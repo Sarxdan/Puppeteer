@@ -37,7 +37,7 @@ public class GrabTool : MonoBehaviour
 
     void Update()
     {
-        if(selectedObject != null)
+        if(selectedObject != null && selectedObject.transform.hasChanged)
         {
             var pos = this.offset + MouseToWorldPosition();
             pos.y = 0.0f;
@@ -48,17 +48,14 @@ public class GrabTool : MonoBehaviour
 
             foreach(var anchor in anchors)
             {
-                float dist;
-                var nearest = this.FindNearestAnchor(anchor, out dist);
+                var nearest = this.FindNearestAnchor(anchor, ref bestDist);
 
-                if(dist < bestDist && this.CanConnect(anchor, nearest))
+                if(nearest != null && this.CanConnect(anchor, nearest))
                 {
-                    bestDist = dist;
                     this.bestSrcPoint = anchor;
                     this.bestDstPoint = nearest;
+                    Debug.DrawLine(anchor.transform.position, nearest.transform.position, Color.cyan);
                 }
-
-                Debug.DrawLine(nearest.transform.position, anchor.transform.position, Color.cyan);
             }
 
             if(this.CanConnect(bestSrcPoint, bestDstPoint))
@@ -120,9 +117,8 @@ public class GrabTool : MonoBehaviour
         return Vector3.Dot(srcDir, dstDir) == -1 && dist < SnapDistance;
     }
 
-    private AnchorPoint FindNearestAnchor(in AnchorPoint anchor, out float distance)
+    private AnchorPoint FindNearestAnchor(in AnchorPoint anchor, ref float distance)
     {
-        distance = Mathf.Infinity;
         AnchorPoint result = null;
         foreach(var target in targets)
         {
