@@ -16,7 +16,6 @@ public class GrabTool : MonoBehaviour
 
     private AnchorPoint bestSrcPoint;
     private AnchorPoint bestDstPoint;
-    private AnchorPoint lastDstPoint;
     private Vector3 lastPosition;
     private Quaternion lastRotation;
 
