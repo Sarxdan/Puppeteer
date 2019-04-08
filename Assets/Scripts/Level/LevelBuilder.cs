@@ -35,7 +35,7 @@ public class LevelBuilder : MonoBehaviour
 
         for(int i = 0; i < NumModules; i++)
         {
-            var module = Instantiate(Modules[Random.Range(0, Modules.Length)]);
+            var module = Instantiate(Modules[Random.Range(0, Modules.Length)], transform);
             module.GetComponent<Renderer>().material.SetColor("_Color", new Color(Random.value, Random.value, Random.value));
             module.transform.SetParent(transform);
 
