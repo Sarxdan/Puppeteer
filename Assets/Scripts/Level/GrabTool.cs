@@ -12,6 +12,7 @@ public class GrabTool : MonoBehaviour
     // the selected object
     private GameObject selectedObject;
     private GameObject sourceObject;
+    private GameObject guideObject;
 
     private AnchorPoint bestSrcPoint;
     private AnchorPoint bestDstPoint;
@@ -32,12 +33,16 @@ public class GrabTool : MonoBehaviour
                 var nearest = this.FindNearestAnchor(anchor, ref bestDist);
                 if (this.CanConnect(anchor, nearest))
                 {
-                    // TODO: cleanup
                     this.bestSrcPoint = anchor;
                     this.bestDstPoint = nearest;
                     Debug.DrawLine(nearest.transform.position, anchor.transform.position, Color.yellow);
+
+                    // place guide object
+                    var offset = anchor.transform.parent.position - anchor.transform.position;
+                    guideObject.transform.SetPositionAndRotation(nearest.transform.position + offset, selectedObject.transform.rotation);
                 }
             }
+            guideObject.SetActive(this.CanConnect(bestSrcPoint, bestDstPoint));
         }
     }
 
@@ -62,6 +67,7 @@ public class GrabTool : MonoBehaviour
                 foreach(var anchor in anchors)
                 {
                     numConnections += (anchor.Attachment != null ? 1 : 0);
+                    
                 }
 
                 if (numConnections <= 1 || GrabInterconnected)
@@ -69,13 +75,25 @@ public class GrabTool : MonoBehaviour
                     selectedObject = GameObject.Instantiate(sourceObject);
                     selectedObject.name = "SelectedObject";
                     offset = selectedObject.transform.position - MouseToWorldPosition();
+
+                    // setup guide object
+                    guideObject = GameObject.Instantiate(sourceObject);
+                    guideObject.name = "GuideObject";
+
+                    // remove anchors from guide
+                    foreach(var anchor in guideObject.GetComponentsInChildren<AnchorPoint>())
+                    {
+                        GameObject.Destroy(anchor.gameObject);
+                    }
+
+                    var renderer = guideObject.GetComponent<Renderer>();
+                    renderer.material.SetColor("_Color", Color.green);
                 }
             }
         }
 
         if(Input.GetMouseButtonDown(1) && selectedObject != null)
         {
-            // rotate by 90deg
             selectedObject.transform.Rotate(0, 90, 0);
         }
 
@@ -92,6 +110,7 @@ public class GrabTool : MonoBehaviour
                 // if connection not possible, destroy selection
                 GameObject.Destroy(selectedObject);
             }
+            GameObject.Destroy(guideObject);
             selectedObject = null;
             time = 0.0f;
         }
@@ -174,7 +193,6 @@ public class GrabTool : MonoBehaviour
     {
         Vector3 mousePos = Input.mousePosition;
         mousePos.z = Camera.main.WorldToScreenPoint(selectedObject.transform.position).z;
-        // convert to world position
         return Camera.main.ScreenToWorldPoint(mousePos);
     }
 }
