@@ -20,13 +20,7 @@ public class LevelBuilder : MonoBehaviour
 
     void Start()
     {
-        // place start module
-        var start = Instantiate(StartModule);
-        start.transform.SetParent(transform);
-        start.transform.position = Vector3.zero;
-
-        CreateDoor(start, 1);
-
+        // temporary code
         for(int i = 0; i < NumModules; i++)
         {
             var module = Instantiate(Modules[Random.Range(0, Modules.Length)], transform);
@@ -36,25 +30,6 @@ public class LevelBuilder : MonoBehaviour
 
             CreateDoor(module, Random.Range(2, 4));
         }
-    }
-
-    public List<GameObject> GetAllModules()
-    {
-        return new List<GameObject>(GameObject.FindGameObjectsWithTag("Connectable"));
-    }
-
-    public List<AnchorPoint> GetValidDoors()
-    {
-        var buffer = this.GetComponentsInChildren<AnchorPoint>();
-        var result = new List<AnchorPoint>();
-        for(int i = 0; i < buffer.Length; i++)
-        {
-            if(buffer[i].Attachment)
-            {
-                result.Add(buffer[i]);
-            }
-        }
-        return result;
     }
 
     private void CreateDoor(in GameObject obj, int numDoors)
