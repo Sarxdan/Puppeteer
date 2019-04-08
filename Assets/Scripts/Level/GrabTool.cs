@@ -54,7 +54,7 @@ public class GrabTool : MonoBehaviour
 
     void Update()
     {
-        if(selectedObject != null && selectedObject.transform.hasChanged)
+        if (selectedObject != null && selectedObject.transform.hasChanged)
         {
             var pos = this.offset + MouseToWorldPosition();
             pos.y = 0.0f;
@@ -69,11 +69,11 @@ public class GrabTool : MonoBehaviour
                 sourceObject = hitInfo.transform.gameObject;
 
                 var anchors = sourceObject.GetComponentsInChildren<AnchorPoint>();
-
                 int numConnections = 0;
-                foreach(var anchor in anchors)
+                foreach (var anchor in anchors)
                 {
                     numConnections += (anchor.Attachment != null ? 1 : 0);
+
                 }
 
                 if (numConnections <= 1 || GrabInterconnected)
@@ -87,7 +87,7 @@ public class GrabTool : MonoBehaviour
                     guideObject.name = "GuideObject";
 
                     // remove anchors from guide
-                    foreach(var anchor in guideObject.GetComponentsInChildren<AnchorPoint>())
+                    foreach (var anchor in guideObject.GetComponentsInChildren<AnchorPoint>())
                     {
                         GameObject.Destroy(anchor.gameObject);
                     }
@@ -98,7 +98,7 @@ public class GrabTool : MonoBehaviour
             }
         }
 
-        if(Input.GetMouseButtonDown(1) && selectedObject != null)
+        if (Input.GetMouseButtonDown(1) && selectedObject != null)
         {
             selectedObject.transform.Rotate(0, 90, 0);
         }
@@ -107,11 +107,18 @@ public class GrabTool : MonoBehaviour
         {
             if (this.PerformConnection(bestSrcPoint, bestDstPoint))
             {
-                // connection possible, move source object
-                sourceObject.transform.SetPositionAndRotation(selectedObject.transform.position, selectedObject.transform.rotation);
+                // connection possible, move 
+                GameObject.Destroy(sourceObject);
+                selectedObject.name = sourceObject.name;
+                selectedObject.transform.SetParent(transform);
             }
-            GameObject.Destroy(selectedObject);
+            else
+            {
+                // if connection not possible, destroy selection
+                GameObject.Destroy(selectedObject);
+            }
             GameObject.Destroy(guideObject);
+            selectedObject = null;
             time = 0.0f;
         }
     }
@@ -133,7 +140,7 @@ public class GrabTool : MonoBehaviour
 
         // check if anchors are too far apart  
         float dist = (dst.transform.position - src.transform.position).magnitude;
-        if(dist > SnapDistance)
+        if (dist > SnapDistance)
         {
             return false;
         }
@@ -147,7 +154,7 @@ public class GrabTool : MonoBehaviour
 
     private bool PerformConnection(in AnchorPoint src, in AnchorPoint dst)
     {
-        if(CanConnect(src, dst))
+        if (CanConnect(src, dst))
         {
             src.transform.parent.position = dst.transform.position + src.transform.parent.position - src.transform.position;
             src.Attachment = dst;
@@ -170,17 +177,18 @@ public class GrabTool : MonoBehaviour
 
     private AnchorPoint FindNearestAnchor(in AnchorPoint anchor, ref float distance)
     {
+        var targets = this.GetAllAnchors();
         AnchorPoint result = null;
-        foreach(var target in this.GetAllAnchors())
+        foreach (var target in targets)
         {
             if (target.transform.parent == anchor.transform.parent)
                 continue;
 
-            if(target.transform.parent == sourceObject.transform)
+            if (target.transform.parent == sourceObject.transform) // remove this statement after level builder is finished
                 continue;
 
             float curDist = (anchor.transform.position - target.transform.position).sqrMagnitude;
-            if(curDist < distance)
+            if (curDist < distance)
             {
                 result = target;
                 distance = curDist;
