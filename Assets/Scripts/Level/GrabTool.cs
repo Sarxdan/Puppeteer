@@ -8,35 +8,54 @@ public class GrabTool : MonoBehaviour
     public float LiftHeight = 2.0f;
     public float LiftSpeed = 0.1f;
 
-    // contains all available anchors
-    private List<AnchorPoint> targets;
-
     // the selected object
     private GameObject selectedObject;
+    private GameObject sourceObject;
 
     private AnchorPoint bestSrcPoint;
     private AnchorPoint bestDstPoint;
-    private Vector3 lastPosition;
-    private Quaternion lastRotation;
 
     // movement offset
     private Vector3 offset;
     private float time;
 
-    void Start()
-    {
-        targets = new List<AnchorPoint>();
-
-        var objects = GameObject.FindGameObjectsWithTag("Connectable");
-        foreach(var obj in objects)
-        {
-            targets.AddRange(obj.GetComponentsInChildren<AnchorPoint>());
-        }
-    }
-
     void Update()
     {
-        if(selectedObject != null && selectedObject.transform.hasChanged)
+        if(Input.GetMouseButtonDown(0))
+        {
+            RaycastHit hitInfo = new RaycastHit();
+            if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hitInfo))
+            {
+                sourceObject = hitInfo.transform.gameObject;
+
+                // create clone
+                selectedObject = GameObject.Instantiate(sourceObject);
+                offset = selectedObject.transform.position - MouseToWorldPosition();
+            }
+        }
+
+        if(Input.GetMouseButtonDown(1) && selectedObject != null)
+        {
+            // rotate by 90deg
+            selectedObject.transform.Rotate(0, 90, 0);
+        }
+
+        if (Input.GetMouseButtonUp(0) && selectedObject != null)
+        {
+            if (this.PerformConnection(bestSrcPoint, bestDstPoint))
+            {
+                GameObject.Destroy(sourceObject);
+            }
+            else
+            {
+                // if connection not possible, destroy selection
+                GameObject.Destroy(selectedObject);
+            }
+            selectedObject = null;
+            time = 0.0f;
+        }
+
+        if (selectedObject != null && selectedObject.transform.hasChanged)
         {
             var pos = this.offset + MouseToWorldPosition();
             pos.y = 0.0f;
@@ -45,79 +64,74 @@ public class GrabTool : MonoBehaviour
             var anchors = selectedObject.GetComponentsInChildren<AnchorPoint>();
             float bestDist = Mathf.Infinity;
 
-            foreach(var anchor in anchors)
+            foreach (var anchor in anchors)
             {
                 var nearest = this.FindNearestAnchor(anchor, ref bestDist);
-
-                if(nearest != null && this.CanConnect(anchor, nearest))
+                if (this.CanConnect(anchor, nearest))
                 {
+                    // TODO: cleanup
                     this.bestSrcPoint = anchor;
                     this.bestDstPoint = nearest;
-                    Debug.DrawLine(anchor.transform.position, nearest.transform.position, Color.cyan);
+                    Debug.DrawLine(nearest.transform.position, anchor.transform.position, Color.yellow);
                 }
             }
-
-            if(this.CanConnect(bestSrcPoint, bestDstPoint))
-            {
-                Debug.DrawLine(bestSrcPoint.transform.position, bestDstPoint.transform.position, Color.yellow);
-            }
-        }
-
-        if(Input.GetMouseButtonDown(0))
-        {
-            RaycastHit hitInfo = new RaycastHit();
-            if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hitInfo))
-            {
-                selectedObject = hitInfo.transform.gameObject;
-                offset = selectedObject.transform.position - MouseToWorldPosition();
-
-                lastPosition = selectedObject.transform.position;
-                lastRotation = selectedObject.transform.rotation;
-            }
-        }
-
-        if(Input.GetMouseButtonDown(1) && selectedObject != null)
-        {
-            selectedObject.transform.Rotate(0, 90, 0);
-        }
-
-        if (Input.GetMouseButtonUp(0) && selectedObject != null)
-        {
-            if(this.CanConnect(bestSrcPoint, bestDstPoint))
-            {
-                var offset = bestDstPoint.transform.position + bestSrcPoint.transform.parent.position - bestSrcPoint.transform.position;
-                offset.y = 0.0f;
-                selectedObject.transform.position = offset;
-            }
-            else
-            {
-                selectedObject.transform.SetPositionAndRotation(lastPosition, lastRotation);
-            }
-            selectedObject = null;
-            time = 0.0f;
         }
     }
 
     // checks if two anchors may be connected
     private bool CanConnect(in AnchorPoint src, in AnchorPoint dst)
     {
+        // ignore invalid anchors
         if (src == null || dst == null)
+        {
             return false;
+        }
 
         // cannot connect to anchor that is already used
-        if (!dst.Open)
+        if (!(src.Open && dst.Open))
+        {
             return false;
+        }
+
+        float dist = (dst.transform.position - src.transform.position).magnitude;
+        // anchors are too far apart  
+        if(dist > SnapDistance)
+        {
+            return false;
+        }
 
         var srcDir = (src.transform.position - src.transform.parent.position).normalized;
         var dstDir = (dst.transform.position - dst.transform.parent.position).normalized;
 
-        float dist = (dst.transform.position - src.transform.position).magnitude;
+        return -1.0f == Vector3.Dot(srcDir, dstDir);
+    }
 
-        return Vector3.Dot(srcDir, dstDir) == -1 && dist < SnapDistance;
+    private bool PerformConnection(in AnchorPoint src, in AnchorPoint dst)
+    {
+        if(CanConnect(src, dst))
+        {
+            src.transform.parent.position = dst.transform.position + src.transform.parent.position - src.transform.position;
+            src.Open = false;
+            dst.Open = false;
+            return true;
+        }
+        return false;
+    }
+
+    private List<AnchorPoint> GetAllAnchors()
+    {
+        var result = new List<AnchorPoint>();
+        var objects = GameObject.FindGameObjectsWithTag("Connectable");
+        foreach (var obj in objects)
+        {
+            result.AddRange(obj.GetComponentsInChildren<AnchorPoint>());
+        }
+        return result;
     }
 
     private AnchorPoint FindNearestAnchor(in AnchorPoint anchor, ref float distance)
     {
+        var targets = this.GetAllAnchors();
         AnchorPoint result = null;
         foreach(var target in targets)
         {

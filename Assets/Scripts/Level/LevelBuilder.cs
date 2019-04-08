@@ -39,10 +39,31 @@ public class LevelBuilder : MonoBehaviour
             module.GetComponent<Renderer>().material.SetColor("_Color", new Color(Random.value, Random.value, Random.value));
             module.transform.SetParent(transform);
 
+            module.transform.position = new Vector3(Random.Range(-16, 16), 0.0f, Random.Range(-16, 16));
+
             CreateDoor(module, Random.Range(2, 4));
         }
 
         gameObject.AddComponent<GrabTool>();
+    }
+
+    public List<GameObject> GetAllModules()
+    {
+        return new List<GameObject>(GameObject.FindGameObjectsWithTag("Connectable"));
+    }
+
+    public List<AnchorPoint> GetValidDoors()
+    {
+        var buffer = this.GetComponentsInChildren<AnchorPoint>();
+        var result = new List<AnchorPoint>();
+        for(int i = 0; i < buffer.Length; i++)
+        {
+            if(buffer[i].Open)
+            {
+                result.Add(buffer[i]);
+            }
+        }
+        return result;
     }
 
     private void CreateDoor(in GameObject obj, int numDoors)
