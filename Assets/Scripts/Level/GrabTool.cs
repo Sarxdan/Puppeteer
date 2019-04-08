@@ -69,11 +69,11 @@ public class GrabTool : MonoBehaviour
                 sourceObject = hitInfo.transform.gameObject;
 
                 var anchors = sourceObject.GetComponentsInChildren<AnchorPoint>();
+
                 int numConnections = 0;
                 foreach(var anchor in anchors)
                 {
                     numConnections += (anchor.Attachment != null ? 1 : 0);
-                    
                 }
 
                 if (numConnections <= 1 || GrabInterconnected)
@@ -107,18 +107,11 @@ public class GrabTool : MonoBehaviour
         {
             if (this.PerformConnection(bestSrcPoint, bestDstPoint))
             {
-                // connection possible, move 
-                GameObject.Destroy(sourceObject);
-                selectedObject.name = sourceObject.name;
-                selectedObject.transform.SetParent(transform);
+                // connection possible, move source object
+                sourceObject.transform.SetPositionAndRotation(selectedObject.transform.position, selectedObject.transform.rotation);
             }
-            else
-            {
-                // if connection not possible, destroy selection
-                GameObject.Destroy(selectedObject);
-            }
+            GameObject.Destroy(selectedObject);
             GameObject.Destroy(guideObject);
-            selectedObject = null;
             time = 0.0f;
         }
     }
@@ -177,14 +170,13 @@ public class GrabTool : MonoBehaviour
 
     private AnchorPoint FindNearestAnchor(in AnchorPoint anchor, ref float distance)
     {
-        var targets = this.GetAllAnchors();
         AnchorPoint result = null;
-        foreach(var target in targets)
+        foreach(var target in this.GetAllAnchors())
         {
             if (target.transform.parent == anchor.transform.parent)
                 continue;
 
-            if(target.transform.parent == sourceObject.transform) // remove this statement after level builder is finished
+            if(target.transform.parent == sourceObject.transform)
                 continue;
 
             float curDist = (anchor.transform.position - target.transform.position).sqrMagnitude;
