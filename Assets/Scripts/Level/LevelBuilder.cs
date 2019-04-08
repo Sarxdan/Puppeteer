@@ -18,14 +18,8 @@ public class LevelBuilder : MonoBehaviour
         Vector3.back,
     };
 
-    private GameObject anchorPrefab;
-
     void Start()
     {
-        anchorPrefab = new GameObject("Anchor");
-        anchorPrefab.AddComponent<AnchorPoint>();
-        anchorPrefab.transform.localScale = Vector3.one;
-
         // place start module
         var start = Instantiate(StartModule);
         start.transform.SetParent(transform);
@@ -70,7 +64,8 @@ public class LevelBuilder : MonoBehaviour
         var doors = new Stack<Vector3>(directions);
         for(int i = 0; i < numDoors; i++)
         {
-            var anchor = Instantiate(anchorPrefab);
+            var anchor = new GameObject("Anchor");
+            anchor.AddComponent<AnchorPoint>();
             anchor.transform.position = 0.5f * doors.Pop();
             anchor.transform.SetParent(obj.transform, false);
         }
