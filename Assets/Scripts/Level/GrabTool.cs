@@ -4,12 +4,18 @@ using UnityEngine;
 
 public class GrabTool : MonoBehaviour
 {
+    // the maximum distance for snapping modules
     public int SnapDistance = 4;
+
+    // the lift height when grabbing an object
     public float LiftHeight = 2.0f;
+
+    // the lift speed when grabbing an object
     public float LiftSpeed = 0.1f;
+
+    // determines if a module may be grabbed even if connected with multiple others
     public bool GrabInterconnected = false;
 
-    // the selected object
     private GameObject selectedObject;
     private GameObject sourceObject;
     private GameObject guideObject;
@@ -101,6 +107,7 @@ public class GrabTool : MonoBehaviour
         {
             if (this.PerformConnection(bestSrcPoint, bestDstPoint))
             {
+                // connection possible, move 
                 GameObject.Destroy(sourceObject);
                 selectedObject.name = sourceObject.name;
                 selectedObject.transform.SetParent(transform);
@@ -131,8 +138,8 @@ public class GrabTool : MonoBehaviour
             return false;
         }
 
+        // check if anchors are too far apart  
         float dist = (dst.transform.position - src.transform.position).magnitude;
-        // anchors are too far apart  
         if(dist > SnapDistance)
         {
             return false;
@@ -141,6 +148,7 @@ public class GrabTool : MonoBehaviour
         var srcDir = (src.transform.position - src.transform.parent.position).normalized;
         var dstDir = (dst.transform.position - dst.transform.parent.position).normalized;
 
+        // only connect modules with correct anchor angles
         return -1.0f == Vector3.Dot(srcDir, dstDir);
     }
 
