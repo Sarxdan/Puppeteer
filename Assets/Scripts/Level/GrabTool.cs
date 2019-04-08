@@ -7,6 +7,7 @@ public class GrabTool : MonoBehaviour
     public int SnapDistance = 4;
     public float LiftHeight = 2.0f;
     public float LiftSpeed = 0.1f;
+    public bool GrabInterconnected = false;
 
     // the selected object
     private GameObject selectedObject;
@@ -19,48 +20,10 @@ public class GrabTool : MonoBehaviour
     private Vector3 offset;
     private float time;
 
-    void Update()
+    void FixedUpdate()
     {
-        if(Input.GetMouseButtonDown(0))
-        {
-            RaycastHit hitInfo = new RaycastHit();
-            if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hitInfo))
-            {
-                sourceObject = hitInfo.transform.gameObject;
-
-                // create clone
-                selectedObject = GameObject.Instantiate(sourceObject);
-                offset = selectedObject.transform.position - MouseToWorldPosition();
-            }
-        }
-
-        if(Input.GetMouseButtonDown(1) && selectedObject != null)
-        {
-            // rotate by 90deg
-            selectedObject.transform.Rotate(0, 90, 0);
-        }
-
-        if (Input.GetMouseButtonUp(0) && selectedObject != null)
-        {
-            if (this.PerformConnection(bestSrcPoint, bestDstPoint))
-            {
-                GameObject.Destroy(sourceObject);
-            }
-            else
-            {
-                // if connection not possible, destroy selection
-                GameObject.Destroy(selectedObject);
-            }
-            selectedObject = null;
-            time = 0.0f;
-        }
-
         if (selectedObject != null && selectedObject.transform.hasChanged)
         {
-            var pos = this.offset + MouseToWorldPosition();
-            pos.y = 0.0f;
-            selectedObject.transform.position = Vector3.Lerp(pos, pos + Vector3.up * LiftHeight, time += LiftSpeed);
-
             var anchors = selectedObject.GetComponentsInChildren<AnchorPoint>();
             float bestDist = Mathf.Infinity;
 
@@ -75,6 +38,69 @@ public class GrabTool : MonoBehaviour
                     Debug.DrawLine(nearest.transform.position, anchor.transform.position, Color.yellow);
                 }
             }
+        }
+    }
+
+    void Update()
+    {
+        if(selectedObject != null && selectedObject.transform.hasChanged)
+        {
+            var pos = this.offset + MouseToWorldPosition();
+            pos.y = 0.0f;
+            selectedObject.transform.position = Vector3.Lerp(pos, pos + Vector3.up * LiftHeight, time += LiftSpeed);
+        }
+
+        if (Input.GetMouseButtonDown(0))
+        {
+            RaycastHit hitInfo = new RaycastHit();
+            if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hitInfo))
+            {
+                sourceObject = hitInfo.transform.gameObject;
+                selectedObject = GameObject.Instantiate(sourceObject);
+
+                // get anchors of clone
+                var anchors = selectedObject.GetComponentsInChildren<AnchorPoint>();
+
+                int numClosed = 0;
+                foreach(var anchor in anchors)
+                {
+                    numClosed += (anchor.Open ? 0 : 1);
+                }
+
+                // do not allow grabbing modules that are connected to multiple
+                if (GrabInterconnected ? true : (numClosed <= 1))
+                {
+                    selectedObject.name = "SelectedObject";
+                    offset = selectedObject.transform.position - MouseToWorldPosition();
+                }
+                else
+                {
+                    GameObject.Destroy(selectedObject);
+                }
+            }
+        }
+
+        if(Input.GetMouseButtonDown(1) && selectedObject != null)
+        {
+            // rotate by 90deg
+            selectedObject.transform.Rotate(0, 90, 0);
+        }
+
+        if (Input.GetMouseButtonUp(0) && selectedObject != null)
+        {
+            if (this.PerformConnection(bestSrcPoint, bestDstPoint))
+            {
+                GameObject.Destroy(sourceObject);
+                selectedObject.name = sourceObject.name;
+                selectedObject.transform.SetParent(transform);
+            }
+            else
+            {
+                // if connection not possible, destroy selection
+                GameObject.Destroy(selectedObject);
+            }
+            selectedObject = null;
+            time = 0.0f;
         }
     }
 
@@ -136,6 +162,9 @@ public class GrabTool : MonoBehaviour
         foreach(var target in targets)
         {
             if (target.transform.parent == anchor.transform.parent)
+                continue;
+
+            if(target.transform.parent == sourceObject.transform)
                 continue;
 
             float curDist = (anchor.transform.position - target.transform.position).sqrMagnitude;

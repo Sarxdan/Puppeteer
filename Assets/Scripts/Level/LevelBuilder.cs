@@ -37,14 +37,11 @@ public class LevelBuilder : MonoBehaviour
         {
             var module = Instantiate(Modules[Random.Range(0, Modules.Length)], transform);
             module.GetComponent<Renderer>().material.SetColor("_Color", new Color(Random.value, Random.value, Random.value));
-            module.transform.SetParent(transform);
 
-            module.transform.position = new Vector3(Random.Range(-16, 16), 0.0f, Random.Range(-16, 16));
+            module.transform.position = new Vector3(Random.Range(-8, 8), 0.0f, Random.Range(-8, 8));
 
             CreateDoor(module, Random.Range(2, 4));
         }
-
-        gameObject.AddComponent<GrabTool>();
     }
 
     public List<GameObject> GetAllModules()
