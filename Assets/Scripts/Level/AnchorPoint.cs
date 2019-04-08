@@ -4,13 +4,17 @@ using UnityEngine;
 
 public class AnchorPoint : MonoBehaviour
 {
-    // checks if the anchor point is open for anchoring
-    public bool Open = true;
+    // the anchor that is attach to this point
+    public AnchorPoint Attachment { get; set; }
+
+    void Start()
+    {
+        Attachment = null;   
+    }
 
     void Update()
     {
-        var transform = gameObject.transform;
-        if(Open)
+        if(!Attachment)
         {
             Debug.DrawLine(transform.position, transform.position + transform.up, Color.yellow);
         }

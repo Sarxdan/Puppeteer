@@ -56,26 +56,19 @@ public class GrabTool : MonoBehaviour
             if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hitInfo))
             {
                 sourceObject = hitInfo.transform.gameObject;
-                selectedObject = GameObject.Instantiate(sourceObject);
 
-                // get anchors of clone
-                var anchors = selectedObject.GetComponentsInChildren<AnchorPoint>();
-
-                int numClosed = 0;
+                var anchors = sourceObject.GetComponentsInChildren<AnchorPoint>();
+                int numConnections = 0;
                 foreach(var anchor in anchors)
                 {
-                    numClosed += (anchor.Open ? 0 : 1);
+                    numConnections += (anchor.Attachment != null ? 1 : 0);
                 }
 
-                // do not allow grabbing modules that are connected to multiple
-                if (GrabInterconnected ? true : (numClosed <= 1))
+                if (numConnections <= 1 || GrabInterconnected)
                 {
+                    selectedObject = GameObject.Instantiate(sourceObject);
                     selectedObject.name = "SelectedObject";
                     offset = selectedObject.transform.position - MouseToWorldPosition();
-                }
-                else
-                {
-                    GameObject.Destroy(selectedObject);
                 }
             }
         }
@@ -114,7 +107,7 @@ public class GrabTool : MonoBehaviour
         }
 
         // cannot connect to anchor that is already used
-        if (!(src.Open && dst.Open))
+        if (src.Attachment || dst.Attachment)
         {
             return false;
         }
@@ -137,8 +130,8 @@ public class GrabTool : MonoBehaviour
         if(CanConnect(src, dst))
         {
             src.transform.parent.position = dst.transform.position + src.transform.parent.position - src.transform.position;
-            src.Open = false;
-            dst.Open = false;
+            src.Attachment = dst;
+            dst.Attachment = src;
             return true;
         }
         return false;
@@ -164,7 +157,7 @@ public class GrabTool : MonoBehaviour
             if (target.transform.parent == anchor.transform.parent)
                 continue;
 
-            if(target.transform.parent == sourceObject.transform)
+            if(target.transform.parent == sourceObject.transform) // remove this statement after level builder is finished
                 continue;
 
             float curDist = (anchor.transform.position - target.transform.position).sqrMagnitude;

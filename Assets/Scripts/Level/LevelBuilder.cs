@@ -55,7 +55,7 @@ public class LevelBuilder : MonoBehaviour
         var result = new List<AnchorPoint>();
         for(int i = 0; i < buffer.Length; i++)
         {
-            if(buffer[i].Open)
+            if(buffer[i].Attachment)
             {
                 result.Add(buffer[i]);
             }
