@@ -13,9 +13,6 @@ public class GrabTool : MonoBehaviour
     // the lift speed when grabbing an object
     public float LiftSpeed = 0.1f;
 
-    // determines if a module may be grabbed even if connected with multiple others
-    public bool GrabInterconnected = false;
-
     private GameObject selectedObject;
     private GameObject sourceObject;
     private GameObject guideObject;
@@ -27,10 +24,14 @@ public class GrabTool : MonoBehaviour
     private Vector3 offset;
     private float time;
 
-    void FixedUpdate()
+    void Update()
     {
         if (selectedObject != null && selectedObject.transform.hasChanged)
         {
+            var pos = this.offset + MouseToWorldPosition();
+            pos.y = 0.0f;
+            selectedObject.transform.position = Vector3.Lerp(pos, pos + Vector3.up * LiftHeight, time += LiftSpeed);
+
             var anchors = selectedObject.GetComponentsInChildren<AnchorPoint>();
             float bestDist = Mathf.Infinity;
 
@@ -50,16 +51,6 @@ public class GrabTool : MonoBehaviour
             }
             guideObject.SetActive(this.CanConnect(bestSrcPoint, bestDstPoint));
         }
-    }
-
-    void Update()
-    {
-        if (selectedObject != null && selectedObject.transform.hasChanged)
-        {
-            var pos = this.offset + MouseToWorldPosition();
-            pos.y = 0.0f;
-            selectedObject.transform.position = Vector3.Lerp(pos, pos + Vector3.up * LiftHeight, time += LiftSpeed);
-        }
 
         if (Input.GetMouseButtonDown(0))
         {
@@ -68,15 +59,7 @@ public class GrabTool : MonoBehaviour
             {
                 sourceObject = hitInfo.transform.gameObject;
 
-                var anchors = sourceObject.GetComponentsInChildren<AnchorPoint>();
-                int numConnections = 0;
-                foreach (var anchor in anchors)
-                {
-                    numConnections += (anchor.Attachment != null ? 1 : 0);
-
-                }
-
-                if (numConnections <= 1 || GrabInterconnected)
+                if (true) // TODO verify that a path from start to goal still exists
                 {
                     selectedObject = GameObject.Instantiate(sourceObject);
                     selectedObject.name = "SelectedObject";
@@ -105,20 +88,14 @@ public class GrabTool : MonoBehaviour
 
         if (Input.GetMouseButtonUp(0) && selectedObject != null)
         {
-            if (this.PerformConnection(bestSrcPoint, bestDstPoint))
+            if (this.CanConnect(bestSrcPoint, bestDstPoint))
             {
-                // connection possible, move 
-                GameObject.Destroy(sourceObject);
-                selectedObject.name = sourceObject.name;
-                selectedObject.transform.SetParent(transform);
+                // connection possible, move source object
+                var offset = bestDstPoint.transform.position + bestSrcPoint.transform.parent.position - bestSrcPoint.transform.position;
+                sourceObject.transform.SetPositionAndRotation(offset, selectedObject.transform.rotation);
             }
-            else
-            {
-                // if connection not possible, destroy selection
-                GameObject.Destroy(selectedObject);
-            }
+            GameObject.Destroy(selectedObject);
             GameObject.Destroy(guideObject);
-            selectedObject = null;
             time = 0.0f;
         }
     }
@@ -128,12 +105,6 @@ public class GrabTool : MonoBehaviour
     {
         // ignore invalid anchors
         if (src == null || dst == null)
-        {
-            return false;
-        }
-
-        // cannot connect to anchor that is already used
-        if (src.Attachment || dst.Attachment)
         {
             return false;
         }
@@ -152,39 +123,21 @@ public class GrabTool : MonoBehaviour
         return -1.0f == Vector3.Dot(srcDir, dstDir);
     }
 
-    private bool PerformConnection(in AnchorPoint src, in AnchorPoint dst)
+    private AnchorPoint FindNearestAnchor(in AnchorPoint anchor, ref float distance)
     {
-        if (CanConnect(src, dst))
-        {
-            src.transform.parent.position = dst.transform.position + src.transform.parent.position - src.transform.position;
-            src.Attachment = dst;
-            dst.Attachment = src;
-            return true;
-        }
-        return false;
-    }
-
-    private List<AnchorPoint> GetAllAnchors()
-    {
-        var result = new List<AnchorPoint>();
+        var targets = new List<AnchorPoint>();
         var objects = GameObject.FindGameObjectsWithTag("Connectable");
         foreach (var obj in objects)
         {
-            result.AddRange(obj.GetComponentsInChildren<AnchorPoint>());
+            targets.AddRange(obj.GetComponentsInChildren<AnchorPoint>());
         }
-        return result;
-    }
-
-    private AnchorPoint FindNearestAnchor(in AnchorPoint anchor, ref float distance)
-    {
-        var targets = this.GetAllAnchors();
         AnchorPoint result = null;
         foreach (var target in targets)
         {
             if (target.transform.parent == anchor.transform.parent)
                 continue;
 
-            if (target.transform.parent == sourceObject.transform) // remove this statement after level builder is finished
+            if (target.transform.parent == sourceObject.transform)
                 continue;
 
             float curDist = (anchor.transform.position - target.transform.position).sqrMagnitude;
