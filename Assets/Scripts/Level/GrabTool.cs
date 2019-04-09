@@ -68,15 +68,7 @@ public class GrabTool : MonoBehaviour
             {
                 sourceObject = hitInfo.transform.gameObject;
 
-                var anchors = sourceObject.GetComponentsInChildren<AnchorPoint>();
-                int numConnections = 0;
-                foreach (var anchor in anchors)
-                {
-                    numConnections += (anchor.Attachment != null ? 1 : 0);
-
-                }
-
-                if (numConnections <= 1 || GrabInterconnected)
+                if (true) // TODO verify that a path from start to goal still exists
                 {
                     selectedObject = GameObject.Instantiate(sourceObject);
                     selectedObject.name = "SelectedObject";
@@ -122,12 +114,6 @@ public class GrabTool : MonoBehaviour
     {
         // ignore invalid anchors
         if (src == null || dst == null)
-        {
-            return false;
-        }
-
-        // cannot connect to anchor that is already used
-        if (src.Attachment || dst.Attachment)
         {
             return false;
         }
