@@ -13,6 +13,9 @@ public class GrabTool : MonoBehaviour
     // the lift speed when grabbing an object
     public float LiftSpeed = 0.1f;
 
+    // enables camera movement using mouse scroll
+    public bool EnableMovement = true;
+
     private GameObject selectedObject;
     private GameObject sourceObject;
     private GameObject guideObject;
@@ -94,6 +97,11 @@ public class GrabTool : MonoBehaviour
             GameObject.Destroy(selectedObject);
             GameObject.Destroy(guideObject);
             time = 0.0f;
+        }
+
+        if(EnableMovement)
+        {
+            Camera.main.transform.position += Vector3.up * -Input.mouseScrollDelta.y;
         }
     }
 
