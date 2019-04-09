@@ -74,9 +74,6 @@ public class GrabTool : MonoBehaviour
                     {
                         GameObject.Destroy(anchor.gameObject);
                     }
-
-                    var renderer = guideObject.GetComponent<Renderer>();
-                    renderer.material.SetColor("_Color", Color.green);
                 }
             }
         }
@@ -116,11 +113,8 @@ public class GrabTool : MonoBehaviour
             return false;
         }
 
-        var srcDir = (src.transform.position - src.transform.parent.position).normalized;
-        var dstDir = (dst.transform.position - dst.transform.parent.position).normalized;
-
         // only connect modules with correct anchor angles
-        return -1.0f == Vector3.Dot(srcDir, dstDir);
+        return Vector3.Dot(src.transform.forward.normalized, dst.transform.forward.normalized) == -1.0f;
     }
 
     private AnchorPoint FindNearestAnchor(in AnchorPoint anchor, ref float distance)
@@ -137,7 +131,7 @@ public class GrabTool : MonoBehaviour
             if (target.transform.parent == anchor.transform.parent)
                 continue;
 
-            if (target.transform.parent == sourceObject.transform) // remove this statement after level builder is finished
+            if (target.transform.parent == sourceObject.transform)
                 continue;
 
             float curDist = (anchor.transform.position - target.transform.position).sqrMagnitude;
