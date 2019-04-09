@@ -127,20 +127,14 @@ public class GrabTool : MonoBehaviour
         return -1.0f == Vector3.Dot(srcDir, dstDir);
     }
 
-    private List<AnchorPoint> GetAllAnchors()
+    private AnchorPoint FindNearestAnchor(in AnchorPoint anchor, ref float distance)
     {
-        var result = new List<AnchorPoint>();
+        var targets = new List<AnchorPoint>();
         var objects = GameObject.FindGameObjectsWithTag("Connectable");
         foreach (var obj in objects)
         {
-            result.AddRange(obj.GetComponentsInChildren<AnchorPoint>());
+            targets.AddRange(obj.GetComponentsInChildren<AnchorPoint>());
         }
-        return result;
-    }
-
-    private AnchorPoint FindNearestAnchor(in AnchorPoint anchor, ref float distance)
-    {
-        var targets = this.GetAllAnchors();
         AnchorPoint result = null;
         foreach (var target in targets)
         {
