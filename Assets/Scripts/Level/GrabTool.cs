@@ -137,7 +137,7 @@ public class GrabTool : MonoBehaviour
             if (target.transform.parent == anchor.transform.parent)
                 continue;
 
-            if (target.transform.parent == sourceObject.transform) // remove this statement after level builder is finished
+            if (target.transform.parent == sourceObject.transform)
                 continue;
 
             float curDist = (anchor.transform.position - target.transform.position).sqrMagnitude;
