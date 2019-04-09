@@ -27,10 +27,15 @@ public class GrabTool : MonoBehaviour
     private Vector3 offset;
     private float time;
 
-    void FixedUpdate()
+
+    void Update()
     {
         if (selectedObject != null && selectedObject.transform.hasChanged)
         {
+            var pos = this.offset + MouseToWorldPosition();
+            pos.y = 0.0f;
+            selectedObject.transform.position = Vector3.Lerp(pos, pos + Vector3.up * LiftHeight, time += LiftSpeed);
+
             var anchors = selectedObject.GetComponentsInChildren<AnchorPoint>();
             float bestDist = Mathf.Infinity;
 
@@ -49,16 +54,6 @@ public class GrabTool : MonoBehaviour
                 }
             }
             guideObject.SetActive(this.CanConnect(bestSrcPoint, bestDstPoint));
-        }
-    }
-
-    void Update()
-    {
-        if (selectedObject != null && selectedObject.transform.hasChanged)
-        {
-            var pos = this.offset + MouseToWorldPosition();
-            pos.y = 0.0f;
-            selectedObject.transform.position = Vector3.Lerp(pos, pos + Vector3.up * LiftHeight, time += LiftSpeed);
         }
 
         if (Input.GetMouseButtonDown(0))
