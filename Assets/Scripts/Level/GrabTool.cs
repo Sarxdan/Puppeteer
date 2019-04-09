@@ -13,9 +13,6 @@ public class GrabTool : MonoBehaviour
     // the lift speed when grabbing an object
     public float LiftSpeed = 0.1f;
 
-    // determines if a module may be grabbed even if connected with multiple others
-    public bool GrabInterconnected = false;
-
     private GameObject selectedObject;
     private GameObject sourceObject;
     private GameObject guideObject;
@@ -26,7 +23,6 @@ public class GrabTool : MonoBehaviour
     // movement offset
     private Vector3 offset;
     private float time;
-
 
     void Update()
     {
