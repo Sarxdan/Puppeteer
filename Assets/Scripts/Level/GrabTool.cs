@@ -105,20 +105,14 @@ public class GrabTool : MonoBehaviour
 
         if (Input.GetMouseButtonUp(0) && selectedObject != null)
         {
-            if (this.PerformConnection(bestSrcPoint, bestDstPoint))
+            if (this.CanConnect(bestSrcPoint, bestDstPoint))
             {
-                // connection possible, move 
-                GameObject.Destroy(sourceObject);
-                selectedObject.name = sourceObject.name;
-                selectedObject.transform.SetParent(transform);
+                // connection possible, move source object
+                var offset = bestDstPoint.transform.position + bestSrcPoint.transform.parent.position - bestSrcPoint.transform.position;
+                sourceObject.transform.SetPositionAndRotation(offset, selectedObject.transform.rotation);
             }
-            else
-            {
-                // if connection not possible, destroy selection
-                GameObject.Destroy(selectedObject);
-            }
+            GameObject.Destroy(selectedObject);
             GameObject.Destroy(guideObject);
-            selectedObject = null;
             time = 0.0f;
         }
     }
@@ -150,18 +144,6 @@ public class GrabTool : MonoBehaviour
 
         // only connect modules with correct anchor angles
         return -1.0f == Vector3.Dot(srcDir, dstDir);
-    }
-
-    private bool PerformConnection(in AnchorPoint src, in AnchorPoint dst)
-    {
-        if (CanConnect(src, dst))
-        {
-            src.transform.parent.position = dst.transform.position + src.transform.parent.position - src.transform.position;
-            src.Attachment = dst;
-            dst.Attachment = src;
-            return true;
-        }
-        return false;
     }
 
     private List<AnchorPoint> GetAllAnchors()
