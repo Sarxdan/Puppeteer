@@ -2,6 +2,17 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/*
+ * AUTHOR:
+ * Philip Stenmark
+ * 
+ * DESCRIPTION:
+ * Raycast testing component for player versus in-level objects interactions.
+ * The origin of the rays are always from the center of the viewport, sent in
+ * direction the camera is facing. Additionally, a lookahead property is used to limit
+ * the distance of the casted ray.
+ * 
+ */
 public class RaycastTester : MonoBehaviour
 {
     [Range(1.0f, 10.0f)]
@@ -12,6 +23,12 @@ public class RaycastTester : MonoBehaviour
 
     void Update()
     {
+        // performs an interaction if possible
+        if (Input.GetKeyDown(KeyCode.E) && last)
+        {
+            last.OnInteract(gameObject);
+        }
+
         if (Physics.Raycast(Camera.main.ViewportPointToRay(new Vector3(0.5f, 0.5f)), out hitInfo, Lookahead))
         {
             Interactable next = hitInfo.transform.GetComponent<Interactable>();
@@ -27,16 +44,11 @@ public class RaycastTester : MonoBehaviour
             SendMessageTo(last, "OnRaycastExit");
             last = null;
         }
-
-        if(Input.GetKeyDown(KeyCode.E) && last != null)
-        {
-            last.OnInteract(gameObject);
-        }
     }
 
     private void SendMessageTo(Interactable target, string methodName)
     {
-        if(target != null)
+        if(target)
         {
             target.SendMessage(methodName);
         }
