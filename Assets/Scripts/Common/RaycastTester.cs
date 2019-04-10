@@ -24,7 +24,7 @@ public class RaycastTester : MonoBehaviour
     void Update()
     {
         // performs an interaction if possible
-        if (Input.GetKeyDown(KeyCode.E) && last)
+        if (Input.GetButtonDown("Use") && last)
         {
             last.OnInteract(gameObject);
         }
