@@ -21,8 +21,10 @@ public class WeaponComponent : Interactable
     [Range(0.0f, 1.0f)]
     public float RecoilAmount;
 
+    //Time left until weapon can be used again
     private float cooldown;
 
+    //Attemps to fire the weapon
     public void Use()
     {
         if (cooldown != 0 || LiquidLeft == 0)
@@ -50,6 +52,7 @@ public class WeaponComponent : Interactable
         LiquidLeft -= LiquidPerRound;
     }
 
+    //Attemps to reload the weapon to its maximum capacity by the given input amount
     public void Reload(ref int liquidInput)
     {
         if (cooldown != 0)
