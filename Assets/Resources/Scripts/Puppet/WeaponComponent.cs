@@ -9,13 +9,17 @@ public class WeaponComponent : Interactable
 
     public int LiquidLeft;
     public int LiquidPerRound;
-
-    public float FiringSpeed;
     public uint Damage;
-    public float Spread;
-    public float Recoil;
+    public uint NumShots;
+
+    [Range(0.0f, 1.0f)]
+    public float FiringSpeed;
+    [Range(0.0f, 4.0f)]
     public float ReloadTime;
-    public uint NumberOfShots;
+    [Range(0.0f, 1.0f)]
+    public float Spread;
+    [Range(0.0f, 1.0f)]
+    public float RecoilAmount;
 
     private float cooldown;
 
@@ -24,7 +28,7 @@ public class WeaponComponent : Interactable
         if (cooldown != 0 || LiquidLeft == 0)
             return;
 
-        for(int i = 0; i < NumberOfShots; i++)
+        for(int i = 0; i < NumShots; i++)
         {
             // calculate spread
             Vector3 offset = Random.insideUnitCircle * Spread;
