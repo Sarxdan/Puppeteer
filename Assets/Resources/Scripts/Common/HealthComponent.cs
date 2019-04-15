@@ -41,6 +41,8 @@ public class HealthComponent : MonoBehaviour
         if (Health <= 0)
             return;
 
+        StopCoroutine("RegenRoutine");
+
         //Cap the HP so it doesn't go below 0
         Health = (uint)Mathf.Max(0, Health -= damage);
         if (Health == 0)
@@ -48,13 +50,9 @@ public class HealthComponent : MonoBehaviour
             this.zeroHealthAction();
             AllowRegen = false;
         }
-        else
+        else if (AllowRegen)
         {
-            if(AllowRegen)
-            {
-                StopCoroutine("RegenRoutine");
-                StartCoroutine("RegenRoutine");
-            }
+            StartCoroutine("RegenRoutine");
         }
     }
     
