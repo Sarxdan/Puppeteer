@@ -10,7 +10,8 @@ namespace Mirror
     {
         public bool ShowLobbyGUI = true;
 
-        [SyncVar(hook=nameof(ReadyStateChanged))]
+       // [SyncVar(hook=nameof(ReadyStateChanged))]
+        [SyncVar]
         public bool ReadyToBegin;
 
         [SyncVar]
@@ -36,6 +37,7 @@ namespace Mirror
         [Command]
         public void CmdChangeReadyState(bool ReadyState)
         {
+            Debug.Log("End Us");
             ReadyToBegin = ReadyState;
             NetworkLobbyManager lobby = NetworkManager.singleton as NetworkLobbyManager;
             lobby?.ReadyStatusChanged();
