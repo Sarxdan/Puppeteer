@@ -11,7 +11,7 @@ using UnityEngine;
  * The script may be inherited by scripts for items, weapons etc. in order for the player to interact with them in the level.
  * 
  * CODE REVIEWED BY:
- * 
+ * Ludvig Björk Förare
  * 
  * 
  */

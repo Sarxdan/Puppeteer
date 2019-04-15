@@ -11,7 +11,7 @@ using UnityEngine;
  * Script is placed on the player prefab to allow interaction with interactable objects.
  * 
  * CODE REVIEWED BY:
- * 
+ * Ludvig Björk Förare
  * 
  * 
  */
