@@ -21,6 +21,7 @@ public class WeaponComponent : Interactable
     [Range(0.0f, 10.0f)]
     public float RecoilAmount;
 
+    public static float RecoilRecovery = 20.0f;
     public Transform HeadTransform;
 
     //Time left until weapon can be used again
@@ -55,12 +56,6 @@ public class WeaponComponent : Interactable
         LiquidLeft -= LiquidPerRound;
     }
 
-    public void Recoil()
-    {
-        recoil = Mathf.Clamp(recoil - 10.0f * Time.deltaTime, 0.0f, 45.0f);
-        HeadTransform.localEulerAngles += Vector3.left * recoil;
-    }
-
     //Attemps to reload the weapon to its maximum capacity by the given input amount
     public void Reload(ref int liquidInput)
     {
@@ -77,7 +72,10 @@ public class WeaponComponent : Interactable
     void Update()
     {
         cooldown = Mathf.Max(0.0f, cooldown -= Time.deltaTime);
-        Recoil();
+
+        // perform recoil
+        recoil = Mathf.Clamp(recoil - RecoilRecovery * Time.deltaTime, 0.0f, 45.0f);
+        HeadTransform.localEulerAngles += Vector3.left * recoil;
     }
 
     public override void OnInteractBegin(GameObject interactor)

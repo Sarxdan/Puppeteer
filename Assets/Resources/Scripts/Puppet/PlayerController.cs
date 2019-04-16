@@ -13,7 +13,7 @@ using UnityEngine;
  * Anton Jonsson (Player Movement done)
  * 
  * CONTRIBUTORS:
- * 
+ * Philip Stenmark
 */
 public class PlayerController : MonoBehaviour
 {
