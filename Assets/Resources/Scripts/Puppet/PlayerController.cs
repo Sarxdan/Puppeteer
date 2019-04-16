@@ -23,8 +23,8 @@ public class PlayerController : MonoBehaviour
     private float currentMovementSpeed;
     
     //Jumping
-    public float jumpForce;
-    public float jumpRayLength;
+    public float JumpForce;
+    public float JumpRayLength;
 
     //Looking
     public Transform HeadTransform;
@@ -111,9 +111,9 @@ public class PlayerController : MonoBehaviour
         }
 
         //Jumping
-        if (Input.GetAxisRaw("Jump") > 0 && Physics.Raycast(transform.position, -transform.up, jumpRayLength))
+        if (Input.GetAxisRaw("Jump") > 0 && Physics.Raycast(transform.position, -transform.up, JumpRayLength))
         {
-            rigidBody.AddForce(transform.up * jumpForce, ForceMode.Impulse);
+            rigidBody.AddForce(transform.up * JumpForce, ForceMode.Impulse);
         }
 
     }
