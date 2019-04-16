@@ -10,6 +10,9 @@ using UnityEngine;
  * Base class for all powerups. 
  * A powerup is started using the Run coroutine, which in turn manages the activate and complete functions
  * 
+ * CODE REVIEWED BY:
+ * 
+ * 
  */
 public abstract class PowerupBase : MonoBehaviour
 {
@@ -17,6 +20,7 @@ public abstract class PowerupBase : MonoBehaviour
     public float Duration;
     public bool Charged;
 
+    // attempts to start and consume the powerup
     public IEnumerator Run()
     {
         // unable to activate powerup

@@ -35,11 +35,11 @@ public class PlayerController : MonoBehaviour
     public bool HasMedkit;
     public float ReviveTime;
 
-    //Weapon and powerup storage
-    private PowerupBase power;
+    //Weapon and ammunition storage
     public GameObject CurrentWeapon;
     public int Ammunition;
 
+    private PowerupBase power;
     private Rigidbody rigidBody;
 
     void Start()
@@ -65,7 +65,7 @@ public class PlayerController : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.F))  // FIXME: input mapping
         {
-            // attempt to launch powerup
+            // launch powerup
             StartCoroutine(power.Run());
         }
 
