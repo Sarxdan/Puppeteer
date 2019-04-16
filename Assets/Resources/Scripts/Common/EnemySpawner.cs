@@ -59,7 +59,7 @@ public class EnemySpawner : MonoBehaviour
             GameObject npcEnemy = Instantiate(EnemyPrefab, SpawnPoints[i].position, SpawnPoints[i].rotation) as GameObject;
             npcEnemy.transform.parent = GameObject.Find("Spawned Enemies").transform;
 
-            npcEnemy.tag = "npcEnemies";
+            npcEnemy.tag = "Enemy";
             EnemyCount.Add(npcEnemy);
         }
     }
