@@ -26,11 +26,13 @@ public abstract class Interactable : MonoBehaviour
     public void OnRaycastEnter()
     {
         // TODO: enable outline of object
+        Debug.Log("enter");
         GetComponent<Renderer>().material.SetColor("_Color", Color.yellow);
     }
 
     public void OnRaycastExit()
     {
+        Debug.Log("exit");
         // TODO: disable outline of object
         GetComponent<Renderer>().material.SetColor("_Color", Color.white);
     }
