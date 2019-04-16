@@ -21,12 +21,12 @@ public class GrabTool : MonoBehaviour
 		{
 			RaycastHit hit;
 			// TODO: Add raycast limit?
-			if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit))
+			if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit, Mathf.Infinity, Physics.DefaultRaycastLayers, QueryTriggerInteraction.Collide))
 			{
 				GameObject hitObject = hit.transform.gameObject;
 				if (hitObject.tag == "Connectable")
 				{
-
+					// Debug.Log("hejhoj");
 				}
 			}
 			// send ray. Save object it hits.
