@@ -18,13 +18,13 @@ public class CharacterSelect : MonoBehaviour
     {
     }
 
-    public void CharacterSelected(int index)
+    public void CharacterSelected(int index, string name)
     {
         Debug.Log("Hjehej");
         SelectableCharacter characterScript = SelectableCharacters[index].GetComponent<SelectableCharacter>();
         characterScript.LightEnabled(true);
         characterScript.Selected = true;
-        //characterScript.enabled = false;
+        characterScript.ChangeNameTag(name);
         
     }
 }

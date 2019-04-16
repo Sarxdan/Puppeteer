@@ -99,7 +99,7 @@ public class CustomNetworkLobbyPlayer : NetworkLobbyPlayer
     public void RpcSelectCharacter(int index)
     {
         Debug.Log("Big oof");
-        GameObject.Find("CharacterSelecter").GetComponent<CharacterSelect>().CharacterSelected(index);
+        GameObject.Find("CharacterSelecter").GetComponent<CharacterSelect>().CharacterSelected(index, Index.ToString());
     }
 
     public void HideCanvas()
@@ -110,6 +110,7 @@ public class CustomNetworkLobbyPlayer : NetworkLobbyPlayer
     [ClientRpc]
     public void RpcHideCanvas()
     {
+        gameObject.transform.SetParent(null);
         GameObject.Find("Canvas").SetActive(false);
     }
 

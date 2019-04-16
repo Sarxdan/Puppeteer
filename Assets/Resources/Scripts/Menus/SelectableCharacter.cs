@@ -13,7 +13,7 @@ public class SelectableCharacter : MonoBehaviour
     private Light spotlight;
 
     [SerializeField]
-    private Text text;
+    private TextMesh text;
 
     //Temporary stuff remove when making the finished menu.
     private bool clicked;
@@ -21,7 +21,7 @@ public class SelectableCharacter : MonoBehaviour
     void Start()
     {
         spotlight = GetComponentInChildren<Light>();
-        text = GetComponentInChildren<Text>();
+        text = GetComponentInChildren<TextMesh>();
     }
 
     void OnMouseOver()
@@ -56,5 +56,10 @@ public class SelectableCharacter : MonoBehaviour
     public void LightEnabled(bool isEnabled)
     {
         spotlight.enabled = isEnabled;
+    }
+
+    public void ChangeNameTag(string name)
+    {
+        text.text = name;
     }
 }
