@@ -6,11 +6,12 @@ using Mirror;
 public class CharacterSelect : MonoBehaviour
 {
     public GameObject[] SelectableCharacters;
+    public int NumberOfSelectedCharacters;
 
     // Start is called before the first frame update
     void Start()
     {
-        
+        NumberOfSelectedCharacters = 0;
     }
 
     // Update is called once per frame
@@ -26,11 +27,12 @@ public class CharacterSelect : MonoBehaviour
             SelectableCharacter script = Character.GetComponent<SelectableCharacter>();
             if (script.PlayerIndex == playerIndex)
             {
+                Debug.Log("BigOOF");
                 script.PlayerIndex = -1;
                 script.Selected = false;
                 script.LightEnabled(false);
-                script.Selected = false;
                 script.ChangeNameTag("");
+                NumberOfSelectedCharacters -= 1;
                 break;
             }
         }
@@ -41,6 +43,7 @@ public class CharacterSelect : MonoBehaviour
         characterScript.Selected = true;
         characterScript.ChangeNameTag(name);
         characterScript.PlayerIndex = playerIndex;
+        NumberOfSelectedCharacters += 1;
         
     }
 }

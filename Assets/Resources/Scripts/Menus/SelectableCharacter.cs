@@ -22,6 +22,7 @@ public class SelectableCharacter : MonoBehaviour
 
     void Start()
     {
+        PlayerIndex = -1;
         spotlight = GetComponentInChildren<Light>();
         text = GetComponentInChildren<TextMesh>();
     }
