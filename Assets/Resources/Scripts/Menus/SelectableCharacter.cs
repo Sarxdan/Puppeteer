@@ -5,9 +5,11 @@ using UnityEngine.UI;
 
 public class SelectableCharacter : MonoBehaviour
 {
-    public int PlayerIndex;
+    public int CharacterIndex;
 
     public bool Selected = false;
+    public int PlayerIndex;
+    
 
     [SerializeField]
     private Light spotlight;
@@ -35,7 +37,7 @@ public class SelectableCharacter : MonoBehaviour
                 {
                     if (item.isLocalPlayer)
                     {
-                        item.ChangeSelectedCharacter(PlayerIndex);
+                        item.ChangeSelectedCharacter(CharacterIndex);
                     }
                 }
             }
