@@ -10,7 +10,7 @@ using UnityEngine;
 * Component used for getting position of roomColliders when building level.
 *
 * CODE REVIEWED BY:
-* OtherName McOtherNameson
+* Sandra "Sanders" Andersson (16/4)
 *
 * CONTRIBUTORS:
 */

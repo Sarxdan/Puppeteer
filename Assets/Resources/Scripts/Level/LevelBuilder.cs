@@ -11,14 +11,14 @@ using Mirror;
 * Script that randomizes the level and places the rooms in a order that is complient with the rules set in the technical specifications.
 *
 * CODE REVIEWED BY:
-* OtherName McOtherNameson
+* Sandra "Sanders" Andersson (16/4)
 *
 * CONTRIBUTORS: 
 */
 
 public class LevelBuilder : NetworkBehaviour
 {
-	// Rooms with the more then one door
+	// Rooms with more than one door
 	public List<GameObject> MultiDoorRooms;
 	// Rooms with only one door.
 	public List<GameObject> DeadEnds;

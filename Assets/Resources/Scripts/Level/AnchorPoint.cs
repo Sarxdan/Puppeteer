@@ -10,7 +10,7 @@ using UnityEngine;
 * Component used to determine where doors are and in which directions they are pointed.
 *
 * CODE REVIEWED BY:
-* OtherName McOtherNameson
+* Sandra "Sanders" Andersson (16/4)
 *
 * CONTRIBUTORS:
 */
@@ -39,8 +39,8 @@ public class AnchorPoint : MonoBehaviour
 		 * 	Debug.DrawLine(transform.position, transform.position + transform.forward * 2, Color.blue);
 		 * }
 		 */
-		
-    }
+
+	}
 
 	// Returns the Position of the AnchorPoint as a Vector of rounded Ints to avoid Unity float errors.
 	public Vector3Int GetPosition()
