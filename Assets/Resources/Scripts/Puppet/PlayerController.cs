@@ -35,9 +35,7 @@ public class PlayerController : MonoBehaviour
     public bool HasMedkit;
     public float ReviveTime;
     
-
-    //Weapons + powerups
-    public bool PowerupReady;
+    //Weapon storage
     public GameObject CurrentWeapon;
     public int Ammunition;
 
@@ -60,6 +58,15 @@ public class PlayerController : MonoBehaviour
             if(Input.GetButtonDown("Reload"))
             {
                 CurrentWeapon.GetComponent<WeaponComponent>().Reload(ref this.Ammunition);
+            }
+        }
+
+        if(Input.GetKeyDown(KeyCode.F))
+        {
+            var power = GetComponent<PowerupBase>();
+            if(power != null)
+            {
+                StartCoroutine(power.Run(gameObject));
             }
         }
 
