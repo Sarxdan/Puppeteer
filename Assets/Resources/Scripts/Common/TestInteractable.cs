@@ -2,23 +2,25 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TestInteractable : Interactable
+public class TestInteractable : PowerupBase
 {
-    public void PlayerDowned()
+    void Start()
     {
-        Debug.Log("kill");
+        GetComponent<HealthComponent>().AddDeathAction(Die);   
     }
 
-    private void Start()
+    void Die()
     {
-        GetComponent<HealthComponent>().AddDeathAction(PlayerDowned);
+        Debug.Log("Dead");
     }
 
-    public override void OnInteractBegin(GameObject interactor)
+    public override void OnActivate()
     {
+        Debug.Log("POWER ACTIVATED");
     }
 
-    public override void OnInteractEnd(GameObject interactor)
+    public override void OnComplete()
     {
+        Debug.Log("POWER DEACTIVATED");
     }
 }
