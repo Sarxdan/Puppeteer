@@ -13,7 +13,7 @@ using UnityEngine;
  * Anton Jonsson (Player Movement done)
  * 
  * CONTRIBUTORS:
- * 
+ * Philip Stenmark
 */
 public class PlayerController : MonoBehaviour
 {
@@ -50,6 +50,18 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
+        if(CurrentWeapon != null)
+        {
+            if(Input.GetButton("Fire"))
+            {
+                CurrentWeapon.GetComponent<WeaponComponent>().Use();
+            }
+
+            if(Input.GetButtonDown("Reload"))
+            {
+                CurrentWeapon.GetComponent<WeaponComponent>().Reload(ref this.Ammunition);
+            }
+        }
 
         //Keeps cursor within screen
         if(Input.GetAxis("Fire") == 1)
