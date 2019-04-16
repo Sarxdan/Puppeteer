@@ -96,10 +96,11 @@ public class CustomNetworkLobbyPlayer : NetworkLobbyPlayer
     #endregion
 
     [ClientRpc]
-    public void RpcSelectCharacter(int index)
+    public void RpcSelectCharacter(int characterIndex)
     {
-        Debug.Log("Big oof");
-        GameObject.Find("CharacterSelecter").GetComponent<CharacterSelect>().CharacterSelected(index, Index.ToString());
+        Debug.Log(characterIndex);
+        //TODO Change Index.ToString() to be the players name
+        GameObject.Find("CharacterSelecter").GetComponent<CharacterSelect>().CharacterSelected(characterIndex, Index.ToString(), Index);
     }
 
     public void HideCanvas()

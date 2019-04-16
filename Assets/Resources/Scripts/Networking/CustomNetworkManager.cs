@@ -19,14 +19,16 @@ using Mirror;
 
 public class CustomNetworkManager : NetworkLobbyManager
 {
-
+    [Header("Custom elements")]
     public Button StartButton;
+    public Button StartGameButton;
     public GameObject playersContainer;
     // Start is called before the first frame update
     void Start()
     {
 
     }
+
 
     // Update is called once per frame
     public void Update()
