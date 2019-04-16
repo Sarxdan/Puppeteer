@@ -30,16 +30,19 @@ public class AnchorPoint : MonoBehaviour
     // Draw position and diretion of doors
     void Update()
     {
-		//Debug.DrawLine(transform.position, transform.position + transform.up * 2, Color.yellow);
 
-		if (Connected)
-		{
-			//Debug.DrawLine(transform.position, transform.position + transform.forward * 2, Color.blue);
-		}
+		/* Code to show doors and door connections in scene editor
+		 * 
+		 * Debug.DrawLine(transform.position, transform.position + transform.up * 2, Color.yellow);
+		 * if (Connected)
+		 * {
+		 * 	Debug.DrawLine(transform.position, transform.position + transform.forward * 2, Color.blue);
+		 * }
+		 */
 		
     }
 
-	// returns the Position of the AnchorPoint as a Vector of rounded Ints to avoid Unity float errors.
+	// Returns the Position of the AnchorPoint as a Vector of rounded Ints to avoid Unity float errors.
 	public Vector3Int GetPosition()
 	{
 		return new Vector3Int(Mathf.RoundToInt(transform.position.x), Mathf.RoundToInt(transform.position.y), Mathf.RoundToInt(transform.position.z));

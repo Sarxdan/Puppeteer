@@ -13,7 +13,7 @@ using Mirror;
 * CODE REVIEWED BY:
 * OtherName McOtherNameson
 *
-* CONTRIBUTORS:
+* CONTRIBUTORS: 
 */
 
 public class LevelBuilder : NetworkBehaviour
@@ -23,7 +23,9 @@ public class LevelBuilder : NetworkBehaviour
 	// Rooms with only one door.
 	public List<GameObject> DeadEnds;
 	// Start and End rooms
-	public GameObject StartRoom, EndRoom;		
+	public GameObject StartRoom, EndRoom;
+
+	public int RoomsToSpawnBeforeDeadEndRooms = 10;
 
 	// List for storing RoomCollider scripts, used for checking if rooms are on the same position.
 	private List<RoomCollider> roomColliderPositions = new List<RoomCollider>();
@@ -48,7 +50,7 @@ public class LevelBuilder : NetworkBehaviour
 	private void RandomizeRooms()
 	{
 		// Randomize a set amount of multidoor rooms first to avoid death by only dead ends.
-		for (int i = 0; i < 10; i++)
+		for (int i = 0; i < RoomsToSpawnBeforeDeadEndRooms; i++)
 		{
 			int index = Random.Range(0, MultiDoorRooms.Count);
 			var instance = Instantiate(MultiDoorRooms[index], transform);
@@ -119,7 +121,7 @@ public class LevelBuilder : NetworkBehaviour
 			// Goes through all doors in the first room in the list and try to attatch it to the first door in the doorqueue.
 			foreach (var door in room.GetComponentsInChildren<AnchorPoint>())
 			{
-				// Find the angle requierd for the doors to line up, then rotate the hole room.
+				// Find the angle requierd for the doors to line up, then rotate the whole room.
 				float angle = Mathf.Round(-Vector3.Angle(opendoor.transform.forward, door.transform.forward) + 180);
 				room.transform.Rotate(Vector3.up, angle);
 
@@ -127,7 +129,7 @@ public class LevelBuilder : NetworkBehaviour
 				Vector3 diff = (opendoor.GetPosition() - door.GetPosition());
 				room.transform.position += diff;
 
-				// Go through all the RoomColliders in the room to be placed and check so no overlap with anyother RoomColliders exicts.
+				// Go through all the RoomColliders in the room to be placed and check so no overlap with any other RoomColliders exists.
 				bool canBePlaced = true;
 				foreach (RoomCollider ownCollider in room.GetComponentsInChildren<RoomCollider>())
 				{
