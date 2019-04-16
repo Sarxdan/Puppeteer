@@ -5,10 +5,25 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using Mirror;
 
+/*
+* AUTHOR:
+* Filip Renman, Kristoffer Lundgren
+*
+* DESCRIPTION:
+* This class is created when a player joins/creates a lobby for a multiplayer game.
+* The class stores variables that can be used later to manipulate the game. For example choose which character the player plays as.
+*
+* CODE REVIEWED BY:
+* 
+*
+* CONTRIBUTORS:
+*/
+
+
 public class CustomNetworkLobbyPlayer : NetworkLobbyPlayer
 {
     [SyncVar]
-    public bool ReadyToBegin2;
+    public bool PlayerIsReady;
 
     [Header("UI")]
     public Button ReadyButton;
@@ -19,7 +34,7 @@ public class CustomNetworkLobbyPlayer : NetworkLobbyPlayer
         base.Start();
         DontDestroyOnLoad(this.gameObject);
 
-        gameObject.transform.position = new Vector3((Index * 200) - 200, 200, 0);
+        gameObject.transform.position = new Vector3((Index * 200) - 400, 200, 0);
 
         if (!isLocalPlayer)
         {
@@ -32,7 +47,7 @@ public class CustomNetworkLobbyPlayer : NetworkLobbyPlayer
     // Update is called once per frame
     void Update()
     {
-        if (ReadyToBegin2)
+        if (PlayerIsReady)
             ReadyText.text = "Ready";
         else
             ReadyText.text = "Not Ready";
@@ -55,20 +70,11 @@ public class CustomNetworkLobbyPlayer : NetworkLobbyPlayer
         base.OnClientEnterLobby();
     }
 
-    public void SugMinKukMirror()
-    {
-        if (ReadyToBegin2)
-            CmdChangeReadyState2();
-        else
-            CmdChangeReadyState2();
-    }
-
     [Command]
     public void CmdChangeReadyState2()
     {
-        if (!isServer)
-            return;
-
-        ReadyToBegin2 = !ReadyToBegin2;
+        PlayerIsReady = !PlayerIsReady;
+        CustomNetworkManager lobby = CustomNetworkManager.singleton as CustomNetworkManager;
+        lobby?.PlayerReadyStatusChanged();
     }
 }

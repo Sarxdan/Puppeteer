@@ -37,7 +37,6 @@ namespace Mirror
         [Command]
         public void CmdChangeReadyState(bool ReadyState)
         {
-            Debug.Log("End Us");
             ReadyToBegin = ReadyState;
             NetworkLobbyManager lobby = NetworkManager.singleton as NetworkLobbyManager;
             lobby?.ReadyStatusChanged();

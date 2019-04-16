@@ -4,6 +4,19 @@ using UnityEngine;
 using UnityEngine.UI;
 using Mirror;
 
+/*
+* AUTHOR:
+* Filip Renman, Kristoffer Lundgren
+*
+* DESCRIPTION:
+* The core of the networking. Handles the pre-game lobby and the game itself.
+*
+* CODE REVIEWED BY:
+* 
+*
+* CONTRIBUTORS:
+*/
+
 public class CustomNetworkManager : NetworkLobbyManager
 {
 
@@ -47,5 +60,29 @@ public class CustomNetworkManager : NetworkLobbyManager
     public override void ServerChangeScene(string sceneName)
     {
         base.ServerChangeScene(sceneName);
+    }
+
+    internal void PlayerReadyStatusChanged()
+    {
+        int CurrentPlayers = 0;
+        int ReadyPlayers = 0;
+
+        foreach (CustomNetworkLobbyPlayer item in lobbySlots)
+        {
+            if (item != null)
+            {
+                CurrentPlayers++;
+                if (item.PlayerIsReady)
+                    ReadyPlayers++;
+            }
+        }
+
+        if (CurrentPlayers == ReadyPlayers)
+            //CheckReadyToBegin();
+            allPlayersReady = true;
+        else
+            allPlayersReady = false;
+
+        StartButton.interactable = allPlayersReady;
     }
 }
