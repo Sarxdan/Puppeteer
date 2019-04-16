@@ -25,6 +25,10 @@ public class CustomNetworkLobbyPlayer : NetworkLobbyPlayer
     [SyncVar]
     public bool PlayerIsReady;
 
+    //[SyncVar(hook = nameof(SelectCharacter))]
+    [SyncVar]
+    public int SelectedCharacterIndex = -1;
+
     [Header("UI")]
     public Button ReadyButton;
     public Text ReadyText;
@@ -69,7 +73,7 @@ public class CustomNetworkLobbyPlayer : NetworkLobbyPlayer
     {
         base.OnClientEnterLobby();
     }
-
+    #region Commands
     [Command]
     public void CmdChangeReadyState2()
     {
@@ -77,4 +81,38 @@ public class CustomNetworkLobbyPlayer : NetworkLobbyPlayer
         CustomNetworkManager lobby = CustomNetworkManager.singleton as CustomNetworkManager;
         lobby?.PlayerReadyStatusChanged();
     }
+
+    public void ChangeSelectedCharacter(int index)
+    {
+        CmdChangeSelectedCharacter(index);
+    }
+
+    [Command]
+    public void CmdChangeSelectedCharacter(int index)
+    {
+        SelectedCharacterIndex = index;
+        RpcSelectCharacter(index);
+    }
+    #endregion
+
+    [ClientRpc]
+    public void RpcSelectCharacter(int index)
+    {
+        Debug.Log("Big oof");
+        GameObject.Find("CharacterSelecter").GetComponent<CharacterSelect>().CharacterSelected(index, Index.ToString());
+    }
+
+    public void HideCanvas()
+    {
+        RpcHideCanvas();
+    }
+
+    [ClientRpc]
+    public void RpcHideCanvas()
+    {
+        gameObject.transform.SetParent(null);
+        GameObject.Find("Canvas").SetActive(false);
+    }
+
+
 }

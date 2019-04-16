@@ -17,6 +17,7 @@ namespace Mirror
         [SyncVar]
         public int Index;
 
+
         #region Unity Callbacks
 
         /// <summary>
