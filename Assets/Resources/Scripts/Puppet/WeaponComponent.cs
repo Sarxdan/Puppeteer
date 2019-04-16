@@ -2,6 +2,19 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/*
+ * AUTHOR:
+ * Sandra Andersson
+ * Philip Stenmark
+ * 
+ * DESCRIPTION:
+ * Script is placed on the weapons for all weapon logic.
+ * 
+ * CODE REVIEWED BY:
+ * 
+ * 
+ * 
+ */
 public class WeaponComponent : Interactable
 {
     //Determines how much liquid this weapon can hold
@@ -9,9 +22,10 @@ public class WeaponComponent : Interactable
 
     public int LiquidLeft;
     public int LiquidPerRound;
+
+    //Weapon attributes
     public uint Damage;
     public uint NumShots;
-
     [Range(0.0f, 1.0f)]
     public float FiringSpeed;
     [Range(0.0f, 4.0f)]
@@ -42,15 +56,16 @@ public class WeaponComponent : Interactable
             RaycastHit hitInfo;
             if(Physics.Raycast(Camera.main.ViewportToWorldPoint(new Vector3(0.5f, 0.5f)), Camera.main.transform.forward + offset, out hitInfo))
             {
+                //Make Damage
                 var health = hitInfo.transform.GetComponent<HealthComponent>();
                 if(health != null)
                 {
                     health.Damage(this.Damage);
                 }
-                Debug.DrawRay(hitInfo.point, hitInfo.normal, Color.red, 1.0f);
             }
         }
 
+        //Adds recoil and cooldown, and subtracts ammo left
         recoil += RecoilAmount;
         cooldown += FiringSpeed;
         LiquidLeft -= LiquidPerRound;
