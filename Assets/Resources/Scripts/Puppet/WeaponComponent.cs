@@ -62,6 +62,8 @@ public class WeaponComponent : Interactable
                 {
                     health.Damage(this.Damage);
                 }
+                Debug.DrawRay(hitInfo.point, hitInfo.normal, Color.black, 1.0f);
+                Debug.DrawRay(transform.position, -transform.forward * 100.0f, Color.red, 0.2f);
             }
         }
 
@@ -90,7 +92,11 @@ public class WeaponComponent : Interactable
 
         // perform recoil
         recoil = Mathf.Clamp(recoil - RecoilRecovery * Time.deltaTime, 0.0f, 45.0f);
-        HeadTransform.localEulerAngles += Vector3.left * recoil;
+        var rotation = HeadTransform.localEulerAngles + Vector3.left * recoil;
+
+        HeadTransform.localEulerAngles = rotation;
+        rotation.y = 180.0f;
+        transform.localEulerAngles = -rotation;
     }
 
     public override void OnInteractBegin(GameObject interactor)
