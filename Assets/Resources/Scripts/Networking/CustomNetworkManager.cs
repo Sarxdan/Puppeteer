@@ -25,7 +25,7 @@ public class CustomNetworkManager : NetworkLobbyManager
     // Start is called before the first frame update
     void Start()
     {
-        
+
     }
 
     // Update is called once per frame
@@ -60,6 +60,17 @@ public class CustomNetworkManager : NetworkLobbyManager
     public override void ServerChangeScene(string sceneName)
     {
         base.ServerChangeScene(sceneName);
+    }
+
+    public void HideCanvas()
+    {
+        foreach (CustomNetworkLobbyPlayer item in lobbySlots)
+        {
+            if (item.isServer)
+            {
+                item.HideCanvas();
+            }
+        }
     }
 
     internal void PlayerReadyStatusChanged()

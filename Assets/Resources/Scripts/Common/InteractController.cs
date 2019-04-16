@@ -30,12 +30,15 @@ public class InteractController : MonoBehaviour
         {
             var hit = hitInfo.transform.GetComponent<Interactable>();
             //Sets current interactable object
-            if(hit != curInteractable && hit != null)
+            if(hit != curInteractable)
             {
                 this.StopInteraction();
 
                 curInteractable = hit;
-                curInteractable.OnRaycastEnter();
+                if(curInteractable != null)
+                {
+                    curInteractable.OnRaycastEnter();
+                }
             }
         }
         //If raycast hits nothing
