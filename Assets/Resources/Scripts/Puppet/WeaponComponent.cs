@@ -18,11 +18,14 @@ public class WeaponComponent : Interactable
     public float ReloadTime;
     [Range(0.0f, 1.0f)]
     public float Spread;
-    [Range(0.0f, 1.0f)]
+    [Range(0.0f, 10.0f)]
     public float RecoilAmount;
+
+    public Transform HeadTransform;
 
     //Time left until weapon can be used again
     private float cooldown;
+    private float recoil = 0.0f;
 
     //Attemps to fire the weapon
     public void Use()
@@ -33,7 +36,7 @@ public class WeaponComponent : Interactable
         for(int i = 0; i < NumShots; i++)
         {
             // calculate spread
-            Vector3 offset = Random.insideUnitCircle * Spread;
+            Vector3 offset = Random.insideUnitSphere * Spread;
 
             RaycastHit hitInfo;
             if(Physics.Raycast(Camera.main.ViewportToWorldPoint(new Vector3(0.5f, 0.5f)), Camera.main.transform.forward + offset, out hitInfo))
@@ -43,13 +46,19 @@ public class WeaponComponent : Interactable
                 {
                     health.Damage(this.Damage);
                 }
-                Debug.DrawLine(hitInfo.point, Camera.main.transform.forward * -1.0f, Color.black, 2.0f);
-                Debug.Log("hit");
+                Debug.DrawRay(hitInfo.point, hitInfo.normal, Color.red, 1.0f);
             }
         }
 
+        recoil += RecoilAmount;
         cooldown += FiringSpeed;
         LiquidLeft -= LiquidPerRound;
+    }
+
+    public void Recoil()
+    {
+        recoil = Mathf.Clamp(recoil - 10.0f * Time.deltaTime, 0.0f, 45.0f);
+        HeadTransform.localEulerAngles += Vector3.left * recoil;
     }
 
     //Attemps to reload the weapon to its maximum capacity by the given input amount
@@ -66,22 +75,26 @@ public class WeaponComponent : Interactable
     }
 
     void Update()
-    { 
-        if(Input.GetKey(KeyCode.F))
-        {
-            this.Use();
-        }
-
+    {
         cooldown = Mathf.Max(0.0f, cooldown -= Time.deltaTime);
+        Recoil();
     }
 
     public override void OnInteractBegin(GameObject interactor)
     {
-        throw new System.NotImplementedException();
+        var player = interactor.GetComponent<PlayerController>();
+
+        if(player.CurrentWeapon != null)
+        {  
+            // TODO: attach weapon to player
+        }
+        else
+        {
+            // TODO: attach weapon to player
+        }
     }
 
     public override void OnInteractEnd(GameObject interactor)
     {
-        throw new System.NotImplementedException();
     }
 }

@@ -16,11 +16,9 @@ public class TestInteractable : Interactable
 
     public override void OnInteractBegin(GameObject interactor)
     {
-        this.GetComponent<HealthComponent>().Damage(2);
     }
 
     public override void OnInteractEnd(GameObject interactor)
     {
-        
     }
 }
