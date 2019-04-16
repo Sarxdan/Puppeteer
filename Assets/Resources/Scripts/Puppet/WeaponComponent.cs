@@ -117,6 +117,7 @@ public class WeaponComponent : Interactable
 
         interactor.GetComponent<PlayerController>().CurrentWeapon = gameObject;
         transform.SetParent(interactor.transform);
+        // TODO: attach to player
         transform.localPosition = new Vector3(0.5f, -0.4f, 0.5f);
     }
 
