@@ -20,6 +20,7 @@ public class LevelBuilder : NetworkBehaviour
 {
 	public List<GameObject> MultiDoorRooms;		// Rooms with the more then one door
 	public List<GameObject> DeadEnds;           // Rooms with only one door.
+	private List<RoomCollider> roomColliderPositions = new List<RoomCollider>();
 	public GameObject StartRoom, EndRoom;
 
 	public Queue<AnchorPoint> OpenDoorQueue = new Queue<AnchorPoint>();
@@ -48,11 +49,12 @@ public class LevelBuilder : NetworkBehaviour
 
 	private void RandomizeRooms()
 	{
-		int index = 0;/*Random.Range(0, MultiDoorRooms.Count);*/
+		
 		while (MultiDoorRooms.Count > 0)
 		{
+			int index = Random.Range(0, MultiDoorRooms.Count);
 			var instance = Instantiate(MultiDoorRooms[index], transform);
-			instance.transform.position = new Vector3(0, 100, 0);
+			instance.transform.position = new Vector3(0, -100, 0);
 			roomsToBePlaced.Add(instance);
 			
 			MultiDoorRooms.RemoveAt(index);
@@ -69,39 +71,56 @@ public class LevelBuilder : NetworkBehaviour
 	private void SpawnRooms()
 	{
 		var startRoom = Instantiate(StartRoom, transform);
-		var doors = startRoom.GetComponentsInChildren<AnchorPoint>();
-		for (int i = 0; i < doors.Length; i++)
+
+		foreach (RoomCollider colliderPosition in startRoom.GetComponentsInChildren<RoomCollider>())
 		{
-			OpenDoorQueue.Enqueue(doors[i]);
+			roomColliderPositions.Add(colliderPosition);
 		}
+
+		foreach (var door in startRoom.GetComponentsInChildren<AnchorPoint>())
+		{
+			OpenDoorQueue.Enqueue(door);
+		}
+
 		while(roomsToBePlaced.Count > 0)
 		{
 			var opendoor = OpenDoorQueue.Dequeue();
 			foreach (var room in roomsToBePlaced)
 			{
+
 				foreach (var door in room.GetComponentsInChildren<AnchorPoint>())
 				{
 					float angle = Mathf.Round(-Vector3.Angle(opendoor.transform.forward, door.transform.forward) + 180);
 					room.transform.Rotate(Vector3.up, angle);
 
-					Vector3 diff = (opendoor.transform.position - door.transform.position);
+					Vector3 diff = (opendoor.GetPosition() - door.GetPosition());
 					room.transform.position += diff;
 
 					bool canBePlaced = true;
-					foreach (BoxCollider collider in room.GetComponentsInChildren<BoxCollider>())
+					foreach (RoomCollider ownCollider in room.GetComponentsInChildren<RoomCollider>())
 					{
-						Collider[] o = Physics.OverlapBox(collider.transform.position, collider.size / 2);
-						if (Physics.CheckBox(collider.transform.position, collider.size/2))
+						foreach (RoomCollider placedCollider in roomColliderPositions)
 						{
-							canBePlaced = false;
-							break;
+							if (ownCollider.GetPosition() == placedCollider.GetPosition())
+							{
+								canBePlaced = false;
+								break;
+							}
 						}
 					}
 
 					if (!canBePlaced)
 					{
-						room.transform.position = new Vector3(0, 100, 0);
+						room.transform.position = new Vector3(0, -100, 0);
 						continue;
+					}
+
+					door.Connected = true;
+					opendoor.Connected = true;
+
+					foreach (RoomCollider colliderPosition in room.GetComponentsInChildren<RoomCollider>())
+					{
+						roomColliderPositions.Add(colliderPosition);
 					}
 
 					foreach (var otherdoor in room.GetComponentsInChildren<AnchorPoint>())
@@ -110,7 +129,19 @@ public class LevelBuilder : NetworkBehaviour
 						{
 							continue;
 						}
-						OpenDoorQueue.Enqueue(otherdoor);
+						foreach (var placedDoor in OpenDoorQueue)
+						{
+							if (otherdoor.GetPosition() == placedDoor.GetPosition())
+							{
+								otherdoor.Connected = true;
+								placedDoor.Connected = true;
+								break;
+							}
+						}
+						if (!otherdoor.Connected)
+						{
+							OpenDoorQueue.Enqueue(otherdoor);
+						}
 					}
 					roomsToBePlaced.Remove(room);
 					break;
