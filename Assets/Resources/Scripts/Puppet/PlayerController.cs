@@ -61,15 +61,6 @@ public class PlayerController : MonoBehaviour
             }
         }
 
-        if(Input.GetKeyDown(KeyCode.F))
-        {
-            var power = GetComponent<PowerupBase>();
-            if(power != null)
-            {
-                StartCoroutine(power.Run(gameObject));
-            }
-        }
-
         //Keeps cursor within screen
         if(Input.GetAxis("Fire") == 1)
         {

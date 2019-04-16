@@ -17,10 +17,18 @@ public abstract class PowerupBase : MonoBehaviour
     public float Duration;
     public bool Charged;
 
-    public IEnumerator Run(GameObject owner)
+    private void Update()
+    {
+        if(Input.GetKeyDown(KeyCode.F))  // FIXME: input mapping
+        {
+            StartCoroutine(Run());
+        }
+    }
+
+    private IEnumerator Run()
     {
         // unable to activate powerup
-        if (owner == null || !Charged)
+        if (!Charged)
         {
             yield break;
         }
@@ -29,7 +37,7 @@ public abstract class PowerupBase : MonoBehaviour
         Charged = false;
 
         // activate power
-        this.OnActivate(owner);
+        this.OnActivate();
 
         while(++time < Duration)
         {
@@ -37,12 +45,12 @@ public abstract class PowerupBase : MonoBehaviour
         }
 
         // finish power
-        this.OnComplete(owner);
+        this.OnComplete();
     }
     
     // called once when the powerup is activated
-    public abstract void OnActivate(GameObject owner);
+    public abstract void OnActivate();
 
     // called once when the powerup is completed
-    public abstract void OnComplete(GameObject owner);
+    public abstract void OnComplete();
 }

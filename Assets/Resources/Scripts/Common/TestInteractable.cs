@@ -14,12 +14,12 @@ public class TestInteractable : PowerupBase
         Debug.Log("Dead");
     }
 
-    public override void OnActivate(GameObject owner)
+    public override void OnActivate()
     {
         Debug.Log("POWER ACTIVATED");
     }
 
-    public override void OnComplete(GameObject owner)
+    public override void OnComplete()
     {
         Debug.Log("POWER DEACTIVATED");
     }
