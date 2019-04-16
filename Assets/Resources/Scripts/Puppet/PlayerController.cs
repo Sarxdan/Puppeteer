@@ -13,7 +13,7 @@ using UnityEngine;
  * Anton Jonsson (Player Movement done)
  * 
  * CONTRIBUTORS:
- * 
+ * Philip Stenmark
 */
 public class PlayerController : MonoBehaviour
 {
@@ -34,25 +34,43 @@ public class PlayerController : MonoBehaviour
     //Revive
     public bool HasMedkit;
     public float ReviveTime;
-    
 
-    //Weapons + powerups
-    public bool PowerupReady;
+    //Weapon and ammunition storage
     public GameObject CurrentWeapon;
     public int Ammunition;
 
+    private PowerupBase power;
     private Rigidbody rigidBody;
 
     void Start()
     {
         rigidBody = GetComponent<Rigidbody>();
+        power = GetComponent<PowerupBase>();
     }
 
     private void Update()
     {
+        if(CurrentWeapon != null)
+        {
+            if(Input.GetButton("Fire"))
+            {
+                CurrentWeapon.GetComponent<WeaponComponent>().Use();
+            }
+
+            if(Input.GetButtonDown("Reload"))
+            {
+                CurrentWeapon.GetComponent<WeaponComponent>().Reload(ref this.Ammunition);
+            }
+        }
+
+        if (Input.GetKeyDown(KeyCode.F))  // FIXME: input mapping
+        {
+            // launch powerup
+            StartCoroutine(power.Run());
+        }
 
         //Keeps cursor within screen
-        if(Input.GetAxis("Fire") == 1)
+        if (Input.GetAxis("Fire") == 1)
         {
             Cursor.lockState = CursorLockMode.Locked;
         }
