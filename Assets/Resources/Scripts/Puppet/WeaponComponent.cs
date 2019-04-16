@@ -108,14 +108,8 @@ public class WeaponComponent : Interactable
 
         if(weapon != null && weapon.transform != transform)
         {
-            var pos = transform.position;
-            var rot = transform.rotation;
-
-            transform.SetPositionAndRotation(weapon.transform.position, weapon.transform.rotation);
-            transform.SetParent(weapon.transform.parent);
-
             weapon.GetComponent<WeaponComponent>().HeadTransform = null;
-            weapon.transform.SetPositionAndRotation(pos, rot);
+            weapon.transform.SetPositionAndRotation(transform.position, transform.rotation);
             weapon.transform.SetParent(null);
         }
 
