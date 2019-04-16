@@ -91,26 +91,39 @@ public class WeaponComponent : Interactable
         cooldown = Mathf.Max(0.0f, cooldown -= Time.deltaTime);
 
         // perform recoil
-        recoil = Mathf.Clamp(recoil - RecoilRecovery * Time.deltaTime, 0.0f, 45.0f);
-        var rotation = HeadTransform.localEulerAngles + Vector3.left * recoil;
+        if(HeadTransform != null)
+        {
+            recoil = Mathf.Clamp(recoil - RecoilRecovery * Time.deltaTime, 0.0f, 45.0f);
+            var rotation = HeadTransform.localEulerAngles + Vector3.left * recoil;
 
-        HeadTransform.localEulerAngles = rotation;
-        rotation.y = 180.0f;
-        transform.localEulerAngles = -rotation;
+            HeadTransform.localEulerAngles = rotation;
+            rotation.y = 180.0f;
+            transform.localEulerAngles = -rotation;
+        }
     }
 
     public override void OnInteractBegin(GameObject interactor)
     {
-        var player = interactor.GetComponent<PlayerController>();
+        var weapon = interactor.GetComponentInChildren<WeaponComponent>();
 
-        if(player.CurrentWeapon != null)
-        {  
-            // TODO: attach weapon to player
-        }
-        else
+        if(weapon != null && weapon.transform != transform)
         {
-            // TODO: attach weapon to player
+            var pos = transform.position;
+            var rot = transform.rotation;
+
+            transform.SetPositionAndRotation(weapon.transform.position, weapon.transform.rotation);
+            transform.SetParent(weapon.transform.parent);
+
+            weapon.GetComponent<WeaponComponent>().HeadTransform = null;
+            weapon.transform.SetPositionAndRotation(pos, rot);
+            weapon.transform.SetParent(null);
         }
+
+        this.HeadTransform = interactor.GetComponentInChildren<Camera>().transform;
+
+        interactor.GetComponent<PlayerController>().CurrentWeapon = gameObject;
+        transform.SetParent(interactor.transform);
+        transform.localPosition = new Vector3(0.5f, -0.4f, 0.5f);
     }
 
     public override void OnInteractEnd(GameObject interactor)
