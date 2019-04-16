@@ -17,15 +17,7 @@ public abstract class PowerupBase : MonoBehaviour
     public float Duration;
     public bool Charged;
 
-    private void Update()
-    {
-        if(Input.GetKeyDown(KeyCode.F))  // FIXME: input mapping
-        {
-            StartCoroutine(Run());
-        }
-    }
-
-    private IEnumerator Run()
+    public IEnumerator Run()
     {
         // unable to activate powerup
         if (!Charged)

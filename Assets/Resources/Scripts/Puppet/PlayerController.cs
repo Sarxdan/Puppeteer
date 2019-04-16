@@ -34,8 +34,9 @@ public class PlayerController : MonoBehaviour
     //Revive
     public bool HasMedkit;
     public float ReviveTime;
-    
-    //Weapon storage
+
+    //Weapon and powerup storage
+    private PowerupBase power;
     public GameObject CurrentWeapon;
     public int Ammunition;
 
@@ -44,6 +45,7 @@ public class PlayerController : MonoBehaviour
     void Start()
     {
         rigidBody = GetComponent<Rigidbody>();
+        power = GetComponent<PowerupBase>();
     }
 
     private void Update()
@@ -61,8 +63,14 @@ public class PlayerController : MonoBehaviour
             }
         }
 
+        if (Input.GetKeyDown(KeyCode.F))  // FIXME: input mapping
+        {
+            // attempt to launch powerup
+            StartCoroutine(power.Run());
+        }
+
         //Keeps cursor within screen
-        if(Input.GetAxis("Fire") == 1)
+        if (Input.GetAxis("Fire") == 1)
         {
             Cursor.lockState = CursorLockMode.Locked;
         }
