@@ -15,7 +15,7 @@ using UnityEngine;
  * 
  * 
  */
-public class InteractController : MonoBehaviour
+public class InteractionController : MonoBehaviour
 {
     public float Lookahead = 4.0f;      //Length for raycast
 
