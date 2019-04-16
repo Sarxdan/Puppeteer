@@ -18,138 +18,176 @@ using Mirror;
 
 public class LevelBuilder : NetworkBehaviour
 {
-	public List<GameObject> MultiDoorRooms;		// Rooms with the more then one door
-	public List<GameObject> DeadEnds;           // Rooms with only one door.
+	// Rooms with the more then one door
+	public List<GameObject> MultiDoorRooms;
+	// Rooms with only one door.
+	public List<GameObject> DeadEnds;
+	// Start and End rooms
+	public GameObject StartRoom, EndRoom;		
+
+	// List for storing RoomCollider scripts, used for checking if rooms are on the same position.
 	private List<RoomCollider> roomColliderPositions = new List<RoomCollider>();
-	public GameObject StartRoom, EndRoom;
+	// Queue with all doors not connected to other doors.
+	private Queue<AnchorPoint> openDoorQueue = new Queue<AnchorPoint>();
+	// Randomized list of rooms to be placed in level. Currently works as a queue.
+	private List<GameObject> roomsToBePlaced = new List<GameObject>();
 
-	public Queue<AnchorPoint> OpenDoorQueue = new Queue<AnchorPoint>();
-	public List<GameObject> roomsToBePlaced = new List<GameObject>();
-
-    // Start is called before the first frame update
+	// Randomize order of rooms and place them in level. Also some networking checks to only do this on server.
     void Start()
     {
-		if (false) // TODO: change to "!isServer" when done.
+		if (false) // TODO: change to "!isServer" when networking is done.
 		{
 			return;
 		}
 
 		RandomizeRooms();
 		SpawnRooms();
-
-
-
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
+	// Randomizes the order of the rooms and puts them into roomsToBePlaced list.
 	private void RandomizeRooms()
 	{
-		
-		while (MultiDoorRooms.Count > 0)
+		// Randomize a set amount of multidoor rooms first to avoid death by only dead ends.
+		for (int i = 0; i < 10; i++)
 		{
 			int index = Random.Range(0, MultiDoorRooms.Count);
 			var instance = Instantiate(MultiDoorRooms[index], transform);
 			instance.transform.position = new Vector3(0, -100, 0);
 			roomsToBePlaced.Add(instance);
-			
-			MultiDoorRooms.RemoveAt(index);
 
+			MultiDoorRooms.RemoveAt(index);
 		}
-		while(DeadEnds.Count > 0)
+
+		// Randomize the rest of the rooms together
+		while (MultiDoorRooms.Count + DeadEnds.Count > 0)
 		{
-			//int index = Random.Range(0, DeadEnds.Count);
-			//roomsToBePlaced.Add(DeadEnds[index]);
-			//DeadEnds.RemoveAt(index);
+			// Create index over whole range of rooms left.
+			int index = Random.Range(0, MultiDoorRooms.Count + DeadEnds.Count);
+
+			if (index < MultiDoorRooms.Count)
+			{
+				var instance = Instantiate(MultiDoorRooms[index], transform);
+				// Move room out of the way.
+				instance.transform.position = new Vector3(0, -100, 0);
+				roomsToBePlaced.Add(instance);
+
+				MultiDoorRooms.RemoveAt(index);
+			}
+			else
+			{
+				index -= MultiDoorRooms.Count;
+				var instance = Instantiate(DeadEnds[index], transform);
+				// Move room out of the way.
+				instance.transform.position = new Vector3(0, -100, 0);
+				roomsToBePlaced.Add(instance);
+
+				DeadEnds.RemoveAt(index);
+			}
 		}
+
+		// Add EndRoom to list last so it is placed last.
+		var endRoom = Instantiate(EndRoom, transform);
+		endRoom.transform.position = new Vector3(0, -100, 0);
+		roomsToBePlaced.Add(endRoom);
 	}
 
+	// Spawns the rooms in the level.
 	private void SpawnRooms()
 	{
+		// Place startroom before adding other rooms.
 		var startRoom = Instantiate(StartRoom, transform);
 
+		// Add all RoomCollider scripts in startroom into roomColliderPositions list.
 		foreach (RoomCollider colliderPosition in startRoom.GetComponentsInChildren<RoomCollider>())
 		{
 			roomColliderPositions.Add(colliderPosition);
 		}
 
+		// Add all avalible doors from startroom into openDoorQueue.
 		foreach (var door in startRoom.GetComponentsInChildren<AnchorPoint>())
 		{
-			OpenDoorQueue.Enqueue(door);
+			openDoorQueue.Enqueue(door);
 		}
 
+		// Place all other rooms
 		while(roomsToBePlaced.Count > 0)
 		{
-			var opendoor = OpenDoorQueue.Dequeue();
-			foreach (var room in roomsToBePlaced)
+			var opendoor = openDoorQueue.Dequeue();
+			var room = roomsToBePlaced[0];
+
+			// TODO: Randomize order of doors
+			// Goes through all doors in the first room in the list and try to attatch it to the first door in the doorqueue.
+			foreach (var door in room.GetComponentsInChildren<AnchorPoint>())
 			{
+				// Find the angle requierd for the doors to line up, then rotate the hole room.
+				float angle = Mathf.Round(-Vector3.Angle(opendoor.transform.forward, door.transform.forward) + 180);
+				room.transform.Rotate(Vector3.up, angle);
 
-				foreach (var door in room.GetComponentsInChildren<AnchorPoint>())
+				// Find the distance between the doors and move the room so the rooms match up.
+				Vector3 diff = (opendoor.GetPosition() - door.GetPosition());
+				room.transform.position += diff;
+
+				// Go through all the RoomColliders in the room to be placed and check so no overlap with anyother RoomColliders exicts.
+				bool canBePlaced = true;
+				foreach (RoomCollider ownCollider in room.GetComponentsInChildren<RoomCollider>())
 				{
-					float angle = Mathf.Round(-Vector3.Angle(opendoor.transform.forward, door.transform.forward) + 180);
-					room.transform.Rotate(Vector3.up, angle);
-
-					Vector3 diff = (opendoor.GetPosition() - door.GetPosition());
-					room.transform.position += diff;
-
-					bool canBePlaced = true;
-					foreach (RoomCollider ownCollider in room.GetComponentsInChildren<RoomCollider>())
+					foreach (RoomCollider placedCollider in roomColliderPositions)
 					{
-						foreach (RoomCollider placedCollider in roomColliderPositions)
+						if (ownCollider.GetPosition() == placedCollider.GetPosition())
 						{
-							if (ownCollider.GetPosition() == placedCollider.GetPosition())
-							{
-								canBePlaced = false;
-								break;
-							}
+							canBePlaced = false;
+							break;
 						}
 					}
+				}
+				// If any overlap is detected, move the room out of the way and start again.
+				if (!canBePlaced)
+				{
+					room.transform.position = new Vector3(0, -100, 0);
+					continue;
+				}
 
-					if (!canBePlaced)
+				// If no overlap is detected, set both doors to connected.
+				door.Connected = true;
+				opendoor.Connected = true;
+
+				// Add all the RoomColliders in the new room to the roomColliderPositions List.
+				foreach (RoomCollider colliderPosition in room.GetComponentsInChildren<RoomCollider>())
+				{
+					roomColliderPositions.Add(colliderPosition);
+				}
+
+				// Go through all the doors in the new room and add all available doors to the openDoorQueue.
+				// Also check if two doors happen to connect, then set both as connected.
+				foreach (var otherdoor in room.GetComponentsInChildren<AnchorPoint>())
+				{
+					if (otherdoor == door)
 					{
-						room.transform.position = new Vector3(0, -100, 0);
 						continue;
 					}
-
-					door.Connected = true;
-					opendoor.Connected = true;
-
-					foreach (RoomCollider colliderPosition in room.GetComponentsInChildren<RoomCollider>())
+					foreach (var placedDoor in openDoorQueue)
 					{
-						roomColliderPositions.Add(colliderPosition);
-					}
-
-					foreach (var otherdoor in room.GetComponentsInChildren<AnchorPoint>())
-					{
-						if (otherdoor == door)
+						if (otherdoor.GetPosition() == placedDoor.GetPosition())
 						{
-							continue;
-						}
-						foreach (var placedDoor in OpenDoorQueue)
-						{
-							if (otherdoor.GetPosition() == placedDoor.GetPosition())
-							{
-								otherdoor.Connected = true;
-								placedDoor.Connected = true;
-								break;
-							}
-						}
-						if (!otherdoor.Connected)
-						{
-							OpenDoorQueue.Enqueue(otherdoor);
+							otherdoor.Connected = true;
+							placedDoor.Connected = true;
+							break;
 						}
 					}
-					roomsToBePlaced.Remove(room);
-					break;
+					if (!otherdoor.Connected)
+					{
+						openDoorQueue.Enqueue(otherdoor);
+					}
 				}
+				// Remove the room from roomsToBePlaced and break the loop, no need to check any more of the doors.
+				roomsToBePlaced.Remove(room);
 				break;
 			}
-			//break;
+			// If the room does not fit the opendoor, put the opendoor back in the end of the queue.
+			if (!opendoor.Connected)
+			{
+				openDoorQueue.Enqueue(opendoor);
+			}
 		}
 	}
-
 }
