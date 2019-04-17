@@ -111,18 +111,17 @@ public class PlayerController : MonoBehaviour
         {
             currentMovementSpeed = 0;
         }
+        /*
         //Sprinting
         if (Input.GetAxisRaw("Sprint") != 0)
         {
             MovementSpeed = SprintSpeed;
         }
+        */
         //Jumping
         if (Input.GetAxisRaw("Jump") > 0 && Physics.Raycast(transform.position, -transform.up, JumpRayLength))
         {
             rigidBody.AddForce(transform.up * JumpForce, ForceMode.Impulse);
         }
-
     }
-    
-    
 }

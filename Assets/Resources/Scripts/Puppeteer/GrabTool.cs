@@ -2,6 +2,20 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/*
+* AUTHOR:
+* Benjamin "Boris" Vesterlund, Anton "Knugen" Jonsson
+*
+* DESCRIPTION:
+* Tool used for grabbing and dropping rooms as puppeteer
+*
+* CODE REVIEWED BY:
+* 
+*
+* CONTRIBUTORS:
+* Philip Stenmark
+*/
+
 public class GrabTool : MonoBehaviour
 {
 	private GameObject level;
@@ -9,6 +23,8 @@ public class GrabTool : MonoBehaviour
 	private GameObject sourceObject;
 	private GameObject selectedObject;
 	private GameObject guideObject;
+
+	private RoomInteractable lastHit;
 
     void Start()
     {
@@ -21,17 +37,61 @@ public class GrabTool : MonoBehaviour
 		{
 			RaycastHit hit;
 			// TODO: Add raycast limit?
-			if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit, Mathf.Infinity, Physics.DefaultRaycastLayers, QueryTriggerInteraction.Collide))
+			int layerMask = 1 << LayerMask.NameToLayer("Puppeteer Interact");
+			if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit, Mathf.Infinity, layerMask, QueryTriggerInteraction.Collide))
 			{
 				GameObject hitObject = hit.transform.gameObject;
-				if (hitObject.tag == "Connectable")
+
+				// Start and stop glow
+				RoomInteractable interactable = hitObject.GetComponent<RoomInteractable>();
+				if (interactable != null)
 				{
-					// Debug.Log("hejhoj");
+					if (interactable != lastHit)
+					{
+						lastHit.OnRaycastExit();
+						lastHit = interactable;
+						if (lastHit.CanBePickedUp)
+						{
+							lastHit.OnRaycastEnter();
+						}
+					}
+					// If pickup button is pressed, call pickup method.
+					if (Input.GetButtonDown("Fire"))
+					{
+						Pickup(hitObject);
+					}
+				}
+				else
+				{
+					// If raycast doesn't hit a valid object
+					lastHit.OnRaycastExit();
+					lastHit = null;
 				}
 			}
-			// send ray. Save object it hits.
-			// If óbject is interactable. Call onraycastenter
-			// If mousebutton is down. Call pickup.
+			else
+			{
+				// If raycast doesn't hit any objects
+				lastHit.OnRaycastExit();
+				lastHit = null;
+			}
 		}
     }
+
+	private void Pickup(GameObject pickupObject)
+	{
+		sourceObject = pickupObject;
+
+		selectedObject = Instantiate(sourceObject);
+		selectedObject.name = "SelectedObject";
+
+		guideObject = Instantiate(sourceObject);
+		guideObject.name = "GuideObject";
+
+		foreach (AnchorPoint door in guideObject.GetComponentsInChildren<AnchorPoint>())
+		{
+			Destroy(door.gameObject);
+		}
+	}
 }
+
+

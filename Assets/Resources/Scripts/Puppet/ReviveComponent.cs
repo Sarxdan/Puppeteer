@@ -1,0 +1,95 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+/*
+ * AUTHOR:
+ * Sandra Andersson
+ * Philip Stenmark
+ * 
+ * DESCRIPTION:
+ * Used for objects that may be revived upon reaching zero health. 
+ * 
+ * CODE REVIEWED BY:
+ * 
+ * 
+ * 
+ */
+public class ReviveComponent : Interactable
+{
+    // delay until revive is complete
+    public int ReviveDelay;
+    // delay until the object may no longer be revived
+    public int DeathDelay;
+    // determines if the revive requires a medkit
+    public bool RequireMedkit = true;
+
+    private HealthComponent healthComponent;
+
+    void Start()
+    {
+        // register death action
+        healthComponent = GetComponent<HealthComponent>();
+        healthComponent.AddDeathAction(OnZeroHealth);
+    }
+
+    public override void OnInteractBegin(GameObject interactor)
+    {
+        StartCoroutine("ReviveRoutine", interactor);
+    }
+
+    public override void OnInteractEnd(GameObject interactor)
+    {
+        StopCoroutine("ReviveRoutine");
+    }
+
+    private void OnZeroHealth()
+    {
+        StartCoroutine("DeathRoutine");
+    }
+
+    private IEnumerator DeathRoutine()
+    {
+        int time = 0;
+        while(++time < DeathDelay)
+        {
+            if (healthComponent.Health != 0)
+            {
+                yield break;
+            }
+
+            yield return new WaitForSeconds(1);
+        }
+        // TODO: perform death action across network
+        Destroy(gameObject);
+    }
+
+    private IEnumerator ReviveRoutine(GameObject reviver)
+    {
+        if (RequireMedkit && !reviver.GetComponent<PlayerController>().HasMedkit)
+        {
+            // no medkit available
+            yield break;
+        }
+
+        int time = 0;
+        while(++time < ReviveDelay)
+        {
+            if (healthComponent.Health != 0)
+            {
+                yield break;
+            }
+
+            yield return new WaitForSeconds(1);
+        }
+
+        // revive successful
+        healthComponent.Revive();
+
+        if(RequireMedkit)
+        {
+            // consume medkit if required
+            reviver.GetComponent<PlayerController>().HasMedkit = false;
+        }
+    }
+}
