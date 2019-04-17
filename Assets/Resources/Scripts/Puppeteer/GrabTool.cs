@@ -75,6 +75,17 @@ public class GrabTool : MonoBehaviour
 				lastHit = null;
 			}
 		}
+		else
+		{
+			if (Input.GetButtonUp("Fire"))
+			{
+				Drop();
+			}
+			else if (Input.GetButtonDown("Aim"))
+			{
+				selectedObject.transform.Rotate(new Vector3(0, 90, 0));
+			}
+		}
     }
 
 	private void Pickup(GameObject pickupObject)
@@ -91,6 +102,11 @@ public class GrabTool : MonoBehaviour
 		{
 			Destroy(door.gameObject);
 		}
+	}
+
+	private void Drop()
+	{
+		// selectedObject = null
 	}
 }
 
