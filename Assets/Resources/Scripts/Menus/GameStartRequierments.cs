@@ -3,6 +3,19 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+/*
+* AUTHOR:
+* Filip Renman, Kristoffer Lundgren
+*
+* DESCRIPTION:
+* Enables the start game button when all players in the lobby have selected a character and the puppeteer is selected
+*
+* CODE REVIEWED BY:
+* Anton Jonsson 17/04-2019
+*
+* CONTRIBUTORS:
+*/
+
 public class GameStartRequierments : MonoBehaviour
 {
     public CharacterSelect CharacterSelectScript;

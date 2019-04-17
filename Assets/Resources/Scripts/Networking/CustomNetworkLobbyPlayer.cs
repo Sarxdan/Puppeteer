@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using Mirror;
@@ -14,39 +12,22 @@ using Mirror;
 * The class stores variables that can be used later to manipulate the game. For example choose which character the player plays as.
 *
 * CODE REVIEWED BY:
-* 
+* Anton Jonsson 17/04-2019
 *
 * CONTRIBUTORS:
 */
-
 
 public class CustomNetworkLobbyPlayer : NetworkLobbyPlayer
 {
     [SyncVar]
     public bool PlayerIsReady;
 
-    //[SyncVar(hook = nameof(SelectCharacter))]
     [SyncVar]
     public int SelectedCharacterIndex = -1;
 
     [Header("UI")]
     public Button ReadyButton;
     public Text ReadyText;
-
-    void Start()
-    {
-        base.Start();
-        DontDestroyOnLoad(this.gameObject);
-
-        gameObject.transform.position = new Vector3((Index * 200) - 400, 200, 0);
-
-        if (!isLocalPlayer)
-        {
-            ReadyButton.gameObject.SetActive(false);
-        }
-
-        ReadyButton.onClick.AddListener(delegate { CmdChangeReadyState2(); });
-    }
 
     // Update is called once per frame
     void Update()
@@ -57,6 +38,7 @@ public class CustomNetworkLobbyPlayer : NetworkLobbyPlayer
             ReadyText.text = "Not Ready";
     }
 
+    //Runs when client connects to the lobby
     public override void OnStartClient()
     {
         base.OnStartClient();
@@ -69,23 +51,30 @@ public class CustomNetworkLobbyPlayer : NetworkLobbyPlayer
         }
     }
 
+    //Runs when the client enters the lobby
     public override void OnClientEnterLobby()
     {
         base.OnClientEnterLobby();
+
+        gameObject.transform.position = new Vector3((Index * 200) - 400, 200, 0);
+
+        if (!isLocalPlayer)
+        {
+            ReadyButton.gameObject.SetActive(false);
+        }
+
+        ReadyButton.onClick.AddListener(delegate { CmdToggleReadyState(); });
     }
     #region Commands
+
     [Command]
-    public void CmdChangeReadyState2()
+    public void CmdToggleReadyState()
     {
         PlayerIsReady = !PlayerIsReady;
         CustomNetworkManager lobby = CustomNetworkManager.singleton as CustomNetworkManager;
         lobby?.PlayerReadyStatusChanged();
     }
 
-    public void ChangeSelectedCharacter(int index)
-    {
-        CmdChangeSelectedCharacter(index);
-    }
 
     [Command]
     public void CmdChangeSelectedCharacter(int index)
@@ -95,19 +84,8 @@ public class CustomNetworkLobbyPlayer : NetworkLobbyPlayer
     }
     #endregion
 
-    [ClientRpc]
-    public void RpcSelectCharacter(int characterIndex)
-    {
-        Debug.Log(characterIndex);
-        //TODO Change Index.ToString() to be the players name
-        GameObject.Find("CharacterSelecter").GetComponent<CharacterSelect>().CharacterSelected(characterIndex, Index.ToString(), Index);
-    }
 
-    public void HideCanvas()
-    {
-        RpcHideCanvas();
-    }
-
+    #region ClientRpc
     [ClientRpc]
     public void RpcHideCanvas()
     {
@@ -115,5 +93,23 @@ public class CustomNetworkLobbyPlayer : NetworkLobbyPlayer
         GameObject.Find("Canvas").SetActive(false);
     }
 
+    [ClientRpc]
+    public void RpcSelectCharacter(int characterIndex)
+    {
+        Debug.Log(characterIndex);
+        //TODO Change Index.ToString() to be the players name
+        GameObject.Find("CharacterSelecter").GetComponent<CharacterSelect>().CharacterSelected(characterIndex, Index.ToString(), Index);
+    }
+    #endregion
+
+    public void HideCanvas()
+    {
+        RpcHideCanvas();
+    }
+
+    public void ChangeSelectedCharacter(int index)
+    {
+        CmdChangeSelectedCharacter(index);
+    }
 
 }

@@ -9,10 +9,10 @@ using Mirror;
 * Filip Renman, Kristoffer Lundgren
 *
 * DESCRIPTION:
-* The core of the networking. Handles the pre-game lobby and the game itself.
+* Handles the pregame lobby, scene switching and the spawning of prefabs in the main game.
 *
 * CODE REVIEWED BY:
-* 
+* Anton Jonsson 17/04-2019
 *
 * CONTRIBUTORS:
 */
@@ -22,15 +22,9 @@ public class CustomNetworkManager : NetworkLobbyManager
     [Header("Custom elements")]
     public Button StartButton;
     public Button StartGameButton;
-    public GameObject playersContainer;
-    // Start is called before the first frame update
-    void Start()
-    {
+    public GameObject PlayersContainer;
 
-    }
-
-
-    // Update is called once per frame
+    //Update is called once per frame
     public void Update()
     {
         if (!allPlayersReady)
@@ -39,6 +33,7 @@ public class CustomNetworkManager : NetworkLobbyManager
             StartButton.interactable = true;
     }
 
+    //Runs when a game lobby is created by the host
     public override void OnLobbyStartHost()
     {
         StartButton.gameObject.SetActive(true);
@@ -46,24 +41,28 @@ public class CustomNetworkManager : NetworkLobbyManager
         base.OnLobbyStartHost();
     }
 
+    //Runs when a client enters the lobby
     public override void OnLobbyClientEnter()
     {
-        if (playersContainer.transform.childCount == 1)
+        if (PlayersContainer.transform.childCount == 1)
             StartButton.gameObject.SetActive(false);
 
         base.OnLobbyClientEnter();
     }
 
+    //Runs when the host stops hosting the lobby
     public override void OnLobbyStopHost()
     {
         base.OnLobbyStopHost();
     }
 
+    //Changes the scene for everyone in the lobby and connected to the host
     public override void ServerChangeScene(string sceneName)
     {
         base.ServerChangeScene(sceneName);
     }
 
+    //Hide the main menu canvas to reveal the character select screen 
     public void HideCanvas()
     {
         foreach (CustomNetworkLobbyPlayer item in lobbySlots)
@@ -75,23 +74,23 @@ public class CustomNetworkManager : NetworkLobbyManager
         }
     }
 
+    //Runs when a player changes ready status (Ready/Not Ready)
     internal void PlayerReadyStatusChanged()
     {
-        int CurrentPlayers = 0;
-        int ReadyPlayers = 0;
+        int currentPlayers = 0;
+        int readyPlayers = 0;
 
         foreach (CustomNetworkLobbyPlayer item in lobbySlots)
         {
             if (item != null)
             {
-                CurrentPlayers++;
+                currentPlayers++;
                 if (item.PlayerIsReady)
-                    ReadyPlayers++;
+                    readyPlayers++;
             }
         }
 
-        if (CurrentPlayers == ReadyPlayers)
-            //CheckReadyToBegin();
+        if (currentPlayers == readyPlayers)
             allPlayersReady = true;
         else
             allPlayersReady = false;

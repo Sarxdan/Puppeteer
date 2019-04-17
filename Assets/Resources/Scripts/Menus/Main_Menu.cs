@@ -5,6 +5,19 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using Mirror;
 
+/*
+* AUTHOR:
+* Filip Renman, Kristoffer Lundgren
+*
+* DESCRIPTION:
+* Main menu specific script used to setup menu for networking
+*
+* CODE REVIEWED BY:
+* Anton Jonsson 17/04-2019
+*
+* CONTRIBUTORS:
+*/
+
 public class Main_Menu : MonoBehaviour
 {
     public Button HostGameButton;
