@@ -10,11 +10,13 @@ namespace Mirror
     {
         public bool ShowLobbyGUI = true;
 
-        [SyncVar(hook=nameof(ReadyStateChanged))]
+       // [SyncVar(hook=nameof(ReadyStateChanged))]
+        [SyncVar]
         public bool ReadyToBegin;
 
         [SyncVar]
         public int Index;
+
 
         #region Unity Callbacks
 

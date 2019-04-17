@@ -13,7 +13,7 @@ using UnityEngine;
  * Anton Jonsson (Player Movement done)
  * 
  * CONTRIBUTORS:
- * 
+ * Philip Stenmark
 */
 public class PlayerController : MonoBehaviour
 {
@@ -21,10 +21,12 @@ public class PlayerController : MonoBehaviour
     public float MovementSpeed;
     public float AccelerationRate;
     private float currentMovementSpeed;
+    public float SprintSpeed;
+    public float StaminaMax;
     
     //Jumping
-    public float jumpForce;
-    public float jumpRayLength;
+    public float JumpForce;
+    public float JumpRayLength;
 
     //Looking
     public Transform HeadTransform;
@@ -34,25 +36,43 @@ public class PlayerController : MonoBehaviour
     //Revive
     public bool HasMedkit;
     public float ReviveTime;
-    
 
-    //Weapons + powerups
-    public bool PowerupReady;
+    //Weapon and ammunition storage
     public GameObject CurrentWeapon;
     public int Ammunition;
 
+    private PowerupBase power;
     private Rigidbody rigidBody;
 
     void Start()
     {
         rigidBody = GetComponent<Rigidbody>();
+        power = GetComponent<PowerupBase>();
     }
 
     private void Update()
     {
+        if(CurrentWeapon != null)
+        {
+            if(Input.GetButton("Fire"))
+            {
+                CurrentWeapon.GetComponent<WeaponComponent>().Use();
+            }
+
+            if(Input.GetButtonDown("Reload"))
+            {
+                CurrentWeapon.GetComponent<WeaponComponent>().Reload(ref this.Ammunition);
+            }
+        }
+
+        if (Input.GetKeyDown(KeyCode.F))  // FIXME: input mapping
+        {
+            // launch powerup
+            StartCoroutine(power.Run());
+        }
 
         //Keeps cursor within screen
-        if(Input.GetAxis("Fire") == 1)
+        if (Input.GetAxis("Fire") == 1)
         {
             Cursor.lockState = CursorLockMode.Locked;
         }
@@ -91,14 +111,17 @@ public class PlayerController : MonoBehaviour
         {
             currentMovementSpeed = 0;
         }
-
-        //Jumping
-        if (Input.GetAxisRaw("Jump") > 0 && Physics.Raycast(transform.position, -transform.up, jumpRayLength))
+        /*
+        //Sprinting
+        if (Input.GetAxisRaw("Sprint") != 0)
         {
-            rigidBody.AddForce(transform.up * jumpForce, ForceMode.Impulse);
+            MovementSpeed = SprintSpeed;
         }
-
+        */
+        //Jumping
+        if (Input.GetAxisRaw("Jump") > 0 && Physics.Raycast(transform.position, -transform.up, JumpRayLength))
+        {
+            rigidBody.AddForce(transform.up * JumpForce, ForceMode.Impulse);
+        }
     }
-    
-    
 }
