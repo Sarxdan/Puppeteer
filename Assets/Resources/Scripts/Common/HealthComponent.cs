@@ -47,6 +47,7 @@ public class HealthComponent : MonoBehaviour
         Health = (uint)Mathf.Max(0, Health -= damage);
         if (Health == 0)
         {
+            // perform death actions
             this.zeroHealthAction();
             AllowRegen = false;
         }
