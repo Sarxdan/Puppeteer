@@ -23,6 +23,7 @@ public class CustomNetworkManager : NetworkLobbyManager
     public Button StartButton;
     public Button StartGameButton;
     public GameObject PlayersContainer;
+    public GameObject[] PlayableCharacters;
 
     //Update is called once per frame
     public void Update()
@@ -96,5 +97,32 @@ public class CustomNetworkManager : NetworkLobbyManager
             allPlayersReady = false;
 
         StartButton.interactable = allPlayersReady;
+    }
+
+    public override GameObject OnLobbyServerCreateGamePlayer(NetworkConnection conn)
+    {
+        int prefabIndex = -1;
+
+        foreach (CustomNetworkLobbyPlayer player in FindObjectsOfType<CustomNetworkLobbyPlayer>())
+        {
+            int connectionID = 0;
+            NetworkIdentity ni = player.GetComponent<NetworkIdentity>();
+
+            if (ni.connectionToClient != null)
+            {
+                connectionID = ni.connectionToClient.connectionId;
+            }
+            else if (ni.connectionToServer != null)
+            {
+                connectionID = ni.connectionToServer.connectionId;
+            }
+
+            if (connectionID == conn.connectionId)
+            {
+                prefabIndex = player.SelectedCharacterIndex;
+            }
+        }
+            GameObject playerPrefab = (GameObject)Instantiate(PlayableCharacters[prefabIndex], new Vector3(0, 0, 0), Quaternion.identity);
+            return playerPrefab;
     }
 }

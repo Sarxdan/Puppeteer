@@ -14,6 +14,7 @@ using Mirror;
 * Sandra "Sanders" Andersson (16/4)
 *
 * CONTRIBUTORS: 
+* Filip Renman, Kristoffer Lundgren
 */
 
 public class LevelBuilder : NetworkBehaviour
@@ -37,13 +38,13 @@ public class LevelBuilder : NetworkBehaviour
 	// Randomize order of rooms and place them in level. Also some networking checks to only do this on server.
     void Start()
     {
-		if (false) // TODO: change to "!isServer" when networking is done.
+		if (isLocalPlayer) // TODO: change to "!isServer" when networking is done.
 		{
-			return;
-		}
+            RandomizeRooms();
+            SpawnRooms();
+            SpawnRoomsOnNetwork();
+        }
 
-		RandomizeRooms();
-		SpawnRooms();
     }
 
 	// Randomizes the order of the rooms and puts them into roomsToBePlaced list.
@@ -54,7 +55,7 @@ public class LevelBuilder : NetworkBehaviour
 		{
 			int index = Random.Range(0, MultiDoorRooms.Count);
 			var instance = Instantiate(MultiDoorRooms[index], transform);
-			instance.transform.position = new Vector3(0, -100, 0);
+            instance.transform.position = new Vector3(0, -100, 0);
 			roomsToBePlaced.Add(instance);
 
 			MultiDoorRooms.RemoveAt(index);
@@ -69,8 +70,8 @@ public class LevelBuilder : NetworkBehaviour
 			if (index < MultiDoorRooms.Count)
 			{
 				var instance = Instantiate(MultiDoorRooms[index], transform);
-				// Move room out of the way.
-				instance.transform.position = new Vector3(0, -100, 0);
+                // Move room out of the way.
+                instance.transform.position = new Vector3(0, -100, 0);
 				roomsToBePlaced.Add(instance);
 
 				MultiDoorRooms.RemoveAt(index);
@@ -79,8 +80,8 @@ public class LevelBuilder : NetworkBehaviour
 			{
 				index -= MultiDoorRooms.Count;
 				var instance = Instantiate(DeadEnds[index], transform);
-				// Move room out of the way.
-				instance.transform.position = new Vector3(0, -100, 0);
+                // Move room out of the way.
+                instance.transform.position = new Vector3(0, -100, 0);
 				roomsToBePlaced.Add(instance);
 
 				DeadEnds.RemoveAt(index);
@@ -192,4 +193,17 @@ public class LevelBuilder : NetworkBehaviour
 			}
 		}
 	}
+
+    //Tells the network to spawn the rooms on every client
+    private void SpawnRoomsOnNetwork()
+    {
+        foreach (NetworkIdentity room in gameObject.GetComponentsInChildren<NetworkIdentity>())
+        {
+            //Special case. If we find the container, we skip it.
+            if (gameObject == room.gameObject)
+                continue;
+
+            NetworkServer.Spawn(room.gameObject);
+        }
+    }
 }

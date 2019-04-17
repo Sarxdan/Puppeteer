@@ -1982,7 +1982,18 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1732731904}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 2108290379}
+        m_MethodName: ServerChangeScene
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: LevelBuilder_Bilip
+          m_BoolArgument: 0
+        m_CallState: 2
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
 --- !u!114 &1732731904
@@ -2709,23 +2720,37 @@ MonoBehaviour:
   transport: {fileID: 2108290378}
   networkAddress: localhost
   maxConnections: 4
-  playerPrefab: {fileID: 9201492665383710727, guid: 1d73996002130d44f9262b13377816d8,
-    type: 3}
+  playerPrefab: {fileID: 0}
   autoCreatePlayer: 1
   playerSpawnMethod: 0
   spawnPrefabs:
   - {fileID: 9201492665383710727, guid: 1d73996002130d44f9262b13377816d8, type: 3}
+  - {fileID: 2025763875758628525, guid: c352f5e0f85e6fa45ad0dfa6c659ed02, type: 3}
+  - {fileID: 3551197739658746661, guid: 500adfbb1aea7094d8a6733dc9d80d71, type: 3}
+  - {fileID: 4861340633507152207, guid: 4804c96633523ff4a9fe0502388501a0, type: 3}
+  - {fileID: 3615965386764853735, guid: ac2c28b6e9f108f439d8503356a24863, type: 3}
+  - {fileID: 4612556360360739246, guid: 71f5d04ee20bfd2499ece49041ba185d, type: 3}
+  - {fileID: 3950878370610942957, guid: ba7e0920141a13c4e9f01800eeed7901, type: 3}
+  - {fileID: 6520671936212628730, guid: bfd985c4280397748a621f496114a1b7, type: 3}
+  - {fileID: 8929061682089431535, guid: 8219c2c03104dc84480367ed74acdecf, type: 3}
+  - {fileID: 0}
   showLobbyGUI: 0
   minPlayers: 1
   lobbyPlayerPrefab: {fileID: 8921059413692234378, guid: 1d73996002130d44f9262b13377816d8,
     type: 3}
   LobbyScene: Bilip_Main
-  GameplayScene: Bilip_CharacterPick
+  GameplayScene: 
   lobbySlots: []
   allPlayersReady: 0
   StartButton: {fileID: 612970450}
   StartGameButton: {fileID: 1732731903}
-  playersContainer: {fileID: 918506750}
+  PlayersContainer: {fileID: 918506750}
+  PlayableCharacters:
+  - {fileID: 9201492665383710727, guid: 1d73996002130d44f9262b13377816d8, type: 3}
+  - {fileID: 9201492665383710727, guid: 1d73996002130d44f9262b13377816d8, type: 3}
+  - {fileID: 9201492665383710727, guid: 1d73996002130d44f9262b13377816d8, type: 3}
+  - {fileID: 9201492665383710727, guid: 1d73996002130d44f9262b13377816d8, type: 3}
+  - {fileID: 2025763875758628525, guid: c352f5e0f85e6fa45ad0dfa6c659ed02, type: 3}
 --- !u!114 &2108290380
 MonoBehaviour:
   m_ObjectHideFlags: 0
