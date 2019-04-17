@@ -45,6 +45,7 @@ public class WeaponComponent : Interactable
     //Attemps to fire the weapon
     public void Use()
     {
+        // unable to fire
         if (cooldown != 0 || LiquidLeft < LiquidPerRound)
             return;
 
@@ -56,7 +57,7 @@ public class WeaponComponent : Interactable
             RaycastHit hitInfo;
             if(Physics.Raycast(Camera.main.ViewportToWorldPoint(new Vector3(0.5f, 0.5f)), Camera.main.transform.forward + offset, out hitInfo))
             {
-                //Make Damage
+                // deal damage to target if possible
                 var health = hitInfo.transform.GetComponent<HealthComponent>();
                 if(health != null)
                 {
@@ -83,19 +84,22 @@ public class WeaponComponent : Interactable
         liquidInput -= amount;
         LiquidLeft += amount;
 
+        // disallow firing while reloading
         cooldown += ReloadTime;
     }
 
     void Update()
     {
+        // decrease cooldown constantly
         cooldown = Mathf.Max(0.0f, cooldown -= Time.deltaTime);
 
         // perform recoil
         if(HeadTransform != null)
         {
             recoil = Mathf.Clamp(recoil - RecoilRecovery * Time.deltaTime, 0.0f, 45.0f);
-            var rotation = HeadTransform.localEulerAngles + Vector3.left * recoil;
 
+            // rotate head according to the recoil amount
+            var rotation = HeadTransform.localEulerAngles + Vector3.left * recoil;
             HeadTransform.localEulerAngles = rotation;
             rotation.y = 180.0f;
             transform.localEulerAngles = -rotation;
@@ -104,13 +108,15 @@ public class WeaponComponent : Interactable
 
     private void OnGUI()
     {
-        GUI.Box(new Rect(Screen.width * 0.5f, Screen.height * 0.5f, 10, 10), "test");
+        // temporary crosshair 
+        GUI.Box(new Rect(Screen.width * 0.5f, Screen.height * 0.5f, 10, 10), "");
     }
 
     public override void OnInteractBegin(GameObject interactor)
     {
         var weapon = interactor.GetComponentInChildren<WeaponComponent>();
 
+        // swap weapon with current
         if(weapon != null && weapon.transform != transform)
         {
             weapon.GetComponent<WeaponComponent>().HeadTransform = null;
@@ -119,7 +125,6 @@ public class WeaponComponent : Interactable
         }
 
         this.HeadTransform = interactor.GetComponentInChildren<Camera>().transform;
-
         interactor.GetComponent<PlayerController>().CurrentWeapon = gameObject;
         transform.SetParent(interactor.transform);
         // TODO: attach to player
@@ -128,5 +133,6 @@ public class WeaponComponent : Interactable
 
     public override void OnInteractEnd(GameObject interactor)
     {
+        // empty
     }
 }
