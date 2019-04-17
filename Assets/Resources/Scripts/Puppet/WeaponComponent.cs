@@ -87,7 +87,7 @@ public class WeaponComponent : Interactable
     public void Reload(ref int liquidInput)
     {
         // reload not possible if recently fired, currently reloading or weapon too charged
-        if (cooldown != 0 || charge > ChargeTime)
+        if (cooldown != 0 || (ChargeTime != 0 && charge > ChargeTime))
             return;
 
         int amount = Mathf.Min(Capacity - LiquidLeft, liquidInput);
