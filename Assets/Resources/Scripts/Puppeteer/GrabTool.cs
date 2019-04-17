@@ -89,8 +89,8 @@ public class GrabTool : MonoBehaviour
 			{
 				if (Input.GetButtonDown("Rotate"))
 				{
-					//selectedObject.transform.RotateAround(new Vector3(0,0,0), selectedObject.transform.up, 90);
-					//selectedObject.transform.Rotate(new Vector3(0, 90, 0));
+					selectedObject.transform.RotateAround(new Vector3(0,0,0), selectedObject.transform.up, 90);
+					//selectedObject.transform.position = MouseToWorldPosition();
 				}
 				UpdatePositions();
 			}
@@ -130,7 +130,6 @@ public class GrabTool : MonoBehaviour
 	private void UpdatePositions()
 	{
 		selectedObject.transform.position = MouseToWorldPosition() + grabOffset;
-		
 	}
 
 	private Vector3 MouseToWorldPosition()
