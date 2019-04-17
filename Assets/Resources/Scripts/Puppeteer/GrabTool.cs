@@ -89,7 +89,8 @@ public class GrabTool : MonoBehaviour
 			{
 				if (Input.GetButtonDown("Rotate"))
 				{
-					selectedObject.transform.Rotate(new Vector3(0, 90, 0));
+					//selectedObject.transform.RotateAround(new Vector3(0,0,0), selectedObject.transform.up, 90);
+					//selectedObject.transform.Rotate(new Vector3(0, 90, 0));
 				}
 				UpdatePositions();
 			}
