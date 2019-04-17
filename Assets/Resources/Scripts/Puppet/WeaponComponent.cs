@@ -34,6 +34,8 @@ public class WeaponComponent : Interactable
     public float Spread;
     [Range(0.0f, 4.0f)]
     public float RecoilAmount;
+    [Range(0.0f, 1.0f)]
+    public float DamageDropoff;
 
     // time required before weapon is ready to fire (i.e gatling gun spinning up)
     [Range(0.0f, 4.0f)]
@@ -70,7 +72,8 @@ public class WeaponComponent : Interactable
                 var health = hitInfo.transform.GetComponent<HealthComponent>();
                 if(health != null)
                 {
-                    health.Damage(this.Damage);
+                    uint damage = (uint)(this.Damage * Mathf.Pow(DamageDropoff, hitInfo.distance / 10.0f));
+                    health.Damage(damage);
                 }
                 Debug.DrawRay(hitInfo.point, hitInfo.normal, Color.black, 1.0f);
                 Debug.DrawRay(transform.position, -transform.forward * 100.0f, Color.red, 0.2f);
