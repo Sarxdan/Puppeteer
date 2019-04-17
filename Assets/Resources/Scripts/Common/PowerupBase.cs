@@ -11,7 +11,7 @@ using UnityEngine;
  * A powerup is started using the Run coroutine, which in turn manages the activate and complete functions
  * 
  * CODE REVIEWED BY:
- * 
+ * Benjamin Vesterlund
  * 
  */
 public abstract class PowerupBase : MonoBehaviour

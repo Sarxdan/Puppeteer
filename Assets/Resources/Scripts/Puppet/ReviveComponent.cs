@@ -11,7 +11,7 @@ using UnityEngine;
  * Used for objects that may be revived upon reaching zero health. 
  * 
  * CODE REVIEWED BY:
- * 
+ * Benjamin Vesterlund
  * 
  * 
  */

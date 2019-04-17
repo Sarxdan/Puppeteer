@@ -11,7 +11,7 @@ using UnityEngine;
  * Script is placed on the weapons for all weapon logic.
  * 
  * CODE REVIEWED BY:
- * 
+ * Benjamin Vesterlund
  * 
  * 
  */
@@ -45,7 +45,7 @@ public class WeaponComponent : Interactable
     //Attemps to fire the weapon
     public void Use()
     {
-        if (cooldown != 0 || LiquidLeft == 0)
+        if (cooldown != 0 || LiquidLeft < LiquidPerRound)
             return;
 
         for(int i = 0; i < NumShots; i++)
