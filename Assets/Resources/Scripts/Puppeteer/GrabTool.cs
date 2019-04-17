@@ -25,6 +25,7 @@ public class GrabTool : MonoBehaviour
 	private GameObject guideObject;
 
 	private RoomInteractable lastHit;
+	private Vector3 grabOffset = new Vector3();
 
     void Start()
     {
@@ -48,7 +49,10 @@ public class GrabTool : MonoBehaviour
 				{
 					if (interactable != lastHit)
 					{
-						lastHit.OnRaycastExit();
+						if (lastHit != null)
+						{
+							lastHit.OnRaycastExit();
+						}
 						lastHit = interactable;
 						if (lastHit.CanBePickedUp)
 						{
@@ -81,9 +85,13 @@ public class GrabTool : MonoBehaviour
 			{
 				Drop();
 			}
-			else if (Input.GetButtonDown("Aim"))
+			else
 			{
-				selectedObject.transform.Rotate(new Vector3(0, 90, 0));
+				if (Input.GetButtonDown("Rotate"))
+				{
+					selectedObject.transform.Rotate(new Vector3(0, 90, 0));
+				}
+				UpdatePositions();
 			}
 		}
     }
@@ -98,6 +106,8 @@ public class GrabTool : MonoBehaviour
 		guideObject = Instantiate(sourceObject);
 		guideObject.name = "GuideObject";
 
+		grabOffset = sourceObject.transform.position - MouseToWorldPosition();
+
 		foreach (AnchorPoint door in guideObject.GetComponentsInChildren<AnchorPoint>())
 		{
 			Destroy(door.gameObject);
@@ -106,7 +116,27 @@ public class GrabTool : MonoBehaviour
 
 	private void Drop()
 	{
-		// selectedObject = null
+		sourceObject.transform.position = guideObject.transform.position;
+		sourceObject.transform.rotation = guideObject.transform.rotation;
+		// TODO: Connect doors before removing selected and guide objects
+
+		Destroy(selectedObject);
+		selectedObject = null;
+		Destroy(guideObject);
+		guideObject = null;
+	}
+
+	private void UpdatePositions()
+	{
+		selectedObject.transform.position = MouseToWorldPosition() + grabOffset;
+		
+	}
+
+	private Vector3 MouseToWorldPosition()
+	{
+		Vector3 mousePos = Input.mousePosition;
+		mousePos.z = Camera.main.WorldToScreenPoint(selectedObject.transform.position).z;
+		return Camera.main.ScreenToWorldPoint(mousePos);
 	}
 }
 
