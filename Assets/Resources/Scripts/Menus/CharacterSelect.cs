@@ -3,6 +3,19 @@ using System.Collections.Generic;
 using UnityEngine;
 using Mirror;
 
+/*
+* AUTHOR:
+* Filip Renman, Kristoffer Lundgren
+*
+* DESCRIPTION:
+* This class takes care of locking characters and unlocking characters when a player selects a character
+*
+* CODE REVIEWED BY:
+* Anton Jonsson 17/04-2019
+*
+* CONTRIBUTORS:
+*/
+
 public class CharacterSelect : MonoBehaviour
 {
     public GameObject[] SelectableCharacters;
@@ -14,20 +27,18 @@ public class CharacterSelect : MonoBehaviour
         NumberOfSelectedCharacters = 0;
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-    }
+    /* 
+     * If the player wanting to select a character already have a character selected, unlock that character and then lock the newly selected character.
+     * Otherwise, only lock the newly selected character
+     */
 
     public void CharacterSelected(int index, string name, int playerIndex)
     {
-        Debug.Log("Yoooooo");
-        foreach (GameObject Character in SelectableCharacters)
+        foreach (GameObject character in SelectableCharacters)
         {
-            SelectableCharacter script = Character.GetComponent<SelectableCharacter>();
+            SelectableCharacter script = character.GetComponent<SelectableCharacter>();
             if (script.PlayerIndex == playerIndex)
             {
-                Debug.Log("BigOOF");
                 script.PlayerIndex = -1;
                 script.Selected = false;
                 script.LightEnabled(false);
@@ -36,7 +47,6 @@ public class CharacterSelect : MonoBehaviour
                 break;
             }
         }
-
 
         SelectableCharacter characterScript = SelectableCharacters[index].GetComponent<SelectableCharacter>();
         characterScript.LightEnabled(true);
