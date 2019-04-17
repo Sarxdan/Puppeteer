@@ -18,18 +18,33 @@ using UnityEngine;
 
 public class GrabTool : MonoBehaviour
 {
-	private GameObject level;
+	private LevelBuilder level;
+
+	// the maximum distance for snapping modules
+	public int SnapDistance = 150;
+
+	// the lift height when grabbing an object
+	public float LiftHeight = 2.0f;
+
+	// the lift speed when grabbing an object
+	public float LiftSpeed = 0.1f;
+
+	// enables camera movement using mouse scroll
+	public bool EnableMovement = true;
 
 	private GameObject sourceObject;
 	private GameObject selectedObject;
 	private GameObject guideObject;
+
+	private AnchorPoint bestSrcPoint;
+	private AnchorPoint bestDstPoint;
 
 	private RoomInteractable lastHit;
 	private Vector3 grabOffset = new Vector3();
 
     void Start()
     {
-		level = GameObject.Find("Level");
+		level = GameObject.Find("Level").GetComponent<LevelBuilder>();
     }
 
     void Update()
@@ -109,10 +124,11 @@ public class GrabTool : MonoBehaviour
 
 		grabOffset = sourceObject.transform.position - MouseToWorldPosition();
 
-		foreach (AnchorPoint door in guideObject.GetComponentsInChildren<AnchorPoint>())
-		{
-			Destroy(door.gameObject);
-		}
+		// NOT NEEDED ANYMORE.
+		//foreach (AnchorPoint door in guideObject.GetComponentsInChildren<AnchorPoint>())
+		//{
+		//	Destroy(door.gameObject);
+		//}
 	}
 
 	private void Drop()
@@ -130,6 +146,78 @@ public class GrabTool : MonoBehaviour
 	private void UpdatePositions()
 	{
 		selectedObject.transform.position = MouseToWorldPosition() + grabOffset;
+		var doors = selectedObject.GetComponentsInChildren<AnchorPoint>();
+		float bestDist = Mathf.Infinity;
+
+		foreach (var door in doors)
+		{
+			var nearestDoor = FindNearestOpenDoor(door, ref bestDist);
+			if (CanConnect(door, nearestDoor))
+			{
+				bestSrcPoint = door;
+				bestDstPoint = nearestDoor;
+				Debug.DrawLine(bestDstPoint.transform.position, bestSrcPoint.transform.position, Color.yellow);
+
+				// TODO: figure this out.
+				// place guide object
+
+				
+			}
+		}
+
+	}
+
+	private AnchorPoint FindNearestOpenDoor(in AnchorPoint doorIn, ref float bestDist)
+	{
+		var doors = new List<AnchorPoint>();
+		var rooms = level.GetRooms();
+		foreach (var room in rooms)
+		{
+			doors.AddRange(room.GetComponentsInChildren<AnchorPoint>());
+		}
+		AnchorPoint result = null;
+		foreach (var door in doors)
+		{
+			if (door.transform.parent == doorIn.transform.parent)
+				continue;
+			if (door.transform.parent.IsChildOf(sourceObject.transform))
+				continue;
+			if (door.transform.parent.IsChildOf(guideObject.transform))
+				continue;
+			if (door.Connected)
+				continue;
+
+			float curDist = (doorIn.transform.position - door.transform.position).sqrMagnitude;
+			if (curDist < bestDist)
+			{
+				result = door;
+				bestDist = curDist;
+			}
+		}
+		return result;
+	}
+
+	private bool CanConnect(in AnchorPoint src, in AnchorPoint dst)
+	{
+		// ignore invalid doors
+		if (src == null || dst == null)
+		{
+			return false;
+		}
+
+		// check if doors are too far apart  
+		float dist = (dst.transform.position - src.transform.position).magnitude;
+		if (dist > SnapDistance)
+		{
+			return false;
+		}
+
+		// TODO: a check to see if the room would be colliding..
+		// check if room is colliding.
+
+
+		// only connect modules with correct door angles
+		return Mathf.RoundToInt((src.transform.forward + dst.transform.forward).magnitude) == 0;
 	}
 
 	private Vector3 MouseToWorldPosition()

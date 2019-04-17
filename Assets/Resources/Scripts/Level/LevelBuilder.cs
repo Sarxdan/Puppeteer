@@ -192,4 +192,16 @@ public class LevelBuilder : NetworkBehaviour
 			}
 		}
 	}
+
+	public List<GameObject> GetRooms()
+	{
+		List<GameObject> result = new List<GameObject>();
+		for (int i = 0; i < transform.childCount; i++)
+		{
+			result.Add(transform.GetChild(i).gameObject);
+		}
+		return result;
+	}
+
+	// TODO: raycast out of door to see if blocked? 
 }
