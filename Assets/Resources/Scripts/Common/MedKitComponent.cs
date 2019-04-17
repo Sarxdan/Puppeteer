@@ -4,15 +4,26 @@ using UnityEngine;
 
 public class MedKitComponent : Interactable
 {
-    // Start is called before the first frame update
-    void Start()
+    [Header("Heal Amount")]
+    public uint HealAmount;
+
+    public override void OnInteractBegin(GameObject interactor)
     {
         
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
+    public override void OnInteractEnd(GameObject interactor)
+    {   
+        PlayerController playerController = interactor.GetComponent<PlayerController>();
+        if(playerController.HasMedkit)
+        {
+            Destroy(gameObject);
+            return;
+        }else
+        {
+            playerController.HasMedkit = true;
+            Destroy(gameObject);
+
+        }
     }
 }
