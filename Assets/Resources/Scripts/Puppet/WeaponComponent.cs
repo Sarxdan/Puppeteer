@@ -35,19 +35,28 @@ public class WeaponComponent : Interactable
     [Range(0.0f, 10.0f)]
     public float RecoilAmount;
 
+    // time required before weapon is ready to fire (i.e gatling gun spinning up)
+    [Range(0.0f, 4.0f)]
+    public float ChargeTime;
+
     public static float RecoilRecovery = 20.0f;
     public Transform HeadTransform;
 
     //Time left until weapon can be used again
     private float cooldown;
-    private float recoil = 0.0f;
+    private float recoil;
+    private float charge;
 
     //Attemps to fire the weapon
     public void Use()
     {
-        // unable to fire
-        if (cooldown != 0 || LiquidLeft < LiquidPerRound)
+        charge += Time.deltaTime;
+
+        if (cooldown != 0 || LiquidLeft < LiquidPerRound || charge < ChargeTime)
+        {
+            // unable to fire
             return;
+        }
 
         for(int i = 0; i < NumShots; i++)
         {
@@ -92,9 +101,11 @@ public class WeaponComponent : Interactable
     {
         // decrease cooldown constantly
         cooldown = Mathf.Max(0.0f, cooldown -= Time.deltaTime);
+        // decrease weapon charge
+        charge = Mathf.Max(0.0f, charge -= Time.deltaTime * 0.5f);
 
         // perform recoil
-        if(HeadTransform != null)
+        if (HeadTransform != null)
         {
             recoil = Mathf.Clamp(recoil - RecoilRecovery * Time.deltaTime, 0.0f, 45.0f);
 
