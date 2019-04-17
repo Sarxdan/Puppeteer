@@ -32,7 +32,7 @@ public class WeaponComponent : Interactable
     public float ReloadTime;
     [Range(0.0f, 0.2f)]
     public float Spread;
-    [Range(0.0f, 10.0f)]
+    [Range(0.0f, 4.0f)]
     public float RecoilAmount;
 
     // time required before weapon is ready to fire (i.e gatling gun spinning up)
