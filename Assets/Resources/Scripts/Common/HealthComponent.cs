@@ -71,8 +71,8 @@ public class HealthComponent : MonoBehaviour
     //Revives the player instantly to the given max revive health
     public void Revive()
     {
-        Debug.Assert(Health == 0);
         Health = (uint)(MaxHealth * MaxReviveRatio);
+        AllowRegen = true;
     }
 
     //Registers a new zero health delegate
