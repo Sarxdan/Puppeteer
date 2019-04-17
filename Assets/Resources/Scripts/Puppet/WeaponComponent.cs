@@ -11,7 +11,7 @@ using UnityEngine;
  * Script is placed on the weapons for all weapon logic.
  * 
  * CODE REVIEWED BY:
- * 
+ * Benjamin Vesterlund
  * 
  * 
  */
@@ -35,18 +35,28 @@ public class WeaponComponent : Interactable
     [Range(0.0f, 10.0f)]
     public float RecoilAmount;
 
+    // time required before weapon is ready to fire (i.e gatling gun spinning up)
+    [Range(0.0f, 4.0f)]
+    public float ChargeTime;
+
     public static float RecoilRecovery = 20.0f;
     public Transform HeadTransform;
 
     //Time left until weapon can be used again
     private float cooldown;
-    private float recoil = 0.0f;
+    private float recoil;
+    private float charge;
 
     //Attemps to fire the weapon
     public void Use()
     {
-        if (cooldown != 0 || LiquidLeft == 0)
+        charge += Time.deltaTime;
+
+        if (cooldown != 0 || LiquidLeft < LiquidPerRound || charge < ChargeTime)
+        {
+            // unable to fire
             return;
+        }
 
         for(int i = 0; i < NumShots; i++)
         {
@@ -56,7 +66,7 @@ public class WeaponComponent : Interactable
             RaycastHit hitInfo;
             if(Physics.Raycast(Camera.main.ViewportToWorldPoint(new Vector3(0.5f, 0.5f)), Camera.main.transform.forward + offset, out hitInfo))
             {
-                //Make Damage
+                // deal damage to target if possible
                 var health = hitInfo.transform.GetComponent<HealthComponent>();
                 if(health != null)
                 {
@@ -76,26 +86,32 @@ public class WeaponComponent : Interactable
     //Attemps to reload the weapon to its maximum capacity by the given input amount
     public void Reload(ref int liquidInput)
     {
-        if (cooldown != 0)
+        // reload not possible if recently fired, currently reloading or weapon too charged
+        if (cooldown != 0 || charge > ChargeTime)
             return;
 
         int amount = Mathf.Min(Capacity - LiquidLeft, liquidInput);
         liquidInput -= amount;
         LiquidLeft += amount;
 
+        // disallow firing while reloading
         cooldown += ReloadTime;
     }
 
     void Update()
     {
+        // decrease cooldown constantly
         cooldown = Mathf.Max(0.0f, cooldown -= Time.deltaTime);
+        // decrease weapon charge
+        charge = Mathf.Max(0.0f, charge -= Time.deltaTime * 0.5f);
 
         // perform recoil
-        if(HeadTransform != null)
+        if (HeadTransform != null)
         {
             recoil = Mathf.Clamp(recoil - RecoilRecovery * Time.deltaTime, 0.0f, 45.0f);
-            var rotation = HeadTransform.localEulerAngles + Vector3.left * recoil;
 
+            // rotate head according to the recoil amount
+            var rotation = HeadTransform.localEulerAngles + Vector3.left * recoil;
             HeadTransform.localEulerAngles = rotation;
             rotation.y = 180.0f;
             transform.localEulerAngles = -rotation;
@@ -104,13 +120,15 @@ public class WeaponComponent : Interactable
 
     private void OnGUI()
     {
-        GUI.Box(new Rect(Screen.width * 0.5f, Screen.height * 0.5f, 10, 10), "test");
+        // temporary crosshair 
+        GUI.Box(new Rect(Screen.width * 0.5f, Screen.height * 0.5f, 10, 10), "");
     }
 
     public override void OnInteractBegin(GameObject interactor)
     {
         var weapon = interactor.GetComponentInChildren<WeaponComponent>();
 
+        // swap weapon with current
         if(weapon != null && weapon.transform != transform)
         {
             weapon.GetComponent<WeaponComponent>().HeadTransform = null;
@@ -119,7 +137,6 @@ public class WeaponComponent : Interactable
         }
 
         this.HeadTransform = interactor.GetComponentInChildren<Camera>().transform;
-
         interactor.GetComponent<PlayerController>().CurrentWeapon = gameObject;
         transform.SetParent(interactor.transform);
         // TODO: attach to player
@@ -128,5 +145,6 @@ public class WeaponComponent : Interactable
 
     public override void OnInteractEnd(GameObject interactor)
     {
+        // empty
     }
 }

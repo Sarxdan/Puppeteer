@@ -11,7 +11,7 @@ using UnityEngine;
  * Used for objects that may be revived upon reaching zero health. 
  * 
  * CODE REVIEWED BY:
- * 
+ * Benjamin Vesterlund
  * 
  * 
  */
@@ -33,6 +33,7 @@ public class ReviveComponent : Interactable
         healthComponent.AddDeathAction(OnZeroHealth);
     }
 
+    // an object has started to interact this object
     public override void OnInteractBegin(GameObject interactor)
     {
         StartCoroutine("ReviveRoutine", interactor);
@@ -43,6 +44,7 @@ public class ReviveComponent : Interactable
         StopCoroutine("ReviveRoutine");
     }
 
+    // called when the health of this object reaches zero
     private void OnZeroHealth()
     {
         StartCoroutine("DeathRoutine");
@@ -55,6 +57,7 @@ public class ReviveComponent : Interactable
         {
             if (healthComponent.Health != 0)
             {
+                // someone has revived!
                 yield break;
             }
 
@@ -77,6 +80,7 @@ public class ReviveComponent : Interactable
         {
             if (healthComponent.Health != 0)
             {
+                // someone has revived already
                 yield break;
             }
 
