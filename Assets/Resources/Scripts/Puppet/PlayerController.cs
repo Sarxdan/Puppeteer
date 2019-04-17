@@ -21,6 +21,8 @@ public class PlayerController : MonoBehaviour
     public float MovementSpeed;
     public float AccelerationRate;
     private float currentMovementSpeed;
+    public float SprintSpeed;
+    public float StaminaMax;
     
     //Jumping
     public float JumpForce;
@@ -109,7 +111,11 @@ public class PlayerController : MonoBehaviour
         {
             currentMovementSpeed = 0;
         }
-
+        //Sprinting
+        if (Input.GetAxisRaw("Sprint") != 0)
+        {
+            MovementSpeed = SprintSpeed;
+        }
         //Jumping
         if (Input.GetAxisRaw("Jump") > 0 && Physics.Raycast(transform.position, -transform.up, JumpRayLength))
         {

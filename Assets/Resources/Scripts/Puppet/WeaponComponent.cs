@@ -30,7 +30,7 @@ public class WeaponComponent : Interactable
     public float FiringSpeed;
     [Range(0.0f, 4.0f)]
     public float ReloadTime;
-    [Range(0.0f, 1.0f)]
+    [Range(0.0f, 0.2f)]
     public float Spread;
     [Range(0.0f, 10.0f)]
     public float RecoilAmount;
@@ -102,6 +102,11 @@ public class WeaponComponent : Interactable
         }
     }
 
+    private void OnGUI()
+    {
+        GUI.Box(new Rect(Screen.width * 0.5f, Screen.height * 0.5f, 10, 10), "test");
+    }
+
     public override void OnInteractBegin(GameObject interactor)
     {
         var weapon = interactor.GetComponentInChildren<WeaponComponent>();
@@ -118,7 +123,7 @@ public class WeaponComponent : Interactable
         interactor.GetComponent<PlayerController>().CurrentWeapon = gameObject;
         transform.SetParent(interactor.transform);
         // TODO: attach to player
-        transform.localPosition = new Vector3(0.5f, -0.4f, 0.5f);
+        transform.localPosition = new Vector3(0.4f, -0.4f, 0.6f);
     }
 
     public override void OnInteractEnd(GameObject interactor)
