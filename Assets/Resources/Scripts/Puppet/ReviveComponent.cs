@@ -21,19 +21,21 @@ public class ReviveComponent : Interactable
     public int ReviveDelay;
     // delay until the object may no longer be revived
     public int DeathDelay;
+    // determines if the revive requires a medkit
+    public bool RequireMedkit = true;
 
     private HealthComponent healthComponent;
 
     void Start()
     {
-        healthComponent = GetComponent<HealthComponent>();
         // register death action
+        healthComponent = GetComponent<HealthComponent>();
         healthComponent.AddDeathAction(OnZeroHealth);
     }
 
     public override void OnInteractBegin(GameObject interactor)
     {
-        StartCoroutine("ReviveRoutine");
+        StartCoroutine("ReviveRoutine", interactor);
     }
 
     public override void OnInteractEnd(GameObject interactor)
@@ -62,8 +64,14 @@ public class ReviveComponent : Interactable
         Destroy(gameObject);
     }
 
-    private IEnumerator ReviveRoutine()
+    private IEnumerator ReviveRoutine(GameObject reviver)
     {
+        if (RequireMedkit && !reviver.GetComponent<PlayerController>().HasMedkit)
+        {
+            // no medkit available
+            yield break;
+        }
+
         int time = 0;
         while(++time < ReviveDelay)
         {
@@ -74,7 +82,14 @@ public class ReviveComponent : Interactable
 
             yield return new WaitForSeconds(1);
         }
+
         // revive successful
         healthComponent.Revive();
+
+        if(RequireMedkit)
+        {
+            // consume medkit if required
+            reviver.GetComponent<PlayerController>().HasMedkit = false;
+        }
     }
 }
