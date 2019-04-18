@@ -19,6 +19,7 @@ public class AnchorPoint : MonoBehaviour
 {
 	// bool to see if AnchorPoint is connected to another AnchorPoint.
 	public bool Connected = false;
+	public AnchorPoint ConnectedTo;
 
     // Update rotation of doors to point away from the room plane.
     void Awake()
@@ -31,14 +32,19 @@ public class AnchorPoint : MonoBehaviour
     void Update()
     {
 
-		/* Code to show doors and door connections in scene editor
-		 * 
-		 * Debug.DrawLine(transform.position, transform.position + transform.up * 2, Color.yellow);
-		 * if (Connected)
-		 * {
-		 * 	Debug.DrawLine(transform.position, transform.position + transform.forward * 2, Color.blue);
-		 * }
-		 */
+		//Code to show doors and door connections in scene editor
+
+
+		if (Connected)
+		{
+			Debug.DrawLine(transform.position, transform.position + transform.forward * 2, Color.blue);
+			Debug.DrawLine(transform.position, transform.position + transform.up * 2, Color.green);
+		}
+		else
+		{
+			Debug.DrawLine(transform.position, transform.position + transform.forward * 2, Color.black);
+			Debug.DrawLine(transform.position, transform.position + transform.up * 2, Color.black);
+		}
 
 	}
 
@@ -46,5 +52,16 @@ public class AnchorPoint : MonoBehaviour
 	public Vector3Int GetPosition()
 	{
 		return new Vector3Int(Mathf.RoundToInt(transform.position.x), Mathf.RoundToInt(transform.position.y), Mathf.RoundToInt(transform.position.z));
+	}
+
+	public void ConnectDoor(AnchorPoint to)
+	{
+		if (to.transform.position == transform.position)
+		{
+			to.Connected = true;
+			to.ConnectedTo = this;
+			Connected = true;
+			ConnectedTo = to;
+		}
 	}
 }

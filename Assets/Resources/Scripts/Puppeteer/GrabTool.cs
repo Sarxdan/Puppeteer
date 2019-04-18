@@ -90,8 +90,11 @@ public class GrabTool : MonoBehaviour
 			else
 			{
 				// If raycast doesn't hit any objects
-				lastHit.OnRaycastExit();
-				lastHit = null;
+				if (lastHit != null)
+				{
+					lastHit.OnRaycastExit();
+					lastHit = null;
+				}
 			}
 		}
 		else
@@ -146,24 +149,34 @@ public class GrabTool : MonoBehaviour
 	private void UpdatePositions()
 	{
 		selectedObject.transform.position = MouseToWorldPosition() + grabOffset;
-		var doors = selectedObject.GetComponentsInChildren<AnchorPoint>();
+		var doorsInSelectedRoom = selectedObject.GetComponentsInChildren<AnchorPoint>();
 		float bestDist = Mathf.Infinity;
 
-		foreach (var door in doors)
+		bestDstPoint = null;
+
+		foreach (var ownDoor in doorsInSelectedRoom)
 		{
-			var nearestDoor = FindNearestOpenDoor(door, ref bestDist);
-			if (CanConnect(door, nearestDoor))
+			var nearestDoor = FindNearestOpenDoor(ownDoor, ref bestDist);
+			if (nearestDoor != null)
 			{
-				bestSrcPoint = door;
+				bestSrcPoint = ownDoor;
 				bestDstPoint = nearestDoor;
-				Debug.DrawLine(bestDstPoint.transform.position, bestSrcPoint.transform.position, Color.yellow);
-
-				// TODO: figure this out.
-				// place guide object
-
 				
+				Debug.DrawLine(bestDstPoint.transform.position, bestSrcPoint.transform.position, Color.yellow);		
 			}
 		}
+
+		if (bestDstPoint != null)
+		{
+			guideObject.transform.rotation = selectedObject.transform.rotation;
+			guideObject.transform.position = selectedObject.transform.position - (bestSrcPoint.transform.position - bestDstPoint.transform.position);
+		}
+		else
+		{
+			guideObject.transform.rotation = sourceObject.transform.rotation;
+			guideObject.transform.position = sourceObject.transform.position;
+		}
+
 
 	}
 
@@ -184,7 +197,7 @@ public class GrabTool : MonoBehaviour
 				continue;
 			if (door.transform.parent.IsChildOf(guideObject.transform))
 				continue;
-			if (door.Connected)
+			if (!CanConnect(doorIn, door))
 				continue;
 
 			float curDist = (doorIn.transform.position - door.transform.position).sqrMagnitude;
@@ -199,25 +212,51 @@ public class GrabTool : MonoBehaviour
 
 	private bool CanConnect(in AnchorPoint src, in AnchorPoint dst)
 	{
-		// ignore invalid doors
+		// Ignore invalid doors.
 		if (src == null || dst == null)
 		{
 			return false;
 		}
-
-		// check if doors are too far apart  
+		// Ignore already connected doors.
+		if (dst.Connected)
+		{
+			return false;
+		}
+		// Only connect modules with correct door angles.
+		if (Mathf.RoundToInt((src.transform.forward + dst.transform.forward).magnitude) != 0)
+		{
+			return false;
+		}
+		// Check if doors are too far apart
 		float dist = (dst.transform.position - src.transform.position).magnitude;
 		if (dist > SnapDistance)
 		{
 			return false;
 		}
+		// Only to check collision (not real movement)
+		guideObject.transform.rotation = selectedObject.transform.rotation;
+		guideObject.transform.position = selectedObject.transform.position - (src.transform.position - dst.transform.position);
 
-		// TODO: a check to see if the room would be colliding..
-		// check if room is colliding.
+		RoomCollider[] placedRoomColliders = level.gameObject.GetComponentsInChildren<RoomCollider>();
 
+		foreach (RoomCollider placedRoomCollider in placedRoomColliders)
+		{
+			if (placedRoomCollider.transform.IsChildOf(sourceObject.transform))
+			{
+				continue;
+			}
+			foreach (RoomCollider guideCollider in guideObject.GetComponentsInChildren<RoomCollider>())
+			{
+				if (guideCollider.GetPosition() == placedRoomCollider.GetPosition())
+				{
+					guideObject.transform.SetPositionAndRotation(sourceObject.transform.position, sourceObject.transform.rotation);
+					return false;
+				}
+			}
+		}
 
-		// only connect modules with correct door angles
-		return Mathf.RoundToInt((src.transform.forward + dst.transform.forward).magnitude) == 0;
+		// No false
+		return true;
 	}
 
 	private Vector3 MouseToWorldPosition()
