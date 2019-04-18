@@ -17,27 +17,45 @@ using UnityEngine.UI;
 public class Compass : MonoBehaviour
 {
     // compass width to screen ratio
-    public static float ScreenWidthRatio = 0.8f;
+    public static readonly float ScreenWidthRatio = 0.8f;
     // UI offset from top of the screen
-    public static float TopOffset = 40.0f;
+    public static readonly float TopOffset = 30.0f;
     // size of displayed icons
-    public static float IconSize = 24.0f;
+    public static readonly float IconSize = 24.0f;
+
+    private static GUIStyle whiteBar;
 
     // contains all tracked entities
     public List<Transform> targets;
 
+    void Awake()
+    {
+        whiteBar = new GUIStyle { normal = new GUIStyleState { background = Texture2D.whiteTexture } };
+    }
+
     void OnGUI()
     {
-        foreach (Transform target in targets)
+        for(int i = 0; i < targets.Count; i++)
         {
-            // calculate angle using only x- and z-axes
-            Vector3 inv = transform.InverseTransformPoint(target.position);
-            float angle = Mathf.Clamp(Mathf.Atan2(inv.x, inv.z), -1.0f, 1.0f);
+            var target = this.targets[i];
 
-            // calculate marker position and draw marker on screen
-            float markerPos = Screen.width * 0.5f - IconSize * 0.5f + angle * Screen.width * ScreenWidthRatio * 0.5f;
-            GUI.DrawTexture(new Rect(markerPos, TopOffset, IconSize, IconSize), target.GetComponent<RawImage>().texture, ScaleMode.ScaleToFit, true);
+            if(target != null)
+            {
+                // calculate angle using only x- and z-axes
+                Vector3 inv = transform.InverseTransformPoint(target.position);
+                float angle = Mathf.Clamp(Mathf.Atan2(inv.x, inv.z), -1.0f, 1.0f);
+
+                float markerPos = Screen.width * 0.5f - IconSize * 0.5f + angle * Screen.width * ScreenWidthRatio * 0.5f;
+                GUI.DrawTexture(new Rect(markerPos, TopOffset, IconSize, IconSize), target.GetComponent<RawImage>().texture, ScaleMode.ScaleToFit, true);
+            }
+            else
+            {
+                // remove invalid target
+                targets.RemoveAt(i);
+            }
         }
+
+        GUI.Box(new Rect(Screen.width * 0.5f - Screen.width * ScreenWidthRatio * 0.5f, TopOffset + IconSize, Screen.width * ScreenWidthRatio, 2.0f), GUIContent.none, whiteBar);
     }
 
     // registers a new tracked target in the compass
