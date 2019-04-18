@@ -159,7 +159,8 @@ public class GrabTool : MonoBehaviour
 
 	private void UpdatePositions()
 	{
-		selectedObject.transform.position = MouseToWorldPosition() + grabOffset;
+		Vector3 newPosition = MouseToWorldPosition() + grabOffset;
+		selectedObject.transform.position = new Vector3(newPosition.x, 5, newPosition.z);
 		var doorsInSelectedRoom = selectedObject.GetComponentsInChildren<AnchorPoint>();
 		float bestDist = Mathf.Infinity;
 
