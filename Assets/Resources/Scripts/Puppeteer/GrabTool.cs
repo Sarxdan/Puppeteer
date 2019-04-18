@@ -77,7 +77,10 @@ public class GrabTool : MonoBehaviour
 					// If pickup button is pressed, call pickup method.
 					if (Input.GetButtonDown("Fire"))
 					{
-						Pickup(hitObject);
+						if (interactable.CanBePickedUp)
+						{
+							Pickup(hitObject);
+						}
 					}
 				}
 				else
@@ -220,7 +223,7 @@ public class GrabTool : MonoBehaviour
 		// Ignore already connected doors.
 		if (dst.Connected)
 		{
-			return false;
+			//return false;
 		}
 		// Only connect modules with correct door angles.
 		if (Mathf.RoundToInt((src.transform.forward + dst.transform.forward).magnitude) != 0)

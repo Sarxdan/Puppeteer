@@ -56,7 +56,7 @@ public class AnchorPoint : MonoBehaviour
 
 	public void ConnectDoor(AnchorPoint to)
 	{
-		if (to.transform.position == transform.position)
+		if (to.GetPosition() == GetPosition())
 		{
 			to.Connected = true;
 			to.ConnectedTo = this;
@@ -64,4 +64,17 @@ public class AnchorPoint : MonoBehaviour
 			ConnectedTo = to;
 		}
 	}
+	public void DisconnectDoor()
+	{
+		ConnectedTo.Connected = false;
+		ConnectedTo.ConnectedTo = null;
+		Connected = false;
+		ConnectedTo = null;
+	}
+	public void ReConnectTo(AnchorPoint to)
+	{
+		DisconnectDoor();
+		ConnectDoor(to);
+	}
+
 }

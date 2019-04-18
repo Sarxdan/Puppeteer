@@ -38,7 +38,7 @@ public class LevelBuilder : NetworkBehaviour
 	// Randomize order of rooms and place them in level. Also some networking checks to only do this on server.
     void Start()
     {
-		if (isServer)
+		if (true) // TODO: change to ifServer
 		{
             RandomizeRooms();
             SpawnRooms();
@@ -204,7 +204,7 @@ public class LevelBuilder : NetworkBehaviour
             room.transform.SetParent(GameObject.Find("Level").transform);
         }
     }
-
+	// Returns a List of rooms.
 	public List<GameObject> GetRooms()
 	{
 		List<GameObject> result = new List<GameObject>();
