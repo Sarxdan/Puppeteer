@@ -5,6 +5,21 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using Mirror;
 
+/*
+* AUTHOR:
+* Filip Renman, Benjamin "Boris" Vesterlund
+*
+* DESCRIPTION:
+* Animations for the main menu
+*
+* CODE REVIEWED BY:
+* 
+*
+* CONTRIBUTORS: 
+* 
+*/
+
+
 public class MenuNavigation : MonoBehaviour
 {
 	public bool cooldown = true;                            // "animation" cooldown. (so the game don't register button presses while panels are moving and breaking...)
@@ -325,7 +340,7 @@ public class MenuNavigation : MonoBehaviour
 		while(distance>=closeEnough)
 		{
 			// Confirm thaht it's moving
-			Debug.Log("Executing Movment");
+			//Debug.Log("Executing Movment");
 
 			// Move a bit then wait until next frame
 			item.transform.position = Vector3.Lerp(item.transform.position, target, delta);
@@ -338,7 +353,7 @@ public class MenuNavigation : MonoBehaviour
 		item.transform.position = target;
 
 		// Comfirm End
-		Debug.Log("Movment Complete");
+		//Debug.Log("Movment Complete");
 		cooldown = true;
 	}
 
@@ -355,7 +370,7 @@ public class MenuNavigation : MonoBehaviour
 		while (difference >= closeEnough)
 		{
 			// Confirm thaht it's moving
-			Debug.Log("Executing Movment");
+			//Debug.Log("Executing Movment");
 
 			// Move a bit then wait until next frame
 			float temp = Mathf.Lerp(text.color.a, target, delta);
@@ -369,7 +384,7 @@ public class MenuNavigation : MonoBehaviour
 		text.color = new Color(text.color.r, text.color.g, text.color.b, target);
 
 		// Comfirm End
-		Debug.Log("Movment Complete");
+		//Debug.Log("Movment Complete");
 	}
 
 	IEnumerator FadeSlider(Slider item, float target, float delta)
@@ -386,7 +401,7 @@ public class MenuNavigation : MonoBehaviour
 		while (difference >= closeEnough)
 		{
 			// Confirm thaht it's moving
-			Debug.Log("Executing Movment");
+			//Debug.Log("Executing Movment");
 
 			// Move a bit then wait until next frame
 			for (int i = 0; i < images.Length; i++)
@@ -406,6 +421,6 @@ public class MenuNavigation : MonoBehaviour
 		}
 
 		// Comfirm End
-		Debug.Log("Movment Complete");
+        //Debug.Log("Movment Complete");
 	}
 }

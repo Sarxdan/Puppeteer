@@ -13,6 +13,7 @@ using Mirror;
 *
 * CODE REVIEWED BY:
 * Anton Jonsson 17/04-2019
+* = Needs review
 *
 * CONTRIBUTORS:
 */
@@ -68,17 +69,11 @@ public class CustomNetworkLobbyPlayer : NetworkLobbyPlayer
     public override void OnClientEnterLobby()
     {
         base.OnClientEnterLobby();
-
-        //gameObject.transform.localPosition = new Vector3(-(Screen.width / 3), ((Screen.height / 3) ) - (Index * (Screen.height / 6)), 0);
-        //gameObject.transform.position = new Vector3(-(Screen.width / 3), ((Screen.height / 3) ) - (Index * (Screen.height / 6)), 0);
         gameObject.transform.localPosition = new Vector3(0, -(Index * (Screen.height / 6)), 0);
 
         if (isLocalPlayer)
         {
-            //GameObject.Find("ReadyButton").gameObject.SetActive(false);
-            Debug.Log("Satan");
             GameObject.Find("ReadyButton").GetComponent<Button>().onClick.AddListener(delegate { ToggleReadyState(); });
-            //ReadyButton.gameObject.SetActive(false);
         }
 
     }
