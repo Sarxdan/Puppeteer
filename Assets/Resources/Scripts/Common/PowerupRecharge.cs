@@ -2,6 +2,17 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/*
+ * AUTHOR:
+ * Philip Stenmark
+ * 
+ * DESCRIPTION:
+ * Holds a charge for any player powerup. 
+ * May only be picked up if player's power is not already charged.
+ * 
+ * CODE REVIEWED BY:
+ * 
+ */
 public class PowerupRecharge : Interactable
 {
     public override void OnInteractBegin(GameObject interactor)
