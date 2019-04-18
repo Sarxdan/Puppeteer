@@ -12,21 +12,22 @@ using UnityEngine.UI;
  * A built-in horizontal user interface is used to display the compass content.
  * 
  * CODE REVIEWED BY:
+ * Kristoffer Lundgren
  * 
  */
 public class Compass : MonoBehaviour
 {
     // compass width to screen ratio
-    public static readonly float ScreenWidthRatio = 0.8f;
+    public static readonly float ScreenWidthRatio = 0.6f;
     // UI offset from top of the screen
     public static readonly float TopOffset = 30.0f;
     // size of displayed icons
     public static readonly float IconSize = 24.0f;
 
-    private static GUIStyle whiteBar;
-
     // contains all tracked entities
     public List<Transform> targets;
+
+    private static GUIStyle whiteBar;
 
     void Awake()
     {
