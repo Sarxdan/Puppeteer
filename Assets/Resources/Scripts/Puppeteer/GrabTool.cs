@@ -77,7 +77,10 @@ public class GrabTool : MonoBehaviour
 					// If pickup button is pressed, call pickup method.
 					if (Input.GetButtonDown("Fire"))
 					{
-						Pickup(hitObject);
+						if (interactable.CanBePickedUp)
+						{
+							Pickup(hitObject);
+						}
 					}
 				}
 				else
@@ -118,6 +121,7 @@ public class GrabTool : MonoBehaviour
 	private void Pickup(GameObject pickupObject)
 	{
 		sourceObject = pickupObject;
+		sourceObject.name = "currentSourceObject";
 
 		selectedObject = Instantiate(sourceObject);
 		selectedObject.name = "SelectedObject";
@@ -144,6 +148,8 @@ public class GrabTool : MonoBehaviour
 		selectedObject = null;
 		Destroy(guideObject);
 		guideObject = null;
+
+		level.ConnectDoorsInRoomIfPossible(sourceObject);
 	}
 
 	private void UpdatePositions()
@@ -218,7 +224,7 @@ public class GrabTool : MonoBehaviour
 			return false;
 		}
 		// Ignore already connected doors.
-		if (dst.Connected)
+		if (dst.Connected && !dst.ConnectedTo.transform.IsChildOf(sourceObject.transform))
 		{
 			return false;
 		}
@@ -253,6 +259,23 @@ public class GrabTool : MonoBehaviour
 					return false;
 				}
 			}
+		}
+
+		RoomTreeNode currentNode = sourceObject.GetComponent<RoomTreeNode>();
+		RoomTreeNode parentNode = currentNode.GetParent();
+
+		currentNode.SetParent(dst.GetComponentInParent<RoomTreeNode>());
+		currentNode.DestroyChildren();
+
+		if (sourceObject.GetComponent<RoomTreeNode>().CutBranch())
+		{
+			level.GetStartNode().ReconnectToTree();
+		}
+		else
+		{
+			currentNode.SetParent(parentNode);
+			level.GetStartNode().ReconnectToTree();
+			return false;
 		}
 
 		// No false
