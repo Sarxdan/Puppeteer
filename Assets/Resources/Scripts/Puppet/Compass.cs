@@ -12,21 +12,25 @@ using UnityEngine.UI;
  * A built-in horizontal user interface is used to display the compass content.
  * 
  * CODE REVIEWED BY:
+ * Kristoffer Lundgren
  * 
  */
 public class Compass : MonoBehaviour
 {
     // compass width to screen ratio
-    public static readonly float ScreenWidthRatio = 0.8f;
+    public static readonly float ScreenWidthRatio = 0.6f;
     // UI offset from top of the screen
     public static readonly float TopOffset = 30.0f;
     // size of displayed icons
     public static readonly float IconSize = 24.0f;
 
-    private static GUIStyle whiteBar;
+    // owner of this compass
+    public Transform Owner;
 
     // contains all tracked entities
-    public List<Transform> targets;
+    public List<Transform> Targets;
+
+    private static GUIStyle whiteBar;
 
     void Awake()
     {
@@ -35,14 +39,20 @@ public class Compass : MonoBehaviour
 
     void OnGUI()
     {
-        for(int i = 0; i < targets.Count; i++)
+        if(Owner == null)
         {
-            var target = this.targets[i];
+            // no compass origin available
+            return;
+        }
+
+        for(int i = 0; i < Targets.Count; i++)
+        {
+            var target = Targets[i];
 
             if(target != null)
             {
                 // calculate angle using only x- and z-axes
-                Vector3 inv = transform.InverseTransformPoint(target.position);
+                Vector3 inv = Owner.InverseTransformPoint(target.position);
                 float angle = Mathf.Clamp(Mathf.Atan2(inv.x, inv.z), -1.0f, 1.0f);
 
                 float markerPos = Screen.width * 0.5f - IconSize * 0.5f + angle * Screen.width * ScreenWidthRatio * 0.5f;
@@ -51,7 +61,7 @@ public class Compass : MonoBehaviour
             else
             {
                 // remove invalid target
-                targets.RemoveAt(i);
+                Targets.RemoveAt(i);
             }
         }
 
@@ -63,18 +73,18 @@ public class Compass : MonoBehaviour
     {
         Debug.Assert(target.GetComponent<RawImage>() != null, "Compass targets requires an icon");
 
-        if(!targets.Contains(target))
+        if(!Targets.Contains(target))
         {
-            targets.Add(target.transform);
+            Targets.Add(target.transform);
         }
     }
 
     // unregisters a tracked target
     public void RemoveTarget(in Transform target)
     {
-        if(targets.Contains(target))
+        if(Targets.Contains(target))
         {
-            targets.Remove(target);
+            Targets.Remove(target);
         }
     }
 }
