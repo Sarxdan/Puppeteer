@@ -50,16 +50,12 @@ public class PlayerController : MonoBehaviour
 
     //Revive
     public bool HasMedkit;
-    public float ReviveTime;
     
-
-    //Weapons + powerups
-    public bool PowerupReady;
+    //Weapons
     public GameObject CurrentWeapon;
     public int Ammunition;
 
     private Rigidbody rigidBody;
-
 
     private IEnumerator StaminaRegenRoutine()
     {
@@ -82,14 +78,32 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
+        if(CurrentWeapon != null)
+        {
+            if(Input.GetButton("Fire"))
+            {
+                CurrentWeapon.GetComponent<WeaponComponent>().Use();
+            }
+
+            if(Input.GetButton("Reload"))
+            {
+                CurrentWeapon.GetComponent<WeaponComponent>().Reload(ref Ammunition);
+            }
+        }
+
+        if(Input.GetKey(KeyCode.F)) // TODO: add input binding for powerup activation
+        {
+            StartCoroutine(GetComponent<PowerupBase>().Run());
+        }
+
         //Keeps cursor within screen
-        if(Input.GetAxis("Fire") == 1)
+        if(Input.GetButton("Fire"))
         {
             Cursor.lockState = CursorLockMode.Locked;
         }
 
         //Escape releases cursor
-        if (Input.GetAxisRaw("Cancel") > 0)
+        if (Input.GetButton("Cancel"))
         {
             Cursor.lockState = CursorLockMode.None;
         }
@@ -127,7 +141,7 @@ public class PlayerController : MonoBehaviour
 
         //Sprinting
         //Checks the most important task, if the sprint button is released
-        if (Input.GetKeyUp("left shift"))
+        if (Input.GetButtonUp("Sprint"))
         {
             MovementSpeed = speedSave;
             AccelerationRate = accSave;
@@ -143,7 +157,7 @@ public class PlayerController : MonoBehaviour
             StartCoroutine("StaminaRegenRoutine");
         }
         //Checks for sprint key and acts accordingly
-        else if (Input.GetKey("left shift"))
+        else if (Input.GetButton("Sprint"))
         {
             isDown = true;
             MovementSpeed = SprintSpeed;
@@ -173,7 +187,7 @@ public class PlayerController : MonoBehaviour
 
 
         //Jumping
-        if (Input.GetAxisRaw("Jump") > 0 && Physics.Raycast(transform.position, -transform.up, jumpRayLength))
+        if (Input.GetButton("Jump") && Physics.Raycast(transform.position, -transform.up, jumpRayLength))
         {
             rigidBody.AddForce(transform.up * jumpForce, ForceMode.Impulse);
         }
