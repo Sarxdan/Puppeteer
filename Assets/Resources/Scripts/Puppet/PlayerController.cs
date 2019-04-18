@@ -4,29 +4,44 @@ using UnityEngine;
 /*
  * AUTHOR:
  * Ludvig Björk Förare
- * Carl Appelkvist
+ * Carl Appelkvist 
+ * 
  * 
  * DESCRIPTION:
  * A simple player controller allowing horizontal, jump and mouse movement.
  * 
+ * Sprint done, made by Carl Appelkvist
+ * 
  * CODE REVIEWED BY:
  * Anton Jonsson (Player Movement done)
+ * Ludvig Björk Förare (Sprint function)
  * 
  * CONTRIBUTORS:
- * Philip Stenmark
+ * 
 */
 public class PlayerController : MonoBehaviour
 {
     //Movement
     public float MovementSpeed;
     public float AccelerationRate;
-    private float currentMovementSpeed;
     public float SprintSpeed;
-    public float StaminaMax;
-    
+    public float MaxStamina;
+    public float SprintAcc;
+    public float StaminaRegenDelay;
+    public float RegenSpeed;
+
+    //Movement private variables
+    private float currentMovementSpeed;
+    [SerializeField]
+    private float currentStamina;
+    private float accSave;
+    private float speedSave;
+    private bool isDown;
+    private bool reachedZero;
+
     //Jumping
-    public float JumpForce;
-    public float JumpRayLength;
+    public float jumpForce;
+    public float jumpRayLength;
 
     //Looking
     public Transform HeadTransform;
@@ -36,43 +51,39 @@ public class PlayerController : MonoBehaviour
     //Revive
     public bool HasMedkit;
     public float ReviveTime;
+    
 
-    //Weapon and ammunition storage
+    //Weapons + powerups
+    public bool PowerupReady;
     public GameObject CurrentWeapon;
     public int Ammunition;
 
-    private PowerupBase power;
     private Rigidbody rigidBody;
+
+
+    private IEnumerator StaminaRegenRoutine()
+    {
+        yield return new WaitForSeconds(StaminaRegenDelay);
+
+        while (currentStamina < MaxStamina)
+        {
+            currentStamina++;
+            yield return new WaitForSeconds(RegenSpeed);
+        }
+    }
 
     void Start()
     {
         rigidBody = GetComponent<Rigidbody>();
-        power = GetComponent<PowerupBase>();
+        //Saves the original input from the variables
+        speedSave = MovementSpeed;
+        accSave = AccelerationRate;
     }
 
     private void Update()
     {
-        if(CurrentWeapon != null)
-        {
-            if(Input.GetButton("Fire"))
-            {
-                CurrentWeapon.GetComponent<WeaponComponent>().Use();
-            }
-
-            if(Input.GetButtonDown("Reload"))
-            {
-                CurrentWeapon.GetComponent<WeaponComponent>().Reload(ref this.Ammunition);
-            }
-        }
-
-        if (Input.GetKeyDown(KeyCode.F))  // FIXME: input mapping
-        {
-            // launch powerup
-            StartCoroutine(power.Run());
-        }
-
         //Keeps cursor within screen
-        if (Input.GetAxis("Fire") == 1)
+        if(Input.GetAxis("Fire") == 1)
         {
             Cursor.lockState = CursorLockMode.Locked;
         }
@@ -98,9 +109,11 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+
     private void FixedUpdate()
     {
         //Horizontal movement
+
         if (Input.GetAxisRaw("Horizontal") != 0 || Input.GetAxisRaw("Vertical") != 0)
         {
             currentMovementSpeed += currentMovementSpeed < MovementSpeed ? AccelerationRate * Time.deltaTime : 0; //Accelerates to MovementSpeed
@@ -111,17 +124,58 @@ public class PlayerController : MonoBehaviour
         {
             currentMovementSpeed = 0;
         }
-        /*
+
         //Sprinting
-        if (Input.GetAxisRaw("Sprint") != 0)
+        //Checks the most important task, if the sprint button is released
+        if (Input.GetKeyUp("left shift"))
         {
-            MovementSpeed = SprintSpeed;
+            MovementSpeed = speedSave;
+            AccelerationRate = accSave;
+            reachedZero = false;
+            isDown = false;
         }
-        */
-        //Jumping
-        if (Input.GetAxisRaw("Jump") > 0 && Physics.Raycast(transform.position, -transform.up, JumpRayLength))
+        //Makes sure stamina can't be negative
+        else if (reachedZero == true && isDown == true)
         {
-            rigidBody.AddForce(transform.up * JumpForce, ForceMode.Impulse);
+            MovementSpeed = speedSave;
+            currentMovementSpeed = MovementSpeed;
+            AccelerationRate = accSave;
+            StartCoroutine("StaminaRegenRoutine");
+        }
+        //Checks for sprint key and acts accordingly
+        else if (Input.GetKey("left shift"))
+        {
+            isDown = true;
+            MovementSpeed = SprintSpeed;
+            AccelerationRate = SprintAcc;
+            currentStamina--;
+            if (isDown == true && currentStamina > 0)
+            {
+                StopCoroutine("StaminaRegenRoutine");
+            }
+            else if (currentStamina <= 0)
+            {
+                MovementSpeed = speedSave;
+                currentMovementSpeed = MovementSpeed;
+                AccelerationRate = accSave;
+                reachedZero = true;
+                StartCoroutine("StaminaRegenRoutine");
+            }
+        }
+        //Basic stamina regen 
+        else
+        {
+            MovementSpeed = speedSave;
+            currentMovementSpeed = MovementSpeed;
+            AccelerationRate = accSave;
+            StartCoroutine("StaminaRegenRoutine");
+        }
+
+
+        //Jumping
+        if (Input.GetAxisRaw("Jump") > 0 && Physics.Raycast(transform.position, -transform.up, jumpRayLength))
+        {
+            rigidBody.AddForce(transform.up * jumpForce, ForceMode.Impulse);
         }
     }
 }
