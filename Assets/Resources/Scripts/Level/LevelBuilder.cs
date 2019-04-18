@@ -44,7 +44,7 @@ public class LevelBuilder : NetworkBehaviour
 
 		RandomizeRooms();
 		SpawnRooms();
-    }
+	}
 
 	// Randomizes the order of the rooms and puts them into roomsToBePlaced list.
 	private void RandomizeRooms()
@@ -150,8 +150,7 @@ public class LevelBuilder : NetworkBehaviour
 				}
 
 				// If no overlap is detected, set both doors to connected.
-				door.Connected = true;
-				opendoor.Connected = true;
+				opendoor.ConnectDoor(door);
 
 				// Add all the RoomColliders in the new room to the roomColliderPositions List.
 				foreach (RoomCollider colliderPosition in room.GetComponentsInChildren<RoomCollider>())
@@ -171,8 +170,7 @@ public class LevelBuilder : NetworkBehaviour
 					{
 						if (otherdoor.GetPosition() == placedDoor.GetPosition())
 						{
-							otherdoor.Connected = true;
-							placedDoor.Connected = true;
+							otherdoor.ConnectDoor(placedDoor);
 							break;
 						}
 					}
@@ -193,6 +191,9 @@ public class LevelBuilder : NetworkBehaviour
 		}
 	}
 
+
+	// Addition
+
 	public List<GameObject> GetRooms()
 	{
 		List<GameObject> result = new List<GameObject>();
@@ -202,6 +203,4 @@ public class LevelBuilder : NetworkBehaviour
 		}
 		return result;
 	}
-
-	// TODO: raycast out of door to see if blocked? 
 }
