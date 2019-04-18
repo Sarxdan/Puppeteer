@@ -42,6 +42,9 @@ public class GrabTool : MonoBehaviour
 	private RoomInteractable lastHit;
 	private Vector3 grabOffset = new Vector3();
 
+	// Original parent node used for updating tree when dropping without snapping to something.
+	private RoomTreeNode firstParentNode;
+
     void Start()
     {
 		level = GameObject.Find("Level").GetComponent<LevelBuilder>();
@@ -77,7 +80,10 @@ public class GrabTool : MonoBehaviour
 					// If pickup button is pressed, call pickup method.
 					if (Input.GetButtonDown("Fire"))
 					{
-						Pickup(hitObject);
+						if (interactable.CanBePickedUp)
+						{
+							Pickup(hitObject);
+						}
 					}
 				}
 				else
@@ -107,7 +113,7 @@ public class GrabTool : MonoBehaviour
 			{
 				if (Input.GetButtonDown("Rotate"))
 				{
-					selectedObject.transform.RotateAround(new Vector3(0,0,0), selectedObject.transform.up, 90);
+					selectedObject.transform.RotateAround(selectedObject.transform.position, selectedObject.transform.up, 90);
 					//selectedObject.transform.position = MouseToWorldPosition();
 				}
 				UpdatePositions();
@@ -118,6 +124,7 @@ public class GrabTool : MonoBehaviour
 	private void Pickup(GameObject pickupObject)
 	{
 		sourceObject = pickupObject;
+		sourceObject.name = "currentSourceObject";
 
 		selectedObject = Instantiate(sourceObject);
 		selectedObject.name = "SelectedObject";
@@ -127,28 +134,33 @@ public class GrabTool : MonoBehaviour
 
 		grabOffset = sourceObject.transform.position - MouseToWorldPosition();
 
-		// NOT NEEDED ANYMORE.
-		//foreach (AnchorPoint door in guideObject.GetComponentsInChildren<AnchorPoint>())
-		//{
-		//	Destroy(door.gameObject);
-		//}
+		firstParentNode = sourceObject.GetComponent<RoomTreeNode>().GetParent();
 	}
 
 	private void Drop()
 	{
+		if (sourceObject.transform.position == guideObject.transform.position && sourceObject.transform.rotation == guideObject.transform.rotation)
+		{
+			sourceObject.GetComponent<RoomTreeNode>().SetParent(firstParentNode);
+		}
+
 		sourceObject.transform.position = guideObject.transform.position;
 		sourceObject.transform.rotation = guideObject.transform.rotation;
+
 		// TODO: Connect doors before removing selected and guide objects
 
 		Destroy(selectedObject);
 		selectedObject = null;
 		Destroy(guideObject);
 		guideObject = null;
+
+		level.ConnectDoorsInRoomIfPossible(sourceObject);
 	}
 
 	private void UpdatePositions()
 	{
-		selectedObject.transform.position = MouseToWorldPosition() + grabOffset;
+		Vector3 newPosition = MouseToWorldPosition() + grabOffset;
+		selectedObject.transform.position = new Vector3(newPosition.x, 5, newPosition.z);
 		var doorsInSelectedRoom = selectedObject.GetComponentsInChildren<AnchorPoint>();
 		float bestDist = Mathf.Infinity;
 
@@ -218,7 +230,7 @@ public class GrabTool : MonoBehaviour
 			return false;
 		}
 		// Ignore already connected doors.
-		if (dst.Connected)
+		if (dst.Connected && !dst.ConnectedTo.transform.IsChildOf(sourceObject.transform))
 		{
 			return false;
 		}
@@ -253,6 +265,29 @@ public class GrabTool : MonoBehaviour
 					return false;
 				}
 			}
+		}
+
+		RoomTreeNode currentNode = sourceObject.GetComponent<RoomTreeNode>();
+		RoomTreeNode parentNode = currentNode.GetParent();
+
+		currentNode.DisconnectFromTree();
+
+		if (!dst.GetComponentInParent<RoomTreeNode>().InTree())
+		{
+			return false;
+		}
+
+		currentNode.SetParent(dst.GetComponentInParent<RoomTreeNode>());
+
+		if (sourceObject.GetComponent<RoomTreeNode>().CutBranch())
+		{
+			level.GetStartNode().ReconnectToTree();
+		}
+		else
+		{
+			currentNode.SetParent(parentNode);
+			level.GetStartNode().ReconnectToTree();
+			return false;
 		}
 
 		// No false
