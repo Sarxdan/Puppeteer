@@ -35,6 +35,8 @@ public class LevelBuilder : NetworkBehaviour
 	// Randomized list of rooms to be placed in level. Currently works as a queue.
 	private List<GameObject> roomsToBePlaced = new List<GameObject>();
 
+	private RoomTreeNode startNode;
+
 	// Randomize order of rooms and place them in level. Also some networking checks to only do this on server.
     void Start()
     {
@@ -99,6 +101,8 @@ public class LevelBuilder : NetworkBehaviour
 		// Place startroom before adding other rooms.
 		var startRoom = Instantiate(StartRoom, transform);
 
+		startNode = startRoom.GetComponent<RoomTreeNode>();
+
 		// Add all RoomCollider scripts in startroom into roomColliderPositions list.
 		foreach (RoomCollider colliderPosition in startRoom.GetComponentsInChildren<RoomCollider>())
 		{
@@ -152,6 +156,8 @@ public class LevelBuilder : NetworkBehaviour
 				// If no overlap is detected, set both doors to connected.
 				opendoor.ConnectDoor(door);
 
+				door.GetComponentInParent<RoomTreeNode>().SetParent(opendoor.GetComponentInParent<RoomTreeNode>());
+
 				// Add all the RoomColliders in the new room to the roomColliderPositions List.
 				foreach (RoomCollider colliderPosition in room.GetComponentsInChildren<RoomCollider>())
 				{
@@ -204,6 +210,7 @@ public class LevelBuilder : NetworkBehaviour
             room.transform.SetParent(GameObject.Find("Level").transform);
         }
     }
+
 	// Returns a List of rooms.
 	public List<GameObject> GetRooms()
 	{
@@ -213,5 +220,30 @@ public class LevelBuilder : NetworkBehaviour
 			result.Add(transform.GetChild(i).gameObject);
 		}
 		return result;
+	}
+
+	// Connect doors if able
+	public void ConnectDoorsInRoomIfPossible(GameObject room)
+	{
+		foreach (var ownDoor in room.GetComponentsInChildren<AnchorPoint>())
+		{
+			ownDoor.DisconnectDoor();
+			foreach (var placedDoor in gameObject.GetComponentsInChildren<AnchorPoint>())
+			{
+				if (ownDoor == placedDoor)
+					continue;
+
+				if (ownDoor.GetPosition() == placedDoor.GetPosition())
+				{
+					ownDoor.ConnectDoor(placedDoor);
+					break;
+				}
+			}
+		}
+	}
+	
+	public RoomTreeNode GetStartNode()
+	{
+		return startNode;
 	}
 }
