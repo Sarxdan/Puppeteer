@@ -4,73 +4,52 @@ using UnityEngine;
 
 /*
  * AUTHOR:
- * Sandra Andersson
+ * Sandra "Sanders" Andersson
  * 
  * DESCRIPTION:
- * Placed on basic traps.
+ * This script may be inherited by scripts for traps.
  * 
  * CODE REVIEWED BY:
- * 
+ * Philip Stenmark
  * 
  * 
  */
 
-public class TrapComponent : MonoBehaviour
+public abstract class TrapComponent : MonoBehaviour
 { 
     public uint Damage;
-    public float ActivateTime;
-    public float Countdown = 0;
+    public float ActivationTime;
+    public float DestroyTime;   //Time until trap gets destroyed after activated
     public List<GameObject> Puppets;
-    public List<int> test;
-
-    public Animator anim;
+    public Animator Anim;
 
     // Start is called before the first frame update
     void Start()
     {
         Puppets = new List<GameObject>();
-        test = new List<int>();
-        anim = gameObject.GetComponent<Animator>();
+        Anim = gameObject.GetComponent<Animator>();
     }
 
-    private void OnTriggerEnter(Collider other)
-    {
-        Debug.Log("Collision!");
-        if(other.gameObject.tag == "Player")
-        {
-            if(Puppets.Count <= 0)
-            {
-                StartCoroutine("TrapTimer");
-            }
-            
-            Puppets.Add(other.gameObject);
-        }
-    }
-    
-
-    private void OnTriggerExit(Collider other)
-    {
-        Puppets.Remove(other.gameObject);
-    }
-
+    //Start timer for activating the trap and start the animation
     private IEnumerator TrapTimer()
     {
-        Debug.Log("Start Timer");
-        yield return new WaitForSeconds(ActivateTime);
-        Debug.Log("Bang #1");
-        anim.SetBool("IsActive", true);
+        yield return new WaitForSeconds(ActivationTime);
+        //TODO: Set correct conditions for future animations
+        Anim.SetBool("IsActive", true);
 
     }
 
-    private void ActivateTrap()
+    private IEnumerator DestroyTimer()
     {
-        foreach(GameObject puppet in Puppets)
-        {
-            puppet.GetComponent<HealthComponent>().Damage(Damage);
-        }
-        Destroy(gameObject);
-        Debug.Log("Ultimate Bang");
-        //this.gameObject.SetActive(false);
+        yield return new WaitForSeconds(DestroyTime);
+        DestroyTrap();
     }
 
+    public abstract void OnTriggerEnter(Collider other);
+
+    public abstract void OnTriggerExit(Collider other);
+
+    public abstract void ActivateTrap();
+
+    public abstract void DestroyTrap();
 }
