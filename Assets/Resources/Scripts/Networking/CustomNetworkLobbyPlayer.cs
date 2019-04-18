@@ -33,9 +33,15 @@ public class CustomNetworkLobbyPlayer : NetworkLobbyPlayer
     void Update()
     {
         if (PlayerIsReady)
+        {
             ReadyText.text = "Ready";
+            ReadyText.color = new Color(0, 255, 0);
+        }
         else
+        {
             ReadyText.text = "Not Ready";
+            ReadyText.color = new Color(255, 0, 0);
+        }
     }
 
     //Runs when client connects to the lobby
@@ -51,19 +57,30 @@ public class CustomNetworkLobbyPlayer : NetworkLobbyPlayer
         }
     }
 
+    public override void OnStartServer()
+    {
+        base.OnStartServer();
+        GameObject.Find("ReadyButton").GetComponent<Button>().onClick.AddListener(delegate { ToggleReadyState(); });
+        GameObject.Find("StartCharacterSelectButton").SetActive(true);
+    }
+
     //Runs when the client enters the lobby
     public override void OnClientEnterLobby()
     {
         base.OnClientEnterLobby();
 
-        gameObject.transform.position = new Vector3((Index * 200) - 400, 200, 0);
+        //gameObject.transform.localPosition = new Vector3(-(Screen.width / 3), ((Screen.height / 3) ) - (Index * (Screen.height / 6)), 0);
+        //gameObject.transform.position = new Vector3(-(Screen.width / 3), ((Screen.height / 3) ) - (Index * (Screen.height / 6)), 0);
+        gameObject.transform.localPosition = new Vector3(0, -(Index * (Screen.height / 6)), 0);
 
-        if (!isLocalPlayer)
+        if (isLocalPlayer)
         {
-            ReadyButton.gameObject.SetActive(false);
+            //GameObject.Find("ReadyButton").gameObject.SetActive(false);
+            Debug.Log("Satan");
+            GameObject.Find("ReadyButton").GetComponent<Button>().onClick.AddListener(delegate { ToggleReadyState(); });
+            //ReadyButton.gameObject.SetActive(false);
         }
 
-        ReadyButton.onClick.AddListener(delegate { CmdToggleReadyState(); });
     }
     #region Commands
 
@@ -112,4 +129,11 @@ public class CustomNetworkLobbyPlayer : NetworkLobbyPlayer
         CmdChangeSelectedCharacter(index);
     }
 
+    public void ToggleReadyState()
+    {
+        if (isLocalPlayer)
+        {
+        CmdToggleReadyState();
+        }
+    }
 }
