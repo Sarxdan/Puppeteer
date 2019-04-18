@@ -17,7 +17,7 @@ using UnityEngine;
  * Ludvig Björk Förare (Sprint function)
  * 
  * CONTRIBUTORS:
- * 
+ * Philip Stenmark
 */
 public class PlayerController : MonoBehaviour
 {
@@ -80,11 +80,13 @@ public class PlayerController : MonoBehaviour
     {
         if(CurrentWeapon != null)
         {
+            // fire current weapon
             if(Input.GetButton("Fire"))
             {
                 CurrentWeapon.GetComponent<WeaponComponent>().Use();
             }
 
+            // reload current weapon
             if(Input.GetButton("Reload"))
             {
                 CurrentWeapon.GetComponent<WeaponComponent>().Reload(ref Ammunition);
