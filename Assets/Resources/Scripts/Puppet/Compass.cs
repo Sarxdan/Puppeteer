@@ -23,14 +23,14 @@ public class Compass : MonoBehaviour
     // size of displayed icons
     public static readonly float IconSize = 24.0f;
 
-    private static GUIStyle texture;
+    private static GUIStyle whiteBar;
 
     // contains all tracked entities
     public List<Transform> targets;
 
     void Awake()
     {
-        texture = new GUIStyle { normal = new GUIStyleState { background = Texture2D.whiteTexture } };
+        whiteBar = new GUIStyle { normal = new GUIStyleState { background = Texture2D.whiteTexture } };
     }
 
     void OnGUI()
@@ -55,7 +55,7 @@ public class Compass : MonoBehaviour
             }
         }
 
-        GUI.Box(new Rect(Screen.width * 0.5f - Screen.width * ScreenWidthRatio * 0.5f, TopOffset + IconSize, Screen.width * ScreenWidthRatio, 2.0f), GUIContent.none, texture);
+        GUI.Box(new Rect(Screen.width * 0.5f - Screen.width * ScreenWidthRatio * 0.5f, TopOffset + IconSize, Screen.width * ScreenWidthRatio, 2.0f), GUIContent.none, whiteBar);
     }
 
     // registers a new tracked target in the compass
