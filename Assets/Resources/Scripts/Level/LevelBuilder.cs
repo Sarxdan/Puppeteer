@@ -38,7 +38,7 @@ public class LevelBuilder : NetworkBehaviour
 	// Randomize order of rooms and place them in level. Also some networking checks to only do this on server.
     void Start()
     {
-		if (isLocalPlayer) // TODO: change to "!isServer" when networking is done.
+		if (isServer) // TODO: change to "!isServer" when networking is done.
 		{
             RandomizeRooms();
             SpawnRooms();
