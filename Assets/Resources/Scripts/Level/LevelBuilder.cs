@@ -204,6 +204,7 @@ public class LevelBuilder : NetworkBehaviour
                 continue;
 
             NetworkServer.Spawn(room.gameObject);
+            room.transform.SetParent(GameObject.Find("Level").transform);
         }
     }
 }

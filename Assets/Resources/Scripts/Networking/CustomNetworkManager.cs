@@ -122,7 +122,7 @@ public class CustomNetworkManager : NetworkLobbyManager
                 prefabIndex = player.SelectedCharacterIndex;
             }
         }
-            GameObject playerPrefab = (GameObject)Instantiate(PlayableCharacters[prefabIndex], new Vector3(0, 0, 0), Quaternion.identity);
+            GameObject playerPrefab = (GameObject)Instantiate(PlayableCharacters[prefabIndex], PlayableCharacters[prefabIndex].transform.position, Quaternion.identity);
             return playerPrefab;
     }
 }
