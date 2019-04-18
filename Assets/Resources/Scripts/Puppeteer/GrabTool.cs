@@ -42,6 +42,9 @@ public class GrabTool : MonoBehaviour
 	private RoomInteractable lastHit;
 	private Vector3 grabOffset = new Vector3();
 
+	// Original parent node used for updating tree when dropping without snapping to something.
+	private RoomTreeNode firstParentNode;
+
     void Start()
     {
 		level = GameObject.Find("Level").GetComponent<LevelBuilder>();
@@ -110,7 +113,7 @@ public class GrabTool : MonoBehaviour
 			{
 				if (Input.GetButtonDown("Rotate"))
 				{
-					selectedObject.transform.RotateAround(new Vector3(0,0,0), selectedObject.transform.up, 90);
+					selectedObject.transform.RotateAround(selectedObject.transform.position, selectedObject.transform.up, 90);
 					//selectedObject.transform.position = MouseToWorldPosition();
 				}
 				UpdatePositions();
@@ -131,17 +134,19 @@ public class GrabTool : MonoBehaviour
 
 		grabOffset = sourceObject.transform.position - MouseToWorldPosition();
 
-		// NOT NEEDED ANYMORE.
-		//foreach (AnchorPoint door in guideObject.GetComponentsInChildren<AnchorPoint>())
-		//{
-		//	Destroy(door.gameObject);
-		//}
+		firstParentNode = sourceObject.GetComponent<RoomTreeNode>().GetParent();
 	}
 
 	private void Drop()
 	{
+		if (sourceObject.transform.position == guideObject.transform.position && sourceObject.transform.rotation == guideObject.transform.rotation)
+		{
+			sourceObject.GetComponent<RoomTreeNode>().SetParent(firstParentNode);
+		}
+
 		sourceObject.transform.position = guideObject.transform.position;
 		sourceObject.transform.rotation = guideObject.transform.rotation;
+
 		// TODO: Connect doors before removing selected and guide objects
 
 		Destroy(selectedObject);
