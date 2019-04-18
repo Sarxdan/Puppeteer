@@ -204,7 +204,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6520671935544540247}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: -5, y: 0, z: -0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 6520671934967695587}
@@ -311,7 +311,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6520671936120533882}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 10, y: 0, z: 0}
+  m_LocalPosition: {x: 5, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 6520671934865458411}
@@ -401,8 +401,7 @@ GameObject:
   - component: {fileID: 6520671936212628729}
   - component: {fileID: 5386746730933096045}
   - component: {fileID: 2584777534507868448}
-  - component: {fileID: 4997110903798550859}
-  - component: {fileID: 5788134535302450957}
+  - component: {fileID: 5290042523395347049}
   m_Layer: 8
   m_Name: Room two
   m_TagString: Connectable
@@ -438,7 +437,7 @@ BoxCollider:
   m_Enabled: 1
   serializedVersion: 2
   m_Size: {x: 10, y: 1, z: 10}
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Center: {x: -5, y: 0, z: 0}
 --- !u!65 &2584777534507868448
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -451,8 +450,8 @@ BoxCollider:
   m_Enabled: 1
   serializedVersion: 2
   m_Size: {x: 10, y: 1, z: 10}
-  m_Center: {x: 10, y: 0, z: 0}
---- !u!114 &4997110903798550859
+  m_Center: {x: 5, y: 0, z: 0}
+--- !u!114 &5290042523395347049
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -461,24 +460,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 6520671936212628730}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9b91ecbcc199f4492b9a91e820070131, type: 3}
+  m_Script: {fileID: 11500000, guid: cd42f50d5144d0e40936cea69f9e45f1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  serverOnly: 0
-  localPlayerAuthority: 1
-  m_AssetId: bfd985c4280397748a621f496114a1b7
-  m_SceneId: 0
---- !u!114 &5788134535302450957
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6520671936212628730}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2f74aedd71d9a4f55b3ce499326d45fb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  syncInterval: 0.1
-  compressRotation: 1
+  CanBePickedUp: 1
