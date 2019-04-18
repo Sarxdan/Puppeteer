@@ -43,8 +43,6 @@ public class RoomTreeNode : MonoBehaviour
 
 	public bool CutBranch()
 	{
-		DisconnectFromTree();
-
 		foreach (RoomTreeNode child in children)
 		{
 			if (!child.FindNewParent())
@@ -115,8 +113,8 @@ public class RoomTreeNode : MonoBehaviour
 		return parent;
 	}
 
-	public void DestroyChildren()
+	public bool InTree()
 	{
-		children.Clear();
+		return inTree;
 	}
 }

@@ -264,8 +264,14 @@ public class GrabTool : MonoBehaviour
 		RoomTreeNode currentNode = sourceObject.GetComponent<RoomTreeNode>();
 		RoomTreeNode parentNode = currentNode.GetParent();
 
+		currentNode.DisconnectFromTree();
+
+		if (!dst.GetComponentInParent<RoomTreeNode>().InTree())
+		{
+			return false;
+		}
+
 		currentNode.SetParent(dst.GetComponentInParent<RoomTreeNode>());
-		currentNode.DestroyChildren();
 
 		if (sourceObject.GetComponent<RoomTreeNode>().CutBranch())
 		{
