@@ -45,7 +45,7 @@ public class CustomNetworkManager : NetworkLobbyManager
     //Runs when a client enters the lobby
     public override void OnLobbyClientEnter()
     {
-        if (PlayersContainer.transform.childCount == 1)
+        if (PlayersContainer.transform.childCount > 1)
             StartButton.gameObject.SetActive(false);
 
         base.OnLobbyClientEnter();

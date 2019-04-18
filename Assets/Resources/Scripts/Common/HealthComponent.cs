@@ -81,4 +81,10 @@ public class HealthComponent : MonoBehaviour
     {
         this.zeroHealthAction += action;
     }
+
+    //Unregisters an existing zero health delegate
+    public void RemoveDeathAction(OnZeroHealth action)
+    {
+        this.zeroHealthAction -= action;
+    }
 }
