@@ -38,13 +38,12 @@ public class LevelBuilder : NetworkBehaviour
 	// Randomize order of rooms and place them in level. Also some networking checks to only do this on server.
     void Start()
     {
-		if (isServer) // TODO: change to "!isServer" when networking is done.
+		if (isServer)
 		{
             RandomizeRooms();
             SpawnRooms();
             SpawnRoomsOnNetwork();
         }
-
     }
 
 	// Randomizes the order of the rooms and puts them into roomsToBePlaced list.
@@ -151,8 +150,7 @@ public class LevelBuilder : NetworkBehaviour
 				}
 
 				// If no overlap is detected, set both doors to connected.
-				door.Connected = true;
-				opendoor.Connected = true;
+				opendoor.ConnectDoor(door);
 
 				// Add all the RoomColliders in the new room to the roomColliderPositions List.
 				foreach (RoomCollider colliderPosition in room.GetComponentsInChildren<RoomCollider>())
@@ -172,8 +170,7 @@ public class LevelBuilder : NetworkBehaviour
 					{
 						if (otherdoor.GetPosition() == placedDoor.GetPosition())
 						{
-							otherdoor.Connected = true;
-							placedDoor.Connected = true;
+							otherdoor.ConnectDoor(placedDoor);
 							break;
 						}
 					}
@@ -207,6 +204,7 @@ public class LevelBuilder : NetworkBehaviour
             room.transform.SetParent(GameObject.Find("Level").transform);
         }
     }
+
 	public List<GameObject> GetRooms()
 	{
 		List<GameObject> result = new List<GameObject>();
@@ -216,6 +214,4 @@ public class LevelBuilder : NetworkBehaviour
 		}
 		return result;
 	}
-
-	// TODO: raycast out of door to see if blocked? 
 }
