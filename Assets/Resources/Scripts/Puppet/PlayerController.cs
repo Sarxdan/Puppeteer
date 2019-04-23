@@ -97,7 +97,6 @@ public class PlayerController : MonoBehaviour
         {
             StartCoroutine(GetComponent<PowerupBase>().Run());
         }
-        Debug.Log(GetComponent<PowerupBase>().PercentageLeft);
 
         //Keeps cursor within screen
         if(Input.GetButton("Fire"))
