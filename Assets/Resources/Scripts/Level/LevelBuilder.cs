@@ -25,6 +25,8 @@ public class LevelBuilder : NetworkBehaviour
 	public List<GameObject> DeadEnds;
 	// Start and End rooms
 	public GameObject StartRoom, EndRoom;
+	// Door to be placed between rooms.
+	public GameObject Door;
 
 	public int RoomsToSpawnBeforeDeadEndRooms = 10;
 
@@ -59,8 +61,9 @@ public class LevelBuilder : NetworkBehaviour
 		for (int i = 0; i < RoomsToSpawnBeforeDeadEndRooms; i++)
 		{
 			int index = Random.Range(0, MultiDoorRooms.Count);
-			var instance = Instantiate(MultiDoorRooms[index], transform);
+			GameObject instance = Instantiate(MultiDoorRooms[index], transform);
             instance.transform.position = new Vector3(0, -100, 0);
+			SpawnDoors(instance);
 			roomsToBePlaced.Add(instance);
 
 			MultiDoorRooms.RemoveAt(index);
@@ -77,6 +80,7 @@ public class LevelBuilder : NetworkBehaviour
 				var instance = Instantiate(MultiDoorRooms[index], transform);
                 // Move room out of the way.
                 instance.transform.position = new Vector3(0, -100, 0);
+				SpawnDoors(instance);
 				roomsToBePlaced.Add(instance);
 
 				MultiDoorRooms.RemoveAt(index);
@@ -87,6 +91,7 @@ public class LevelBuilder : NetworkBehaviour
 				var instance = Instantiate(DeadEnds[index], transform);
                 // Move room out of the way.
                 instance.transform.position = new Vector3(0, -100, 0);
+				SpawnDoors(instance);
 				roomsToBePlaced.Add(instance);
 
 				DeadEnds.RemoveAt(index);
@@ -96,6 +101,7 @@ public class LevelBuilder : NetworkBehaviour
 		// Add EndRoom to list last so it is placed last.
 		var endRoom = Instantiate(EndRoom, transform);
 		endRoom.transform.position = new Vector3(0, -100, 0);
+		SpawnDoors(endRoom);
 		roomsToBePlaced.Add(endRoom);
 	}
 
@@ -104,7 +110,7 @@ public class LevelBuilder : NetworkBehaviour
 	{
 		// Place startroom before adding other rooms.
 		var startRoom = Instantiate(StartRoom, transform);
-
+		SpawnDoors(startRoom);
 		startNode = startRoom.GetComponent<RoomTreeNode>();
 
 		// Add all RoomCollider scripts in startroom into roomColliderPositions list.
@@ -125,10 +131,16 @@ public class LevelBuilder : NetworkBehaviour
 			var opendoor = openDoorQueue.Dequeue();
 			var room = roomsToBePlaced[0];
 
-			// TODO: Randomize order of doors
+			// Add doors to temporary list so they can be randomized.
+			List<AnchorPoint> doorList = new List<AnchorPoint>();
+			doorList.AddRange(room.GetComponentsInChildren<AnchorPoint>());
+
 			// Goes through all doors in the first room in the list and try to attatch it to the first door in the doorqueue.
-			foreach (var door in room.GetComponentsInChildren<AnchorPoint>())
+			while (doorList.Count > 0)
 			{
+				int index = Random.Range(0, doorList.Count);
+				AnchorPoint	door = doorList[index];
+
 				// Find the angle requierd for the doors to line up, then rotate the whole room.
 				float angle = Mathf.Round(-Vector3.Angle(opendoor.transform.forward, door.transform.forward) + 180);
 				room.transform.Rotate(Vector3.up, angle);
@@ -154,6 +166,7 @@ public class LevelBuilder : NetworkBehaviour
 				if (!canBePlaced)
 				{
 					room.transform.position = new Vector3(0, -100, 0);
+					doorList.RemoveAt(index);
 					continue;
 				}
 
@@ -249,5 +262,19 @@ public class LevelBuilder : NetworkBehaviour
 	public RoomTreeNode GetStartNode()
 	{
 		return startNode;
+	}
+
+	// Method to instantiate doors at all anchorpoints of a room.
+	private void SpawnDoors(GameObject room)
+	{
+		foreach (AnchorPoint doorAnchor in room.GetComponentsInChildren<AnchorPoint>())
+		{
+			GameObject door = Instantiate(Door, doorAnchor.transform);
+			DoorComponent doorScript = door.GetComponent<DoorComponent>();
+			door.transform.localEulerAngles = new Vector3(0, 0, 0);
+			door.transform.position = doorAnchor.transform.position + doorAnchor.transform.rotation * doorScript.adjustmentVector;
+			doorScript.defaultAngle = 0;
+			doorScript.Locked = true;
+		}
 	}
 }

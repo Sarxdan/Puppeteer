@@ -28,22 +28,27 @@ public class DoorComponent : Interactable
         locked = value;
         if(locked)
         {
-            transform.rotation = Quaternion.Euler(transform.eulerAngles.x, DefaultAngle, transform.eulerAngles.z);
+            transform.localRotation = Quaternion.Euler(transform.localEulerAngles.x, defaultAngle, transform.localEulerAngles.z);
         }
     }
     }
 
-    public float DefaultAngle = 90;
+    
     public float RotationSpeed;
-
     // How much the door should open
-    private float openAngle = 90;
-    private bool open = false;
+    public float OpenAngle = 90;
+	public float defaultAngle = 0;
+	// Vector used for offsetting door position into doorframe correctly.
+	public Vector3 adjustmentVector = new Vector3(0.6f, 0, 0);
+
+	private float currentAngle = 0;
+	private bool open = false;
 
     // Save the start angle of the door
     void Start()
     {
-        DefaultAngle = transform.eulerAngles.y;
+        defaultAngle = transform.localEulerAngles.y;
+		currentAngle = defaultAngle;
     }
     // When the used key is pressed the direction the door should open is calculated
     public override void OnInteractBegin(GameObject interactor)
@@ -51,8 +56,7 @@ public class DoorComponent : Interactable
         if(!locked)
         {
             float dotProduct = Vector3.Dot(transform.forward, interactor.transform.forward);
-            openAngle  = -90 * Mathf.Sign(dotProduct);
-            Debug.Log(openAngle);
+            currentAngle  = OpenAngle * Mathf.Sign(dotProduct);
             open = !open;
         }
     }
@@ -64,12 +68,11 @@ public class DoorComponent : Interactable
         {
             if(open)
             {
-                transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.Euler(transform.eulerAngles.x , DefaultAngle + openAngle, transform.eulerAngles.z), RotationSpeed);
-
+                transform.localRotation = Quaternion.RotateTowards(transform.localRotation, Quaternion.Euler(transform.localEulerAngles.x , defaultAngle + currentAngle, transform.localEulerAngles.z), RotationSpeed);
             }
             else
             {
-                transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.Euler(transform.eulerAngles.x , DefaultAngle, transform.eulerAngles.z), RotationSpeed);
+                transform.localRotation = Quaternion.RotateTowards(transform.localRotation, Quaternion.Euler(transform.localEulerAngles.x , defaultAngle, transform.localEulerAngles.z), RotationSpeed);
             }
         }
     }

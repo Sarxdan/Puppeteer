@@ -26,7 +26,7 @@ public class InteractionController : MonoBehaviour
     {
         RaycastHit hitInfo;
         //If raycast hits an object
-        if(Physics.Raycast(Camera.main.ViewportPointToRay(new Vector3(0.5f, 0.5f)), out hitInfo, Lookahead))
+        if(Physics.Raycast(Camera.main.ViewportPointToRay(new Vector3(0.5f, 0.5f)), out hitInfo, Lookahead, ~(1 << 8)))
         {
             var hit = hitInfo.transform.GetComponent<Interactable>();
             //Sets current interactable object

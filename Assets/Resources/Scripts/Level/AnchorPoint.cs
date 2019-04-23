@@ -33,8 +33,6 @@ public class AnchorPoint : MonoBehaviour
     {
 
 		//Code to show doors and door connections in scene editor
-
-
 		if (Connected)
 		{
 			Debug.DrawLine(transform.position, transform.position + transform.forward * 2, Color.blue);
@@ -51,29 +49,67 @@ public class AnchorPoint : MonoBehaviour
 	// Returns the Position of the AnchorPoint as a Vector of rounded Ints to avoid Unity float errors.
 	public Vector3 GetPosition()
 	{
-		return new Vector3(Mathf.RoundToInt(transform.position.x * 1000) / 1000, Mathf.RoundToInt(transform.position.y * 1000) / 1000, Mathf.RoundToInt(transform.position.z * 1000) / 1000);
+		return new Vector3(Mathf.RoundToInt(transform.position.x * 1000) / 1000.0f, Mathf.RoundToInt(transform.position.y * 1000) / 1000.0f, Mathf.RoundToInt(transform.position.z * 1000) / 1000.0f);
 	}
 
+	// Connect two doors together
 	public void ConnectDoor(AnchorPoint to)
 	{
 		if (to.GetPosition() == GetPosition())
 		{
+			DoorComponent thisDoor = GetComponentInChildren<DoorComponent>();
+			DoorComponent toDoor = to.GetComponentInChildren<DoorComponent>();
+
+			// Destory one of the doors to avoid two doors in the same doorframe.
+			Destroy(toDoor.gameObject);
+
+			thisDoor.Locked = false;
+			toDoor.Locked = false;
+
 			to.Connected = true;
 			to.ConnectedTo = this;
 			Connected = true;
 			ConnectedTo = to;
 		}
 	}
+
+	// Disconnects a door from whatever it was connected with.
 	public void DisconnectDoor()
 	{
 		if (Connected)
 		{
+			// If either door was previously removed, readd it and lock it.
+			DoorComponent thisDoor = GetComponentInChildren<DoorComponent>();
+			DoorComponent toDoor = ConnectedTo.GetComponentInChildren<DoorComponent>();
+
+			if (thisDoor == null)
+			{
+				GameObject door = Instantiate(GetComponentInParent<LevelBuilder>().Door, transform);
+				thisDoor = door.GetComponent<DoorComponent>();
+				door.transform.localEulerAngles = new Vector3(0, 0, 0);
+				door.transform.position = transform.position + transform.rotation * thisDoor.adjustmentVector;
+				thisDoor.defaultAngle = 0;
+			}
+			else if (toDoor == null)
+			{
+				GameObject door = Instantiate(GetComponentInParent<LevelBuilder>().Door, ConnectedTo.transform);
+				toDoor = door.GetComponent<DoorComponent>();
+				door.transform.localEulerAngles = new Vector3(0, 0, 0);
+				door.transform.position = ConnectedTo.transform.position + ConnectedTo.transform.rotation * toDoor.adjustmentVector;
+				toDoor.defaultAngle = 0;
+			}
+
+			thisDoor.Locked = true;
+			toDoor.Locked = true;
+
 			ConnectedTo.Connected = false;
 			ConnectedTo.ConnectedTo = null;
 			Connected = false;
 			ConnectedTo = null;
 		}
 	}
+
+	// Reconnects a door to a new door.
 	public void ReConnectTo(AnchorPoint to)
 	{
 		DisconnectDoor();
