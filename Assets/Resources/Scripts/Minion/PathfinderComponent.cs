@@ -66,11 +66,8 @@ public class PathfinderComponent : MonoBehaviour
         rigidBody.MovePosition(transform.position + deltaPos.normalized * this.MovementSpeed * Time.deltaTime );
     }
 
-    public void MoveTo(Vector3 end, NavMesh navmesh){
-        
-    }
 
-    public void pathfind(Vector3 end, NavMesh navmesh)
+    public void MoveTo(Vector3 end, NavMesh navmesh)
     {
 
         RaycastHit hit;
