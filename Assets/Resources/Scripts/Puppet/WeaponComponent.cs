@@ -17,6 +17,9 @@ using UnityEngine;
  */
 public class WeaponComponent : Interactable
 {
+	// Sound Test
+	private SoundTest soundEmitter;
+
     //Determines how much liquid this weapon can hold
     public int Capacity;
 
@@ -49,19 +52,34 @@ public class WeaponComponent : Interactable
     private float recoil;
     private float charge;
 
-    //Attemps to fire the weapon
-    public void Use()
+	public void Start()
+	{
+		soundEmitter = GetComponent<SoundTest>();
+	}
+
+	//Attemps to fire the weapon
+	public void Use()
     {
         charge += Time.deltaTime;
 
-        if (cooldown != 0 || LiquidLeft < LiquidPerRound || charge < ChargeTime)
+        if (cooldown != 0 || charge < ChargeTime)
         {
-            // unable to fire
-            return;
+			return;
         }
+		if (LiquidLeft < LiquidPerRound)
+		{
+			// Sound Test
+			if (soundEmitter != null)
+				soundEmitter.PlaySoundEmptyClip();
+			return;
+		}
 
         for(int i = 0; i < NumShots; i++)
         {
+			// Sound Test
+			if (soundEmitter != null)
+				soundEmitter.PlaySoundGunShot();
+
             // calculate spread
             Vector3 offset = Random.insideUnitSphere * Spread;
 
@@ -92,6 +110,10 @@ public class WeaponComponent : Interactable
         // reload not possible if recently fired, currently reloading or weapon too charged
         if (cooldown != 0 || (ChargeTime != 0 && charge > ChargeTime))
             return;
+
+		// Sound Test
+		if (soundEmitter != null)
+			soundEmitter.PlaySoundReload();
 
         int amount = Mathf.Min(Capacity - LiquidLeft, liquidInput);
         liquidInput -= amount;

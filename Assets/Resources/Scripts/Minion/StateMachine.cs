@@ -11,10 +11,13 @@ public class StateMachine : MonoBehaviour
     public float AttackCooldown;
     public uint AttackDamage;
 
+
+
     //Pathfind component reference (pathFinder)
 
     public void Start()
     {
+
         //pathFinder = getComponent.....
     }
 
@@ -27,17 +30,17 @@ public class StateMachine : MonoBehaviour
 
     public void Update()
     {
-        if(System.Environment.TickCount % tickRate == 0)
+        
+        if (System.Environment.TickCount % tickRate == 0)
         {
             if (CurrentState != null) CurrentState.Run();
         }
     }
-
 }
 
 //-------------------------------------------------------------
 
-public abstract class State
+public abstract class State : MonoBehaviour
 {
     public abstract void Enter();
 
@@ -45,4 +48,3 @@ public abstract class State
 
     public abstract void Exit();
 }
-

@@ -161,7 +161,7 @@ public class MenuNavigation : MonoBehaviour
 	{
 		//Enter
 		// Get the target position of panel
-		Vector3 relativeLocation = new Vector3(Screen.width/5, 0.0f, 0.0f);
+		Vector3 relativeLocation = new Vector3(Screen.width/3, 0.0f, 0.0f);
 		Vector3 targetLocation = OptionsPanel.transform.position + relativeLocation;
 		float timeDelta = 0.1f;
 
@@ -179,7 +179,7 @@ public class MenuNavigation : MonoBehaviour
 
 		// Exit
 		// Get the target position
-		Vector3 relativeLocation2 = new Vector3(-Screen.width / 5, 0.0f, 0.0f);
+		Vector3 relativeLocation2 = new Vector3(-Screen.width / 3, 0.0f, 0.0f);
 		Vector3 targetLocation2 = OptionsPanel.transform.position + relativeLocation2;
 
 		// Get target fade value
