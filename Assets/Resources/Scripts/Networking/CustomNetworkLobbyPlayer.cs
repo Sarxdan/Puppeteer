@@ -13,7 +13,7 @@ using Mirror;
 *
 * CODE REVIEWED BY:
 * Anton Jonsson 17/04-2019
-* = Needs review
+* Benjamin "Boris" Vesterlund 23/4/2019
 *
 * CONTRIBUTORS:
 */
@@ -35,7 +35,7 @@ public class CustomNetworkLobbyPlayer : NetworkLobbyPlayer
     public Text PlayerText;
     public InputField PlayerNameInput;
 
-    static int playerCount = 1;
+    static int playerCount = 0;
 
     // Update is called once per frame
     void Update()
@@ -82,8 +82,6 @@ public class CustomNetworkLobbyPlayer : NetworkLobbyPlayer
 
 
         CmdSetNickname("Player " + playerCount.ToString());
-        //NickName = "Player " + playerCount.ToString();
-        //PlayerText.text = "Player " + playerCount.ToString();
 
         if (isLocalPlayer)
         {

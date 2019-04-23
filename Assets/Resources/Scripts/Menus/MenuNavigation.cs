@@ -30,6 +30,7 @@ public class MenuNavigation : MonoBehaviour
 	public GameObject VideoOptionsPanel;					// the panel with options buttons on.
     public GameObject JoinMenuPanel;
     public GameObject LobbyMenuPanel;
+    public GameObject CreditsPanel;
 	public GameState currentState = GameState.MainMenu;		// current state.
 
 
@@ -37,7 +38,7 @@ public class MenuNavigation : MonoBehaviour
 	public Button JoinGameButton;
     public Button JoinGameIpButton;
 	public Button HostGameButton;
-	public Button NicknameButton;
+	public Button CreditsButton;
 	public Button OptionsButton;
 	public Button ExitButton;
 
@@ -58,7 +59,7 @@ public class MenuNavigation : MonoBehaviour
 		JoinMenuStep1,
 		LobbyMenu,
 		HostMenu,
-		Nickname,
+		Credits,
 		Options,
 		OptionsAudio,
 		OptionsVideo,
@@ -72,7 +73,7 @@ public class MenuNavigation : MonoBehaviour
 		JoinGameButton.onClick.AddListener(JoinGame);
         JoinGameIpButton.onClick.AddListener(HostGame);
 		HostGameButton.onClick.AddListener(HostGame);
-		NicknameButton.onClick.AddListener(Nickname);
+		CreditsButton.onClick.AddListener(Credits);
 		OptionsButton.onClick.AddListener(Options);
 			VideoButton.onClick.AddListener(VideoOptions);
 			AudioButton.onClick.AddListener(AudioOptions);
@@ -105,6 +106,14 @@ public class MenuNavigation : MonoBehaviour
 	void Nickname()
 	{
 	}
+
+    void Credits()
+    {
+        if (cooldown && currentState != GameState.Credits)
+        {
+            ChangeState(GameState.Credits);
+        }
+    }
 
 	void Options()
 	{
@@ -321,12 +330,40 @@ public class MenuNavigation : MonoBehaviour
         StartCoroutine(SmoothMove(LobbyMenuPanel, targetLocation2, timeDelta));
     }
 
+    IEnumerator CreditsState()
+    {
+        // Enter
+        // Get the target position of panel
+        Vector3 relativeLocation = new Vector3((Screen.width / 2) + (Screen.width / 4), 0, 0);
+        Vector3 targetlocation = CreditsPanel.transform.position + relativeLocation;
+        float timeDelta = 0.1f;
+
+        // Get target fade value
+        float targetOpacity = 1;
+
+        // Start coroutine
+        StartCoroutine(SmoothMove(CreditsPanel, targetlocation, timeDelta));
+
+
+        while (currentState == GameState.Credits) { yield return null; } // running.
+
+        // Exit
+        // Get the target position
+        Vector3 relativeLocation2 = new Vector3(-(Screen.width / 2) - (Screen.width / 4), 0, 0);
+        Vector3 targetLocation2 = CreditsPanel.transform.position + relativeLocation2;
+
+        // Get target fade value
+        float targetOpacity2 = 0;
+
+        // Start coroutine
+        StartCoroutine(SmoothMove(CreditsPanel, targetLocation2, timeDelta));
+    }
 
 
 
 
-	//--------------------Movment--------------------
-	IEnumerator SmoothMove(GameObject item, Vector3 target, float delta)
+    //--------------------Movment--------------------
+    IEnumerator SmoothMove(GameObject item, Vector3 target, float delta)
 	{
 		cooldown = false;
 		// will need to perform some of this process and yeild until next frames
