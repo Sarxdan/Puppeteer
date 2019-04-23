@@ -7,7 +7,7 @@ using UnityEngine;
  * Philip Stenmark
  * 
  * DESCRIPTION:
- * Displays the goal on the compass display while activated.
+ * Displays the goal on the compass display when activated.
  * Requires that one object in the scene has the 'Finish' tag.
  * 
  * CODE REVIEWED BY:
