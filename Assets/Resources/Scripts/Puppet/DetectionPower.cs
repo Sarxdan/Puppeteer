@@ -7,15 +7,15 @@ using UnityEngine;
  * Philip Stenmark
  * 
  * DESCRIPTION:
- * Increases maximum stamina and overall movement speed when activated.
+ * When activated, all visible doors gets an outline color that is dependent of the corresponding room's content.
+ * Unique colors may be selected for rooms with; traps, enemires, power recharge and weapons. Locked doors may also
+ * be shown.
  * 
  * CODE REVIEWED BY:
  * 
  */
-public class StaminaPower : PowerupBase
+public class DetectionPower : PowerupBase
 {
-    public float SpeedModifier = 2.0f;
-
     public override void OnActivate()
     {
         
