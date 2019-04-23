@@ -52,6 +52,10 @@ public class LevelBuilder : NetworkBehaviour
 	private void RandomizeRooms()
 	{
 		// Randomize a set amount of multidoor rooms first to avoid death by only dead ends.
+		if (RoomsToSpawnBeforeDeadEndRooms > MultiDoorRooms.Count)
+		{
+			RoomsToSpawnBeforeDeadEndRooms = MultiDoorRooms.Count;
+		}
 		for (int i = 0; i < RoomsToSpawnBeforeDeadEndRooms; i++)
 		{
 			int index = Random.Range(0, MultiDoorRooms.Count);
