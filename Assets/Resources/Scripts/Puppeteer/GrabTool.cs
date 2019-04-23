@@ -21,13 +21,13 @@ public class GrabTool : MonoBehaviour
 	private LevelBuilder level;
 
 	// the maximum distance for snapping modules
-	public int SnapDistance = 150;
+	public int SnapDistance = 10;
 
 	// the lift height when grabbing an object
-	public float LiftHeight = 2.0f;
+	public float LiftHeight = 3.0f;
 
 	// the lift speed when grabbing an object
-	public float LiftSpeed = 0.1f;
+	public float LiftSpeed = 50.0f;
 
 	// enables camera movement using mouse scroll
 	public bool EnableMovement = true;
