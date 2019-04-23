@@ -43,15 +43,17 @@ namespace MinionStates
                     }
                     foreach(GameObject i in machine.DownedPuppets)
                     {
-                        if (machine.DownedPuppets.Contains(i) && )
+                        if (machine.DownedPuppets.Contains(i) && true) // This was pushed with error for some reason
                         {
 
                         }
                     }
                     for (int i = 0; i < machine.DownedPuppets.Count ; i++)
                     {
-                        if (machine.DownedPuppets.)
-                    }
+						// This was pushed with error for some reason
+                        //if (machine.DownedPuppets.) 
+
+					}
                 }
             }
         }

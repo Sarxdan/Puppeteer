@@ -2,34 +2,45 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/*
+* AUTHOR:
+* Benjamin "Boris" Vesterlund, Anton "Knugen" Jonsson
+*
+* DESCRIPTION:
+* Scipt used for each node in a tree. The script allows for recursive method calls throughout the tree.
+*
+* CODE REVIEWED BY:
+*
+* CONTRIBUTORS: 
+*/
+
 public class RoomTreeNode : MonoBehaviour
 {
+
 	private RoomTreeNode parent;
+	private List<RoomTreeNode> children = new List<RoomTreeNode>();
+
 	private bool inTree = true;
 
-	private List<RoomTreeNode> children = new List<RoomTreeNode>();
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
+	// Update used to draw tree on level.
     void Update()
     {
-		if (parent !=  null)
+		if (parent != null)
 		{
 			Debug.DrawLine(transform.position + new Vector3(0, 1, 0), parent.transform.position + new Vector3(0, 1, 0), Color.black);
 		}
     }
 
+	// Method that recursively goes through tree (depth first) to find a new suitable parent node for the part of the tree that has been cut off.
 	public bool FindNewParent()
 	{
+		// If this is a suitable new parent node, return true.
 		if (ConnectToOtherRoom())
 		{
 			return true;
 		}
 
+		// Go through each child and check if they are a suitable new parent. If they are, set them as your new parent and return true so you become the new parent of yor previous parent.
 		foreach (RoomTreeNode child in children)
 		{
 			if (child.FindNewParent())
@@ -41,6 +52,7 @@ public class RoomTreeNode : MonoBehaviour
 		return false;
 	}
 
+	// Special case of FindNewParent() method where all children must find a suitable parent for the tree to still be valid. Used to initiate the search.
 	public bool CutBranch()
 	{
 		foreach (RoomTreeNode child in children)
@@ -53,6 +65,7 @@ public class RoomTreeNode : MonoBehaviour
 		return true;
 	}
 
+	// Goes thorugh all connected doors and checks if they are connected to a branch that has not been cut off. If they are, set them as parent.
 	public bool ConnectToOtherRoom()
 	{
 		foreach (AnchorPoint door in GetComponentsInChildren<AnchorPoint>())
@@ -70,6 +83,7 @@ public class RoomTreeNode : MonoBehaviour
 		return false;
 	}
 
+	// Recursively sets the inTree bool to false for all children.
 	public void DisconnectFromTree()
 	{
 		foreach (RoomTreeNode child in children)
@@ -79,6 +93,7 @@ public class RoomTreeNode : MonoBehaviour
 		inTree = false;
 	}
 
+	// Recursively sets the inTree bool to true for all children.
 	public void ReconnectToTree()
 	{
 		inTree = true;
@@ -88,6 +103,7 @@ public class RoomTreeNode : MonoBehaviour
 		}
 	}
 
+	// Switches parent.
 	public void SetParent(RoomTreeNode parent)
 	{
 		if (this.parent != null)

@@ -7,7 +7,7 @@ using UnityEngine;
 * Benjamin "Boris" Vesterlund, Anton "Knugen" Jonsson
 *
 * DESCRIPTION:
-* Tool used for grabbing and dropping rooms as puppeteer
+* Tool used for grabbing and dropping rooms as puppeteer. Also does checks to determine if drop is legal.
 *
 * CODE REVIEWED BY:
 * 
@@ -20,13 +20,13 @@ public class GrabTool : MonoBehaviour
 {
 	private LevelBuilder level;
 
-	// the maximum distance for snapping modules
+	// The maximum distance for snapping modules
 	public int SnapDistance = 10;
-
-	// the lift height when grabbing an object
+	// Maximum raycast ray length
+	public float RaycastDistance = 500;
+	// The lift height when grabbing an object
 	public float LiftHeight = 3.0f;
-
-	// the lift speed when grabbing an object
+	// The lift speed when grabbing an object
 	public float LiftSpeed = 50.0f;
 
 	// enables camera movement using mouse scroll
@@ -55,9 +55,8 @@ public class GrabTool : MonoBehaviour
 		if (selectedObject == null)
 		{
 			RaycastHit hit;
-			// TODO: Add raycast limit?
 			int layerMask = 1 << LayerMask.NameToLayer("Puppeteer Interact");
-			if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit, Mathf.Infinity, layerMask, QueryTriggerInteraction.Collide))
+			if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit, RaycastDistance, layerMask, QueryTriggerInteraction.Collide))
 			{
 				GameObject hitObject = hit.transform.gameObject;
 
