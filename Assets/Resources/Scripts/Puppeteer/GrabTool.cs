@@ -27,7 +27,7 @@ public class GrabTool : MonoBehaviour
 	public float LiftHeight = 2.0f;
 
 	// the lift speed when grabbing an object
-	public float LiftSpeed = 0.1f;
+	public float LiftSpeed = 50.0f;
 
 	// enables camera movement using mouse scroll
 	public bool EnableMovement = true;
