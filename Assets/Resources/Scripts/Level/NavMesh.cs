@@ -3,37 +3,28 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [System.Serializable]
-public class meshFace : System.Object
+public class navmeshFace : System.Object
 {
-    public int a, b, c = -1;
     public Vector3 aPos, bPos, cPos = new Vector3();
     public Vector3 Origin;
-    public meshFace(int a, int b, int c, Vector3[] positionRefs)
-    {
-        this.a = a;
-        this.b = b;
-        this.c = c;
 
-        this.aPos = positionRefs[a];
-        this.bPos = positionRefs[b];
-        this.cPos = positionRefs[c];
+    public navmeshFace(Vector3 a, Vector3 b, Vector3 c)
+    {
+
+        this.aPos = a;
+        this.bPos = b;
+        this.cPos = c;
+
+        this.Origin = (aPos + bPos + cPos)/3;
+
     }
 
-    public bool hasVertex(int vertexIndex)
-    {
-        return this.a == vertexIndex || this.b == vertexIndex || this.c == vertexIndex;
-    }
 
     public bool hasVertex(Vector3 vertexPos)
     {
         return this.aPos == vertexPos || this.bPos == vertexPos || this.cPos == vertexPos;
     }
 
-    public int this[int i]
-    {
-        get { return i == 0 ? this.a : i == 1 ? this.b : i == 2 ? this.c : -1; }
-        set {} //This will unlikely be used
-    }
 }
 
 
@@ -43,9 +34,7 @@ public class NavMesh : MonoBehaviour
     public Mesh inputMesh;
     
     //Cache
-    public Vector3[] vertices;
-    public meshFace[] faces;
-    public Vector3[] faceOrigins;
+    public navmeshFace[] faces;
 
     public bool bake;
     public bool draw;
@@ -60,20 +49,18 @@ public class NavMesh : MonoBehaviour
             rotation = Quaternion.Euler(0, 0, 0);
             bake = false;
 
-            vertices = new Vector3[inputMesh.vertices.Length];
+            Vector3[] vertices = new Vector3[inputMesh.vertices.Length];
 
             for(int i = 0; i < inputMesh.vertices.Length; i++)
             {
                 vertices[i] = rotation * inputMesh.vertices[i];
             }
 
-            faceOrigins = new Vector3[(int)(inputMesh.triangles.Length/3)];
-            faces = new meshFace[(int)(inputMesh.triangles.Length / 3)];
+            faces = new navmeshFace[(int)(inputMesh.triangles.Length / 3)];
 
             for(int i = 0; i < faces.Length; i++)
             {
-                faces[i] = new meshFace(inputMesh.triangles[i*3], inputMesh.triangles[i * 3 + 1], inputMesh.triangles[i * 3 + 2], vertices); 
-                faceOrigins[i] = (vertices[faces[i].a] + vertices[faces[i].b] + vertices[faces[i].c])/3;
+                faces[i] = new navmeshFace(vertices[inputMesh.triangles[i*3]], vertices[inputMesh.triangles[i * 3 + 1]], vertices[inputMesh.triangles[i * 3 + 2]]); 
             }
             
 
@@ -83,7 +70,7 @@ public class NavMesh : MonoBehaviour
         {
             if (inputMesh != null)
             {
-                Gizmos.DrawWireMesh(inputMesh, transform.position, rotation);
+                Gizmos.DrawWireMesh(inputMesh, transform.position, rotation * transform.rotation);
             }
             if(highlight != null)
             {
@@ -92,73 +79,50 @@ public class NavMesh : MonoBehaviour
         }
     }
 
-    
-
-    public int getFaceFromEdge(int A, int B, List<int> filter)
+    public navmeshFace getFaceFromEdge(Vector3 A, Vector3 B, List<navmeshFace> filter)
     {
-        for(int i = 0; i < faces.Length; i++)
+        foreach(navmeshFace face in faces)
         {
-            if (!filter.Contains(i))
+            if (!filter.Contains(face))
             {
-                if ((faces[i].a == A || faces[i].b == A || faces[i].c == A) &&
-                   (faces[i].a == B || faces[i].b == B || faces[i].c == B))
-                    return i;
+                if ((face.aPos == A || face.bPos == A || face.cPos == A) &&
+                   (face.aPos == B || face.bPos == B || face.cPos == B))
+                    return face;
             }
         }
-        return -1;
+        return null;
     }
 
-    public int getFaceFromPoint(Vector3 point)
+    public navmeshFace getFaceFromPoint(Vector3 point)
     {
-        List<int> filteredFaces = new List<int>();
-        int closestFace = 0;
-        for (int i = 0; i < 10; i++) {
-            closestFace = getClosestFace(point, filteredFaces);
-            if (PointWithinFace(point, faces[closestFace]))
+        List<navmeshFace> filteredFaces = new List<navmeshFace>();
+        foreach (navmeshFace face in faces) {
+            if (PointWithinFace(point, face))
             {
-                Debug.Log("Found closest face!");
-                return closestFace;
+                return face;
             }
             else
             {
-                filteredFaces.Add(closestFace);
+                filteredFaces.Add(face);
             }
         }
-        Mesh faceMesh = new Mesh();
-        faceMesh.vertices = new Vector3[]{
-            faces[closestFace].aPos,
-            faces[closestFace].bPos,
-            faces[closestFace].cPos
-        };
-        faceMesh.triangles = new int[] { 0, 1, 2 };
 
-        faceMesh.normals = new Vector3[]
-        {
-            Vector3.up,
-            Vector3.up,
-            Vector3.up
-        };
-
-        highlight = faceMesh;
-
-        Debug.DrawRay(faceOrigins[closestFace] + transform.position, Vector3.up * 3, Color.blue, Time.deltaTime);
-        Debug.Log("Did not find closest face!");
-        return 0;
+        return null;
     }
 
-    public int getClosestFace(Vector3 position, List<int> filter)
+    public navmeshFace getClosestFace(Vector3 position, List<navmeshFace> filter)
     {
         float closestDistance = Mathf.Infinity;
-        int closestFace = -1;
-        for (int i = 0; i < faceOrigins.Length; i++)
+        navmeshFace closestFace = null;
+        for (int i = 0; i < faces.Length; i++)
         {
-            if (!filter.Contains(i))
+            if (!filter.Contains(faces[i]))
             {
-                float distance = Vector3.Distance(faceOrigins[i] + transform.position, position);
+                float distance = Vector3.Distance(faces[i].Origin + transform.position, position);
                 if (distance < closestDistance)
                 {
                     closestDistance = distance;
-                    closestFace = i;
+                    closestFace = faces[i];
                 }
             }
         }
@@ -169,20 +133,22 @@ public class NavMesh : MonoBehaviour
     }
     
 
-    public bool PointWithinFace(Vector3 point, meshFace triangle)
+    public bool PointWithinFace(Vector3 point, navmeshFace triangle)
     {
-        return (
-                SameSideOf(point, triangle.aPos + transform.position, triangle.bPos + transform.position, triangle.cPos) &&
-                SameSideOf(point, triangle.bPos + transform.position, triangle.aPos + transform.position, triangle.cPos) &&
-                SameSideOf(point, triangle.cPos + transform.position, triangle.aPos + transform.position, triangle.bPos));
+        bool A = SameSideOf(point, triangle.aPos, triangle.bPos, triangle.cPos);
+        bool B = SameSideOf(point, triangle.bPos, triangle.aPos, triangle.cPos);
+        bool C = SameSideOf(point, triangle.cPos, triangle.aPos, triangle.bPos);
+        return A && B && C;
     }
 
-    public bool SameSideOf(Vector3 p, Vector3 C, Vector3 A, Vector3 B)
+    public bool SameSideOf(Vector3 pA, Vector3 pB, Vector3 A, Vector3 B)
     {
         //Returns whether pA and pB are on the same side of the line AB or not
-        Vector3 crossA = Vector3.Cross(B - A, p - A);
-        Vector3 crossB = Vector3.Cross(B - A, C - A);
-        return Vector3.Dot(crossA,crossB) >= 0;
+        Vector3 crossA = Vector3.Cross(B - A, pA - A);
+        Vector3 crossB = Vector3.Cross(B - A, pB - A);
+        float dot = Vector3.Dot(crossA,crossB);
+        return dot >= 0;
+
     }
 
     private RaycastHit[] recursiveRaycast(Ray ray, float length, int layerMask)

@@ -14,7 +14,7 @@ public class gotoClick : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(Input.GetAxisRaw("Fire") > 0)
+        if(Input.GetAxisRaw("Fire") > 0 && !agent.IsPathfinding)
         {
             RaycastHit hit;
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
