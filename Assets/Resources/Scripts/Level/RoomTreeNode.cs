@@ -7,7 +7,7 @@ using UnityEngine;
 * Benjamin "Boris" Vesterlund, Anton "Knugen" Jonsson
 *
 * DESCRIPTION:
-* Scipt used for each node in a tree. The script allows for recursive method calls throughout the tree.
+* Script used for each node in a tree. The script allows for recursive method calls throughout the tree.
 *
 * CODE REVIEWED BY:
 *

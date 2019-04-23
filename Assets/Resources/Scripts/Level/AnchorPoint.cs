@@ -33,8 +33,6 @@ public class AnchorPoint : MonoBehaviour
     {
 
 		//Code to show doors and door connections in scene editor
-
-
 		if (Connected)
 		{
 			Debug.DrawLine(transform.position, transform.position + transform.forward * 2, Color.blue);
@@ -54,6 +52,7 @@ public class AnchorPoint : MonoBehaviour
 		return new Vector3(Mathf.RoundToInt(transform.position.x * 1000) / 1000.0f, Mathf.RoundToInt(transform.position.y * 1000) / 1000.0f, Mathf.RoundToInt(transform.position.z * 1000) / 1000.0f);
 	}
 
+	// Connect two doors together
 	public void ConnectDoor(AnchorPoint to)
 	{
 		if (to.GetPosition() == GetPosition())
@@ -61,9 +60,8 @@ public class AnchorPoint : MonoBehaviour
 			DoorComponent thisDoor = GetComponentInChildren<DoorComponent>();
 			DoorComponent toDoor = to.GetComponentInChildren<DoorComponent>();
 
-			//thisDoor.gameObject.SetActive(true);
+			// Destory one of the doors to avoid two doors in the same doorframe.
 			Destroy(toDoor.gameObject);
-			//toDoor.gameObject.SetActive(false);
 
 			thisDoor.Locked = false;
 			toDoor.Locked = false;
@@ -74,10 +72,13 @@ public class AnchorPoint : MonoBehaviour
 			ConnectedTo = to;
 		}
 	}
+
+	// Disconnects a door from whatever it was connected with.
 	public void DisconnectDoor()
 	{
 		if (Connected)
 		{
+			// If either door was previously removed, readd it and lock it.
 			DoorComponent thisDoor = GetComponentInChildren<DoorComponent>();
 			DoorComponent toDoor = ConnectedTo.GetComponentInChildren<DoorComponent>();
 
@@ -107,6 +108,8 @@ public class AnchorPoint : MonoBehaviour
 			ConnectedTo = null;
 		}
 	}
+
+	// Reconnects a door to a new door.
 	public void ReConnectTo(AnchorPoint to)
 	{
 		DisconnectDoor();
