@@ -49,7 +49,7 @@ public class NavMesh : MonoBehaviour
 
     public bool bake;
     public bool draw;
-    Quaternion rotation = Quaternion.Euler(-90, 0, 0);
+    Quaternion rotation = Quaternion.Euler(0, 0, 0);
 
     private Mesh highlight;
 
@@ -57,6 +57,7 @@ public class NavMesh : MonoBehaviour
     {
         if (bake)
         {
+            rotation = Quaternion.Euler(0, 0, 0);
             bake = false;
 
             vertices = new Vector3[inputMesh.vertices.Length];
