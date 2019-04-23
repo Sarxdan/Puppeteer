@@ -10,7 +10,7 @@ using Mirror;
 * 
 *
 * CODE REVIEWED BY:
-* = Needs review
+* Benjamin "Boris" Vesterlund 23/4/2019
 *
 * CONTRIBUTORS:
 */

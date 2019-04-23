@@ -246,6 +246,12 @@ public class GrabTool : MonoBehaviour
 		{
 			return false;
 		}
+		// Check if source room contains player
+		if (sourceObject.GetComponent<RoomInteractable>().RoomContainsPlayer())
+		{
+			return false;
+		}
+
 		// Only to check collision (not real movement)
 		guideObject.transform.rotation = selectedObject.transform.rotation;
 		guideObject.transform.position = selectedObject.transform.position - (src.transform.position - dst.transform.position);
