@@ -58,6 +58,15 @@ public class AnchorPoint : MonoBehaviour
 	{
 		if (to.GetPosition() == GetPosition())
 		{
+			DoorComponent thisDoor = GetComponentInChildren<DoorComponent>();
+			DoorComponent toDoor = to.GetComponentInChildren<DoorComponent>();
+
+			//thisDoor.gameObject.SetActive(true);
+			toDoor.gameObject.SetActive(false);
+
+			thisDoor.Locked = false;
+			toDoor.Locked = false;
+
 			to.Connected = true;
 			to.ConnectedTo = this;
 			Connected = true;

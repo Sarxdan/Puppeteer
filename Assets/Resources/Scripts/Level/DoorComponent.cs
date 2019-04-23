@@ -28,7 +28,7 @@ public class DoorComponent : Interactable
         locked = value;
         if(locked)
         {
-            transform.rotation = Quaternion.Euler(transform.eulerAngles.x, defaultAngle, transform.eulerAngles.z);
+            transform.localRotation = Quaternion.Euler(transform.localEulerAngles.x, defaultAngle, transform.localEulerAngles.z);
         }
     }
     }
@@ -37,15 +37,17 @@ public class DoorComponent : Interactable
     public float RotationSpeed;
     // How much the door should open
     public float OpenAngle = 90;
+	public float defaultAngle = 0;
+	// Vector used for offsetting door position into doorframe correctly.
+	public Vector3 adjustmentVector = new Vector3(0.6f, 0, 0);
 
 	private float currentAngle = 0;
-	private float defaultAngle = 90;
 	private bool open = false;
 
     // Save the start angle of the door
     void Start()
     {
-        defaultAngle = transform.eulerAngles.y;
+        defaultAngle = transform.localEulerAngles.y;
 		currentAngle = defaultAngle;
     }
     // When the used key is pressed the direction the door should open is calculated
@@ -66,11 +68,11 @@ public class DoorComponent : Interactable
         {
             if(open)
             {
-                transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.Euler(transform.eulerAngles.x , defaultAngle + currentAngle, transform.eulerAngles.z), RotationSpeed);
+                transform.localRotation = Quaternion.RotateTowards(transform.localRotation, Quaternion.Euler(transform.localEulerAngles.x , defaultAngle + currentAngle, transform.localEulerAngles.z), RotationSpeed);
             }
             else
             {
-                transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.Euler(transform.eulerAngles.x , defaultAngle, transform.eulerAngles.z), RotationSpeed);
+                transform.localRotation = Quaternion.RotateTowards(transform.localRotation, Quaternion.Euler(transform.localEulerAngles.x , defaultAngle, transform.localEulerAngles.z), RotationSpeed);
             }
         }
     }
