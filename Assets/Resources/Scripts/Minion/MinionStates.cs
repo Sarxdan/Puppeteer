@@ -11,7 +11,14 @@ public class AttackingState : State
 
     public override void Run()
     {
-
+        Ray visionRay = new Ray(transform.position, Vector3.forward);
+        if (Physics.Raycast(visionRay, out RaycastHit hit, 10f))
+        {
+            if (hit.collider.tag == "Player")
+            {
+                transform.position = Vector3.MoveTowards(transform.position, GameObject.FindWithTag("Player").transform.position, Time.time);
+            }
+        }
     }
 
     public override void Exit()
