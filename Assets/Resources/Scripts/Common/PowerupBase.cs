@@ -21,6 +21,17 @@ public abstract class PowerupBase : MonoBehaviour
     // checks if the power is charged and ready to use
     public bool Charged;
 
+    // get percentage left of powerup
+    public float PercentageLeft
+    {
+        get
+        {
+            return Charged ? 1.0f : 1.0f - ((float)timeLeft / (float)Duration);
+        }
+    }
+
+    private int timeLeft;
+
     // attempts to start and consume the powerup
     public IEnumerator Run()
     {
@@ -30,13 +41,13 @@ public abstract class PowerupBase : MonoBehaviour
             yield break;
         }
 
-        int time = 0;
+        timeLeft = 0;
         Charged = false;
 
         // activate power
         this.OnActivate();
 
-        while(++time < Duration)
+        while(++timeLeft < Duration)
         {
             yield return new WaitForSeconds(1);
         }

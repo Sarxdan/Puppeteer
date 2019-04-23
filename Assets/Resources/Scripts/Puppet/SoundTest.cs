@@ -23,11 +23,11 @@ public class SoundTest : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-		GunShotEvent = FMODUnity.RuntimeManager.CreateInstance(GunShot);
-		ReloadEvent = FMODUnity.RuntimeManager.CreateInstance(Reload);
-		EmptyClipEvent = FMODUnity.RuntimeManager.CreateInstance(EmptyClip);
-		CockEvent = FMODUnity.RuntimeManager.CreateInstance(Cock);
-		SilentEvent = FMODUnity.RuntimeManager.CreateInstance(Silent);
+		//GunShotEvent = FMODUnity.RuntimeManager.CreateInstance(GunShot);
+		//ReloadEvent = FMODUnity.RuntimeManager.CreateInstance(Reload);
+		//EmptyClipEvent = FMODUnity.RuntimeManager.CreateInstance(EmptyClip);
+		//CockEvent = FMODUnity.RuntimeManager.CreateInstance(Cock);
+		//SilentEvent = FMODUnity.RuntimeManager.CreateInstance(Silent);
     }
 
     // Update is called once per frame

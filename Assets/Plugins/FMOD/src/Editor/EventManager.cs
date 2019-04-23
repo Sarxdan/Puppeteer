@@ -523,8 +523,8 @@ namespace FMODUnity
                 foreach (var bankRef in eventCache.EditorBanks)
                 {
                     var subDir = Path.GetDirectoryName(bankRef.Path).Replace(bankSourceFolder, "");
-                    string sourcePath = bankSourceFolder + subDir + Path.DirectorySeparatorChar + bankRef.Name + ".bank";
-                    string targetPath = bankTargetFolder + subDir + Path.DirectorySeparatorChar + bankRef.Name + "." + bankTargetExension;
+                    string sourcePath = bankSourceFolder /*+ subDir*/ + Path.DirectorySeparatorChar + bankRef.Name + ".bank";
+                    string targetPath = bankTargetFolder /*+ subDir*/ + Path.DirectorySeparatorChar + bankRef.Name + "." + bankTargetExension;
 
                     FileInfo sourceInfo = new FileInfo(sourcePath);
                     FileInfo targetInfo = new FileInfo(targetPath);

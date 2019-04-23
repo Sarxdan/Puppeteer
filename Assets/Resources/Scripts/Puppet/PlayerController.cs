@@ -28,7 +28,7 @@ public class PlayerController : MonoBehaviour
     public float MaxStamina;
     public float SprintAcc;
     public float StaminaRegenDelay;
-    public float RegenSpeed;
+    public float StaminaRegenSpeed;
 
     //Movement private variables
     private float currentMovementSpeed;
@@ -64,7 +64,7 @@ public class PlayerController : MonoBehaviour
         while (currentStamina < MaxStamina)
         {
             currentStamina++;
-            yield return new WaitForSeconds(RegenSpeed);
+            yield return new WaitForSeconds(StaminaRegenSpeed);
         }
     }
 
