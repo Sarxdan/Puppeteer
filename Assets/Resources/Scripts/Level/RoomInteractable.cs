@@ -28,4 +28,21 @@ public class RoomInteractable : Interactable
 	{
 
 	}
+
+	// Returns true if there is a player in the room
+	public bool RoomContainsPlayer()
+	{
+		foreach (BoxCollider collider in GetComponents<BoxCollider>())
+		{
+			foreach (GameObject player in GameObject.FindGameObjectsWithTag("Player"))
+			{
+				// Check if any player is within any collider on the room.
+				if (collider.bounds.Contains(player.transform.position))
+				{
+					return true;
+				}
+			}
+		}
+		return false;
+	}
 }

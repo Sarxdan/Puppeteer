@@ -124,7 +124,7 @@ public class GrabTool : MonoBehaviour
 	private void Pickup(GameObject pickupObject)
 	{
 		sourceObject = pickupObject;
-		sourceObject.name = "currentSourceObject";
+		sourceObject.name = "CurrentSourceObject";
 
 		selectedObject = Instantiate(sourceObject);
 		selectedObject.name = "SelectedObject";
@@ -160,7 +160,8 @@ public class GrabTool : MonoBehaviour
 	private void UpdatePositions()
 	{
 		Vector3 newPosition = MouseToWorldPosition() + grabOffset;
-		selectedObject.transform.position = new Vector3(newPosition.x, 5, newPosition.z);
+		selectedObject.transform.position = Vector3.Lerp(selectedObject.transform.position, new Vector3(newPosition.x, LiftHeight, newPosition.z), LiftSpeed * Time.deltaTime);
+
 		var doorsInSelectedRoom = selectedObject.GetComponentsInChildren<AnchorPoint>();
 		float bestDist = Mathf.Infinity;
 
@@ -245,6 +246,12 @@ public class GrabTool : MonoBehaviour
 		{
 			return false;
 		}
+		// Check if source room contains player
+		if (sourceObject.GetComponent<RoomInteractable>().RoomContainsPlayer())
+		{
+			return false;
+		}
+
 		// Only to check collision (not real movement)
 		guideObject.transform.rotation = selectedObject.transform.rotation;
 		guideObject.transform.position = selectedObject.transform.position - (src.transform.position - dst.transform.position);

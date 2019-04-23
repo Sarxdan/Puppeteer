@@ -42,16 +42,16 @@ public class AnchorPoint : MonoBehaviour
 		}
 		else
 		{
-			Debug.DrawLine(transform.position, transform.position + transform.forward * 2, Color.black);
+			Debug.DrawLine(transform.position, transform.position - transform.forward * 2, Color.black);
 			Debug.DrawLine(transform.position, transform.position + transform.up * 2, Color.black);
 		}
 
 	}
 
 	// Returns the Position of the AnchorPoint as a Vector of rounded Ints to avoid Unity float errors.
-	public Vector3Int GetPosition()
+	public Vector3 GetPosition()
 	{
-		return new Vector3Int(Mathf.RoundToInt(transform.position.x), Mathf.RoundToInt(transform.position.y), Mathf.RoundToInt(transform.position.z));
+		return new Vector3(Mathf.RoundToInt(transform.position.x * 1000) / 1000.0f, Mathf.RoundToInt(transform.position.y * 1000) / 1000.0f, Mathf.RoundToInt(transform.position.z * 1000) / 1000.0f);
 	}
 
 	public void ConnectDoor(AnchorPoint to)
