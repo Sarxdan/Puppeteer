@@ -131,10 +131,16 @@ public class LevelBuilder : NetworkBehaviour
 			var opendoor = openDoorQueue.Dequeue();
 			var room = roomsToBePlaced[0];
 
-			// TODO: Randomize order of doors
+			// Add doors to temporary list so they can be randomized.
+			List<AnchorPoint> doorList = new List<AnchorPoint>();
+			doorList.AddRange(room.GetComponentsInChildren<AnchorPoint>());
+
 			// Goes through all doors in the first room in the list and try to attatch it to the first door in the doorqueue.
-			foreach (var door in room.GetComponentsInChildren<AnchorPoint>())
+			while (doorList.Count > 0)
 			{
+				int index = Random.Range(0, doorList.Count);
+				AnchorPoint	door = doorList[index];
+
 				// Find the angle requierd for the doors to line up, then rotate the whole room.
 				float angle = Mathf.Round(-Vector3.Angle(opendoor.transform.forward, door.transform.forward) + 180);
 				room.transform.Rotate(Vector3.up, angle);
@@ -160,6 +166,7 @@ public class LevelBuilder : NetworkBehaviour
 				if (!canBePlaced)
 				{
 					room.transform.position = new Vector3(0, -100, 0);
+					doorList.RemoveAt(index);
 					continue;
 				}
 
