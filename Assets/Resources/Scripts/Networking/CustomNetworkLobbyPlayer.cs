@@ -13,7 +13,7 @@ using Mirror;
 *
 * CODE REVIEWED BY:
 * Anton Jonsson 17/04-2019
-* = Needs review
+* Benjamin "Boris" Vesterlund 23/4/2019
 *
 * CONTRIBUTORS:
 */
@@ -26,9 +26,16 @@ public class CustomNetworkLobbyPlayer : NetworkLobbyPlayer
     [SyncVar]
     public int SelectedCharacterIndex = -1;
 
+    [SyncVar (hook = nameof(UpdateNicknameText))]
+    public string Nickname;
+
     [Header("UI")]
     public Button ReadyButton;
     public Text ReadyText;
+    public Text PlayerText;
+    public InputField PlayerNameInput;
+
+    static int playerCount = 0;
 
     // Update is called once per frame
     void Update()
@@ -55,6 +62,7 @@ public class CustomNetworkLobbyPlayer : NetworkLobbyPlayer
         if (lobby != null && SceneManager.GetActiveScene().name == lobby.LobbyScene)
         {
             gameObject.transform.SetParent(GameObject.Find("Players").transform);
+            playerCount++;
         }
     }
 
@@ -70,10 +78,16 @@ public class CustomNetworkLobbyPlayer : NetworkLobbyPlayer
     {
         base.OnClientEnterLobby();
         gameObject.transform.localPosition = new Vector3(0, -(Index * (Screen.height / 6)), 0);
+        gameObject.transform.localScale = new Vector3(1.2f , 1.2f, 1);
+
+
+        CmdSetNickname("Player " + playerCount.ToString());
 
         if (isLocalPlayer)
         {
+            PlayerNameInput = GameObject.Find("NicknameInput").GetComponent<InputField>();
             GameObject.Find("ReadyButton").GetComponent<Button>().onClick.AddListener(delegate { ToggleReadyState(); });
+            GameObject.Find("SetNicknameButton").GetComponent<Button>().onClick.AddListener(delegate { ChangeNickname(); });
         }
 
     }
@@ -94,6 +108,12 @@ public class CustomNetworkLobbyPlayer : NetworkLobbyPlayer
         SelectedCharacterIndex = index;
         RpcSelectCharacter(index);
     }
+
+    [Command]
+    public void CmdSetNickname(string newNickname)
+    {
+        Nickname = newNickname;
+    }
     #endregion
 
 
@@ -110,7 +130,7 @@ public class CustomNetworkLobbyPlayer : NetworkLobbyPlayer
     {
         Debug.Log(characterIndex);
         //TODO Change Index.ToString() to be the players name
-        GameObject.Find("CharacterSelecter").GetComponent<CharacterSelect>().CharacterSelected(characterIndex, Index.ToString(), Index);
+        GameObject.Find("CharacterSelecter").GetComponent<CharacterSelect>().CharacterSelected(characterIndex, Nickname, Index);
     }
     #endregion
 
@@ -130,5 +150,15 @@ public class CustomNetworkLobbyPlayer : NetworkLobbyPlayer
         {
         CmdToggleReadyState();
         }
+    }
+
+    public void UpdateNicknameText(string newName)
+    {
+        PlayerText.text = newName;
+    }
+
+    public void ChangeNickname()
+    {
+        CmdSetNickname(PlayerNameInput.text);
     }
 }
