@@ -7,15 +7,13 @@ using UnityEngine;
  * Philip Stenmark
  * 
  * DESCRIPTION:
- * Increases maximum stamina and overall movement speed when activated.
+ * When activated, the owner will become invisible for all observers except other players.
  * 
  * CODE REVIEWED BY:
  * 
  */
-public class StaminaPower : PowerupBase
+public class InvisibilityPower : PowerupBase
 {
-    public float SpeedModifier = 2.0f;
-
     public override void OnActivate()
     {
         
