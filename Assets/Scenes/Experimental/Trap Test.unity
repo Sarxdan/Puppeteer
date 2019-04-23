@@ -184,7 +184,7 @@ MonoBehaviour:
   ActivationTime: 1
   DestroyTime: 20
   Puppets: []
-  anim: {fileID: 0}
+  Anim: {fileID: 0}
 --- !u!114 &256951346
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -578,15 +578,18 @@ MonoBehaviour:
   MovementSpeed: 5
   AccelerationRate: 10
   SprintSpeed: 8
-  StaminaMax: 10
-  JumpForce: 1
-  JumpRayLength: 1
+  MaxStamina: 0
+  SprintAcc: 0
+  StaminaRegenDelay: 0
+  StaminaRegenSpeed: 0
+  currentStamina: 0
+  jumpForce: 0
+  jumpRayLength: 0
   HeadTransform: {fileID: 794451509}
   LookVerticalMin: -90
   LookVerticalMax: 90
   MouseSensitivity: 1.5
   HasMedkit: 0
-  ReviveTime: 10
   CurrentWeapon: {fileID: 0}
   Ammunition: 100000
 --- !u!54 &1151212104
@@ -842,15 +845,18 @@ MonoBehaviour:
   MovementSpeed: 5
   AccelerationRate: 10
   SprintSpeed: 8
-  StaminaMax: 10
-  JumpForce: 1
-  JumpRayLength: 1
+  MaxStamina: 0
+  SprintAcc: 0
+  StaminaRegenDelay: 0
+  StaminaRegenSpeed: 0
+  currentStamina: 0
+  jumpForce: 0
+  jumpRayLength: 0
   HeadTransform: {fileID: 0}
   LookVerticalMin: -90
   LookVerticalMax: 90
   MouseSensitivity: 1.5
   HasMedkit: 0
-  ReviveTime: 10
   CurrentWeapon: {fileID: 0}
   Ammunition: 100000
 --- !u!54 &1452884227
@@ -1057,7 +1063,7 @@ MonoBehaviour:
   ActivationTime: 2
   DestroyTime: 2
   Puppets: []
-  anim: {fileID: 0}
+  Anim: {fileID: 0}
 --- !u!114 &1796439606
 MonoBehaviour:
   m_ObjectHideFlags: 0
