@@ -191,7 +191,7 @@ public class PlayerController : MonoBehaviour
 
 
         //Jumping
-        if (Input.GetButton("Jump") && Physics.Raycast(transform.position, -transform.up, jumpRayLength))
+        if (Input.GetButtonDown("Jump") && Physics.Raycast(transform.position, -transform.up, jumpRayLength))
         {
             rigidBody.AddForce(transform.up * jumpForce, ForceMode.Impulse);
         }
