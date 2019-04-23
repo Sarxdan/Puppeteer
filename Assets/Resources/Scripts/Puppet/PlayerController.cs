@@ -54,6 +54,7 @@ public class PlayerController : MonoBehaviour
     //Weapons
     public GameObject CurrentWeapon;
     public int Ammunition;
+    public bool CanShoot;
 
     private Rigidbody rigidBody;
 
@@ -71,6 +72,7 @@ public class PlayerController : MonoBehaviour
     void Start()
     {
         rigidBody = GetComponent<Rigidbody>();
+        gameObject.GetComponent<HealthComponent>().AddDeathAction(Stunned);
         //Saves the original input from the variables
         speedSave = MovementSpeed;
         accSave = AccelerationRate;
@@ -78,7 +80,7 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
-        if(CurrentWeapon != null)
+        if(CurrentWeapon != null && CanShoot)
         {
             // fire current weapon
             if(Input.GetButton("Fire"))
@@ -130,7 +132,7 @@ public class PlayerController : MonoBehaviour
     {
         //Horizontal movement
 
-        if (Input.GetAxisRaw("Horizontal") != 0 || Input.GetAxisRaw("Vertical") != 0)
+        if ( Input.GetAxisRaw("Horizontal") != 0 || Input.GetAxisRaw("Vertical") != 0)
         {
             currentMovementSpeed += currentMovementSpeed < MovementSpeed ? AccelerationRate * Time.deltaTime : 0; //Accelerates to MovementSpeed
             Vector3 direction = (Input.GetAxisRaw("Horizontal") * transform.right + Input.GetAxisRaw("Vertical") * transform.forward).normalized; //Direction to move
@@ -193,5 +195,24 @@ public class PlayerController : MonoBehaviour
         {
             rigidBody.AddForce(transform.up * jumpForce, ForceMode.Impulse);
         }
+    }
+
+    //Freezes the position of the puppet and disables shooting and interacting
+    public void Stunned()
+    {
+        rigidBody.constraints = RigidbodyConstraints.FreezePosition | RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
+        CanShoot = false;
+        if(gameObject.GetComponent<HealthComponent>().Health <= 0)
+        {
+            gameObject.GetComponent<InteractionController>().enabled = false;
+        }
+    }
+
+    //Unstunns the enemy and enables shooting and interacting
+    public void UnStunned()
+    {
+        rigidBody.constraints = RigidbodyConstraints.None | RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
+        CanShoot = true;
+        gameObject.GetComponent<InteractionController>().enabled = true;
     }
 }

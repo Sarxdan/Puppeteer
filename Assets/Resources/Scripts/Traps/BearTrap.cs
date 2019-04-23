@@ -2,14 +2,27 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/*
+ * AUTHOR:
+ * Sandra "Sanders" Andersson
+ * 
+ * DESCRIPTION:
+ * This script is placed on the bear trap for specific attributes.
+ * 
+ * CODE REVIEWED BY:
+ * 
+ * 
+ * 
+ */
+
 public class BearTrap : TrapComponent
 {
+    public GameObject target;
+
     public override void OnTriggerEnter(Collider other)
     {
-        Debug.Log("Collision!");
         if (other.gameObject.tag == "Player")
         {
-            Debug.Log("Puppet added" + Puppets.Count);
             if (Puppets.Count <= 0)
             {
                 StartCoroutine("TrapTimer");
@@ -29,19 +42,21 @@ public class BearTrap : TrapComponent
         Puppets.Remove(other.gameObject);
     }
     
+    //Stun and damage the puppet that last entered the trap
+    //and enable interaction with it for releasing puppet
     public override void ActivateTrap()
     {
-        //TODO: Disable walking for the puppet
-        GameObject target = Puppets[0];
+        target = Puppets[0];
         target.GetComponent<HealthComponent>().Damage(Damage);
+        target.GetComponent<PlayerController>().Stunned();
 
-        Debug.Log("Ultimate Bang");
-
-        StartCoroutine("DestroyTimer");
+        gameObject.GetComponent<BearInteract>().enabled = true;
     }
+
     public override void DestroyTrap()
     {
-        //TODO: Enable walking for the puppet
+        target.GetComponent<PlayerController>().UnStunned();
+
         Destroy(gameObject);
     }
 }
