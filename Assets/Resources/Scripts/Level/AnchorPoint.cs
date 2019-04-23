@@ -42,7 +42,7 @@ public class AnchorPoint : MonoBehaviour
 		}
 		else
 		{
-			Debug.DrawLine(transform.position, transform.position + transform.forward * 2, Color.black);
+			Debug.DrawLine(transform.position, transform.position - transform.forward * 2, Color.black);
 			Debug.DrawLine(transform.position, transform.position + transform.up * 2, Color.black);
 		}
 

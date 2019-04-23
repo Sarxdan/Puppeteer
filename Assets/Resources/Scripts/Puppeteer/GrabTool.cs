@@ -124,7 +124,7 @@ public class GrabTool : MonoBehaviour
 	private void Pickup(GameObject pickupObject)
 	{
 		sourceObject = pickupObject;
-		sourceObject.name = "currentSourceObject";
+		sourceObject.name = "CurrentSourceObject";
 
 		selectedObject = Instantiate(sourceObject);
 		selectedObject.name = "SelectedObject";
@@ -160,7 +160,8 @@ public class GrabTool : MonoBehaviour
 	private void UpdatePositions()
 	{
 		Vector3 newPosition = MouseToWorldPosition() + grabOffset;
-		selectedObject.transform.position = new Vector3(newPosition.x, 5, newPosition.z);
+		selectedObject.transform.position = Vector3.Lerp(selectedObject.transform.position, new Vector3(newPosition.x, LiftHeight, newPosition.z), LiftSpeed * Time.deltaTime);
+
 		var doorsInSelectedRoom = selectedObject.GetComponentsInChildren<AnchorPoint>();
 		float bestDist = Mathf.Infinity;
 
