@@ -54,7 +54,7 @@ public class PlayerController : MonoBehaviour
     //Weapons
     public GameObject CurrentWeapon;
     public int Ammunition;
-    public bool CanShoot;
+    public bool CanShoot = true;
 
     private Rigidbody rigidBody;
 
