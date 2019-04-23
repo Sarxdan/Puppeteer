@@ -74,6 +74,7 @@ public class HealthComponent : MonoBehaviour
     {
         Health = (uint)(MaxHealth * MaxReviveRatio);
         AllowRegen = true;
+        AddDeathAction(gameObject.GetComponent<PlayerController>().Stunned);
     }
 
     //Registers a new zero health delegate
@@ -82,7 +83,7 @@ public class HealthComponent : MonoBehaviour
         this.zeroHealthAction += action;
     }
 
-    //Unregisters an existing zero health delegate
+    //Unregisters an existing zero health delegatew
     public void RemoveDeathAction(OnZeroHealth action)
     {
         this.zeroHealthAction -= action;
