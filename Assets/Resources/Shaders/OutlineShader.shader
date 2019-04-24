@@ -1,11 +1,9 @@
-﻿// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
-
-Shader "Outline" {
+﻿Shader "Outline" {
 	Properties{
-		_Color("Base Color", Color) = (1,0,0,1)
-		_OutlineColor("Outline Color", Color) = (1,0,0,1)
-		_OutlineWidth("Outline Width", Range(0.0, 1.0)) = 0.05
-		_MainTex("Diffuse Texture", 2D) = "white" { }
+		_Color("Base Color", Color) = (.5,.5,.5,1)
+		_OutlineColor("Outline Color", Color) = (0,0,0,1)
+		_OutlineWidth("Outline Width", Range(0, 1)) = .1
+		_MainTex("Base Texture", 2D) = "white" { }
 	}
 
 		CGINCLUDE
@@ -26,110 +24,80 @@ Shader "Outline" {
 
 	v2f vert(appdata v) {
 		v2f o;
+		v.vertex *= (1 + _OutlineWidth);
 		o.pos = UnityObjectToClipPos(v.vertex);
-
-		float3 norm = mul((float3x3)UNITY_MATRIX_IT_MV, v.normal);
-		float2 offset = TransformViewToProjection(norm.xy);
-
-		o.pos.xy += offset * o.pos.z * _OutlineWidth;
 		o.color = _OutlineColor;
 		return o;
 	}
 	ENDCG
 
 		SubShader{
-			Tags { "Queue" = "Transparent" }
+CGPROGRAM
+#pragma surface surf Lambert
 
-			// note that a vertex shader is specified here but its using the one above
-			Pass {
-				Name "OUTLINE"
-				Tags { "LightMode" = "Always" }
-				Cull Off
-				ZWrite Off
-				ZTest LEqual
-				ColorMask RGB // alpha not used
+sampler2D _MainTex;
+fixed4 _Color;
 
-				// you can choose what kind of blending mode you want for the outline
-				Blend SrcAlpha OneMinusSrcAlpha // Normal
-				//Blend One One // Additive
-				//Blend One OneMinusDstColor // Soft Additive
-				//Blend DstColor Zero // Multiplicative
-				//Blend DstColor SrcColor // 2x Multiplicative
+struct Input {
+	float2 uv_MainTex;
+};
+
+void surf(Input IN, inout SurfaceOutput o) {
+	fixed4 c = tex2D(_MainTex, IN.uv_MainTex) * _Color;
+	o.Albedo = c.rgb;
+	o.Alpha = c.a;
+}
+ENDCG
+
+Pass {
+	Name "OUTLINE"
+	Tags { "LightMode" = "Always" }
+	Cull Front
+	ZWrite On
+	ColorMask RGB
+	Blend SrcAlpha OneMinusSrcAlpha
 
 	CGPROGRAM
 	#pragma vertex vert
 	#pragma fragment frag
-
-	half4 frag(v2f i) :COLOR {
-		return i.color;
-	}
+	half4 frag(v2f i) :COLOR { return i.color; }
 	ENDCG
-			}
-
-			Pass {
-				Name "BASE"
-				ZWrite On
-				ZTest LEqual
-				Blend SrcAlpha OneMinusSrcAlpha
-				Material {
-					Diffuse[_Color]
-					Ambient[_Color]
-				}
-				Lighting On
-				SetTexture[_MainTex] {
-					ConstantColor[_Color]
-					Combine texture * constant
-				}
-				SetTexture[_MainTex] {
-					Combine previous * primary DOUBLE
-				}
-			}
+}
 	}
 
 		SubShader{
-			Tags { "Queue" = "Transparent" }
+	CGPROGRAM
+	#pragma surface surf Lambert
+
+	sampler2D _MainTex;
+	fixed4 _Color;
+
+	struct Input {
+		float2 uv_MainTex;
+	};
+
+	void surf(Input IN, inout SurfaceOutput o) {
+		fixed4 c = tex2D(_MainTex, IN.uv_MainTex) * _Color;
+		o.Albedo = c.rgb;
+		o.Alpha = c.a;
+	}
+	ENDCG
 
 			Pass {
 				Name "OUTLINE"
 				Tags { "LightMode" = "Always" }
 				Cull Front
-				ZWrite Off
-				ZTest Always
+				ZWrite On
 				ColorMask RGB
+				Blend SrcAlpha OneMinusSrcAlpha
 
-		// you can choose what kind of blending mode you want for the outline
-		Blend SrcAlpha OneMinusSrcAlpha // Normal
-		//Blend One One // Additive
-		//Blend One OneMinusDstColor // Soft Additive
-		//Blend DstColor Zero // Multiplicative
-		//Blend DstColor SrcColor // 2x Multiplicative
+				CGPROGRAM
+				#pragma vertex vert
+				#pragma exclude_renderers gles xbox360 ps3
+				ENDCG
+				SetTexture[_MainTex] { combine primary }
+			}
+}
 
-		CGPROGRAM
-		#pragma vertex vert
-		#pragma exclude_renderers gles xbox360 ps3
-		ENDCG
-		SetTexture[_MainTex] { combine primary }
-	}
-
-	Pass {
-		Name "BASE"
-		ZWrite On
-		ZTest LEqual
-		Blend SrcAlpha OneMinusSrcAlpha
-		Material {
-			Diffuse[_Color]
-			Ambient[_Color]
-		}
-		Lighting On
-		SetTexture[_MainTex] {
-			ConstantColor[_Color]
-			Combine texture * constant
-		}
-		SetTexture[_MainTex] {
-			Combine previous * primary DOUBLE
-		}
-	}
-	}
-
-		Fallback "Diffuse"
+Fallback "Diffuse"
 }
