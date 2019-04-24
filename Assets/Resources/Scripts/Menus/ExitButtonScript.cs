@@ -20,10 +20,10 @@ public class ExitButtonScript : MonoBehaviour
 {
     void Start()
     {
-        gameObject.GetComponent<Button>().onClick.AddListener(delegate { exitGame(); });
+        gameObject.GetComponent<Button>().onClick.AddListener(delegate { ExitGame(); });
     }
 
-    private void exitGame()
+    private void ExitGame()
     {
         Application.Quit();
     }
