@@ -1,4 +1,8 @@
-﻿Shader "Outline" {
+﻿/*
+	Draws an outline around the silhouette of the object with provided color and line width.
+	Made for use with highlightable objects in the scene.
+*/
+Shader "Outline" {
 	Properties {
 		_OutlineWidth("Outline Width", Range(0, 1)) = 0.1
 		_OutlineColor("Outline Color", Color) = (0,0,0,1)
@@ -23,17 +27,20 @@
 
 	v2f vert(appdata v) {
 		v2f o;
+		// scale vertex by outline offset
 		v.vertex *= (1 + _OutlineWidth);
+		// optionally disable entire outline
 		o.pos = UnityObjectToClipPos(v.vertex * _EnableOutline);
+		// select line color
 		o.color = _OutlineColor;
 		return o;
 	}
 	ENDCG
 
 	SubShader {
-
 		// transparent pass
 		Pass {
+			Name "Transparent"
 			Tags { "Queue" = "Transparent" }
 			Cull Back
 			Blend Zero One
