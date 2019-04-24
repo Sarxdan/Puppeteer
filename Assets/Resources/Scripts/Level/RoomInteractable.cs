@@ -10,7 +10,7 @@ using UnityEngine;
 * Script to determine what rooms should do when interacted with.
 *
 * CODE REVIEWED BY:
-* 
+* Filip Renman (24/4/2019)
 *
 * CONTRIBUTORS:
 */

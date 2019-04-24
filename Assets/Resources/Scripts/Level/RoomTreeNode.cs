@@ -10,6 +10,8 @@ using UnityEngine;
 * Script used for each node in a tree. The script allows for recursive method calls throughout the tree.
 *
 * CODE REVIEWED BY:
+* Filip Renman (24/4/2019)
+* 
 *
 * CONTRIBUTORS: 
 */

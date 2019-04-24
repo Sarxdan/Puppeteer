@@ -12,6 +12,7 @@ using Mirror;
 *
 * CODE REVIEWED BY:
 * Sandra "Sanders" Andersson (16/4)
+* Filip Renman (24/4)
 *
 * CONTRIBUTORS: 
 * Filip Renman, Kristoffer Lundgren

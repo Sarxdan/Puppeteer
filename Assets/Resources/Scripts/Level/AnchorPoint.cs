@@ -64,7 +64,6 @@ public class AnchorPoint : MonoBehaviour
 			Destroy(toDoor.gameObject);
 
 			thisDoor.Locked = false;
-			toDoor.Locked = false;
 
 			to.Connected = true;
 			to.ConnectedTo = this;
