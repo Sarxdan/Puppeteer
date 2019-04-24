@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Mirror;
 
 /*
 * AUTHOR:
@@ -15,7 +16,7 @@ using UnityEngine;
 * CONTRIBUTORS:
 */
 
-public class AnchorPoint : MonoBehaviour
+public class AnchorPoint : NetworkBehaviour
 {
 	// bool to see if AnchorPoint is connected to another AnchorPoint.
 	public bool Connected = false;
@@ -61,6 +62,8 @@ public class AnchorPoint : MonoBehaviour
 			DoorComponent toDoor = to.GetComponentInChildren<DoorComponent>();
 
 			// Destory one of the doors to avoid two doors in the same doorframe.
+
+			NetworkServer.Destroy(toDoor.gameObject);
 			Destroy(toDoor.gameObject);
 
 			thisDoor.Locked = false;
@@ -83,7 +86,7 @@ public class AnchorPoint : MonoBehaviour
 
 			if (thisDoor == null)
 			{
-				GameObject door = Instantiate(GetComponentInParent<LevelBuilder>().Door, transform);
+				GameObject door = Instantiate(GameObject.FindGameObjectWithTag("GameController").GetComponent<LevelBuilder>().Door, transform);
 				thisDoor = door.GetComponent<DoorComponent>();
 				door.transform.localEulerAngles = new Vector3(0, 0, 0);
 				door.transform.position = transform.position + transform.rotation * thisDoor.adjustmentVector;
@@ -91,7 +94,7 @@ public class AnchorPoint : MonoBehaviour
 			}
 			else if (toDoor == null)
 			{
-				GameObject door = Instantiate(GetComponentInParent<LevelBuilder>().Door, ConnectedTo.transform);
+				GameObject door = Instantiate(GameObject.FindGameObjectWithTag("GameController").GetComponent<LevelBuilder>().Door, ConnectedTo.transform);
 				toDoor = door.GetComponent<DoorComponent>();
 				door.transform.localEulerAngles = new Vector3(0, 0, 0);
 				door.transform.position = ConnectedTo.transform.position + ConnectedTo.transform.rotation * toDoor.adjustmentVector;
