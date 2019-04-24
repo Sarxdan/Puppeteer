@@ -62,20 +62,15 @@ public class DoorComponent : Interactable
 		Debug.Log("I Made It!!!!!!!");
 		if (!locked)
 		{
-			//float dotProduct = Vector3.Dot(transform.forward, interactor.transform.forward);
-			//currentAngle = OpenAngle * Mathf.Sign(dotProduct);
+			float dotProduct = Vector3.Dot(transform.forward, interactor.transform.forward);
+			currentAngle = OpenAngle * Mathf.Sign(dotProduct);
 			open = !open;
 		}
 	}
     public override void OnInteractEnd(GameObject interactor){}
     // Closes and opens the door
     void FixedUpdate()
-    {
-		if (!isServer)
-		{
-			//CmdInteractBegin(gameObject);
-		}
-		
+    {	
         if(!locked)
         {
             if(open)
@@ -88,15 +83,4 @@ public class DoorComponent : Interactable
             }
         }
     }
-
-	public void CallServerStuff(GameObject a)
-	{
-		CmdInteractBegin(a);
-	}
-
-	[Command]
-	public void CmdInteractBegin(GameObject interactor)
-	{
-		
-	}
 }

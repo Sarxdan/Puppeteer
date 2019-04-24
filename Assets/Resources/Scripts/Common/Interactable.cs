@@ -17,7 +17,7 @@ using Mirror;
  * 
  */
 
-public abstract class Interactable : NetworkBehaviour
+public abstract class Interactable : MonoBehaviour
 {
     private Material outlineMat;
     private void Start()

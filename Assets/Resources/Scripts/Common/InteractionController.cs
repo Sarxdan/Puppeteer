@@ -55,7 +55,7 @@ public class InteractionController : NetworkBehaviour
             if(Input.GetButtonDown("Use") && !isInteracting)
             {
 				//curInteractable.OnInteractBegin(gameObject);
-				CmdBeginInteract(gameObject);
+				CmdBeginInteract(new InteractStruct(gameObject, curInteractable.gameObject));
                 isInteracting = true; // TODO: syncvar if works :)
             }
 
@@ -87,9 +87,9 @@ public class InteractionController : NetworkBehaviour
     }
 
 	[Command]
-	public void CmdBeginInteract(GameObject interactable)
+	public void CmdBeginInteract(InteractStruct info)
 	{
-		//current.GetComponent<Interactable>().OnInteractBegin(gameObject);
+		info.Target.GetComponent<Interactable>().OnInteractBegin(info.Source);
 		Debug.Log("(:");
 	}
 }
