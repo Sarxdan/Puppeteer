@@ -2,7 +2,7 @@
 	Properties {
 		_OutlineWidth("Outline Width", Range(0, 1)) = 0.1
 		_OutlineColor("Outline Color", Color) = (0,0,0,1)
-		_UseOutline("Use Outline", Float) = 1
+		_EnableOutline("Enable Outline", Float) = 1.0
 	}
 
 	CGINCLUDE
@@ -19,34 +19,33 @@
 
 	uniform float _OutlineWidth;
 	uniform float4 _OutlineColor;
-	uniform float _UseOutline;
+	uniform float _EnableOutline;
 
 	v2f vert(appdata v) {
 		v2f o;
 		v.vertex *= (1 + _OutlineWidth);
-		// optionally disable outline
-		o.pos = UnityObjectToClipPos(v.vertex * _UseOutline);
+		o.pos = UnityObjectToClipPos(v.vertex * _EnableOutline);
 		o.color = _OutlineColor;
 		return o;
 	}
 	ENDCG
 
 	SubShader {
-		Tags { "Queue" = "Transparent" }
 
+		// transparent pass
 		Pass {
-			// transparent pass
+			Tags { "Queue" = "Transparent" }
 			Cull Back
 			Blend Zero One
 		}
 
+		// outline pass
 		Pass {
-			// outline pass
+			Name "Outline"
 			Tags { "LightMode" = "Always" }
 			Cull Front
 			Blend SrcAlpha OneMinusSrcAlpha
 
-// fragment program
 CGPROGRAM
 	#pragma vertex vert
 	#pragma fragment frag
