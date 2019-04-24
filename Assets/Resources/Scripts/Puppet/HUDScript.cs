@@ -4,12 +4,11 @@ using UnityEngine;
 using UnityEngine.UI;
 /*
  * AUTHOR:
- * Ludvig Björk Förare
- * Carl Appelkvist 
+ * Kristoffer Lundgren
  * 
  * 
  * DESCRIPTION:
- * A simple player controller allowing horizontal, jump and mouse movement.
+ * A script for drawing the HUD for the puppets, it handles health, stamina, medkits, and powerups
  * 
  * 
  * 
@@ -84,7 +83,7 @@ public class HUDScript : MonoBehaviour
     {
         
         drawHealthBar();
-
+        drawStaminaBar();
 
 
         //Powerup Status
@@ -92,6 +91,8 @@ public class HUDScript : MonoBehaviour
         float delta = powerUp.PercentageLeft;
         PowerUpFill.localScale = new Vector3(1, 1.0f - delta, 1);
         #endregion
+
+
         //Shows the medkit icon on the screen
         #region medKit
         if(playerController.HasMedkit && medKitToggle)
@@ -105,11 +106,13 @@ public class HUDScript : MonoBehaviour
             medKitToggle = true;
         }
         #endregion
+
+
         // Shows the current number of magazines depending on what weapon is currently equipped
         #region magazine counter 
         if(playerController.CurrentWeapon != null)
         {
-            float magazines = playerController.Ammunition / playerController.CurrentWeapon.GetComponent<WeaponComponent>().Capacity; 
+            float magazines = Mathf.Clamp(playerController.Ammunition / playerController.CurrentWeapon.GetComponent<WeaponComponent>().Capacity,0, 999); 
             
             if(magazines > 100)
             {
@@ -123,10 +126,6 @@ public class HUDScript : MonoBehaviour
                 CurrentAmmo.text = "0" +  Mathf.FloorToInt(magazines).ToString();
             }
         }
-        #endregion
-        // Updates the stamina bar
-        #region stamina bar
-
         #endregion
     }
 
@@ -143,7 +142,8 @@ public class HUDScript : MonoBehaviour
 
         }
         // Scale the health bar
-        HealthBarFill.localScale = new Vector3(Mathf.Lerp(xScaleHP * (Mathf.Clamp(lerpToHP, 0, maxHealth)/maxHealth), xScaleHP * (Mathf.Clamp(health, 0, maxHealth)/maxHealth), HPIncrement), HealthBarFill.localScale.y, HealthBarFill.localScale.z);
+        HealthBarFill.localScale = new Vector3(Mathf.Lerp(xScaleHP * (Mathf.Clamp(lerpToHP, 0, maxHealth)/maxHealth), xScaleHP * (Mathf.Clamp(health, 0, maxHealth)/maxHealth), HPIncrement),
+                                                         HealthBarFill.localScale.y, HealthBarFill.localScale.z);
         // Increment the lerp
         HPIncrement += HealthBarSpeed * Time.deltaTime;
         maxHealth = healthComponent.MaxHealth;
@@ -164,8 +164,7 @@ public class HUDScript : MonoBehaviour
             previousStamina = playerController.CurrentStamina;
         }
 
-        StaminaBarFill.localScale = new Vector3(Mathf.Lerp(xScaleStamina * (Mathf.Clamp(lerpToStamina, 0, playerController.MaxStamina)/playerController.MaxStamina),
-                                                xScaleStamina * (Mathf.Clamp(playerController.CurrentStamina, 0, playerController.MaxStamina)/playerController.MaxStamina), StaminaIncrement),
+        StaminaBarFill.localScale = new Vector3(Mathf.Lerp(xScaleStamina * (Mathf.Clamp(lerpToStamina, 0, playerController.MaxStamina)/playerController.MaxStamina), xScaleStamina * (Mathf.Clamp(playerController.CurrentStamina, 0, playerController.MaxStamina)/playerController.MaxStamina), StaminaIncrement),
                                                 StaminaBarFill.localScale.y, StaminaBarFill.localScale.z);
 
         StaminaIncrement += 0.8f*Time.deltaTime;
