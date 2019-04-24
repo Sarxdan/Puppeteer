@@ -53,6 +53,24 @@ public class LevelBuilder : NetworkBehaviour
 			SpawnRooms();
 			SpawnRoomsOnNetwork();
 		}
+		else
+		{
+			foreach (RoomInteractable room in FindObjectsOfType<RoomInteractable>())
+			{
+				room.transform.SetParent(parent.transform);
+			}
+
+			foreach (DoorComponent door in FindObjectsOfType<DoorComponent>())
+			{
+				foreach (AnchorPoint anchor in FindObjectsOfType<AnchorPoint>())
+				{
+					if ((anchor.transform.position - door.transform.position).magnitude <= 0.2)
+					{
+						door.transform.SetParent(anchor.transform);
+					}
+				}
+			}
+		}
 	}
 
 	// Randomizes the order of the rooms and puts them into roomsToBePlaced list.
@@ -224,10 +242,6 @@ public class LevelBuilder : NetworkBehaviour
     {
         foreach (RoomInteractable room in parent.gameObject.GetComponentsInChildren<RoomInteractable>())
         {
-            //Special case. If we find the container, we skip it.
-            if (gameObject == room.gameObject)
-                continue;
-
             NetworkServer.Spawn(room.gameObject);
             room.transform.SetParent(parent.transform);
         }
