@@ -20,7 +20,7 @@ public class PowerupRecharge : Interactable
         var power = interactor.GetComponent<PowerupBase>();
 
         // attempt to pickup recharge
-        if (power != null && !power.Charged)
+        if (power != null && power.PercentageLeft == 0.0f)
         {
             power.Charged = true;
             Destroy(gameObject);
