@@ -283,4 +283,9 @@ public class LevelBuilder : NetworkBehaviour
 			doorScript.Locked = true;
 		}
 	}
+
+	public GameObject GetLevel()
+	{
+		return parent;
+	}
 }

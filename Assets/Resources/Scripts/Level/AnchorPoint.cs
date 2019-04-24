@@ -87,6 +87,7 @@ public class AnchorPoint : NetworkBehaviour
 			if (thisDoor == null)
 			{
 				GameObject door = Instantiate(GameObject.FindGameObjectWithTag("GameController").GetComponent<LevelBuilder>().Door, transform);
+				NetworkServer.Spawn(door);
 				thisDoor = door.GetComponent<DoorComponent>();
 				door.transform.localEulerAngles = new Vector3(0, 0, 0);
 				door.transform.position = transform.position + transform.rotation * thisDoor.adjustmentVector;
@@ -95,6 +96,7 @@ public class AnchorPoint : NetworkBehaviour
 			else if (toDoor == null)
 			{
 				GameObject door = Instantiate(GameObject.FindGameObjectWithTag("GameController").GetComponent<LevelBuilder>().Door, ConnectedTo.transform);
+				NetworkServer.Spawn(door);
 				toDoor = door.GetComponent<DoorComponent>();
 				door.transform.localEulerAngles = new Vector3(0, 0, 0);
 				door.transform.position = ConnectedTo.transform.position + ConnectedTo.transform.rotation * toDoor.adjustmentVector;
