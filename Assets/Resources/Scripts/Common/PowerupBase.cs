@@ -49,7 +49,6 @@ public abstract class PowerupBase : MonoBehaviour
 
         while(timeLeft < Duration)
         {
-            Debug.Log(PercentageLeft);
             timeLeft += Time.deltaTime;
             yield return new WaitForEndOfFrame();
         }
@@ -57,8 +56,6 @@ public abstract class PowerupBase : MonoBehaviour
         // deactivate power
         timeLeft = Duration;
         this.OnComplete();
-
-        Debug.Log(PercentageLeft);
     }
     
     // called once when the powerup is activated
