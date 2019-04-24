@@ -10,7 +10,7 @@ using UnityEngine;
 * Tool used for grabbing and dropping rooms as puppeteer. Also does checks to determine if drop is legal.
 *
 * CODE REVIEWED BY:
-* 
+* Filip Renman (24/4/2019)
 *
 * CONTRIBUTORS:
 * Philip Stenmark
