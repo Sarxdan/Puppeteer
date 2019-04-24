@@ -17,6 +17,7 @@ using Mirror;
 * CONTRIBUTORS:
 */
 
+
 public class CustomNetworkManager : NetworkLobbyManager
 {
     [Header("Custom elements")]
@@ -25,13 +26,21 @@ public class CustomNetworkManager : NetworkLobbyManager
     public GameObject PlayersContainer;
     public GameObject[] PlayableCharacters;
 
+    private int AmountOfPlayersLastUpdate = -1;
+
     //Update is called once per frame
     public void Update()
     {
+
         if (!allPlayersReady)
             StartButton.interactable = false;
         else
             StartButton.interactable = true;
+
+        if (AmountOfPlayersLastUpdate != lobbySlots.Count)
+            PlayerReadyStatusChanged();
+
+        AmountOfPlayersLastUpdate = lobbySlots.Count;
     }
 
     //Runs when a game lobby is created by the host
