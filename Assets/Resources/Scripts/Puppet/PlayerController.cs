@@ -29,11 +29,9 @@ public class PlayerController : MonoBehaviour
     public float SprintAcc;
     public float StaminaRegenDelay;
     public float StaminaRegenSpeed;
-
+    public float currentStamina;
     //Movement private variables
     private float currentMovementSpeed;
-    [SerializeField]
-    private float currentStamina;
     private float accSave;
     private float speedSave;
     private bool isDown;
