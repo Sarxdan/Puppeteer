@@ -10,7 +10,7 @@ using UnityEngine;
 * Tool used for grabbing and dropping rooms as puppeteer. Also does checks to determine if drop is legal.
 *
 * CODE REVIEWED BY:
-* 
+* Filip Renman (24/4/2019)
 *
 * CONTRIBUTORS:
 * Philip Stenmark
@@ -47,7 +47,8 @@ public class GrabTool : MonoBehaviour
 
     void Start()
     {
-		level = GameObject.Find("Level").GetComponent<LevelBuilder>();
+		//level = GameObject.Find("Level").GetComponent<LevelBuilder>();
+		level = GetComponent<LevelBuilder>();
     }
 
     void Update()
@@ -190,6 +191,13 @@ public class GrabTool : MonoBehaviour
 		{
 			guideObject.transform.rotation = selectedObject.transform.rotation;
 			guideObject.transform.position = selectedObject.transform.position - (bestSrcPoint.transform.position - bestDstPoint.transform.position);
+
+			RoomTreeNode currentNode = sourceObject.GetComponent<RoomTreeNode>();
+			RoomTreeNode targetNode = bestDstPoint.GetComponentInParent<RoomTreeNode>();
+			currentNode.DisconnectFromTree();
+			currentNode.SetParent(targetNode);
+			currentNode.CutBranch();
+			level.GetStartNode().ReconnectToTree();
 		}
 		else
 		{
@@ -263,7 +271,7 @@ public class GrabTool : MonoBehaviour
 		guideObject.transform.rotation = selectedObject.transform.rotation;
 		guideObject.transform.position = selectedObject.transform.position - (src.transform.position - dst.transform.position);
 
-		RoomCollider[] placedRoomColliders = level.gameObject.GetComponentsInChildren<RoomCollider>();
+		RoomCollider[] placedRoomColliders = level.GetLevel().GetComponentsInChildren<RoomCollider>();
 
 		// Check if room overlaps when moved.
 		foreach (RoomCollider placedRoomCollider in placedRoomColliders)

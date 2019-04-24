@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Mirror;
 
 /*
  * AUTHOR:
@@ -16,7 +17,7 @@ using UnityEngine;
  * 
  */
 
-public abstract class Interactable : MonoBehaviour
+public abstract class Interactable : NetworkBehaviour
 {
     //Called once when an interaction has started
     public abstract void OnInteractBegin(GameObject interactor);
