@@ -161,6 +161,85 @@ MonoBehaviour:
   LiftHeight: 3
   LiftSpeed: 50
   EnableMovement: 0
+--- !u!1001 &372562718
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 2682485095117575597, guid: 8f1603c1a136b2a49ae5ef2841d4418e,
+        type: 3}
+      propertyPath: m_Name
+      value: Compass
+      objectReference: {fileID: 0}
+    - target: {fileID: 2682485095117575595, guid: 8f1603c1a136b2a49ae5ef2841d4418e,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2682485095117575595, guid: 8f1603c1a136b2a49ae5ef2841d4418e,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2682485095117575595, guid: 8f1603c1a136b2a49ae5ef2841d4418e,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2682485095117575595, guid: 8f1603c1a136b2a49ae5ef2841d4418e,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2682485095117575595, guid: 8f1603c1a136b2a49ae5ef2841d4418e,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2682485095117575595, guid: 8f1603c1a136b2a49ae5ef2841d4418e,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2682485095117575595, guid: 8f1603c1a136b2a49ae5ef2841d4418e,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2682485095117575595, guid: 8f1603c1a136b2a49ae5ef2841d4418e,
+        type: 3}
+      propertyPath: m_RootOrder
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 2682485095117575595, guid: 8f1603c1a136b2a49ae5ef2841d4418e,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2682485095117575595, guid: 8f1603c1a136b2a49ae5ef2841d4418e,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2682485095117575595, guid: 8f1603c1a136b2a49ae5ef2841d4418e,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4339769270322815234, guid: 8f1603c1a136b2a49ae5ef2841d4418e,
+        type: 3}
+      propertyPath: Targets.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4339769270322815234, guid: 8f1603c1a136b2a49ae5ef2841d4418e,
+        type: 3}
+      propertyPath: Owner
+      value: 
+      objectReference: {fileID: 1600226372}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 8f1603c1a136b2a49ae5ef2841d4418e, type: 3}
 --- !u!1 &652521863
 GameObject:
   m_ObjectHideFlags: 0
@@ -435,7 +514,7 @@ GameObject:
   - component: {fileID: 1600226366}
   - component: {fileID: 1600226365}
   - component: {fileID: 1600226364}
-  - component: {fileID: 1600226363}
+  - component: {fileID: 1600226373}
   m_Layer: 0
   m_Name: PlayerTest
   m_TagString: Untagged
@@ -443,21 +522,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1600226363
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1600226362}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 78f562d2d19aedb43b0e9b3f678d3fdc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Duration: 10
-  Charged: 1
-  SpeedModifier: 2
 --- !u!114 &1600226364
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -620,6 +684,20 @@ RectTransform:
   m_AnchoredPosition: {x: 1.029, y: 0.88}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1600226373
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1600226362}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4338e4b39628592469df6d92be02710a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Duration: 60
+  Charged: 1
 --- !u!1 &1647375292
 GameObject:
   m_ObjectHideFlags: 0

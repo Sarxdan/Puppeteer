@@ -10,6 +10,8 @@ using UnityEngine;
 * Script used for each node in a tree. The script allows for recursive method calls throughout the tree.
 *
 * CODE REVIEWED BY:
+* Filip Renman (24/4/2019)
+* 
 *
 * CONTRIBUTORS: 
 */
@@ -55,7 +57,7 @@ public class RoomTreeNode : MonoBehaviour
 	// Special case of FindNewParent() method where all children must find a suitable parent for the tree to still be valid. Used to initiate the search.
 	public bool CutBranch()
 	{
-		foreach (RoomTreeNode child in children)
+		foreach (RoomTreeNode child in children.ToArray())
 		{
 			if (!child.FindNewParent())
 			{

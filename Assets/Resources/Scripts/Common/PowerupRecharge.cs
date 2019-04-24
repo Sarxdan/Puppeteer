@@ -11,6 +11,7 @@ using UnityEngine;
  * May only be picked up if player's power is not already charged.
  * 
  * CODE REVIEWED BY:
+ * Anton Jonsson (24/4)
  * 
  */
 public class PowerupRecharge : Interactable
@@ -20,7 +21,7 @@ public class PowerupRecharge : Interactable
         var power = interactor.GetComponent<PowerupBase>();
 
         // attempt to pickup recharge
-        if (power != null && !power.Charged)
+        if (power != null && power.PercentageLeft == 0.0f)
         {
             power.Charged = true;
             Destroy(gameObject);

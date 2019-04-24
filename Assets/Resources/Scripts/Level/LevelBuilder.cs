@@ -12,6 +12,7 @@ using Mirror;
 *
 * CODE REVIEWED BY:
 * Sandra "Sanders" Andersson (16/4)
+* Filip Renman (24/4)
 *
 * CONTRIBUTORS: 
 * Filip Renman, Kristoffer Lundgren
@@ -39,16 +40,20 @@ public class LevelBuilder : NetworkBehaviour
 
 	private RoomTreeNode startNode;
 
+	private GameObject parent;
+
 	// Randomize order of rooms and place them in level. Also some networking checks to only do this on server.
     void Start()
     {
-		if (true) // TODO: change to ifServer
+		parent = GameObject.Find("Level");
+
+		if (isServer)
 		{
-            RandomizeRooms();
-            SpawnRooms();
-            SpawnRoomsOnNetwork();
-        }
-    }
+			RandomizeRooms();
+			SpawnRooms();
+			SpawnRoomsOnNetwork();
+		}
+	}
 
 	// Randomizes the order of the rooms and puts them into roomsToBePlaced list.
 	private void RandomizeRooms()
@@ -61,7 +66,7 @@ public class LevelBuilder : NetworkBehaviour
 		for (int i = 0; i < RoomsToSpawnBeforeDeadEndRooms; i++)
 		{
 			int index = Random.Range(0, MultiDoorRooms.Count);
-			GameObject instance = Instantiate(MultiDoorRooms[index], transform);
+			GameObject instance = Instantiate(MultiDoorRooms[index], parent.transform);
             instance.transform.position = new Vector3(0, -100, 0);
 			SpawnDoors(instance);
 			roomsToBePlaced.Add(instance);
@@ -77,7 +82,7 @@ public class LevelBuilder : NetworkBehaviour
 
 			if (index < MultiDoorRooms.Count)
 			{
-				var instance = Instantiate(MultiDoorRooms[index], transform);
+				var instance = Instantiate(MultiDoorRooms[index], parent.transform);
                 // Move room out of the way.
                 instance.transform.position = new Vector3(0, -100, 0);
 				SpawnDoors(instance);
@@ -88,7 +93,7 @@ public class LevelBuilder : NetworkBehaviour
 			else
 			{
 				index -= MultiDoorRooms.Count;
-				var instance = Instantiate(DeadEnds[index], transform);
+				var instance = Instantiate(DeadEnds[index], parent.transform);
                 // Move room out of the way.
                 instance.transform.position = new Vector3(0, -100, 0);
 				SpawnDoors(instance);
@@ -99,7 +104,7 @@ public class LevelBuilder : NetworkBehaviour
 		}
 
 		// Add EndRoom to list last so it is placed last.
-		var endRoom = Instantiate(EndRoom, transform);
+		var endRoom = Instantiate(EndRoom, parent.transform);
 		endRoom.transform.position = new Vector3(0, -100, 0);
 		SpawnDoors(endRoom);
 		roomsToBePlaced.Add(endRoom);
@@ -109,7 +114,7 @@ public class LevelBuilder : NetworkBehaviour
 	private void SpawnRooms()
 	{
 		// Place startroom before adding other rooms.
-		var startRoom = Instantiate(StartRoom, transform);
+		var startRoom = Instantiate(StartRoom, parent.transform);
 		SpawnDoors(startRoom);
 		startNode = startRoom.GetComponent<RoomTreeNode>();
 
@@ -217,14 +222,14 @@ public class LevelBuilder : NetworkBehaviour
     //Tells the network to spawn the rooms on every client
     private void SpawnRoomsOnNetwork()
     {
-        foreach (NetworkIdentity room in gameObject.GetComponentsInChildren<NetworkIdentity>())
+        foreach (RoomInteractable room in parent.gameObject.GetComponentsInChildren<RoomInteractable>())
         {
             //Special case. If we find the container, we skip it.
             if (gameObject == room.gameObject)
                 continue;
 
             NetworkServer.Spawn(room.gameObject);
-            room.transform.SetParent(GameObject.Find("Level").transform);
+            room.transform.SetParent(parent.transform);
         }
     }
 
@@ -232,9 +237,9 @@ public class LevelBuilder : NetworkBehaviour
 	public List<GameObject> GetRooms()
 	{
 		List<GameObject> result = new List<GameObject>();
-		for (int i = 0; i < transform.childCount; i++)
+		for (int i = 0; i < parent.transform.childCount; i++)
 		{
-			result.Add(transform.GetChild(i).gameObject);
+			result.Add(parent.transform.GetChild(i).gameObject);
 		}
 		return result;
 	}
@@ -245,7 +250,7 @@ public class LevelBuilder : NetworkBehaviour
 		foreach (var ownDoor in room.GetComponentsInChildren<AnchorPoint>())
 		{
 			ownDoor.DisconnectDoor();
-			foreach (var placedDoor in gameObject.GetComponentsInChildren<AnchorPoint>())
+			foreach (var placedDoor in parent.GetComponentsInChildren<AnchorPoint>())
 			{
 				if (ownDoor == placedDoor)
 					continue;
@@ -270,11 +275,17 @@ public class LevelBuilder : NetworkBehaviour
 		foreach (AnchorPoint doorAnchor in room.GetComponentsInChildren<AnchorPoint>())
 		{
 			GameObject door = Instantiate(Door, doorAnchor.transform);
+			NetworkServer.Spawn(door);
 			DoorComponent doorScript = door.GetComponent<DoorComponent>();
 			door.transform.localEulerAngles = new Vector3(0, 0, 0);
 			door.transform.position = doorAnchor.transform.position + doorAnchor.transform.rotation * doorScript.adjustmentVector;
 			doorScript.defaultAngle = 0;
 			doorScript.Locked = true;
 		}
+	}
+
+	public GameObject GetLevel()
+	{
+		return parent;
 	}
 }
