@@ -26,11 +26,11 @@ public abstract class PowerupBase : MonoBehaviour
     {
         get
         {
-            return Charged ? 1.0f : 1.0f - ((float)timeLeft / (float)Duration);
+            return Charged ? 1.0f : (1.0f - timeLeft / Duration);
         }
     }
 
-    private int timeLeft;
+    private float timeLeft;
 
     // attempts to start and consume the powerup
     public IEnumerator Run()
@@ -41,19 +41,24 @@ public abstract class PowerupBase : MonoBehaviour
             yield break;
         }
 
-        timeLeft = 0;
+        timeLeft = 0.0f;
         Charged = false;
 
         // activate power
         this.OnActivate();
 
-        while(++timeLeft < Duration)
+        while(timeLeft < Duration)
         {
-            yield return new WaitForSeconds(1);
+            Debug.Log(PercentageLeft);
+            timeLeft += Time.deltaTime;
+            yield return new WaitForEndOfFrame();
         }
 
         // deactivate power
+        timeLeft = Duration;
         this.OnComplete();
+
+        Debug.Log(PercentageLeft);
     }
     
     // called once when the powerup is activated
