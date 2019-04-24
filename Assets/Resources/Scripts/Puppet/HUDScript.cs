@@ -59,7 +59,7 @@ public class HUDScript : MonoBehaviour
         xScaleHP = HealthBarFill.localScale.x;
         xScaleStamina = StaminaBarFill.localScale.x;
         previousHP = healthComponent.Health;
-        previousStamina = playerController.currentStamina;
+        previousStamina = playerController.CurrentStamina;
     }   
 
     // Update is called once per frame
@@ -108,21 +108,21 @@ public class HUDScript : MonoBehaviour
         }
         #endregion
 
-        if(playerController.currentStamina != previousStamina)
+        if(playerController.CurrentStamina != previousStamina)
         {
             StaminaIncrement = 0;
             lerpToStamina = previousStamina;
-            previousStamina = playerController.currentStamina;
+            previousStamina = playerController.CurrentStamina;
         }
 
         StaminaBarFill.localScale = new Vector3(Mathf.Lerp(xScaleStamina * (Mathf.Clamp(lerpToStamina, 0, playerController.MaxStamina)/playerController.MaxStamina),
-                                                xScaleStamina * (Mathf.Clamp(playerController.currentStamina, 0, playerController.MaxStamina)/playerController.MaxStamina), StaminaIncrement),
+                                                xScaleStamina * (Mathf.Clamp(playerController.CurrentStamina, 0, playerController.MaxStamina)/playerController.MaxStamina), StaminaIncrement),
                                                 StaminaBarFill.localScale.y, StaminaBarFill.localScale.z);
         StaminaIncrement += 0.8f*Time.deltaTime;
 
         if(StaminaIncrement >= 1)
         {
-            previousStamina = playerController.currentStamina;
+            previousStamina = playerController.CurrentStamina;
             lerpToStamina = previousStamina;
         }
     }
