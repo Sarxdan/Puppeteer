@@ -33,6 +33,7 @@ public class PlayerController : MonoBehaviour
     // movement speed modifier used by power up
     public float MovementSpeedMod = 1.0f;
 
+
     //Movement private variables
     private float currentMovementSpeed;
     private float accSave;
