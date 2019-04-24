@@ -41,19 +41,21 @@ namespace MinionStates
                     {
                         health.Damage(machine.AttackDamage);
                     }
-                    foreach(GameObject i in machine.DownedPuppets)
+                    foreach (GameObject i in machine.DownedPuppets)
                     {
-                        if (machine.DownedPuppets.Contains(i) && true) // This was pushed with error for some reason
+                        if (i.GetComponent<HealthComponent>().Health > 0)
                         {
-
+                            Debug.Log("borta");
+                            machine.DownedPuppets.Remove(i);
+                            machine.TargetEntity = i;
                         }
                     }
-                    for (int i = 0; i < machine.DownedPuppets.Count ; i++)
-                    {
-						// This was pushed with error for some reason
-                        //if (machine.DownedPuppets.) 
+                    //for (int i = 0; i < machine.DownedPuppets.Count; i++)
+                    //{
+                    //    // This was pushed with error for some reason
+                    //    //if (machine.DownedPuppets.) 
 
-					}
+                    //}
                 }
             }
         }
