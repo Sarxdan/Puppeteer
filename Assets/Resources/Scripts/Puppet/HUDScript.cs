@@ -2,7 +2,22 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-
+/*
+ * AUTHOR:
+ * Ludvig Björk Förare
+ * Carl Appelkvist 
+ * 
+ * 
+ * DESCRIPTION:
+ * A simple player controller allowing horizontal, jump and mouse movement.
+ * 
+ * 
+ * 
+ * CODE REVIEWED BY:
+ * 
+ * CONTRIBUTORS:
+ * 
+*/
 public class HUDScript : MonoBehaviour
 {
 
@@ -45,12 +60,14 @@ public class HUDScript : MonoBehaviour
     //Used for making sure the setActive funtion is only run once when the medkit variable changes
     private bool medKitToggle = true;
 
-    //Staminabar
+    // Used for checking if the stamina has changes
     private float previousStamina;
+    // The stamina value to lerp to
     private float lerpToStamina;
+    // The lerp increment
     private float StaminaIncrement;
 
-    // Start is called before the first frame update
+    // Getting all the components and setting all the constant variables
     void Start()
     {
         healthComponent = Owner.GetComponent<HealthComponent>();    
@@ -107,24 +124,10 @@ public class HUDScript : MonoBehaviour
             }
         }
         #endregion
+        // Updates the stamina bar
+        #region stamina bar
 
-        if(playerController.CurrentStamina != previousStamina)
-        {
-            StaminaIncrement = 0;
-            lerpToStamina = previousStamina;
-            previousStamina = playerController.CurrentStamina;
-        }
-
-        StaminaBarFill.localScale = new Vector3(Mathf.Lerp(xScaleStamina * (Mathf.Clamp(lerpToStamina, 0, playerController.MaxStamina)/playerController.MaxStamina),
-                                                xScaleStamina * (Mathf.Clamp(playerController.CurrentStamina, 0, playerController.MaxStamina)/playerController.MaxStamina), StaminaIncrement),
-                                                StaminaBarFill.localScale.y, StaminaBarFill.localScale.z);
-        StaminaIncrement += 0.8f*Time.deltaTime;
-
-        if(StaminaIncrement >= 1)
-        {
-            previousStamina = playerController.CurrentStamina;
-            lerpToStamina = previousStamina;
-        }
+        #endregion
     }
 
     private void drawHealthBar()
@@ -141,9 +144,10 @@ public class HUDScript : MonoBehaviour
         }
         // Scale the health bar
         HealthBarFill.localScale = new Vector3(Mathf.Lerp(xScaleHP * (Mathf.Clamp(lerpToHP, 0, maxHealth)/maxHealth), xScaleHP * (Mathf.Clamp(health, 0, maxHealth)/maxHealth), HPIncrement), HealthBarFill.localScale.y, HealthBarFill.localScale.z);
-
+        // Increment the lerp
         HPIncrement += HealthBarSpeed * Time.deltaTime;
         maxHealth = healthComponent.MaxHealth;
+        // runs whe the lerp is complete
         if(HPIncrement >= 1)
         {
             previousHP = healthComponent.Health;
@@ -151,5 +155,25 @@ public class HUDScript : MonoBehaviour
         }
     }
 
+    private void drawStaminaBar()
+    {
+        if(playerController.CurrentStamina != previousStamina)
+        {
+            StaminaIncrement = 0;
+            lerpToStamina = previousStamina;
+            previousStamina = playerController.CurrentStamina;
+        }
+
+        StaminaBarFill.localScale = new Vector3(Mathf.Lerp(xScaleStamina * (Mathf.Clamp(lerpToStamina, 0, playerController.MaxStamina)/playerController.MaxStamina),
+                                                xScaleStamina * (Mathf.Clamp(playerController.CurrentStamina, 0, playerController.MaxStamina)/playerController.MaxStamina), StaminaIncrement),
+                                                StaminaBarFill.localScale.y, StaminaBarFill.localScale.z);
+
+        StaminaIncrement += 0.8f*Time.deltaTime;
+        if(StaminaIncrement >= 1)
+        {
+            previousStamina = playerController.CurrentStamina;
+            lerpToStamina = previousStamina;
+        }
+    }
 
 }
