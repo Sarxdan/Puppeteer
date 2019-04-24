@@ -11,6 +11,7 @@ using UnityEngine;
  * Requires that one object in the scene has the 'Finish' tag.
  * 
  * CODE REVIEWED BY:
+ * Anton Jonsson (24/4)
  * 
  */
 public class NavigationPower : PowerupBase

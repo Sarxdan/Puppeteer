@@ -11,6 +11,7 @@ using UnityEngine;
  * May only be picked up if player's power is not already charged.
  * 
  * CODE REVIEWED BY:
+ * Anton Jonsson (24/4)
  * 
  */
 public class PowerupRecharge : Interactable
