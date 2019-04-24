@@ -29,7 +29,11 @@ public class PlayerController : MonoBehaviour
     public float SprintAcc;
     public float StaminaRegenDelay;
     public float StaminaRegenSpeed;
-    public float currentStamina;
+    public float CurrentStamina;
+    // movement speed modifier used by power up
+    public float MovementSpeedMod = 1.0f;
+
+
     //Movement private variables
     private float currentMovementSpeed;
     private float accSave;
@@ -38,8 +42,8 @@ public class PlayerController : MonoBehaviour
     private bool reachedZero;
 
     //Jumping
-    public float jumpForce;
-    public float jumpRayLength;
+    public float JumpForce;
+    public float JumpRayLength;
 
     //Looking
     public Transform HeadTransform;
@@ -60,9 +64,9 @@ public class PlayerController : MonoBehaviour
     {
         yield return new WaitForSeconds(StaminaRegenDelay);
 
-        while (currentStamina < MaxStamina)
+        while (CurrentStamina < MaxStamina)
         {
-            currentStamina++;
+            CurrentStamina++;
             yield return new WaitForSeconds(StaminaRegenSpeed);
         }
     }
@@ -132,7 +136,7 @@ public class PlayerController : MonoBehaviour
 
         if ( Input.GetAxisRaw("Horizontal") != 0 || Input.GetAxisRaw("Vertical") != 0)
         {
-            currentMovementSpeed += currentMovementSpeed < MovementSpeed ? AccelerationRate * Time.deltaTime : 0; //Accelerates to MovementSpeed
+            currentMovementSpeed += currentMovementSpeed < MovementSpeed * MovementSpeedMod ? AccelerationRate * Time.deltaTime : 0; //Accelerates to MovementSpeed
             Vector3 direction = (Input.GetAxisRaw("Horizontal") * transform.right + Input.GetAxisRaw("Vertical") * transform.forward).normalized; //Direction to move
             rigidBody.MovePosition(transform.position + direction * currentMovementSpeed * Time.deltaTime);
         }
@@ -164,12 +168,12 @@ public class PlayerController : MonoBehaviour
             isDown = true;
             MovementSpeed = SprintSpeed;
             AccelerationRate = SprintAcc;
-            currentStamina--;
-            if (isDown == true && currentStamina > 0)
+            CurrentStamina--;
+            if (isDown == true && CurrentStamina > 0)
             {
                 StopCoroutine("StaminaRegenRoutine");
             }
-            else if (currentStamina <= 0)
+            else if (CurrentStamina <= 0)
             {
                 MovementSpeed = speedSave;
                 currentMovementSpeed = MovementSpeed;
@@ -189,9 +193,9 @@ public class PlayerController : MonoBehaviour
 
 
         //Jumping
-        if (Input.GetButtonDown("Jump") && Physics.Raycast(transform.position, -transform.up, jumpRayLength))
+        if (Input.GetButtonDown("Jump") && Physics.Raycast(transform.position, -transform.up, JumpRayLength))
         {
-            rigidBody.AddForce(transform.up * jumpForce, ForceMode.Impulse);
+            rigidBody.AddForce(transform.up * JumpForce, ForceMode.Impulse);
         }
     }
 
