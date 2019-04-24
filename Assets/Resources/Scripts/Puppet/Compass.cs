@@ -37,7 +37,7 @@ public class Compass : MonoBehaviour
         whiteBar = new GUIStyle { normal = new GUIStyleState { background = Texture2D.whiteTexture } };
     }
 
-    void Update()
+    void OnGUI()
     {
         if(Owner == null)
         {
