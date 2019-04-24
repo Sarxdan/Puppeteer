@@ -47,7 +47,8 @@ public class GrabTool : MonoBehaviour
 
     void Start()
     {
-		level = GameObject.Find("Level").GetComponent<LevelBuilder>();
+		//level = GameObject.Find("Level").GetComponent<LevelBuilder>();
+		level = GetComponent<LevelBuilder>();
     }
 
     void Update()
