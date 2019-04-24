@@ -222,7 +222,7 @@ public class LevelBuilder : NetworkBehaviour
     //Tells the network to spawn the rooms on every client
     private void SpawnRoomsOnNetwork()
     {
-        foreach (RoomInteractable room in gameObject.GetComponentsInChildren<RoomInteractable>())
+        foreach (RoomInteractable room in parent.gameObject.GetComponentsInChildren<RoomInteractable>())
         {
             //Special case. If we find the container, we skip it.
             if (gameObject == room.gameObject)
