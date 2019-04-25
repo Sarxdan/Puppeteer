@@ -2167,11 +2167,12 @@ GameObject:
   - component: {fileID: 591953401651075568}
   - component: {fileID: 591953401651075571}
   - component: {fileID: 591953401651075583}
-  - component: {fileID: 591953401651075582}
-  - component: {fileID: 591953401651075577}
   - component: {fileID: 591953401651075576}
   - component: {fileID: 591953401651075579}
   - component: {fileID: 591953401651075578}
+  - component: {fileID: 8871172352554027632}
+  - component: {fileID: 2938287794061509675}
+  - component: {fileID: 3048783195332344851}
   m_Layer: 0
   m_Name: Froggo
   m_TagString: Untagged
@@ -2187,7 +2188,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 591953402505555194}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.438, z: 0}
+  m_LocalPosition: {x: 0, y: 5, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 591953402505392326}
@@ -2295,34 +2296,6 @@ MonoBehaviour:
   RegenSpeed: 1
   RegenDelay: 10
   AllowRegen: 0
---- !u!114 &591953401651075582
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 591953402505555194}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a2c2b8e92ddf9274c920d4197a66a3d5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  syncInterval: 0.1
-  componentsToDisable: []
---- !u!114 &591953401651075577
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 591953402505555194}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 41da09f073a954b4dae28c974e911522, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  syncInterval: 0.1
-  compressRotation: 1
 --- !u!114 &591953401651075576
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2337,8 +2310,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   serverOnly: 0
   localPlayerAuthority: 1
-  m_AssetId: 
-  m_SceneId: 856172362
+  m_AssetId: 33b9c727c533647419579d7e52a92de5
+  m_SceneId: 0
 --- !u!114 &591953401651075579
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2368,6 +2341,51 @@ MonoBehaviour:
   ReviveDelay: 0
   DeathDelay: 0
   RequireMedkit: 1
+--- !u!114 &8871172352554027632
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 591953402505555194}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 41da09f073a954b4dae28c974e911522, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncInterval: 0.1
+  compressRotation: 1
+--- !u!114 &2938287794061509675
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 591953402505555194}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f6f3bf89aa97405989c802ba270f815, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncInterval: 0.1
+  animator: {fileID: 591953402498129706}
+--- !u!114 &3048783195332344851
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 591953402505555194}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a2c2b8e92ddf9274c920d4197a66a3d5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncInterval: 0.1
+  componentsToDisable:
+  - {fileID: 591953401985262530}
+  - {fileID: 591953401985262531}
+  - {fileID: 591953401651075571}
 --- !u!1 &591953402505555196
 GameObject:
   m_ObjectHideFlags: 0
