@@ -17,46 +17,38 @@ namespace MinionStates
 
         public override void Enter()
         {
-
+            
         }
 
         public override void Run()
         {
             Ray attackRay = new Ray(machine.transform.position, Vector3.forward);
-            Debug.DrawRay(machine.transform.position, Vector3.forward*10, Color.green, 1);
-          
-            if (Physics.Raycast(attackRay, out RaycastHit hit, 10f))
-            {
-                if (hit.collider.tag == "Player" && machine.DownedPuppets.Contains(hit.transform.gameObject) == false)
-                {
-                    HealthComponent health = hit.transform.GetComponent<HealthComponent>();
-                    machine.TargetEntity = hit.transform.gameObject;
+            Debug.DrawRay(machine.transform.position, Vector3.forward * machine.AttackRange, Color.green, 1);
 
-                    if (health.Health == 0)
+            if (Physics.Raycast(attackRay, out RaycastHit target, machine.AttackRange))
+            {
+                if (target.transform.gameObject == null)
+                {
+                    machine.StopCoroutine("AttackRoutine");
+                    machine.coRunning = false;
+                    return;
+                }
+                else if (target.collider.tag == ("Player"))
+                {
+                    machine.TargetEntity = target.transform.gameObject;
+                    if (machine.coRunning == false)
                     {
-                        machine.DownedPuppets.Add(machine.TargetEntity);
-                        machine.TargetEntity = null;
+                        machine.StartCoroutine("AttackRoutine", target.transform.gameObject);
                     }
                     else
                     {
-                        health.Damage(machine.AttackDamage);
+                        return;
                     }
-                    foreach (GameObject i in machine.DownedPuppets)
-                    {
-                        if (i.GetComponent<HealthComponent>().Health > 0)
-                        {
-                            Debug.Log("borta");
-                            machine.DownedPuppets.Remove(i);
-                            machine.TargetEntity = i;
-                        }
-                    }
-                    //for (int i = 0; i < machine.DownedPuppets.Count; i++)
-                    //{
-                    //    // This was pushed with error for some reason
-                    //    //if (machine.DownedPuppets.) 
-
-                    //}
                 }
+            }
+            else
+            {
+                return;
             }
         }
     
