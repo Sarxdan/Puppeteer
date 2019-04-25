@@ -7,8 +7,8 @@
 
 	SubShader
 	{
-		Cull Off 
-		ZWrite Off 
+		Cull Back
+		ZWrite Off
 		ZTest Always
 
 		Pass
@@ -49,9 +49,11 @@
 
 			fixed4 frag(v2f i) : SV_Target
 			{
-				fixed4 col = tex2D(_MainTex, i.uv0);
-				fixed4 glow = max(0, tex2D(_GlowBlurPassTex, i.uv1) - tex2D(_GlowPrePassTex, i.uv1));
-				return col + glow * _Intensity;
+				fixed4 color = tex2D(_MainTex, i.uv0);
+				fixed4 blurred = tex2D(_GlowBlurPassTex, i.uv1);
+				fixed4 prepass = tex2D(_GlowPrePassTex, i.uv1);
+				fixed4 glow = max(0, blurred - prepass);
+				return color +  glow * _Intensity;
 			}
 			ENDCG
 		}
