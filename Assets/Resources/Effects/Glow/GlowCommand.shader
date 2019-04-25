@@ -2,8 +2,9 @@
 {
 	SubShader
 	{
-		Tags { "RenderType" = "Opaque" }
-		LOD 100
+		Cull Back
+		ZWrite On
+		ZTest LEqual
 
 		Pass
 		{
