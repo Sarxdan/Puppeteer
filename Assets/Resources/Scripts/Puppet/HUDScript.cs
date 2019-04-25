@@ -13,7 +13,8 @@ using UnityEngine.UI;
  * 
  * 
  * CODE REVIEWED BY:
- * 
+ * Benjamin "Boris" Vesterlund 
+ *
  * CONTRIBUTORS:
  * 
 */
@@ -36,7 +37,7 @@ public class HUDScript : MonoBehaviour
     private HealthComponent healthComponent;
     // Used to check is player has a med kit
     private PlayerController playerController;
-
+    // The base class of the powerup that the player has
     private PowerupBase powerUp;
 
     // Current health of the player
@@ -52,7 +53,7 @@ public class HUDScript : MonoBehaviour
     // Used for checking if the hp has changed
     private uint previousHP;
     // The hp value to lerp to, changes when the hp is modified
-    private uint lerpToHP;
+    private uint lerpFromHP;
     // Controls how fast the health bar changes
     public float HealthBarSpeed = 0.8f;
 
@@ -62,9 +63,13 @@ public class HUDScript : MonoBehaviour
     // Used for checking if the stamina has changes
     private float previousStamina;
     // The stamina value to lerp to
-    private float lerpToStamina;
+    private float lerpFromStamina;
     // The lerp increment
     private float StaminaIncrement;
+    // The speed of the stamina bar
+    public float StaminaBarSpeed = 0.8f;
+
+
 
     // Getting all the components and setting all the constant variables
     void Start()
@@ -75,10 +80,11 @@ public class HUDScript : MonoBehaviour
         xScaleHP = HealthBarFill.localScale.x;
         xScaleStamina = StaminaBarFill.localScale.x;
         previousHP = healthComponent.Health;
+        maxHealth = healthComponent.MaxHealth;
         previousStamina = playerController.CurrentStamina;
     }   
 
-    // Update is called once per frame
+    // Draw the HUD
     void Update()
     {
         
@@ -112,18 +118,20 @@ public class HUDScript : MonoBehaviour
         #region magazine counter 
         if(playerController.CurrentWeapon != null)
         {
-            float magazines = Mathf.Clamp(playerController.Ammunition / playerController.CurrentWeapon.GetComponent<WeaponComponent>().Capacity,0, 999); 
-            
+            // Calculated the number of magazine left
+            float magazines = Mathf.Clamp(((float)playerController.Ammunition / (float)playerController.CurrentWeapon.GetComponent<WeaponComponent>().Capacity),0, 999); 
+            // Changes the number of leading zeroes depending on the number of magazines
             if(magazines > 100)
             {
                 CurrentAmmo.text = Mathf.FloorToInt(magazines).ToString();
             }
             if(magazines > 10)
             {
-                CurrentAmmo.text = "00" + Mathf.FloorToInt(magazines).ToString();
-            }else
+                CurrentAmmo.text = "0" + Mathf.FloorToInt(magazines).ToString();
+            }
+            else
             {
-                CurrentAmmo.text = "0" +  Mathf.FloorToInt(magazines).ToString();
+                CurrentAmmo.text = "00" +  Mathf.FloorToInt(magazines).ToString();
             }
         }
         #endregion
@@ -137,41 +145,41 @@ public class HUDScript : MonoBehaviour
         if(previousHP != health)
         {
             HPIncrement = 0;
-            lerpToHP = previousHP;
+            lerpFromHP = previousHP;
             previousHP = healthComponent.Health;
-
         }
         // Scale the health bar
-        HealthBarFill.localScale = new Vector3(Mathf.Lerp(xScaleHP * (Mathf.Clamp(lerpToHP, 0, maxHealth)/maxHealth), xScaleHP * (Mathf.Clamp(health, 0, maxHealth)/maxHealth), HPIncrement),
-                                                         HealthBarFill.localScale.y, HealthBarFill.localScale.z);
+        HealthBarFill.localScale = new Vector3(Mathf.Lerp(xScaleHP * (Mathf.Clamp(lerpFromHP, 0, maxHealth)/maxHealth), xScaleHP * (Mathf.Clamp(health, 0, maxHealth)/maxHealth), HPIncrement),
+                                                HealthBarFill.localScale.y, HealthBarFill.localScale.z);
         // Increment the lerp
         HPIncrement += HealthBarSpeed * Time.deltaTime;
-        maxHealth = healthComponent.MaxHealth;
+
         // runs whe the lerp is complete
         if(HPIncrement >= 1)
         {
             previousHP = healthComponent.Health;
-            lerpToHP = previousHP;
+            lerpFromHP = previousHP;
         }
     }
 
     private void drawStaminaBar()
     {
+        // Check if the stamina has changed and start the lerp if it has
         if(playerController.CurrentStamina != previousStamina)
         {
             StaminaIncrement = 0;
-            lerpToStamina = previousStamina;
+            lerpFromStamina = previousStamina;
             previousStamina = playerController.CurrentStamina;
         }
 
-        StaminaBarFill.localScale = new Vector3(Mathf.Lerp(xScaleStamina * (Mathf.Clamp(lerpToStamina, 0, playerController.MaxStamina)/playerController.MaxStamina), xScaleStamina * (Mathf.Clamp(playerController.CurrentStamina, 0, playerController.MaxStamina)/playerController.MaxStamina), StaminaIncrement),
+        StaminaBarFill.localScale = new Vector3(Mathf.Lerp(xScaleStamina * (Mathf.Clamp(lerpFromStamina, 0, playerController.MaxStamina)/playerController.MaxStamina), xScaleStamina * (Mathf.Clamp(playerController.CurrentStamina, 0, playerController.MaxStamina)/playerController.MaxStamina), StaminaIncrement),
                                                 StaminaBarFill.localScale.y, StaminaBarFill.localScale.z);
 
-        StaminaIncrement += 0.8f*Time.deltaTime;
+        StaminaIncrement += StaminaBarSpeed*Time.deltaTime;
         if(StaminaIncrement >= 1)
         {
             previousStamina = playerController.CurrentStamina;
-            lerpToStamina = previousStamina;
+            lerpFromStamina = previousStamina;
         }
     }
 
