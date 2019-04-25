@@ -14,9 +14,9 @@ using Mirror;
  * CODE REVIEWED BY:
  * Ludvig Björk Förare
  * 
- * 
  */
 
+[RequireComponent(typeof(Glowable))]
 public abstract class Interactable : MonoBehaviour
 {
     //Called once when an interaction has started
@@ -26,11 +26,13 @@ public abstract class Interactable : MonoBehaviour
 
     public void OnRaycastEnter()
     {
-        
+        // enable outline effect
+        GetComponent<Glowable>().Toggle(true);
     }
 
     public void OnRaycastExit()
     {
-        
+        // disable outline effect
+        GetComponent<Glowable>().Toggle(false);
     }
 }

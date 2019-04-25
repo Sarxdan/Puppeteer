@@ -29,14 +29,11 @@ public class Glowable : MonoBehaviour
         GlowController.Register(this);
     }
 
-    void OnMouseEnter()
+    // toggle the glow effect
+    public void Toggle(bool state)
     {
-        targetColor = GlowColor;
-    }
-
-    void OnMouseExit()
-    {
-        targetColor = Color.black;
+        targetColor = state ? GlowColor : Color.black;
+        enabled = true;
     }
 
     void Update()
