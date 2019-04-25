@@ -19,16 +19,31 @@ public class BearInteract : Interactable
 {
     public float ReleaseTimer;  //Time it takes to release a puppet from trap
     public uint ReleaseDamage;  //The amount of damage dealt to the puppet if it releases itself
-    
+    public bool Activated = false;
+
+    private void Start()
+    {
+        
+    }
+
     //Start release timer
     public override void OnInteractBegin(GameObject interactor)
     {
+        if (!Activated)
+        {
+            return;
+        }
+
         StartCoroutine("ReleaseFromTrap", interactor);
     }
 
     //Stop release timer
     public override void OnInteractEnd(GameObject interactor)
     {
+        if (!Activated)
+        {
+            return;
+        }
         StopCoroutine("ReleaseFromTrap");
     }
 
