@@ -18,11 +18,15 @@ public class StaminaPower : PowerupBase
 
     public override void OnActivate()
     {
-        
+        var player = GetComponent<PlayerController>();
+        player.CurrentStamina = Mathf.Infinity;
+        player.MovementSpeedMod = this.SpeedModifier;
     }
 
     public override void OnComplete()
     {
-        
+        var player = GetComponent<PlayerController>();
+        player.CurrentStamina = 0.0f;
+        player.MovementSpeedMod = 1.0f;
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Mirror;
 /*
 * AUTHOR:
 * Kristoffer Lundgren
@@ -16,7 +17,9 @@ using UnityEngine;
 */
 public class DoorComponent : Interactable
 {
+	[SerializeField]
     private bool locked;
+
     public bool Locked
     {
         get
@@ -42,6 +45,8 @@ public class DoorComponent : Interactable
 	public Vector3 adjustmentVector = new Vector3(0.6f, 0, 0);
 
 	private float currentAngle = 0;
+
+	[SerializeField]
 	private bool open = false;
 
     // Save the start angle of the door
@@ -49,21 +54,23 @@ public class DoorComponent : Interactable
     {
         defaultAngle = transform.localEulerAngles.y;
 		currentAngle = defaultAngle;
-    }
+
+	}
     // When the used key is pressed the direction the door should open is calculated
     public override void OnInteractBegin(GameObject interactor)
     {
-        if(!locked)
-        {
-            float dotProduct = Vector3.Dot(transform.forward, interactor.transform.forward);
-            currentAngle  = OpenAngle * Mathf.Sign(dotProduct);
-            open = !open;
-        }
-    }
+		Debug.Log("I Made It!!!!!!!");
+		if (!locked)
+		{
+			float dotProduct = Vector3.Dot(transform.forward, interactor.transform.forward);
+			currentAngle = OpenAngle * Mathf.Sign(dotProduct);
+			open = !open;
+		}
+	}
     public override void OnInteractEnd(GameObject interactor){}
     // Closes and opens the door
-    void Update()
-    {
+    void FixedUpdate()
+    {	
         if(!locked)
         {
             if(open)

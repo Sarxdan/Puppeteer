@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Mirror;
 
 /*
  * AUTHOR:
@@ -15,7 +16,7 @@ using UnityEngine;
  * 
  * 
  */
-public class InteractionController : MonoBehaviour
+public class InteractionController : NetworkBehaviour
 {
     public float Lookahead = 4.0f;      //Length for raycast
 
@@ -53,8 +54,9 @@ public class InteractionController : MonoBehaviour
             //Attempt to start interaction
             if(Input.GetButtonDown("Use") && !isInteracting)
             {
-                curInteractable.OnInteractBegin(gameObject);
-                isInteracting = true;
+				//curInteractable.OnInteractBegin(gameObject);
+				CmdBeginInteract(new InteractStruct(gameObject, curInteractable.gameObject));
+                isInteracting = true; // TODO: syncvar if works :)
             }
 
             //Cancel interaction
@@ -83,4 +85,11 @@ public class InteractionController : MonoBehaviour
         curInteractable.OnRaycastExit();
         curInteractable = null;
     }
+
+	[Command]
+	public void CmdBeginInteract(InteractStruct info)
+	{
+		info.Target.GetComponent<Interactable>().OnInteractBegin(info.Source);
+		Debug.Log("(:");
+	}
 }

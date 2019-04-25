@@ -194,6 +194,7 @@ GameObject:
   - component: {fileID: 980383792}
   - component: {fileID: 980383791}
   - component: {fileID: 980383790}
+  - component: {fileID: 980383795}
   m_Layer: 0
   m_Name: Cube (1)
   m_TagString: Player
@@ -286,12 +287,27 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 980383789}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 2.027, y: 1.02, z: 1.525}
+  m_LocalPosition: {x: -0.046, y: 1.02, z: 3.4}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &980383795
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 980383789}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 964c0ff3b54b6c04faaea0941b999864, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ReviveDelay: 0
+  DeathDelay: 0
+  RequireMedkit: 1
 --- !u!1 &1203683821
 GameObject:
   m_ObjectHideFlags: 0
@@ -387,6 +403,7 @@ GameObject:
   - component: {fileID: 1273182323}
   - component: {fileID: 1273182322}
   - component: {fileID: 1273182326}
+  - component: {fileID: 1273182327}
   m_Layer: 0
   m_Name: Cube
   m_TagString: Player
@@ -460,7 +477,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1273182321}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -1.78, y: 1.02, z: 1.68}
+  m_LocalPosition: {x: -0.102, y: 1.02, z: 1.533}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -485,6 +502,21 @@ MonoBehaviour:
   RegenSpeed: 0
   RegenDelay: 0
   AllowRegen: 0
+--- !u!114 &1273182327
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1273182321}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 964c0ff3b54b6c04faaea0941b999864, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ReviveDelay: 0
+  DeathDelay: 0
+  RequireMedkit: 1
 --- !u!1 &1278122872
 GameObject:
   m_ObjectHideFlags: 0
@@ -617,8 +649,6 @@ MonoBehaviour:
   AttackDamage: 2
   AttackRdy: 0
   DownedPuppets: []
-  RayScan: {x: 0, y: 0, z: 0}
-  i: 0
 --- !u!54 &1890675134
 Rigidbody:
   m_ObjectHideFlags: 0
