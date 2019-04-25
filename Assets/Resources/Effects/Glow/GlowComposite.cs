@@ -18,6 +18,6 @@ public class GlowComposite : MonoBehaviour
     void OnRenderImage(RenderTexture source, RenderTexture destination)
     {
         composite.SetFloat("_Intensity", this.Intensity);
-        Graphics.Blit(source, destination, composite, 0);
+        Graphics.Blit(source, destination, composite);
     }
 }

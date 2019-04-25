@@ -7,8 +7,8 @@
 
 	SubShader
 	{
-		Cull Off 
-		ZWrite Off 
+		Cull Off
+		ZWrite Off
 		ZTest Always
 
 		Pass
@@ -40,12 +40,6 @@
 				o.vertex = UnityObjectToClipPos(v.vertex);
 				o.uv0 = v.uv;
 				o.uv1 = v.uv;
-
-#if UNITY_UV_STARTS_AT_TOP
-				if (_MainTex_TexelSize.y < 0)
-					o.uv1.y = 1 - o.uv1.y;
-#endif
-
 				return o;
 			}
 
