@@ -30,9 +30,12 @@ public class PlayerController : MonoBehaviour
     public float StaminaRegenDelay;
     public float StaminaRegenSpeed;
     public float CurrentStamina;
+
     // movement speed modifier used by power up
     public float MovementSpeedMod = 1.0f;
 
+    //Animation
+    private Animator animController;
 
     //Movement private variables
     private float currentMovementSpeed;
@@ -75,6 +78,7 @@ public class PlayerController : MonoBehaviour
     {
         rigidBody = GetComponent<Rigidbody>();
         gameObject.GetComponent<HealthComponent>().AddDeathAction(Stunned);
+        animController = GetComponent<Animator>();
         //Saves the original input from the variables
         speedSave = MovementSpeed;
         accSave = AccelerationRate;
@@ -108,6 +112,8 @@ public class PlayerController : MonoBehaviour
             Cursor.lockState = CursorLockMode.Locked;
         }
 
+        animController.SetBool("Aiming", Input.GetButton("Fire"));
+
         //Escape releases cursor
         if (Input.GetButton("Cancel"))
         {
@@ -127,6 +133,7 @@ public class PlayerController : MonoBehaviour
                 HeadTransform.localEulerAngles = HeadTransform.localEulerAngles - Vector3.right * MouseSensitivity * Input.GetAxis("Mouse Y");
             }
         }
+
     }
 
 
@@ -145,10 +152,14 @@ public class PlayerController : MonoBehaviour
             currentMovementSpeed = 0;
         }
 
+        animController.SetFloat("Forward", Input.GetAxis("Vertical"));
+        animController.SetFloat("Strafe", Input.GetAxis("Horizontal"));
+
         //Sprinting
         //Checks the most important task, if the sprint button is released
         if (Input.GetButtonUp("Sprint"))
         {
+            animController.SetBool("Sprint", false);
             MovementSpeed = speedSave;
             AccelerationRate = accSave;
             reachedZero = false;
@@ -157,6 +168,7 @@ public class PlayerController : MonoBehaviour
         //Makes sure stamina can't be negative
         else if (reachedZero == true && isDown == true)
         {
+            animController.SetBool("Sprint", false);
             MovementSpeed = speedSave;
             currentMovementSpeed = MovementSpeed;
             AccelerationRate = accSave;
@@ -165,6 +177,7 @@ public class PlayerController : MonoBehaviour
         //Checks for sprint key and acts accordingly
         else if (Input.GetButton("Sprint"))
         {
+            animController.SetBool("Sprint", true);
             isDown = true;
             MovementSpeed = SprintSpeed;
             AccelerationRate = SprintAcc;
