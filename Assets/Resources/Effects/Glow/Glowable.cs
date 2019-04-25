@@ -33,7 +33,6 @@ public class Glowable : MonoBehaviour
     public void Toggle(bool state)
     {
         targetColor = state ? GlowColor : Color.black;
-        enabled = true;
     }
 
     void Update()
