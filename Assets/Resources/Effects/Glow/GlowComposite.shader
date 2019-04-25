@@ -7,8 +7,8 @@
 
 	SubShader
 	{
-		Cull Off
-		ZWrite Off
+		Cull Off 
+		ZWrite Off 
 		ZTest Always
 
 		Pass
@@ -31,8 +31,6 @@
 				float2 uv0 : TEXCOORD0;
 				float2 uv1 : TEXCOORD1;
 			};
-
-			float2 _MainTex_TexelSize;
 
 			v2f vert(appdata v)
 			{
