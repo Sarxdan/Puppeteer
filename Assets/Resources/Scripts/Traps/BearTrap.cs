@@ -17,14 +17,17 @@ using UnityEngine;
 
 public class BearTrap : TrapComponent
 {
-    public GameObject target;
+    public GameObject Target;
 
     public override void OnTriggerEnter(Collider other)
     {
+
+        Debug.Log("Entered");
         if (other.gameObject.tag == "Player")
         {
             if (Puppets.Count <= 0)
             {
+                Debug.Log("Start Timer");
                 StartCoroutine("TrapTimer");
             }
 
@@ -46,17 +49,10 @@ public class BearTrap : TrapComponent
     //and enable interaction with it for releasing puppet
     public override void ActivateTrap()
     {
-        target = Puppets[0];
-        target.GetComponent<HealthComponent>().Damage(Damage);
-        target.GetComponent<PlayerController>().Stunned();
+        Target = Puppets[0];
+        Target.GetComponent<HealthComponent>().Damage(Damage);
+        Target.GetComponent<PlayerController>().Stunned();
 
-        gameObject.GetComponent<BearInteract>().enabled = true;
-    }
-
-    public override void DestroyTrap()
-    {
-        target.GetComponent<PlayerController>().UnStunned();
-
-        Destroy(gameObject);
+        gameObject.GetComponent<BearInteract>().Activated = true;
     }
 }

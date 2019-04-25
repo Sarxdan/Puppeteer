@@ -14,29 +14,11 @@ using Mirror;
  * CODE REVIEWED BY:
  * Ludvig Björk Förare
  * 
- * 
  */
 
+[RequireComponent(typeof(Glowable))]
 public abstract class Interactable : MonoBehaviour
 {
-    private Material outlineMat;
-    private void Start()
-    {
-        var materials = GetComponent<Renderer>().materials;
-        foreach(var mat in materials)
-        {
-            if(mat.FindPass("Outline") != -1)
-            {
-                outlineMat = mat;
-            }
-        }
-
-        if(outlineMat == null)
-        {
-            Debug.LogError("Interactable objects requires an outline material");
-        }
-    }
-
     //Called once when an interaction has started
     public abstract void OnInteractBegin(GameObject interactor);
     //Called once when an interaction has ended
@@ -44,19 +26,13 @@ public abstract class Interactable : MonoBehaviour
 
     public void OnRaycastEnter()
     {
-        if (outlineMat != null)
-        {
-            // enable outline
-            outlineMat.SetFloat("_EnableOutline", 1);
-        }
+        // enable outline effect
+        GetComponent<Glowable>().Toggle(true);
     }
 
     public void OnRaycastExit()
     {
-        if (outlineMat != null)
-        {
-            // disable outline
-            outlineMat.SetFloat("_EnableOutline", 0);
-        }
+        // disable outline effect
+        GetComponent<Glowable>().Toggle(false);
     }
 }

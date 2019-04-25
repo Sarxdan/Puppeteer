@@ -11,8 +11,9 @@ GameObject:
   - component: {fileID: 4226621942601024551}
   - component: {fileID: 3817624514976054721}
   - component: {fileID: 1216106484952837286}
-  - component: {fileID: 3260191503717844168}
   - component: {fileID: 826288087222615237}
+  - component: {fileID: 2797910268040567067}
+  - component: {fileID: 4947658519017366908}
   m_Layer: 0
   m_Name: Door
   m_TagString: Untagged
@@ -64,20 +65,6 @@ MonoBehaviour:
   localPlayerAuthority: 0
   m_AssetId: 44dec3f5c49221f4d8a32bbe8d3002a3
   m_SceneId: 0
---- !u!114 &3260191503717844168
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3565548570659699362}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2f74aedd71d9a4f55b3ce499326d45fb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  syncInterval: 0.1
-  compressRotation: 1
 --- !u!114 &826288087222615237
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -90,13 +77,40 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cf677a6cc2f6b744fb032c21d80b877f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  syncInterval: 0.1
   locked: 0
   RotationSpeed: 10
   OpenAngle: 90
   defaultAngle: 0
   adjustmentVector: {x: 0.6, y: 0, z: 0}
   open: 0
+--- !u!114 &2797910268040567067
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3565548570659699362}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 41da09f073a954b4dae28c974e911522, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncInterval: 0.1
+  compressRotation: 0
+--- !u!114 &4947658519017366908
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3565548570659699362}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5bb98d5cfea00ff47a55c4d6156d31d3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GlowColor: {r: 1, g: 1, b: 1, a: 1}
+  LerpFactor: 10
 --- !u!1001 &4667018250808230765
 PrefabInstance:
   m_ObjectHideFlags: 0

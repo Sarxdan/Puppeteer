@@ -45,31 +45,13 @@ public class LevelBuilder : NetworkBehaviour
 	// Randomize order of rooms and place them in level. Also some networking checks to only do this on server.
     void Start()
     {
-		parent = GameObject.Find("Level");
-
 		if (isServer)
 		{
+			parent = GameObject.Find("Level");
 			RandomizeRooms();
 			SpawnRooms();
 			SpawnRoomsOnNetwork();
-		}
-		else
-		{
-			foreach (RoomInteractable room in FindObjectsOfType<RoomInteractable>())
-			{
-				room.transform.SetParent(parent.transform);
-			}
-
-			foreach (DoorComponent door in FindObjectsOfType<DoorComponent>())
-			{
-				foreach (AnchorPoint anchor in FindObjectsOfType<AnchorPoint>())
-				{
-					if ((anchor.transform.position - door.transform.position).magnitude <= 0.2)
-					{
-						door.transform.SetParent(anchor.transform);
-					}
-				}
-			}
+			RpcSetParents();
 		}
 	}
 
@@ -295,11 +277,35 @@ public class LevelBuilder : NetworkBehaviour
 			door.transform.position = doorAnchor.transform.position + doorAnchor.transform.rotation * doorScript.adjustmentVector;
 			doorScript.defaultAngle = 0;
 			doorScript.Locked = true;
+
 		}
 	}
 
 	public GameObject GetLevel()
 	{
 		return parent;
+	}
+
+	[ClientRpc]
+	public void RpcSetParents()
+	{
+		parent = GameObject.Find("Level");
+
+		foreach (RoomInteractable room in FindObjectsOfType<RoomInteractable>())
+		{
+			room.transform.SetParent(parent.transform);
+		}
+
+		foreach (DoorComponent door in FindObjectsOfType<DoorComponent>())
+		{
+			foreach (AnchorPoint anchor in FindObjectsOfType<AnchorPoint>())
+			{
+				if ((anchor.transform.position - door.transform.position).magnitude <= 0.6f)
+				{
+					door.transform.SetParent(anchor.transform);
+					break;
+				}
+			}
+		}
 	}
 }
