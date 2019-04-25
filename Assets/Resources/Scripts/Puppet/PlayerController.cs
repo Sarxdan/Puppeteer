@@ -15,9 +15,11 @@ using UnityEngine;
  * CODE REVIEWED BY:
  * Anton Jonsson (Player Movement done)
  * Ludvig Björk Förare (Sprint function)
+ * Filip Renman (Animation 190425)
  * 
  * CONTRIBUTORS:
  * Philip Stenmark
+ * Ludvig Björk Förare (Animation integration)
 */
 public class PlayerController : MonoBehaviour
 {
@@ -112,7 +114,6 @@ public class PlayerController : MonoBehaviour
             Cursor.lockState = CursorLockMode.Locked;
         }
 
-        animController.SetBool("Aiming", Input.GetButton("Fire"));
 
         //Escape releases cursor
         if (Input.GetButton("Cancel"))
@@ -134,6 +135,11 @@ public class PlayerController : MonoBehaviour
             }
         }
 
+        
+        animController.SetBool("Aiming", Input.GetButton("Fire"));
+        animController.SetFloat("Forward", Input.GetAxis("Vertical"));
+        animController.SetFloat("Strafe", Input.GetAxis("Horizontal"));
+
     }
 
 
@@ -152,8 +158,6 @@ public class PlayerController : MonoBehaviour
             currentMovementSpeed = 0;
         }
 
-        animController.SetFloat("Forward", Input.GetAxis("Vertical"));
-        animController.SetFloat("Strafe", Input.GetAxis("Horizontal"));
 
         //Sprinting
         //Checks the most important task, if the sprint button is released
@@ -204,6 +208,7 @@ public class PlayerController : MonoBehaviour
             StartCoroutine("StaminaRegenRoutine");
         }
 
+        Debug.DrawRay(transform.position, -transform.up*JumpRayLength, Color.red, Time.deltaTime);
 
         //Jumping
         if (Input.GetButtonDown("Jump") && Physics.Raycast(transform.position, -transform.up, JumpRayLength))
