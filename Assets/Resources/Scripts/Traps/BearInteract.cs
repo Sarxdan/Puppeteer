@@ -18,19 +18,21 @@ using UnityEngine;
 public class BearInteract : Interactable
 {
     public float ReleaseTimer;  //Time it takes to release a puppet from trap
-    public uint ReleaseDamage;  //Damage on when puppet when releasing itself
-
-
+    public uint ReleaseDamage;  //The amount of damage dealt to the puppet if it releases itself
+    
+    //Start release timer
     public override void OnInteractBegin(GameObject interactor)
     {
         StartCoroutine("ReleaseFromTrap", interactor);
     }
 
+    //Stop release timer
     public override void OnInteractEnd(GameObject interactor)
     {
         StopCoroutine("ReleaseFromTrap");
     }
 
+    //Release the puppet from the trap after the interaction timer is full
     public IEnumerator ReleaseFromTrap(GameObject interactor)
     {
         //Timer for releasing the puppet
@@ -40,15 +42,15 @@ public class BearInteract : Interactable
             yield return new WaitForSeconds(1);
         }
 
-        GameObject target = gameObject.GetComponent<BearTrap>().target;
+        GameObject target = gameObject.GetComponent<BearTrap>().Target;
         target.GetComponent<PlayerController>().UnStunned();
 
-        //Damage the puppet, if the releaser is also the trapped one
-        if (interactor == target)
+        //If the puppet is releasing itself, do damage
+        if(interactor == target)
         {
             target.GetComponent<HealthComponent>().Damage(ReleaseDamage);
         }
-
+       
         gameObject.GetComponent<BearTrap>().DestroyTrap();
     }
 }
