@@ -36,13 +36,16 @@ public abstract class TrapComponent : MonoBehaviour
         yield return new WaitForSeconds(ActivationTime);
         //TODO: Set correct conditions for future animations
         Anim.SetBool("IsActive", true);
-
     }
 
     private IEnumerator DestroyTimer()
     {
         yield return new WaitForSeconds(DestroyTime);
         DestroyTrap();
+    }
+    public void DestroyTrap()
+    {
+        Destroy(gameObject);
     }
 
     public abstract void OnTriggerEnter(Collider other);
@@ -51,5 +54,4 @@ public abstract class TrapComponent : MonoBehaviour
 
     public abstract void ActivateTrap();
 
-    public abstract void DestroyTrap();
 }

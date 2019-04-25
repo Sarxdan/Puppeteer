@@ -47,8 +47,9 @@ public class BasicTrap : TrapComponent
         StartCoroutine("DestroyTimer");
     }
 
-    public override void DestroyTrap()
+    private IEnumerator DestroyTimer()
     {
-        Destroy(gameObject);
+        yield return new WaitForSeconds(DestroyTime);
+        DestroyTrap();
     }
 }
