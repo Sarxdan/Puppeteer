@@ -274,7 +274,7 @@ namespace Mirror
             if (start != null)
             {
                 float t = CurrentInterpolationFactor(start, goal);
-                return Quaternion.RotateTowards(start.rotation, goal.rotation, t);
+                return Quaternion.Slerp(start.rotation, goal.rotation, t);
             }
             return defaultRotation;
         }
