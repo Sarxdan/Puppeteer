@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2588813442285734549}
   m_Layer: 0
-  m_Name: Spike
+  m_Name: Spike (No Model)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -45,7 +45,6 @@ GameObject:
   - component: {fileID: 2588813443623990339}
   - component: {fileID: 2588813443623990338}
   - component: {fileID: 2588813443623990349}
-  - component: {fileID: 2588813443623990348}
   - component: {fileID: 2588813443623990351}
   m_Layer: 0
   m_Name: Spike
@@ -145,25 +144,6 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
---- !u!114 &2588813443623990348
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2588813443623990350}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 966551dd969a4d444a4a6f50efd09aff, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Health: 20
-  MaxHealth: 20
-  MaxRegenRatio: 0.5
-  MaxReviveRatio: 0.5
-  RegenSpeed: 1
-  RegenDelay: 2
-  AllowRegen: 1
 --- !u!114 &2588813443623990351
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -176,8 +156,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6d827e602a52eb64bb2bd54c91a8c3dd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Damage: 20
-  ActivationTime: 2
+  Damage: 5
+  ActivationTime: 0.4
   DestroyTime: 2
   Puppets: []
   Anim: {fileID: 0}

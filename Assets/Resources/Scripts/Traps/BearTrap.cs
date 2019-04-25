@@ -21,10 +21,13 @@ public class BearTrap : TrapComponent
 
     public override void OnTriggerEnter(Collider other)
     {
+
+        Debug.Log("Entered");
         if (other.gameObject.tag == "Player")
         {
             if (Puppets.Count <= 0)
             {
+                Debug.Log("Start Timer");
                 StartCoroutine("TrapTimer");
             }
 
@@ -50,6 +53,6 @@ public class BearTrap : TrapComponent
         Target.GetComponent<HealthComponent>().Damage(Damage);
         Target.GetComponent<PlayerController>().Stunned();
 
-        gameObject.GetComponent<BearInteract>().enabled = true;
+        gameObject.GetComponent<BearInteract>().Activated = true;
     }
 }
