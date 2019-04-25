@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Mirror;
 
 /*
  * AUTHOR:
@@ -25,13 +26,11 @@ public abstract class Interactable : MonoBehaviour
 
     public void OnRaycastEnter()
     {
-        // TODO: enable outline of object
-        //GetComponent<Renderer>().material.SetColor("_Color", Color.yellow);
+        
     }
 
     public void OnRaycastExit()
     {
-        // TODO: disable outline of object
-        //GetComponent<Renderer>().material.SetColor("_Color", Color.white);
+        
     }
 }
