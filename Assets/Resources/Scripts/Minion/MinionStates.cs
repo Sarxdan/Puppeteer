@@ -27,13 +27,7 @@ namespace MinionStates
 
             if (Physics.Raycast(attackRay, out RaycastHit target, machine.AttackRange))
             {
-                if (target.transform.gameObject == null)
-                {
-                    machine.StopCoroutine("AttackRoutine");
-                    machine.coRunning = false;
-                    return;
-                }
-                else if (target.collider.tag == ("Player"))
+                if (target.collider.tag == ("Player"))
                 {
                     machine.TargetEntity = target.transform.gameObject;
                     if (machine.coRunning == false)
@@ -48,6 +42,9 @@ namespace MinionStates
             }
             else
             {
+                machine.StopCoroutine("AttackRoutine");
+                machine.coRunning = false;
+                machine.TargetEntity = null;
                 return;
             }
         }
