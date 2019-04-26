@@ -2,6 +2,17 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/*
+ * AUTHOR:
+ * Philip Stenmark
+ * 
+ * DESCRIPTION:
+ * Enables an object to display a glowing outline when toggled.
+ * All glowable objects are managed by the centralized GlowController.
+ * 
+ * CODE REVIEWED BY:
+ * 
+ */
 public class Glowable : MonoBehaviour
 {
     public Color GlowColor = Color.white;

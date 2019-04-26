@@ -2,6 +2,26 @@
 using UnityEngine.Rendering;
 using System.Collections.Generic;
 
+/*
+ * AUTHOR:
+ * Philip Stenmark
+ * 
+ * DESCRIPTION:
+ * Manages a command buffer to perform separate render passes that allows glowing outlines to be shown.
+ * Three different buffers are used to create the effect. 
+ * The process is structured as following:
+ * 1. Render only glowing objects in their solid glow color (pre-pass).
+ * 2. Process the pre-pass using pre-calculated gaussian blur (blur-pass).
+ * 3. Subtract the blur-pass result with the pre-pass result the get the outline.
+ * 4. Apply final result to scene default framebuffer.
+ * 
+ * CODE REVIEWED BY:
+ * 
+ * 
+ */
+[DisallowMultipleComponent]
+[RequireComponent(typeof(Camera))]
+[RequireComponent(typeof(GlowComposite))]
 public class GlowController : MonoBehaviour
 {
     private static List<Glowable> targets = new List<Glowable>();
@@ -10,6 +30,7 @@ public class GlowController : MonoBehaviour
     private Material glowMat;
     private Material blurMat;
     private Vector2 blurTexelSize;
+    private float blurScale = 1.3f;
 
     private int prePassID;
     private int blurPassID;
@@ -43,8 +64,9 @@ public class GlowController : MonoBehaviour
 
         for (int i = 0; i < targets.Count; i++)
         {
-            if(targets[i] == null)
+            if (targets[i] == null)
             {
+                // remove invalid targets
                 targets.RemoveAt(i);
                 continue;
             }
@@ -53,7 +75,11 @@ public class GlowController : MonoBehaviour
 
             for (int j = 0; j < targets[i].Renderers.Length; j++)
             {
-                buffer.DrawRenderer(targets[i].Renderers[j], glowMat);
+                var renderer = targets[i].Renderers[j];
+                if(renderer)
+                {
+                    buffer.DrawRenderer(renderer, glowMat);
+                }
             }
         }
 
@@ -61,7 +87,7 @@ public class GlowController : MonoBehaviour
         buffer.GetTemporaryRT(tempPassID, Screen.width >> 1, Screen.height >> 1, 0, FilterMode.Bilinear);
         buffer.Blit(prePassID, blurPassID);
 
-        blurTexelSize = new Vector2(1.0f / (Screen.width >> 1), 1.0f / (Screen.height >> 1));
+        blurTexelSize = new Vector2(blurScale / (Screen.width >> 1), blurScale / (Screen.height >> 1));
         buffer.SetGlobalVector(blurSizeID, blurTexelSize);
 
         for (int i = 0; i < 4; i++)
@@ -74,7 +100,7 @@ public class GlowController : MonoBehaviour
     // register a glow payload
     public static void Register(in Glowable obj)
     {
-        if (!targets.Contains(obj))
+        if (!targets.Contains(obj) && obj != null)
         {
             targets.Add(obj);
         }
