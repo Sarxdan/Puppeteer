@@ -27,12 +27,20 @@ public abstract class Interactable : MonoBehaviour
     public void OnRaycastEnter()
     {
         // enable outline effect
-        GetComponent<Glowable>().Toggle(true);
+        var glow = GetComponent<Glowable>();
+        if (glow)
+        {
+            glow.Toggle(true);
+        }
     }
 
     public void OnRaycastExit()
     {
         // disable outline effect
-        GetComponent<Glowable>().Toggle(false);
+        var glow = GetComponent<Glowable>();
+        if(glow)
+        {
+            glow.Toggle(false);
+        }
     }
 }
