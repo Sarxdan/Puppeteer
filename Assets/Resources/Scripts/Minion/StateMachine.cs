@@ -23,8 +23,10 @@ public class StateMachine : MonoBehaviour
     public GameObject TargetEntity;
     public float AttackCooldown;
     public uint AttackDamage;
+    public float AttackRange;
     public bool AttackRdy;
     public List<GameObject> DownedPuppets;
+    public bool coRunning;
     //Pathfind component reference (pathFinder)
 
     public void Start()
@@ -43,25 +45,31 @@ public class StateMachine : MonoBehaviour
     {
         if (System.Environment.TickCount % tickRate == 0)
         {
+            
             if (CurrentState != null) CurrentState.Run();
         }
 
     }
 
-    //IEnumerator hitRoutine()
-    //{
-    //    Debug.Log(AttackRdy);
-    //    AttackRdy = true;
-    //    yield return new WaitForSecondsRealtime(5);
-    //    StopCoroutine("waitRoutine");
-
-    //}
+    private IEnumerator AttackRoutine(GameObject target)
+    {
+        coRunning = true;
+        HealthComponent health = target.transform.GetComponent<HealthComponent>();
+        while (target != null && health.Health > 0)
+        {
+            health.Damage(AttackDamage);
+            yield return new WaitForSeconds(AttackCooldown);
+            if (health.Health == 0)
+            {
+                coRunning = false;
+                yield break;
+            }
+        }
+    }
 }
 
 
-
 //-------------------------------------------------------------
-
 public abstract class State
 {
     public abstract void Enter();

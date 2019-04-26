@@ -40,7 +40,7 @@ public class GlowController : MonoBehaviour
     {
         buffer.Clear();
 
-        buffer.GetTemporaryRT(prePassID, Screen.width, Screen.height, 0, FilterMode.Bilinear);
+        buffer.GetTemporaryRT(prePassID, Screen.width, Screen.height, 1, FilterMode.Bilinear);
         buffer.SetRenderTarget(prePassID);
         buffer.ClearRenderTarget(true, true, Color.clear);
 
