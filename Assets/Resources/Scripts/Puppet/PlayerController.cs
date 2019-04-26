@@ -94,6 +94,7 @@ public class PlayerController : MonoBehaviour
             if(Input.GetButton("Fire"))
             {
                 CurrentWeapon.GetComponent<WeaponComponent>().Use();
+                animController.SetTrigger("Fire");
             }
 
             // reload current weapon
@@ -136,7 +137,6 @@ public class PlayerController : MonoBehaviour
         }
 
         
-        animController.SetBool("Aiming", Input.GetButton("Fire"));
         animController.SetFloat("Forward", Input.GetAxis("Vertical"));
         animController.SetFloat("Strafe", Input.GetAxis("Horizontal"));
 
