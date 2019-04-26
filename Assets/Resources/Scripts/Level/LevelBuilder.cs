@@ -227,6 +227,11 @@ public class LevelBuilder : NetworkBehaviour
             NetworkServer.Spawn(room.gameObject);
             room.transform.SetParent(parent.transform);
         }
+
+		foreach (DoorComponent door in FindObjectsOfType<DoorComponent>())
+		{
+			NetworkServer.Spawn(door.gameObject);
+		}
     }
 
 	// Returns a List of rooms.
@@ -262,6 +267,11 @@ public class LevelBuilder : NetworkBehaviour
 	
 	public RoomTreeNode GetStartNode()
 	{
+		if (startNode == null)
+		{
+			startNode = GameObject.Find("startRoom").GetComponent<RoomTreeNode>();
+		}
+
 		return startNode;
 	}
 
@@ -271,7 +281,6 @@ public class LevelBuilder : NetworkBehaviour
 		foreach (AnchorPoint doorAnchor in room.GetComponentsInChildren<AnchorPoint>())
 		{
 			GameObject door = Instantiate(Door, doorAnchor.transform);
-			NetworkServer.Spawn(door);
 			DoorComponent doorScript = door.GetComponent<DoorComponent>();
 			door.transform.localEulerAngles = new Vector3(0, 0, 0);
 			door.transform.position = doorAnchor.transform.position + doorAnchor.transform.rotation * doorScript.adjustmentVector;
@@ -285,7 +294,7 @@ public class LevelBuilder : NetworkBehaviour
 	{
 		return parent;
 	}
-
+	
 	[ClientRpc]
 	public void RpcSetParents()
 	{
@@ -300,7 +309,7 @@ public class LevelBuilder : NetworkBehaviour
 		{
 			foreach (AnchorPoint anchor in FindObjectsOfType<AnchorPoint>())
 			{
-				if ((anchor.transform.position - door.transform.position).magnitude <= 0.6f)
+				if ((anchor.transform.position - door.transform.position).magnitude <= 0.8f && Quaternion.Angle(anchor.transform.rotation, door.transform.rotation) <= 5)
 				{
 					door.transform.SetParent(anchor.transform);
 					break;

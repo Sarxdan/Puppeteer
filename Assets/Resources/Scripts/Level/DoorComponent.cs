@@ -52,9 +52,7 @@ public class DoorComponent : Interactable
     // Save the start angle of the door
     void Start()
     {
-        defaultAngle = transform.localEulerAngles.y;
 		currentAngle = defaultAngle;
-
 	}
     // When the used key is pressed the direction the door should open is calculated
     public override void OnInteractBegin(GameObject interactor)

@@ -119,5 +119,4 @@ public class AnchorPoint : NetworkBehaviour
 		DisconnectDoor();
 		ConnectDoor(to);
 	}
-
 }
