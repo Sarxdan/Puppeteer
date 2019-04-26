@@ -8,5 +8,7 @@ public class StartRoomScript : MonoBehaviour
     void Start()
     {
 		gameObject.name = "startRoom";
+		FindObjectOfType<LevelBuilder>().BuildTree();
     }
+
 }

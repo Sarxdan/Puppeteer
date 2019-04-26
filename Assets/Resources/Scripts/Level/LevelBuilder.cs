@@ -179,6 +179,7 @@ public class LevelBuilder : NetworkBehaviour
 				opendoor.ConnectDoor(door);
 
 				door.GetComponentInParent<RoomTreeNode>().SetParent(opendoor.GetComponentInParent<RoomTreeNode>());
+				door.GetComponentInParent<RoomTreeNode>().ReconnectToTree();
 
 				// Add all the RoomColliders in the new room to the roomColliderPositions List.
 				foreach (RoomCollider colliderPosition in room.GetComponentsInChildren<RoomCollider>())
@@ -300,11 +301,13 @@ public class LevelBuilder : NetworkBehaviour
 	{
 		parent = GameObject.Find("Level");
 
+		// Move rooms into level GameObject
 		foreach (RoomInteractable room in FindObjectsOfType<RoomInteractable>())
 		{
 			room.transform.SetParent(parent.transform);
 		}
 
+		// Move physical doors into room door GameObjects
 		foreach (DoorComponent door in FindObjectsOfType<DoorComponent>())
 		{
 			foreach (AnchorPoint anchor in FindObjectsOfType<AnchorPoint>())
@@ -315,6 +318,28 @@ public class LevelBuilder : NetworkBehaviour
 					break;
 				}
 			}
+		}
+
+		// Connect Anchorpoints that are 
+		foreach (AnchorPoint anchor in FindObjectsOfType<AnchorPoint>())
+		{
+			foreach (AnchorPoint otherAnchor in FindObjectsOfType<AnchorPoint>())
+			{
+				if (anchor != otherAnchor && anchor.GetPosition() == otherAnchor.GetPosition())
+				{
+					anchor.ConnectDoorClient(otherAnchor);
+				}
+			}
+		}
+	}
+
+	public void BuildTree()
+	{
+		if (isLocalPlayer)
+		{
+			// Build tree on client
+			GetStartNode().ReconnectToTree();
+			GetStartNode().BuildTree();
 		}
 	}
 }

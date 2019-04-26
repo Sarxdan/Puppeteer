@@ -75,6 +75,14 @@ public class AnchorPoint : NetworkBehaviour
 		}
 	}
 
+	public void ConnectDoorClient(AnchorPoint to)
+	{
+		to.Connected = true;
+		to.ConnectedTo = this;
+		Connected = true;
+		ConnectedTo = to;
+	}
+
 	// Disconnects a door from whatever it was connected with.
 	public void DisconnectDoor()
 	{
@@ -111,6 +119,12 @@ public class AnchorPoint : NetworkBehaviour
 			Connected = false;
 			ConnectedTo = null;
 		}
+	}
+
+	[ClientRpc]
+	public void RpcConnectDoors(GameObject door)
+	{
+
 	}
 
 	// Reconnects a door to a new door.
