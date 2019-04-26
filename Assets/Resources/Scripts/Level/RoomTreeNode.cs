@@ -22,7 +22,7 @@ public class RoomTreeNode : MonoBehaviour
 	private RoomTreeNode parent;
 	private List<RoomTreeNode> children = new List<RoomTreeNode>();
 
-	private bool inTree = true;
+	private bool inTree = false;
 
 	// Update used to draw tree on level.
     void Update()
@@ -134,5 +134,22 @@ public class RoomTreeNode : MonoBehaviour
 	public bool InTree()
 	{
 		return inTree;
+	}
+
+	public void BuildTree()
+	{
+		foreach (AnchorPoint door in GetComponentsInChildren<AnchorPoint>())
+		{
+			if (door.Connected)
+			{
+				RoomTreeNode newNode = door.ConnectedTo.GetComponentInParent<RoomTreeNode>();
+				if (!newNode.inTree)
+				{
+					newNode.SetParent(this);
+					newNode.ReconnectToTree();
+					newNode.BuildTree();
+				}
+			}
+		}
 	}
 }
