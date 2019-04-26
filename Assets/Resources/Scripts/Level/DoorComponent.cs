@@ -31,8 +31,9 @@ public class DoorComponent : Interactable
 			locked = value;
 			if(locked)
 			{
-				transform.GetChild(0).gameObject.SetActive(false);
+				transform.GetChild(0).gameObject.SetActive(false); // NEEDS NETWORK
 				transform.GetChild(1).gameObject.SetActive(true);
+
 				transform.localRotation = Quaternion.Euler(transform.localEulerAngles.x, defaultAngle, transform.localEulerAngles.z);
 			}
 			else
