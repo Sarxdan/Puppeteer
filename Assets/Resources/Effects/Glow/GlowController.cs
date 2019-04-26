@@ -75,7 +75,11 @@ public class GlowController : MonoBehaviour
 
             for (int j = 0; j < targets[i].Renderers.Length; j++)
             {
-                buffer.DrawRenderer(targets[i].Renderers[j], glowMat);
+                var renderer = targets[i].Renderers[j];
+                if(renderer)
+                {
+                    buffer.DrawRenderer(renderer, glowMat);
+                }
             }
         }
 
@@ -96,7 +100,7 @@ public class GlowController : MonoBehaviour
     // register a glow payload
     public static void Register(in Glowable obj)
     {
-        if (!targets.Contains(obj))
+        if (!targets.Contains(obj) && obj != null)
         {
             targets.Add(obj);
         }
