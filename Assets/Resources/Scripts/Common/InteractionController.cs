@@ -90,6 +90,5 @@ public class InteractionController : NetworkBehaviour
 	public void CmdBeginInteract(InteractStruct info)
 	{
 		info.Target.GetComponent<Interactable>().OnInteractBegin(info.Source);
-		Debug.Log("(:");
 	}
 }

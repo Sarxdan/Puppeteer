@@ -4,10 +4,9 @@ using System.Collections.Generic;
 
 public class GlowController : MonoBehaviour
 {
-    private static GlowController instance;
+    private static List<Glowable> targets = new List<Glowable>();
 
     private CommandBuffer buffer;
-    private List<Glowable> targets = new List<Glowable>();
     private Material glowMat;
     private Material blurMat;
     private Vector2 blurTexelSize;
@@ -20,8 +19,6 @@ public class GlowController : MonoBehaviour
 
     void Awake()
     {
-        instance = this;
-
         glowMat = new Material(Shader.Find("Hidden/GlowCommand"));
         blurMat = new Material(Shader.Find("Hidden/Blur"));
 
@@ -46,6 +43,12 @@ public class GlowController : MonoBehaviour
 
         for (int i = 0; i < targets.Count; i++)
         {
+            if(targets[i] == null)
+            {
+                targets.RemoveAt(i);
+                continue;
+            }
+
             buffer.SetGlobalColor(glowColorID, targets[i].CurrentColor);
 
             for (int j = 0; j < targets[i].Renderers.Length; j++)
@@ -71,9 +74,9 @@ public class GlowController : MonoBehaviour
     // register a glow payload
     public static void Register(in Glowable obj)
     {
-        if (instance != null)
+        if (!targets.Contains(obj))
         {
-            instance.targets.Add(obj);
+            targets.Add(obj);
         }
     }
 }
