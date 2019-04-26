@@ -2,8 +2,16 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[ExecuteInEditMode]
-[RequireComponent(typeof(Camera))]
+/*
+ * AUTHOR:
+ * Philip Stenmark
+ * 
+ * DESCRIPTION:
+ * Applies the final composite built by the GlowController to the scene.
+ * 
+ * CODE REVIEWED BY:
+ * 
+ */
 public class GlowComposite : MonoBehaviour
 {
     [Range(0, 10)]
