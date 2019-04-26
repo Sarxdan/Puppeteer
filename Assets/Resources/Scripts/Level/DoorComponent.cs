@@ -57,7 +57,6 @@ public class DoorComponent : Interactable
     // When the used key is pressed the direction the door should open is calculated
     public override void OnInteractBegin(GameObject interactor)
     {
-		Debug.Log("I Made It!!!!!!!");
 		if (!locked)
 		{
 			float dotProduct = Vector3.Dot(transform.forward, interactor.transform.forward);
