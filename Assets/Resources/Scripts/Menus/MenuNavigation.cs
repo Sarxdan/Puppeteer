@@ -28,6 +28,7 @@ public class MenuNavigation : MonoBehaviour
     public GameObject OptionsPanel;							// the panel with options buttons on.
 	public GameObject AudioOptionsPanel;					// the panel with options buttons on.
 	public GameObject VideoOptionsPanel;					// the panel with options buttons on.
+	public GameObject ControlsOptionsPanel;					// the panel with options button on.
     public GameObject JoinMenuPanel;
     public GameObject LobbyMenuPanel;
     public GameObject CreditsPanel;
@@ -117,7 +118,7 @@ public class MenuNavigation : MonoBehaviour
 
 	void Options()
 	{
-		if (cooldown && (currentState != GameState.Options && currentState != GameState.OptionsAudio && currentState != GameState.OptionsVideo))
+		if (cooldown && (currentState != GameState.Options && currentState != GameState.OptionsAudio && currentState != GameState.OptionsVideo && currentState != GameState.OptionsControls))
 		{
 			ChangeState(GameState.Options);
 		}
@@ -184,7 +185,7 @@ public class MenuNavigation : MonoBehaviour
 		StartCoroutine(FadeText(ControlsText, targetOpacity, timeDelta));
 
 
-		while (currentState == GameState.Options || currentState == GameState.OptionsAudio || currentState == GameState.OptionsVideo) { yield return null; } // running.
+		while (currentState == GameState.Options || currentState == GameState.OptionsAudio || currentState == GameState.OptionsVideo || currentState == GameState.OptionsControls) { yield return null; } // running.
 
 		// Exit
 		// Get the target position
@@ -269,6 +270,29 @@ public class MenuNavigation : MonoBehaviour
 
 		// Start coroutine
 		StartCoroutine(SmoothMove(VideoOptionsPanel, targetLocation2, timeDelta));
+	}
+
+	IEnumerator OptionsControlsState()
+	{
+		Vector3 relativeLocation = new Vector3((Screen.width / 2),0,0);
+		Vector3 targetLocation = ControlsOptionsPanel.transform.position + relativeLocation;
+
+		float timeDelta = 0.1f;
+
+		float targetOpacity = 1;
+
+		StartCoroutine(SmoothMove(ControlsOptionsPanel, targetLocation, timeDelta));
+
+		while(currentState == GameState.OptionsControls) {yield return null;} // running
+
+		// Exit
+		// Get the target position
+		Vector3 relativeLocation2 = new Vector3(-(Screen.width / 2), 0, 0);
+		Vector3 targetLocation2 = ControlsOptionsPanel.transform.position + relativeLocation2;
+
+		float targetOpacity2 = 0;
+
+		StartCoroutine(SmoothMove(ControlsOptionsPanel, targetLocation2, timeDelta));
 	}
 
     IEnumerator JoinMenuStep1State()
