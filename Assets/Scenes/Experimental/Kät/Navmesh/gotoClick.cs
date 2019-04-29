@@ -14,13 +14,16 @@ public class gotoClick : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(Input.GetAxisRaw("Fire") > 0 && !agent.HasPath)
+        if(Input.GetKey(KeyCode.P) && !agent.HasPath)
         {
             RaycastHit hit;
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            if(Physics.Raycast(ray, out hit) && hit.transform.CompareTag("RoomCollider"))
+            if(Physics.Raycast(ray, out hit))
             {
-                agent.MoveTo(hit.point, hit.transform);
+                Vector3 pos = hit.point;
+                pos.y = 0;
+                Debug.DrawRay(pos, transform.up, Color.red, 2);
+                agent.MoveTo(pos, hit.transform);
             }
         }
     }

@@ -95,6 +95,7 @@ public class NavMesh : MonoBehaviour
 
     public navmeshFace getFaceFromPoint(Vector3 point)
     {
+        return getClosestFace(point, new List<navmeshFace>());
         List<navmeshFace> filteredFaces = new List<navmeshFace>();
         foreach (navmeshFace face in faces) {
             if (PointWithinFace(point, face))
@@ -107,7 +108,6 @@ public class NavMesh : MonoBehaviour
             }
         }
 
-        return getClosestFace(point, new List<navmeshFace>());
     }
 
     public navmeshFace getClosestFace(Vector3 position, List<navmeshFace> filter)
