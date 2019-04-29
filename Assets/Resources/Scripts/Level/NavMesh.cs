@@ -107,7 +107,7 @@ public class NavMesh : MonoBehaviour
             }
         }
 
-        return null;
+        return getClosestFace(point, new List<navmeshFace>());
     }
 
     public navmeshFace getClosestFace(Vector3 position, List<navmeshFace> filter)

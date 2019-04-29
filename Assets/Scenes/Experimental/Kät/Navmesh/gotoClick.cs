@@ -20,7 +20,7 @@ public class gotoClick : MonoBehaviour
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             if(Physics.Raycast(ray, out hit) && hit.transform.CompareTag("RoomCollider"))
             {
-                agent.MoveTo(hit.point, hit.transform.GetComponent<NavMesh>());
+                agent.MoveTo(hit.point, hit.transform);
             }
         }
     }
