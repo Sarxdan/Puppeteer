@@ -28,12 +28,19 @@ public class DoorComponent : Interactable
         }
         set
         {
-        locked = value;
-        if(locked)
-        {
-            transform.localRotation = Quaternion.Euler(transform.localEulerAngles.x, defaultAngle, transform.localEulerAngles.z);
-        }
-    }
+			locked = value;
+			if(locked)
+			{
+				transform.GetChild(0).gameObject.SetActive(false);
+				transform.GetChild(1).gameObject.SetActive(true);
+				transform.localRotation = Quaternion.Euler(transform.localEulerAngles.x, defaultAngle, transform.localEulerAngles.z);
+			}
+			else
+			{
+				transform.GetChild(0).gameObject.SetActive(true);
+				transform.GetChild(1).gameObject.SetActive(false);
+			}
+		}
     }
 
     
@@ -52,14 +59,11 @@ public class DoorComponent : Interactable
     // Save the start angle of the door
     void Start()
     {
-        defaultAngle = transform.localEulerAngles.y;
 		currentAngle = defaultAngle;
-
 	}
     // When the used key is pressed the direction the door should open is calculated
     public override void OnInteractBegin(GameObject interactor)
     {
-		Debug.Log("I Made It!!!!!!!");
 		if (!locked)
 		{
 			float dotProduct = Vector3.Dot(transform.forward, interactor.transform.forward);
