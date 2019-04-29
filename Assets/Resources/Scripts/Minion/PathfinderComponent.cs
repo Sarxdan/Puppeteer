@@ -8,10 +8,10 @@ public class PathfinderComponent : MonoBehaviour
 {
     public float MovementSpeed = 1;
     public int MaxRecursionDepth = 20;
-    public List<Vector3> path;
+    public List<AStarRoomNode> path;
     public List<Vector3> subPath;
     public bool HasPath = false;
-    private Transform navmeshTransform;
+    public Transform navmeshTransform;
 
     public float LegHeight;
     // Start is called before the first frame update
@@ -39,12 +39,8 @@ public class PathfinderComponent : MonoBehaviour
             this.HasPath = false;
             return;
         }
-
         //If subpath is empty, create new subpath
         if(this.subPath.Count <= 0){
-            //Pops end position
-            Vector3 endPos = this.path[path.Count-1];
-            this.path.RemoveAt(path.Count-1);
 
             RaycastHit hit;
             if(!Physics.Raycast(transform.position, -Vector3.up, out hit, 4)){
@@ -52,16 +48,28 @@ public class PathfinderComponent : MonoBehaviour
                 this.HasPath = false;
                 return;
             }
+
+            //this.navmeshTransform = hit.transform;
             NavMesh navmesh = hit.transform.root.GetComponent<NavMesh>();
+
             if(navmesh == null){
                 Debug.LogError("Object " + hit.transform.name + " does not have a NavMesh component! Plz fix!");
                 this.HasPath = false;
                 return;
             }
 
+            this.navmeshTransform = this.path[path.Count-1].Parent.RoomRef;
+            Vector3 endPos = navmeshTransform.InverseTransformPoint(this.path[path.Count-1].EntrancePos);
+            Vector3 startPos = navmeshTransform.InverseTransformPoint(hit.point);
+            //Pops end position
+            this.path.RemoveAt(path.Count-1);
+
             //Runs A* pathfind on faces, saves last face (reversed linked list)
-            AStarFaceNode startNode = aStarFacePathfind(hit.point, endPos, navmesh);
-            navmeshTransform = hit.transform;
+            AStarFaceNode startNode = aStarFacePathfind(startPos, endPos, navmesh);
+
+
+
+            Debug.DrawRay(this.navmeshTransform.position, Vector3.up * 10, Color.black, 3);
 
             //If A* linked list contains at least two items, run funnel stringpull
             if(startNode != null && startNode.Parent != null){
@@ -69,14 +77,15 @@ public class PathfinderComponent : MonoBehaviour
                 Vector3[] commonEndNodes = getCommonNodes(startNode.Face, startNode.Parent.Face);
                 if(commonEndNodes.Length == 2){
                     startNode.Face = new navmeshFace(commonEndNodes[0], commonEndNodes[1], endPos);
-                    this.subPath.AddRange(funnelStringpull(startNode, endPos, hit.point, new List<Vector3>(), 0));
-                    this.subPath.Add(navmeshTransform.InverseTransformPoint(endPos));
+                    this.subPath.AddRange(funnelStringpull(startNode, endPos, startPos, new List<Vector3>(), 0));
                 }
             }
+            this.subPath.Add(endPos);
+            Debug.Log("Subpath generated! Size: " + this.subPath.Count);
 
-            for(int i = 0; i < this.subPath.Count -1; i++){
-                Debug.DrawLine(this.subPath[i], this.subPath[i+1], Color.green, 3);
-            }
+        if(subPath.Count <= 0){
+            Debug.LogError("Subpath was not created! This is very bad");
+        }
 
         }else{
             //Does the actual movement
@@ -90,6 +99,11 @@ public class PathfinderComponent : MonoBehaviour
                 distance = this.MovementSpeed * Time.deltaTime;
             }
             rigidBody.MovePosition(transform.position + deltaPos.normalized * this.MovementSpeed * Time.deltaTime );
+        }
+        if(this.subPath.Count > 0){
+            for(int i = 0; i < this.subPath.Count -1; i++){
+                Debug.DrawLine(this.subPath[i], this.subPath[i+1], Color.cyan, 5);
+            }
         }
     }
 
@@ -107,18 +121,23 @@ public class PathfinderComponent : MonoBehaviour
         }
 
         this.path = aStarRoomPathfind(startRoom, endRoom);
-        this.path.Insert(0,endPos);
-
+        if(this.path.Count > 0){
+            this.path.Insert(0,new AStarRoomNode(0,this.path[0].RoomRef, this.path[0], endPos));
+        }else{
+            this.path.Insert(0, new AStarRoomNode(0, startRoom, null, endPos));
+            this.path[0].Parent = this.path[0];
+        }
         for(int i = 0; i < this.path.Count-1; i++){
-            Debug.DrawLine(this.path[i], this.path[i+1], Color.cyan, 3);
+            Debug.DrawLine(this.path[i].EntrancePos, this.path[i+1].EntrancePos, Color.cyan, 3);
+            Debug.DrawRay(this.path[i].Parent.RoomRef.position, -Vector3.up * 5, Color.blue, 5);
         }
 
         HasPath = true;
     }
 
     #region room
-    private List<Vector3> aStarRoomPathfind(Transform startRoom, Transform endRoom){
-        List<Vector3> returnList = new List<Vector3>();
+    private List<AStarRoomNode> aStarRoomPathfind(Transform startRoom, Transform endRoom){
+        List<AStarRoomNode> returnList = new List<AStarRoomNode>();
         List<AStarRoomNode> unevaluatedNodes = new List<AStarRoomNode>();
         List<AStarRoomNode> evaluatedNodes = new List<AStarRoomNode>();
         List<Transform> checkedRooms = new List<Transform>();
@@ -160,13 +179,14 @@ public class PathfinderComponent : MonoBehaviour
         }
         
         while(currentNode.Parent != null){
-            returnList.Add(currentNode.EntrancePos);
+            returnList.Add(currentNode);
             currentNode = currentNode.Parent;
         }
         return returnList;
     }
 
-    private class AStarRoomNode
+    [System.Serializable]
+    public class AStarRoomNode
     {
         public float FCost;
         public Transform RoomRef;
@@ -186,6 +206,8 @@ public class PathfinderComponent : MonoBehaviour
     #endregion
 
     #region navmesh
+
+    #region face
     private AStarFaceNode aStarFacePathfind(Vector3 start, Vector3 end, NavMesh navmesh){
 
         List<AStarFaceNode> unevaluatedNodes = new List<AStarFaceNode>();
@@ -195,8 +217,12 @@ public class PathfinderComponent : MonoBehaviour
         this.subPath = new List<Vector3>();
 
 
+
         navmeshFace startFace = navmesh.getFaceFromPoint(start);
         navmeshFace endFace = navmesh.getFaceFromPoint(end);
+
+        Debug.DrawRay(startFace.Origin, Vector3.up * 20, Color.green, 2);
+        Debug.DrawRay(endFace.Origin, Vector3.up * 20, Color.red, 2);
 
         if(startFace == null || endFace == null) return null;
 
@@ -222,7 +248,9 @@ public class PathfinderComponent : MonoBehaviour
             evaluatedNodes.Add(currentNode);
 
             //Check if current face is destination
-            if (currentNode.Face == endFace) break;
+            if (currentNode.Face == endFace){
+                break;
+            };
 
             //Fetches adjacent faces, filtering already fetched faces
             navmeshFace newFace1 = navmesh.getFaceFromEdge(currentNode.Face.aPos, currentNode.Face.bPos, faceFilter);
@@ -258,10 +286,11 @@ public class PathfinderComponent : MonoBehaviour
         }
     }
 
+    #endregion
+
     private List<Vector3> funnelStringpull(AStarFaceNode currentNode, Vector3 origin, Vector3 end, List<Vector3> nodeList, int recursionIndex){
         recursionIndex ++;
         if(recursionIndex>MaxRecursionDepth || currentNode.Parent == null) return nodeList;
-
         //Last added left and right
         Vector3 lastLeft = getLeft(currentNode, origin);
         Vector3 lastRight = getRight(currentNode, origin);
@@ -273,6 +302,11 @@ public class PathfinderComponent : MonoBehaviour
         AStarFaceNode lastRightNode = currentNode.Parent;
         AStarFaceNode lastLeftNode = currentNode.Parent;
 
+        Debug.DrawRay(origin, Vector3.up, Color.yellow*2, 5);
+        Debug.DrawRay(end, Vector3.up, Color.magenta*2, 5);
+        Debug.DrawRay(leftPortal, Vector3.up, Color.green, 5);
+        Debug.DrawRay(rightPortal, Vector3.up, Color.red, 5);
+
         currentNode = currentNode.Parent;
         //Backtraces through parents and adds faces to facepath list
         while(currentNode.Parent != null) 
@@ -280,11 +314,14 @@ public class PathfinderComponent : MonoBehaviour
             AStarFaceNode nextNode = currentNode.Parent;
             //Defines next AStarNode
 
+            Debug.DrawRay(currentNode.Face.Origin, Vector3.up, Color.white, 5);
+
             //If next face does not contain current left vert
             if (!nextNode.Face.hasVertex(leftPortal))
             {
                 //Moves left portal to next node point
                 leftPortal = getLeft(nextNode, rightPortal);
+                Debug.DrawRay(leftPortal, Vector3.up, Color.green, 5);
 
                 //Calculates (lastRight x leftPortal) * (Up) from origin
                 Vector3 leftRightCross = Vector3.Cross(lastRight - origin, leftPortal - origin);
@@ -312,6 +349,7 @@ public class PathfinderComponent : MonoBehaviour
             {
                 //Moves right portal to next node point
                 rightPortal = getRight(nextNode, leftPortal);
+                Debug.DrawRay(leftPortal, Vector3.up, Color.red, 5);
 
                 //Calculates (rightPortal x lastLeft) * (Up) from origin
                 Vector3 leftRightCross = Vector3.Cross(rightPortal - origin, lastLeft - origin);
@@ -337,7 +375,6 @@ public class PathfinderComponent : MonoBehaviour
             }
             currentNode = nextNode;
             
-
         }
 
         Vector3 endLeftCross = Vector3.Cross(end - origin, lastLeft - origin);

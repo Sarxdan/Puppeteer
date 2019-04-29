@@ -118,7 +118,7 @@ public class NavMesh : MonoBehaviour
         {
             if (!filter.Contains(faces[i]))
             {
-                float distance = Vector3.Distance(faces[i].Origin + transform.position, position);
+                float distance = Vector3.Distance(faces[i].Origin, position);
                 if (distance < closestDistance)
                 {
                     closestDistance = distance;
