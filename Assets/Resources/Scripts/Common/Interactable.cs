@@ -17,7 +17,7 @@ using Mirror;
  */
 
 [RequireComponent(typeof(Glowable))]
-public abstract class Interactable : MonoBehaviour
+public abstract class Interactable : NetworkBehaviour
 {
     //Called once when an interaction has started
     public abstract void OnInteractBegin(GameObject interactor);

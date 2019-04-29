@@ -18,6 +18,7 @@ using Mirror;
 public class DoorComponent : Interactable
 {
 	[SerializeField]
+	[SyncVar(hook = nameof(LockingDoor))]
     private bool locked;
 
     public bool Locked
@@ -31,8 +32,9 @@ public class DoorComponent : Interactable
 			locked = value;
 			if(locked)
 			{
-				transform.GetChild(0).gameObject.SetActive(false);
+				transform.GetChild(0).gameObject.SetActive(false); // NEEDS NETWORK
 				transform.GetChild(1).gameObject.SetActive(true);
+
 				transform.localRotation = Quaternion.Euler(transform.localEulerAngles.x, defaultAngle, transform.localEulerAngles.z);
 			}
 			else
@@ -43,6 +45,20 @@ public class DoorComponent : Interactable
 		}
     }
 
+	public void LockingDoor(bool lockstatus)
+	{
+		if (lockstatus)
+		{
+			transform.GetChild(0).gameObject.SetActive(false);
+			transform.GetChild(1).gameObject.SetActive(true);
+		}
+		else
+		{
+			transform.GetChild(0).gameObject.SetActive(true);
+			transform.GetChild(1).gameObject.SetActive(false);
+		}
+
+	}
     
     public float RotationSpeed;
     // How much the door should open

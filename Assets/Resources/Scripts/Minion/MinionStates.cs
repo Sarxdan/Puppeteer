@@ -22,21 +22,21 @@ namespace MinionStates
 
         public override void Run()
         {
-            Ray attackRay = new Ray(machine.transform.position, Vector3.forward);
-            Debug.DrawRay(machine.transform.position, Vector3.forward * machine.AttackRange, Color.green, 1);
+            machine.StartCoroutine("ProxyRoutine");
 
+            Ray attackRay = new Ray(machine.transform.position, Vector3.forward);
+            if (machine.eDebug == true) Debug.DrawRay(machine.transform.position, Vector3.forward * machine.AttackRange, Color.green, 0.2f);
+
+            if (machine.Follow == true)
+            {
+                machine.transform.position = Vector3.MoveTowards(machine.transform.position, machine.TargetEntity.transform.position, 0.3f);
+            }
             if (Physics.Raycast(attackRay, out RaycastHit target, machine.AttackRange))
             {
-                if (target.transform.gameObject == null)
-                {
-                    machine.StopCoroutine("AttackRoutine");
-                    machine.coRunning = false;
-                    return;
-                }
-                else if (target.collider.tag == ("Player"))
+                if (target.collider.tag == ("Player"))
                 {
                     machine.TargetEntity = target.transform.gameObject;
-                    if (machine.coRunning == false)
+                    if (machine.CoRunning == false)
                     {
                         machine.StartCoroutine("AttackRoutine", target.transform.gameObject);
                     }
@@ -48,6 +48,9 @@ namespace MinionStates
             }
             else
             {
+                machine.StopCoroutine("AttackRoutine");
+                machine.CoRunning = false;
+                machine.TargetEntity = null;
                 return;
             }
         }
