@@ -32,6 +32,7 @@ public class PlayerController : MonoBehaviour
     public float StaminaRegenDelay;
     public float StaminaRegenSpeed;
     public float CurrentStamina;
+    // Added by Krig, used for disabling the input when in the pause menu.
     public bool DisableInput = false;
 
     // movement speed modifier used by power up
