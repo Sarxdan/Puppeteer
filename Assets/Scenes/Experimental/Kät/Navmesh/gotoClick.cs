@@ -23,7 +23,7 @@ public class gotoClick : MonoBehaviour
                 Vector3 pos = hit.point;
                 pos.y = 0;
                 Debug.DrawRay(pos, transform.up, Color.red, 2);
-                agent.MoveTo(pos, hit.transform);
+                agent.MoveTo(pos);
             }
         }
     }

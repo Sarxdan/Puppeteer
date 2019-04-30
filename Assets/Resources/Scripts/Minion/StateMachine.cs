@@ -19,7 +19,7 @@ public class StateMachine : MonoBehaviour
 {
     public uint tickRate = 10;
     public State CurrentState;
-    public GameObject EnemySpawner;
+    public EnemySpawner EnemySpawner;
     public GameObject TargetEntity;
     public float ProxyCooldown;
     public float AttackCooldown;
@@ -32,14 +32,19 @@ public class StateMachine : MonoBehaviour
     public float ClosestPuppDist = 0;
     public bool Follow;
 
+    public Animator AnimController;
+    public Rigidbody rigidbody;
+
     public bool eDebug;
     //Pathfind component reference (pathFinder)
+    public PathfinderComponent PathFinder;
 
     public void Start()
     {
-        Puppets.AddRange(GameObject.FindGameObjectsWithTag("Player"));
+        PathFinder = GetComponent<PathfinderComponent>();
+        AnimController = GetComponent<Animator>();
         Follow = false;
-        SetState(new AttackingState(this));
+        SetState(new WanderState(this));
     }
 
     public void SetState(State newState)
@@ -54,8 +59,10 @@ public class StateMachine : MonoBehaviour
     {
         if (System.Environment.TickCount % tickRate == 0)
         {
-
+            Puppets.Clear();
+            Puppets.AddRange(GameObject.FindGameObjectsWithTag("Player"));
             if (CurrentState != null) CurrentState.Run();
+
         }
     }
 
@@ -78,12 +85,12 @@ public class StateMachine : MonoBehaviour
     //REEEEEE FUCKING FIXA FRAMTIDA FLOOF
     private IEnumerator ProxyRoutine()
     {
+        ClosestPuppDist = Mathf.Infinity;
         foreach (GameObject pupp in Puppets)
         {
             if (pupp != null)
             {
                 float puppDist = Vector3.Distance(pupp.transform.position, gameObject.transform.position);
-
                 if (ClosestPuppDist == 0)
                 {
                     Follow = false;
@@ -94,7 +101,7 @@ public class StateMachine : MonoBehaviour
                     Follow = false;
                     ClosestPuppDist = puppDist;
                 }
-                else if (ClosestPuppDist <= AggroRange)
+                if (ClosestPuppDist <= AggroRange)
                 {
                     Follow = true;
                     TargetEntity = pupp.gameObject;
