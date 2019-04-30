@@ -12,6 +12,7 @@ using Mirror;
 *
 * CODE REVIEWED BY:
 * Sandra "Sanders" Andersson (16/4)
+* Ludvig Björk Förare (190430)
 *
 * CONTRIBUTORS:
 */
@@ -73,14 +74,6 @@ public class AnchorPoint : NetworkBehaviour
 			Connected = true;
 			ConnectedTo = to;
 		}
-	}
-
-	public void ConnectDoorClient(AnchorPoint to)
-	{
-		to.Connected = true;
-		to.ConnectedTo = this;
-		Connected = true;
-		ConnectedTo = to;
 	}
 
 	// Disconnects a door from whatever it was connected with.

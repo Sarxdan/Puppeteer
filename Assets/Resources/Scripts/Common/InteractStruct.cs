@@ -10,7 +10,7 @@ using UnityEngine;
 * Struct used to send information about interacted gameobjects over network
 *
 * CODE REVIEWED BY:
-* 
+* Ludvig Björk Förare (190430)
 *
 * CONTRIBUTORS:
 */

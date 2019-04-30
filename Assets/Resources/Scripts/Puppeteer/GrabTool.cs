@@ -12,7 +12,8 @@ using Mirror;
 *
 * CODE REVIEWED BY:
 * Filip Renman (24/4/2019)
-*
+* Ludvig Björk Förare (190430)
+* 
 * CONTRIBUTORS:
 * Philip Stenmark
 */
@@ -177,13 +178,8 @@ public class GrabTool : NetworkBehaviour
 	private void Pickup(GameObject pickupObject)
 	{
 		sourceObject = pickupObject;
-		sourceObject.name = "CurrentSourceObject";
-
 		selectedObject = Instantiate(sourceObject);
-		selectedObject.name = "SelectedObject";
-
 		guideObject = Instantiate(sourceObject);
-		guideObject.name = "GuideObject";
 
 		grabOffset = sourceObject.transform.position - MouseToWorldPosition();
 
@@ -198,13 +194,8 @@ public class GrabTool : NetworkBehaviour
 		if (!isLocalPlayer)
 		{
 			sourceObject = pickupObject;
-			sourceObject.name = "CurrentSourceObject";
-
 			selectedObject = Instantiate(sourceObject);
-			selectedObject.name = "SelectedObject";
-
 			guideObject = Instantiate(sourceObject);
-			guideObject.name = "GuideObject";
 		}
 		
 		grabOffset = sourceObject.transform.position - localPlayerMousePos;

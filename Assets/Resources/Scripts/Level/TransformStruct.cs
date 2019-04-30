@@ -10,7 +10,7 @@ using UnityEngine;
 * Struct used to send position and rotation of an object over network
 *
 * CODE REVIEWED BY:
-* 
+* Ludvig Björk Förare (190430)
 *
 * CONTRIBUTORS:
 */
