@@ -137,8 +137,8 @@ public class GrabTool : NetworkBehaviour
 				{
 					// Rotate room around its own up-axis
 
-					// CMDRotate
 					selectedObject.transform.RotateAround(selectedObject.transform.position, selectedObject.transform.up, 90);
+					CmdRotate(selectedObject.transform.rotation);
 				}
 				if (!isServer)
 				{
@@ -147,6 +147,12 @@ public class GrabTool : NetworkBehaviour
 
 			}
 		}
+	}
+
+	[Command]
+	public void CmdRotate(Quaternion rot)
+	{
+		selectedObject.transform.rotation = rot;
 	}
 
 	[Command]
@@ -177,6 +183,7 @@ public class GrabTool : NetworkBehaviour
 			grabOffset = sourceObject.transform.position - MouseToWorldPosition();
 		}
 
+		CmdUpdateMousePos(MouseToWorldPosition());
 		CmdPickup(pickupObject);
 	}
 
@@ -267,6 +274,8 @@ public class GrabTool : NetworkBehaviour
 		if (bestDstPoint != null)
 		{
 			RpcUpdateGuide(new TransformStruct(selectedObject.transform.position - (bestSrcPoint.transform.position - bestDstPoint.transform.position), selectedObject.transform.rotation));
+			guideObject.transform.position = selectedObject.transform.position - (bestSrcPoint.transform.position - bestDstPoint.transform.position);
+			guideObject.transform.rotation = selectedObject.transform.rotation;
 
 			RoomTreeNode currentNode = sourceObject.GetComponent<RoomTreeNode>();
 			RoomTreeNode targetNode = bestDstPoint.GetComponentInParent<RoomTreeNode>();
@@ -278,6 +287,8 @@ public class GrabTool : NetworkBehaviour
 		else
 		{
 			RpcUpdateGuide(new TransformStruct(sourceObject.transform.position, sourceObject.transform.rotation));
+			guideObject.transform.position = sourceObject.transform.position;
+			guideObject.transform.rotation = sourceObject.transform.rotation;
 		}
 	}
 
