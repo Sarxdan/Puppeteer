@@ -203,6 +203,19 @@ public class GrabTool : NetworkBehaviour
 
 		// Save the parent node of the picked up room to be able to reset if the position doesn't change.
 		firstParentNode = sourceObject.GetComponent<RoomTreeNode>().GetParent();
+
+		if (!isLocalPlayer)
+		{
+			foreach (MeshRenderer renderer in selectedObject.GetComponentsInChildren<MeshRenderer>())
+			{
+				renderer.enabled = false;
+			}
+
+			foreach (MeshRenderer renderer in guideObject.GetComponentsInChildren<MeshRenderer>())
+			{
+				renderer.enabled = false;
+			}
+		}
 	}
 
 	private void Drop()
