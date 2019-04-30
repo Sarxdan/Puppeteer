@@ -18,7 +18,7 @@ public class ItemSpawner : NetworkBehaviour
 	// Calculates the correct percentage of all spawnable entitys and then randoms a percentile, spawning its corresponding entity type.
 	void Start()
     {
-		level = transform.parent.gameObject;
+		//level = transform.parent.gameObject;
 		if (!isServer)
 		{
 			return;

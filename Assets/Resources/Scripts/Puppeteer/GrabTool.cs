@@ -12,7 +12,8 @@ using Mirror;
 *
 * CODE REVIEWED BY:
 * Filip Renman (24/4/2019)
-*
+* Ludvig Björk Förare (190430)
+* 
 * CONTRIBUTORS:
 * Philip Stenmark
 */
@@ -43,6 +44,7 @@ public class GrabTool : NetworkBehaviour
 	private RoomInteractable lastHit;
 	private Vector3 grabOffset = new Vector3();
 
+	// Mouse position of current Puppeteer. Used when server is not puppeteer.
 	private Vector3 localPlayerMousePos;
 
 	// Original parent node used for updating tree when dropping without snapping to something.
@@ -56,11 +58,13 @@ public class GrabTool : NetworkBehaviour
 
     void Update()
     {
+		// Update local players rooms and send data to server. Purely visual.
 		if (isLocalPlayer)
 		{
 			ClientUpdate();
 		}
 
+		// Main update and checks always run on server
 		if (isServer)
 		{
 			if (selectedObject != null)
@@ -70,6 +74,7 @@ public class GrabTool : NetworkBehaviour
 		}
     }
 
+	// Decide what the server should do with inputs.
 	private void ClientUpdate()
 	{
 		if (selectedObject == null)
@@ -125,6 +130,7 @@ public class GrabTool : NetworkBehaviour
 		}
 		else
 		{
+			// Send current mouseposition to server
 			CmdUpdateMousePos(MouseToWorldPosition());
 
 			if (Input.GetButtonUp("Fire"))
@@ -137,8 +143,8 @@ public class GrabTool : NetworkBehaviour
 				{
 					// Rotate room around its own up-axis
 
-					// CMDRotate
 					selectedObject.transform.RotateAround(selectedObject.transform.position, selectedObject.transform.up, 90);
+					CmdRotate(selectedObject.transform.rotation);
 				}
 				if (!isServer)
 				{
@@ -149,6 +155,14 @@ public class GrabTool : NetworkBehaviour
 		}
 	}
 
+	// Rotate room on server
+	[Command]
+	public void CmdRotate(Quaternion rot)
+	{
+		selectedObject.transform.rotation = rot;
+	}
+	
+	// Update mouse position on server
 	[Command]
 	public void CmdUpdateMousePos(Vector3 pos)
 	{
@@ -163,41 +177,47 @@ public class GrabTool : NetworkBehaviour
 	// Method used for picking up an object.
 	private void Pickup(GameObject pickupObject)
 	{
-		if (!isServer)
-		{
-			sourceObject = pickupObject;
-			sourceObject.name = "CurrentSourceObject";
+		sourceObject = pickupObject;
+		selectedObject = Instantiate(sourceObject);
+		guideObject = Instantiate(sourceObject);
 
-			selectedObject = Instantiate(sourceObject);
-			selectedObject.name = "SelectedObject";
+		grabOffset = sourceObject.transform.position - MouseToWorldPosition();
 
-			guideObject = Instantiate(sourceObject);
-			guideObject.name = "GuideObject";
-
-			grabOffset = sourceObject.transform.position - MouseToWorldPosition();
-		}
-
+		CmdUpdateMousePos(MouseToWorldPosition());
 		CmdPickup(pickupObject);
 	}
 
+	// Method for picking up objects on server and making them invisible if server is not Puppeteer.
 	[Command]
 	public void CmdPickup(GameObject pickupObject)
 	{
-		sourceObject = pickupObject;
-		sourceObject.name = "CurrentSourceObject";
-
-		selectedObject = Instantiate(sourceObject);
-		selectedObject.name = "SelectedObject";
-
-		guideObject = Instantiate(sourceObject);
-		guideObject.name = "GuideObject";
-
+		if (!isLocalPlayer)
+		{
+			sourceObject = pickupObject;
+			selectedObject = Instantiate(sourceObject);
+			guideObject = Instantiate(sourceObject);
+		}
+		
 		grabOffset = sourceObject.transform.position - localPlayerMousePos;
 
 		// Save the parent node of the picked up room to be able to reset if the position doesn't change.
 		firstParentNode = sourceObject.GetComponent<RoomTreeNode>().GetParent();
+
+		if (!isLocalPlayer)
+		{
+			foreach (MeshRenderer renderer in selectedObject.GetComponentsInChildren<MeshRenderer>())
+			{
+				renderer.enabled = false;
+			}
+
+			foreach (MeshRenderer renderer in guideObject.GetComponentsInChildren<MeshRenderer>())
+			{
+				renderer.enabled = false;
+			}
+		}
 	}
 
+	// Method to drop rooms to snapped position.
 	private void Drop()
 	{
 		CmdDrop();
@@ -210,6 +230,7 @@ public class GrabTool : NetworkBehaviour
 		}
 	}
 
+	// Method to update position of source object on server when drop happens.
 	[Command]
 	public void CmdDrop()
 	{
@@ -232,6 +253,7 @@ public class GrabTool : NetworkBehaviour
 		level.ConnectDoorsInRoomIfPossible(sourceObject);
 	}
 
+	// Move local selected object for client.
 	private void ClientUpdatePositions()
 	{
 		Vector3 newPosition = MouseToWorldPosition() + grabOffset;
@@ -266,7 +288,9 @@ public class GrabTool : NetworkBehaviour
 		// Move guideObject to best availible position. If there is none, move it to source.
 		if (bestDstPoint != null)
 		{
-			RpcUpdateGuide(new TransformStruct(selectedObject.transform.position - (bestSrcPoint.transform.position - bestDstPoint.transform.position), selectedObject.transform.rotation));
+			RpcUpdateGuide(new TransformStruct(selectedObject.transform.position - (bestSrcPoint.transform.position - bestDstPoint.transform.position), selectedObject.transform.rotation.normalized));
+			guideObject.transform.position = selectedObject.transform.position - (bestSrcPoint.transform.position - bestDstPoint.transform.position);
+			guideObject.transform.rotation = selectedObject.transform.rotation;
 
 			RoomTreeNode currentNode = sourceObject.GetComponent<RoomTreeNode>();
 			RoomTreeNode targetNode = bestDstPoint.GetComponentInParent<RoomTreeNode>();
@@ -277,14 +301,17 @@ public class GrabTool : NetworkBehaviour
 		}
 		else
 		{
-			RpcUpdateGuide(new TransformStruct(sourceObject.transform.position, sourceObject.transform.rotation));
+			RpcUpdateGuide(new TransformStruct(sourceObject.transform.position, sourceObject.transform.rotation.normalized));
+			guideObject.transform.position = sourceObject.transform.position;
+			guideObject.transform.rotation = sourceObject.transform.rotation;
 		}
 	}
 
+	// Method to send data from server to client about position of guideRoom.
 	[ClientRpc]
 	public void RpcUpdateGuide(TransformStruct target)
 	{
-		if (isLocalPlayer)
+		if (isLocalPlayer && guideObject != null)
 		{
 			guideObject.transform.rotation = target.Rotation;
 			guideObject.transform.position = target.Position;

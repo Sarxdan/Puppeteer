@@ -24,12 +24,13 @@ namespace MinionStates
         {
             machine.StartCoroutine("ProxyRoutine");
 
-            Ray attackRay = new Ray(machine.transform.position, Vector3.forward);
+            Ray attackRay = new Ray(machine.transform.position, machine.transform.forward);
             if (machine.eDebug == true) Debug.DrawRay(machine.transform.position, Vector3.forward * machine.AttackRange, Color.green, 0.2f);
 
             if (machine.Follow == true)
             {
-                machine.transform.position = Vector3.MoveTowards(machine.transform.position, machine.TargetEntity.transform.position, 0.3f);
+                //machine.transform.position = Vector3.MoveTowards(machine.transform.position, machine.TargetEntity.transform.position, 0.3f);
+                machine.PathFinder.MoveTo(machine.TargetEntity.transform.position);
             }
             if (Physics.Raycast(attackRay, out RaycastHit target, machine.AttackRange))
             {
@@ -95,6 +96,7 @@ namespace MinionStates
     public class WanderState : State
     {
         private StateMachine machine;
+        private Vector3 destination;
 
         public WanderState(StateMachine machine)
         {
@@ -102,17 +104,21 @@ namespace MinionStates
         }
         public override void Enter()
         {
-
+            destination = machine.EnemySpawner.GetNearbyDestination();
+            machine.AnimController.SetBool("Walking", true);
+            machine.PathFinder.MoveTo(destination);
         }
 
         public override void Run()
         {
-
+            if(!machine.PathFinder.HasPath){
+                machine.SetState(new WanderState(machine));
+            }
         }
 
         public override void Exit()
         {
-
+            machine.AnimController.SetBool("Walking", false);
         }
     }
 

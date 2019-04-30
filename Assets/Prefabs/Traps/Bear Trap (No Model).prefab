@@ -101,9 +101,13 @@ GameObject:
   m_Component:
   - component: {fileID: 5025733951878215715}
   - component: {fileID: 2003450191868672706}
-  - component: {fileID: 4602860582812109636}
   - component: {fileID: 8214339790825210017}
+  - component: {fileID: 4602860582812109636}
   - component: {fileID: 724720941931044917}
+  - component: {fileID: 6524870847537967573}
+  - component: {fileID: 3845641326040089322}
+  - component: {fileID: 5465590311773285304}
+  - component: {fileID: 6370938280715159669}
   m_Layer: 0
   m_Name: Bear Trap (No Model)
   m_TagString: Untagged
@@ -147,6 +151,19 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!65 &8214339790825210017
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5733567816084534936}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 2.1305444, y: 1, z: 1.9746199}
+  m_Center: {x: 0.0126770735, y: 0, z: 0.48730993}
 --- !u!114 &4602860582812109636
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -165,19 +182,6 @@ MonoBehaviour:
   Puppets: []
   Anim: {fileID: 0}
   Target: {fileID: 0}
---- !u!65 &8214339790825210017
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5733567816084534936}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 1
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 2.1305444, y: 1, z: 1.9746199}
-  m_Center: {x: 0.0126770735, y: 0, z: 0.48730993}
 --- !u!114 &724720941931044917
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -194,6 +198,64 @@ MonoBehaviour:
   ReleaseTimer: 3
   ReleaseDamage: 10
   Activated: 0
+--- !u!114 &6524870847537967573
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5733567816084534936}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b91ecbcc199f4492b9a91e820070131, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  serverOnly: 0
+  localPlayerAuthority: 0
+  m_AssetId: 9e1af8b73d684464dbc9b16d8dbf8097
+  m_SceneId: 0
+--- !u!114 &3845641326040089322
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5733567816084534936}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 41da09f073a954b4dae28c974e911522, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncInterval: 0.1
+  compressRotation: 0
+--- !u!114 &5465590311773285304
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5733567816084534936}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f6f3bf89aa97405989c802ba270f815, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncInterval: 0.1
+  animator: {fileID: 2003450191868672706}
+--- !u!114 &6370938280715159669
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5733567816084534936}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5bb98d5cfea00ff47a55c4d6156d31d3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GlowColor: {r: 1, g: 1, b: 1, a: 1}
+  LerpFactor: 10
 --- !u!1 &6241595794944264098
 GameObject:
   m_ObjectHideFlags: 0

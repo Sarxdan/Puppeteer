@@ -135,21 +135,4 @@ public class RoomTreeNode : MonoBehaviour
 	{
 		return inTree;
 	}
-
-	public void BuildTree()
-	{
-		foreach (AnchorPoint door in GetComponentsInChildren<AnchorPoint>())
-		{
-			if (door.Connected)
-			{
-				RoomTreeNode newNode = door.ConnectedTo.GetComponentInParent<RoomTreeNode>();
-				if (!newNode.inTree)
-				{
-					newNode.SetParent(this);
-					newNode.ReconnectToTree();
-					newNode.BuildTree();
-				}
-			}
-		}
-	}
 }
