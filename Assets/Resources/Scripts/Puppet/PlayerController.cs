@@ -108,7 +108,7 @@ public class PlayerController : MonoBehaviour
             }
         }
 
-        if(Input.GetKey(KeyCode.F)) // TODO: add input binding for powerup activation
+        if(Input.GetButtonDown("UsePowerup")) // TODO: add input binding for powerup activation
         {
             StartCoroutine(GetComponent<PowerupBase>().Run());
         }
@@ -169,7 +169,7 @@ public class PlayerController : MonoBehaviour
 
             //Sprinting
             //Checks the most important task, if the sprint button is released
-            if (Input.GetButtonUp("Sprint"))
+            if (Input.GetButtonUp("Sprint") && (!Input.GetButton("Horizontal") || !Input.GetButton("Vertical")))
             {
                 animController.SetBool("Sprint", false);
                 MovementSpeed = speedSave;
@@ -187,7 +187,7 @@ public class PlayerController : MonoBehaviour
                 StartCoroutine("StaminaRegenRoutine");
             }
             //Checks for sprint key and acts accordingly
-            else if (Input.GetButton("Sprint"))
+            else if (Input.GetButton("Sprint") && (Input.GetButton("Horizontal") || Input.GetButton("Vertical")))
             {
                 animController.SetBool("Sprint", true);
                 isDown = true;
