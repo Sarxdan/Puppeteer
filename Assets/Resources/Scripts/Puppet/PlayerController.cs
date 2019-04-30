@@ -108,7 +108,7 @@ public class PlayerController : MonoBehaviour
             }
         }
 
-        if(Input.GetKey(KeyCode.F)) // TODO: add input binding for powerup activation
+        if(Input.GetButtonDown("UsePowerup")) // TODO: add input binding for powerup activation
         {
             StartCoroutine(GetComponent<PowerupBase>().Run());
         }
