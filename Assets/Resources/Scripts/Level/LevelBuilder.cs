@@ -251,6 +251,9 @@ public class LevelBuilder : NetworkBehaviour
 		foreach (var ownDoor in room.GetComponentsInChildren<AnchorPoint>())
 		{
 			ownDoor.DisconnectDoor();
+		}
+		foreach (var ownDoor in room.GetComponentsInChildren<AnchorPoint>())
+		{
 			foreach (var placedDoor in parent.GetComponentsInChildren<AnchorPoint>())
 			{
 				if (ownDoor == placedDoor)
