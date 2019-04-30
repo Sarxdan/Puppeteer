@@ -79,7 +79,7 @@ namespace MinionStates
 
         public override void Run()
         {
-            if (machine.EnemySpawner.GetComponent<HealthComponent>.Health == 0 || machine.EnemySpawner == null)
+            if (machine.EnemySpawner.GetComponent<HealthComponent>().Health == 0 || machine.EnemySpawner == null)
             {
                 //rampage babey
             }

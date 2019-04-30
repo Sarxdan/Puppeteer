@@ -59,11 +59,8 @@ public class StateMachine : MonoBehaviour
     {
         if (System.Environment.TickCount % tickRate == 0)
         {
-<<<<<<< HEAD
-=======
             Puppets.Clear();
             Puppets.AddRange(GameObject.FindGameObjectsWithTag("Player"));
->>>>>>> b9320e9e4251c0022f61a6c43fab3a530e1c0787
             if (CurrentState != null) CurrentState.Run();
 
         }
