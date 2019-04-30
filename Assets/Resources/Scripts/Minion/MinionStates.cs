@@ -73,12 +73,15 @@ namespace MinionStates
         }
         public override void Enter()
         {
-
+            Vector3 home = machine.EnemySpawner.transform.position;
         }
 
         public override void Run()
         {
-
+            if (machine.EnemySpawner.GetComponent<HealthComponent>.Health == 0 || machine.EnemySpawner == null)
+            {
+                //rampage babey
+            }
         }
 
         public override void Exit()

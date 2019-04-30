@@ -54,7 +54,6 @@ public class StateMachine : MonoBehaviour
     {
         if (System.Environment.TickCount % tickRate == 0)
         {
-
             if (CurrentState != null) CurrentState.Run();
         }
     }
