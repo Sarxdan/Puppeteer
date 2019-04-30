@@ -2,29 +2,23 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-class AStarNode
-{
-    public float FCost;
-    public navmeshFace Face;
-    public AStarNode Parent;
-    public AStarNode(float fCost, navmeshFace Face, AStarNode parent)
-    {
-        this.FCost = fCost;
-        this.Parent = parent;
-        this.Face = Face;
-    }
-}
+
 
 public class PathfinderComponent : MonoBehaviour
 {
     public float MovementSpeed = 1;
+    public float RotationSpeed = 0.5f;
     public int MaxRecursionDepth = 20;
-    public List<Vector3> path;
+    public List<AStarRoomNode> path;
+    public List<Vector3> subPath;
     public bool HasPath = false;
-    private Transform navmeshTransform;
+    public Transform navmeshTransform;
+    public NavMesh previousNavmesh;
 
     public float LegHeight;
     // Start is called before the first frame update
+
+    public float InteractRayLength = 0.4f;
 
     private Rigidbody rigidBody;
     void Start()
@@ -40,96 +34,230 @@ public class PathfinderComponent : MonoBehaviour
         }
     }
 
-    private void createOrUpdateNode(navmeshFace face, Vector3 start, Vector3 end, List<AStarNode> unEvaluatedNodes, List<navmeshFace> faceFilter, AStarNode parent)
-    {
-        if(faceFilter.Contains(face)){
-            unEvaluatedNodes.Find(x => x.Face == face);
-        }else{
-            unEvaluatedNodes.Add(new AStarNode(Vector3.Distance(start, face.Origin) + Vector3.Distance(face.Origin, end), face, parent));
-            faceFilter.Add(face);
-        }
-    }
+    
 
     private void move(){
-        if(path.Count <= 0){
-            HasPath = false;
+
+        
+        if(this.path.Count <= 0 && this.subPath.Count <= 0){
+            this.HasPath = false;
+            rigidBody.velocity = Vector3.zero;
             return;
         }
-        Vector3 deltaPos = navmeshTransform.TransformPoint(path[0]) - transform.position + transform.up * LegHeight;
-        float distance = 0;
-        if(deltaPos.magnitude < this.MovementSpeed * Time.deltaTime){
-            distance = deltaPos.magnitude;
-            this.path.RemoveAt(0);
-        }else{
-            distance = this.MovementSpeed * Time.deltaTime;
+        //If subpath is empty, create new subpath
+        if(this.subPath.Count <= 0){
+            
+            RaycastHit hit;
+            if(!Physics.Raycast(transform.position, -Vector3.up, out hit, 4)){
+                Debug.LogError("Object " + transform.name + " could not find the floor and therefore not pathfind. This is very bad and cannot happen");
+                this.HasPath = false;
+                return;
+            }
+
+
+            this.navmeshTransform = this.path[path.Count-1].Parent.RoomRef;
+
+            Vector3 endPos = navmeshTransform.InverseTransformPoint(this.path[path.Count-1].EntrancePos);
+            Vector3 startPos = navmeshTransform.InverseTransformPoint(hit.point);
+
+            this.path.RemoveAt(path.Count-1);
+
+            if(previousNavmesh != null) previousNavmesh.draw = false;
+            NavMesh navmesh = navmeshTransform.GetComponent<NavMesh>();
+            previousNavmesh = navmesh;
+            navmesh.draw = true;
+
+            if(navmesh == null){
+                Debug.LogError("Object " + hit.transform.name + " does not have a NavMesh component! Plz fix!");
+                this.HasPath = false;
+                return;
+            }
+            
+
+            //Runs A* pathfind on faces, saves last face (reversed linked list)
+            AStarFaceNode startNode = aStarFacePathfind(startPos, endPos, navmesh);
+
+
+
+            //If A* linked list contains at least two items, run funnel stringpull
+            if(startNode != null && startNode.Parent != null){
+                //Replaces lone point on start node with end
+                Vector3[] commonEndNodes = getCommonNodes(startNode.Face, startNode.Parent.Face);
+                if(commonEndNodes.Length == 2){
+                    startNode.Face = new navmeshFace(commonEndNodes[0], commonEndNodes[1], endPos);
+                    this.subPath.AddRange(funnelStringpull(startNode, endPos, startPos, new List<Vector3>(), 0));
+                }
+            }
+            this.subPath.Add(endPos);
+            Debug.Log("Subpath generated for room " + navmeshTransform);
+
+        if(subPath.Count <= 0){
+            Debug.LogError("Subpath was not created! This is very bad");
         }
-        rigidBody.MovePosition(transform.position + deltaPos.normalized * this.MovementSpeed * Time.deltaTime );
+
+        }else{
+            //Does the actual movement
+            Vector3 deltaPos = navmeshTransform.TransformPoint(subPath[0]) - transform.position + transform.up * LegHeight;
+            float distance = 0;
+            Quaternion goalRot = Quaternion.LookRotation(deltaPos, transform.up);
+            Debug.DrawRay(transform.position, transform.forward, Color.magenta, Time.deltaTime);
+            transform.rotation = Quaternion.RotateTowards(transform.rotation, goalRot, RotationSpeed);
+            
+            if(deltaPos.magnitude <= 0.1f){
+                distance = deltaPos.magnitude;
+                this.subPath.RemoveAt(0);
+            }else{
+                distance = this.MovementSpeed * Time.deltaTime;
+            }
+            //rigidBody.MovePosition(transform.position + transform.forward * this.MovementSpeed * Time.deltaTime );
+            rigidBody.velocity = transform.forward * this.MovementSpeed * Time.deltaTime;
+        }
+        if(this.subPath.Count > 0){
+            for(int i = 0; i < this.subPath.Count - 1; i++){
+                Debug.DrawLine(navmeshTransform.TransformPoint(this.subPath[i]), navmeshTransform.TransformPoint(this.subPath[i+1]), Color.magenta, 5);
+            }
+        }
+        if(this.path.Count > 0){
+            for(int i = 0; i < this.path.Count - 1; i++){
+                Debug.DrawLine(this.path[i].EntrancePos, this.path[i+1].EntrancePos, Color.cyan, 5);
+            }
+        }
+
+        RaycastHit doorHit;
+        if(Physics.Raycast(transform.position, transform.forward, out doorHit, InteractRayLength)){
+            DoorComponent doorComponent = doorHit.transform.GetComponent<DoorComponent>();
+            if(doorComponent != null){
+                doorComponent.OnInteractBegin(gameObject);
+            }
+        }
+
     }
 
 
-    public void MoveTo(Vector3 end, NavMesh navmesh)
+
+
+    public void MoveTo(Vector3 endPos, Transform endRoom)
     {
 
         RaycastHit hit;
-        Vector3 start;
+        Transform startRoom;
         if (Physics.Raycast(transform.position, -transform.up, out hit))
         {
-            NavMesh navMesh = hit.transform.GetComponent<NavMesh>();
-            if (navMesh != null)
-            {
-                start = hit.point;
-                navmeshTransform = navMesh.transform;
-            }else{
-                return;
-            }
+            startRoom = hit.transform.parent;
         }else{
             return;
         }
 
-        //Changes start and end to localspace
-        start = navmeshTransform.InverseTransformPoint(start);
-        end = navmeshTransform.InverseTransformPoint(end);
-
-        //Runs A* pathfind on faces, saves last face (reversed linked list)
-        AStarNode startNode = aStarFacePathfind(start, end, navmesh);
-
-        //If A* linked list contains at least two items, run funnel stringpull
-        if(startNode != null && startNode.Parent != null){
-            //Replaces lone point on start node with end
-            Vector3[] commonEndNodes = getCommonNodes(startNode.Face, startNode.Parent.Face);
-            if(commonEndNodes.Length == 2){
-                startNode.Face = new navmeshFace(commonEndNodes[0], commonEndNodes[1], end);
-                this.path.AddRange(funnelStringpull(startNode, end, start, new List<Vector3>(), 0));
-            }
+        this.path = aStarRoomPathfind(startRoom, endRoom);
+        if(this.path.Count > 0){
+            this.path.Insert(0,new AStarRoomNode(0,this.path[0].RoomRef, this.path[0], endPos));
+        }else{
+            this.path.Insert(0, new AStarRoomNode(0, startRoom, null, endPos));
+            this.path[0].Parent = this.path[0];
         }
-        this.path.Add(end);
 
         HasPath = true;
     }
 
-    private AStarNode aStarFacePathfind(Vector3 start, Vector3 end, NavMesh navmesh){
+    #region room
+    private List<AStarRoomNode> aStarRoomPathfind(Transform startRoom, Transform endRoom){
+        List<AStarRoomNode> returnList = new List<AStarRoomNode>();
+        List<AStarRoomNode> unevaluatedNodes = new List<AStarRoomNode>();
+        List<AStarRoomNode> evaluatedNodes = new List<AStarRoomNode>();
+        List<Transform> checkedRooms = new List<Transform>();
+        AStarRoomNode currentNode = null;
 
-        List<AStarNode> unEvaluatedNodes = new List<AStarNode>();
-        List<AStarNode> evaluatedNodes = new List<AStarNode>();
+        unevaluatedNodes.Add(new AStarRoomNode(Vector3.Distance(endRoom.position, startRoom.position), startRoom, null, new Vector3()));
+        checkedRooms.Add(startRoom);
+
+        while(unevaluatedNodes.Count > 0){
+            float lowestFCost = Mathf.Infinity;
+            currentNode = null;
+            foreach(AStarRoomNode node in unevaluatedNodes)
+            {
+                if(node.FCost < lowestFCost)
+                {
+                    lowestFCost = node.FCost;
+                    currentNode = node;
+                }
+            }
+
+            if(currentNode.RoomRef == endRoom){
+                break;
+            }
+
+            unevaluatedNodes.Remove(currentNode);
+            evaluatedNodes.Add(currentNode);
+
+            foreach(AnchorPoint door in currentNode.RoomRef.GetComponent<DoorReferences>().doors){
+                if(door.Connected){
+                    Transform adjacentRoom = door.ConnectedTo.transform.parent.transform.parent;
+                    if(!checkedRooms.Contains(adjacentRoom)){
+                        unevaluatedNodes.Add(new AStarRoomNode(Vector3.Distance(startRoom.position, adjacentRoom.position) + Vector3.Distance(endRoom.position, adjacentRoom.position), adjacentRoom, currentNode, door.transform.position));
+                        checkedRooms.Add(adjacentRoom);
+                    }
+                }
+            }
+
+        }
+        
+        while(currentNode.Parent != null){
+            returnList.Add(currentNode);
+            currentNode = currentNode.Parent;
+        }
+        return returnList;
+    }
+
+    [System.Serializable]
+    public class AStarRoomNode
+    {
+        public float FCost;
+        public Transform RoomRef;
+        public AStarRoomNode Parent;
+        public Vector3 EntrancePos;
+
+        public AStarRoomNode(float fCost, Transform roomRef, AStarRoomNode parent, Vector3 entrancePos){
+            this.FCost = fCost;
+            this.RoomRef = roomRef;
+            this.Parent = parent;
+            this.EntrancePos = entrancePos;
+        }
+    }
+
+    
+
+    #endregion
+
+    #region navmesh
+
+    #region face
+    private AStarFaceNode aStarFacePathfind(Vector3 start, Vector3 end, NavMesh navmesh){
+
+        List<AStarFaceNode> unevaluatedNodes = new List<AStarFaceNode>();
+        List<AStarFaceNode> evaluatedNodes = new List<AStarFaceNode>();
         List<navmeshFace> faceFilter = new List<navmeshFace>();
-        List<AStarNode> facePath = new List<AStarNode>();
-        this.path = new List<Vector3>();
+        List<AStarFaceNode> facePath = new List<AStarFaceNode>();
+
 
 
         navmeshFace startFace = navmesh.getFaceFromPoint(start);
         navmeshFace endFace = navmesh.getFaceFromPoint(end);
 
+
+        Debug.DrawRay(startFace.Origin + navmeshTransform.position, navmeshTransform.up * 5, Color.green,3);
+        Debug.DrawRay(endFace.Origin + navmeshTransform.position, navmeshTransform.up * 5, Color.red,3);
+
         if(startFace == null || endFace == null) return null;
 
-        createOrUpdateNode(startFace, end, start, unEvaluatedNodes, faceFilter, null);
+        createOrUpdateNode(startFace, end, start, unevaluatedNodes, faceFilter, null);
 
-        AStarNode currentNode = null;
+        AStarFaceNode currentNode = null;
 
-        while (unEvaluatedNodes.Count > 0)
+        while (unevaluatedNodes.Count > 0)
         {
             //Fetches unevaluated node with lowest FCost
             float lowestFCost = Mathf.Infinity;
-            foreach(AStarNode node in unEvaluatedNodes)
+            foreach(AStarFaceNode node in unevaluatedNodes)
             {
                 if(node.FCost < lowestFCost)
                 {
@@ -139,11 +267,13 @@ public class PathfinderComponent : MonoBehaviour
             }
 
             //Moves node to evaluated list
-            unEvaluatedNodes.Remove(currentNode);
+            unevaluatedNodes.Remove(currentNode);
             evaluatedNodes.Add(currentNode);
 
             //Check if current face is destination
-            if (currentNode.Face == endFace) break;
+            if (currentNode.Face == endFace){
+                break;
+            };
 
             //Fetches adjacent faces, filtering already fetched faces
             navmeshFace newFace1 = navmesh.getFaceFromEdge(currentNode.Face.aPos, currentNode.Face.bPos, faceFilter);
@@ -153,28 +283,37 @@ public class PathfinderComponent : MonoBehaviour
             //If edge has a face, add it as a A* node
             if (newFace1 != null)
             {
-                createOrUpdateNode(newFace1,  end, start, unEvaluatedNodes, faceFilter, currentNode);
+                createOrUpdateNode(newFace1,  end, start, unevaluatedNodes, faceFilter, currentNode);
             }
 
             if (newFace2 != null)
             {
-                createOrUpdateNode(newFace2, end, start, unEvaluatedNodes, faceFilter, currentNode);
+                createOrUpdateNode(newFace2, end, start, unevaluatedNodes, faceFilter, currentNode);
             }
 
             if (newFace3 != null)
             {
-                createOrUpdateNode(newFace3, end, start, unEvaluatedNodes, faceFilter, currentNode);
+                createOrUpdateNode(newFace3, end, start, unevaluatedNodes, faceFilter, currentNode);
             }
         }
-
         return currentNode;
 
     }
+    private void createOrUpdateNode(navmeshFace face, Vector3 start, Vector3 end, List<AStarFaceNode> unEvaluatedNodes, List<navmeshFace> faceFilter, AStarFaceNode parent)
+    {
+        if(faceFilter.Contains(face)){
+            unEvaluatedNodes.Find(x => x.Face == face);
+        }else{
+            unEvaluatedNodes.Add(new AStarFaceNode(Vector3.Distance(start, face.Origin) + Vector3.Distance(face.Origin, end), face, parent));
+            faceFilter.Add(face);
+        }
+    }
 
-    private List<Vector3> funnelStringpull(AStarNode currentNode, Vector3 origin, Vector3 end, List<Vector3> nodeList, int recursionIndex){
+    #endregion
+
+    private List<Vector3> funnelStringpull(AStarFaceNode currentNode, Vector3 origin, Vector3 end, List<Vector3> nodeList, int recursionIndex){
         recursionIndex ++;
         if(recursionIndex>MaxRecursionDepth || currentNode.Parent == null) return nodeList;
-
         //Last added left and right
         Vector3 lastLeft = getLeft(currentNode, origin);
         Vector3 lastRight = getRight(currentNode, origin);
@@ -183,15 +322,16 @@ public class PathfinderComponent : MonoBehaviour
         Vector3 leftPortal = lastLeft;
         Vector3 rightPortal = lastRight;
 
-        AStarNode lastRightNode = currentNode.Parent;
-        AStarNode lastLeftNode = currentNode.Parent;
+        AStarFaceNode lastRightNode = currentNode.Parent;
+        AStarFaceNode lastLeftNode = currentNode.Parent;
 
         currentNode = currentNode.Parent;
         //Backtraces through parents and adds faces to facepath list
         while(currentNode.Parent != null) 
         {
-            AStarNode nextNode = currentNode.Parent;
+            AStarFaceNode nextNode = currentNode.Parent;
             //Defines next AStarNode
+
 
             //If next face does not contain current left vert
             if (!nextNode.Face.hasVertex(leftPortal))
@@ -250,7 +390,6 @@ public class PathfinderComponent : MonoBehaviour
             }
             currentNode = nextNode;
             
-
         }
 
         Vector3 endLeftCross = Vector3.Cross(end - origin, lastLeft - origin);
@@ -267,7 +406,18 @@ public class PathfinderComponent : MonoBehaviour
 
         return nodeList;
     }
-
+    class AStarFaceNode
+    {
+        public float FCost;
+        public navmeshFace Face;
+        public AStarFaceNode Parent;
+        public AStarFaceNode(float fCost, navmeshFace Face, AStarFaceNode parent)
+        {
+            this.FCost = fCost;
+            this.Parent = parent;
+            this.Face = Face;
+        }
+    }
     private List<T> listSum<T>(List<T> A, List<T> B)
     {
         List<T> ret = new List<T>();
@@ -276,23 +426,23 @@ public class PathfinderComponent : MonoBehaviour
         return ret;
     }
 
-    private Vector3 getLeft(AStarNode node, Vector3 origin)
+    private Vector3 getLeft(AStarFaceNode node, Vector3 origin)
     {
         return getLeftOrRight(node, origin, 1);
     }
-    private Vector3 getRight(AStarNode node, Vector3 origin)
+    private Vector3 getRight(AStarFaceNode node, Vector3 origin)
     {
         return getLeftOrRight(node, origin, -1);
     }
 
-    private AStarNode getLastOccurance(AStarNode node, Vector3 point){
+    private AStarFaceNode getLastOccurance(AStarFaceNode node, Vector3 point){
         if(node.Parent != null && node.Parent.Face.hasVertex(point)){
             return getLastOccurance(node.Parent, point);
         }else{
             return node;
         }
     }
-    private Vector3 getLeftOrRight(AStarNode node, Vector3 origin, int inverse)
+    private Vector3 getLeftOrRight(AStarFaceNode node, Vector3 origin, int inverse)
     {
         //If someone knows how to do this in one line plz call me ;*
         Vector3 A = new Vector3();
@@ -346,5 +496,6 @@ public class PathfinderComponent : MonoBehaviour
         if (B.hasVertex(A.cPos)) ret.Add(A.cPos);
         return ret.ToArray();
     }
-    
+    #endregion
+
 }

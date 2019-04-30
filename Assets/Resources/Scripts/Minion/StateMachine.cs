@@ -21,18 +21,24 @@ public class StateMachine : MonoBehaviour
     public State CurrentState;
     public GameObject EnemySpawner;
     public GameObject TargetEntity;
+    public float ProxyCooldown;
     public float AttackCooldown;
     public uint AttackDamage;
     public float AttackRange;
-    //public bool AttackRdy;
+    public float AggroRange;
     public List<GameObject> Puppets;
-    //public GameObject[] Puppets;
-    public bool coRunning;
+    public bool CoRunning;
+    public bool EnInRange;
+    public float ClosestPuppDist = 0;
+    public bool Follow;
+
+    public bool eDebug;
     //Pathfind component reference (pathFinder)
 
     public void Start()
     {
         Puppets.AddRange(GameObject.FindGameObjectsWithTag("Player"));
+        Follow = false;
         SetState(new AttackingState(this));
     }
 
@@ -41,7 +47,7 @@ public class StateMachine : MonoBehaviour
         if (CurrentState != null) CurrentState.Exit();
         CurrentState = newState;
         CurrentState.Enter();
-        
+
     }
 
     public void Update()
@@ -49,31 +55,66 @@ public class StateMachine : MonoBehaviour
         if (System.Environment.TickCount % tickRate == 0)
         {
 
-            foreach (GameObject pupp in Puppets)
-            {
-                float puppDist = Vector3.Distance(pupp.transform.position, gameObject.transform.position);
-            }
             if (CurrentState != null) CurrentState.Run();
         }
     }
 
     private IEnumerator AttackRoutine(GameObject target)
     {
-        coRunning = true;
+        CoRunning = true;
         HealthComponent health = target.transform.GetComponent<HealthComponent>();
         while (target != null && health.Health > 0)
         {
+            
             health.Damage(AttackDamage);
             yield return new WaitForSeconds(AttackCooldown);
             if (health.Health == 0)
             {
-                coRunning = false;
+                CoRunning = false;
                 yield break;
             }
         }
     }
-}
+    //REEEEEE FUCKING FIXA FRAMTIDA FLOOF
+    private IEnumerator ProxyRoutine()
+    {
+        foreach (GameObject pupp in Puppets)
+        {
+            if (pupp != null)
+            {
+                float puppDist = Vector3.Distance(pupp.transform.position, gameObject.transform.position);
 
+                if (ClosestPuppDist == 0)
+                {
+                    Follow = false;
+                    ClosestPuppDist = puppDist;
+                }
+                else if (ClosestPuppDist > puppDist)
+                {
+                    Follow = false;
+                    ClosestPuppDist = puppDist;
+                }
+                else if (ClosestPuppDist <= AggroRange)
+                {
+                    Follow = true;
+                    TargetEntity = pupp.gameObject;
+                    //EnInRange = true;
+                    if (CoRunning == false)
+                    {
+                        StartCoroutine("AttackRoutine", TargetEntity);
+                    }
+                
+                    
+                }
+            }
+            else if (pupp == null)
+            {
+                Puppets.Remove(pupp);
+            }
+            yield return new WaitForSeconds(ProxyCooldown);
+        }
+    }
+}
 
 //-------------------------------------------------------------
 public abstract class State
