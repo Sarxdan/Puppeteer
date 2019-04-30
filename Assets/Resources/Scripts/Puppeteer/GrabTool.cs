@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Mirror;
 
 /*
 * AUTHOR:
@@ -11,12 +12,13 @@ using UnityEngine;
 *
 * CODE REVIEWED BY:
 * Filip Renman (24/4/2019)
-*
+* Ludvig Björk Förare (190430)
+* 
 * CONTRIBUTORS:
 * Philip Stenmark
 */
 
-public class GrabTool : MonoBehaviour
+public class GrabTool : NetworkBehaviour
 {
 	private LevelBuilder level;
 
@@ -42,6 +44,9 @@ public class GrabTool : MonoBehaviour
 	private RoomInteractable lastHit;
 	private Vector3 grabOffset = new Vector3();
 
+	// Mouse position of current Puppeteer. Used when server is not puppeteer.
+	private Vector3 localPlayerMousePos;
+
 	// Original parent node used for updating tree when dropping without snapping to something.
 	private RoomTreeNode firstParentNode;
 
@@ -53,6 +58,25 @@ public class GrabTool : MonoBehaviour
 
     void Update()
     {
+		// Update local players rooms and send data to server. Purely visual.
+		if (isLocalPlayer)
+		{
+			ClientUpdate();
+		}
+
+		// Main update and checks always run on server
+		if (isServer)
+		{
+			if (selectedObject != null)
+			{
+				ServerUpdate();
+			}
+		}
+    }
+
+	// Decide what the server should do with inputs.
+	private void ClientUpdate()
+	{
 		if (selectedObject == null)
 		{
 			// Raycast only on Puppeteer Interact layer.
@@ -106,6 +130,9 @@ public class GrabTool : MonoBehaviour
 		}
 		else
 		{
+			// Send current mouseposition to server
+			CmdUpdateMousePos(MouseToWorldPosition());
+
 			if (Input.GetButtonUp("Fire"))
 			{
 				Drop();
@@ -115,32 +142,97 @@ public class GrabTool : MonoBehaviour
 				if (Input.GetButtonDown("Rotate"))
 				{
 					// Rotate room around its own up-axis
+
 					selectedObject.transform.RotateAround(selectedObject.transform.position, selectedObject.transform.up, 90);
+					CmdRotate(selectedObject.transform.rotation);
 				}
-				UpdatePositions();
+				if (!isServer)
+				{
+					ClientUpdatePositions();
+				}
+
 			}
 		}
-    }
+	}
+
+	// Rotate room on server
+	[Command]
+	public void CmdRotate(Quaternion rot)
+	{
+		selectedObject.transform.rotation = rot;
+	}
+	
+	// Update mouse position on server
+	[Command]
+	public void CmdUpdateMousePos(Vector3 pos)
+	{
+		localPlayerMousePos = pos;
+	}
+
+	private void ServerUpdate()
+	{
+		ServerUpdatePositions();
+	}
 
 	// Method used for picking up an object.
 	private void Pickup(GameObject pickupObject)
 	{
 		sourceObject = pickupObject;
-		sourceObject.name = "CurrentSourceObject";
-
 		selectedObject = Instantiate(sourceObject);
-		selectedObject.name = "SelectedObject";
-
 		guideObject = Instantiate(sourceObject);
-		guideObject.name = "GuideObject";
 
 		grabOffset = sourceObject.transform.position - MouseToWorldPosition();
 
-		// Save the parent node of the picked up room to be able to reset if the position doesn't change.
-		firstParentNode = sourceObject.GetComponent<RoomTreeNode>().GetParent();
+		CmdUpdateMousePos(MouseToWorldPosition());
+		CmdPickup(pickupObject);
 	}
 
+	// Method for picking up objects on server and making them invisible if server is not Puppeteer.
+	[Command]
+	public void CmdPickup(GameObject pickupObject)
+	{
+		if (!isLocalPlayer)
+		{
+			sourceObject = pickupObject;
+			selectedObject = Instantiate(sourceObject);
+			guideObject = Instantiate(sourceObject);
+		}
+		
+		grabOffset = sourceObject.transform.position - localPlayerMousePos;
+
+		// Save the parent node of the picked up room to be able to reset if the position doesn't change.
+		firstParentNode = sourceObject.GetComponent<RoomTreeNode>().GetParent();
+
+		if (!isLocalPlayer)
+		{
+			foreach (MeshRenderer renderer in selectedObject.GetComponentsInChildren<MeshRenderer>())
+			{
+				renderer.enabled = false;
+			}
+
+			foreach (MeshRenderer renderer in guideObject.GetComponentsInChildren<MeshRenderer>())
+			{
+				renderer.enabled = false;
+			}
+		}
+	}
+
+	// Method to drop rooms to snapped position.
 	private void Drop()
+	{
+		CmdDrop();
+		if (!isServer)
+		{
+			Destroy(selectedObject);
+			selectedObject = null;
+			Destroy(guideObject);
+			guideObject = null;
+		}
+	}
+
+	// Method to update position of source object on server when drop happens.
+	[Command]
+	public void CmdDrop()
 	{
 		// Reset tree if position doesn't change.
 		if (sourceObject.transform.position == guideObject.transform.position && sourceObject.transform.rotation == guideObject.transform.rotation)
@@ -161,11 +253,18 @@ public class GrabTool : MonoBehaviour
 		level.ConnectDoorsInRoomIfPossible(sourceObject);
 	}
 
+	// Move local selected object for client.
+	private void ClientUpdatePositions()
+	{
+		Vector3 newPosition = MouseToWorldPosition() + grabOffset;
+		selectedObject.transform.position = Vector3.Lerp(selectedObject.transform.position, new Vector3(newPosition.x, LiftHeight, newPosition.z), LiftSpeed * Time.deltaTime);
+	}
+
 	// Moves all objects to their positions.
-	private void UpdatePositions()
+	private void ServerUpdatePositions()
 	{
 		// Move source object to mouse.
-		Vector3 newPosition = MouseToWorldPosition() + grabOffset;
+		Vector3 newPosition = localPlayerMousePos + grabOffset;
 		selectedObject.transform.position = Vector3.Lerp(selectedObject.transform.position, new Vector3(newPosition.x, LiftHeight, newPosition.z), LiftSpeed * Time.deltaTime);
 
 		var doorsInSelectedRoom = selectedObject.GetComponentsInChildren<AnchorPoint>();
@@ -189,8 +288,9 @@ public class GrabTool : MonoBehaviour
 		// Move guideObject to best availible position. If there is none, move it to source.
 		if (bestDstPoint != null)
 		{
-			guideObject.transform.rotation = selectedObject.transform.rotation;
+			RpcUpdateGuide(new TransformStruct(selectedObject.transform.position - (bestSrcPoint.transform.position - bestDstPoint.transform.position), selectedObject.transform.rotation.normalized));
 			guideObject.transform.position = selectedObject.transform.position - (bestSrcPoint.transform.position - bestDstPoint.transform.position);
+			guideObject.transform.rotation = selectedObject.transform.rotation;
 
 			RoomTreeNode currentNode = sourceObject.GetComponent<RoomTreeNode>();
 			RoomTreeNode targetNode = bestDstPoint.GetComponentInParent<RoomTreeNode>();
@@ -201,8 +301,20 @@ public class GrabTool : MonoBehaviour
 		}
 		else
 		{
-			guideObject.transform.rotation = sourceObject.transform.rotation;
+			RpcUpdateGuide(new TransformStruct(sourceObject.transform.position, sourceObject.transform.rotation.normalized));
 			guideObject.transform.position = sourceObject.transform.position;
+			guideObject.transform.rotation = sourceObject.transform.rotation;
+		}
+	}
+
+	// Method to send data from server to client about position of guideRoom.
+	[ClientRpc]
+	public void RpcUpdateGuide(TransformStruct target)
+	{
+		if (isLocalPlayer && guideObject != null)
+		{
+			guideObject.transform.rotation = target.Rotation;
+			guideObject.transform.position = target.Position;
 		}
 	}
 

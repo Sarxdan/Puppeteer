@@ -5,23 +5,9 @@ using UnityEngine;
 
 public class ItemSpawner : NetworkBehaviour
 {
-
+	public uint NumberOfSpawns;
 	public GameObject[] Spawners;
-
-	// Input to setup the spawnrate and chance to spawn.
-	public bool Weapon;
-	public uint PercentOfDropWeapon;
-	public bool Ammo;
-	public uint PercentOfDropAmmo;
-	public bool PowerUp;
-	public uint PercentOfDropPowerUp;
-
-
-	// internal values (incase invalid percentage is entered)
-	public uint percent;
-	public float weaponPercent;
-	public float ammoPercent;
-	public float powerPercent;
+	private GameObject level;
 
 	// Refrences to all prefabs that can spawn.
 	public GameObject[] WeaponList;
@@ -32,43 +18,39 @@ public class ItemSpawner : NetworkBehaviour
 	// Calculates the correct percentage of all spawnable entitys and then randoms a percentile, spawning its corresponding entity type.
 	void Start()
     {
+		//level = transform.parent.gameObject;
 		if (!isServer)
 		{
 			return;
 		}
-
-		Debug.Log("Snopp");
-		if (Weapon)
-			percent += PercentOfDropWeapon;
-		if (Ammo)
-			percent += PercentOfDropAmmo;
-		if (PowerUp)
-			percent += PercentOfDropPowerUp;
-
-		float newPercent = (100.0f / percent);
-
-		if (Weapon)
-			weaponPercent = newPercent * PercentOfDropWeapon;
-		if (Ammo)
-			ammoPercent = newPercent * PercentOfDropAmmo;
-		if (PowerUp)
-			powerPercent = newPercent * PercentOfDropPowerUp;
-
-		int chance = Random.Range(0, 100);
-		if (chance < weaponPercent & Weapon)
+		if (NumberOfSpawns > Spawners.Length)
 		{
-			Debug.Log("W spawned");
-			SpawnWeapon();
+			NumberOfSpawns = (uint)Spawners.Length;
 		}
-		else if (chance > weaponPercent & chance < (weaponPercent + ammoPercent) & Ammo)
+		var randomList = GetRandom(0, Spawners.Length, NumberOfSpawns);
+		foreach (var index in randomList)
 		{
-			Debug.Log("A spawned");
-			SpawnAmmo();
-		}
-		else if (chance > weaponPercent + ammoPercent & PowerUp)
-		{
-			Debug.Log("P spawned");
-			SpawnPowerUp();
+			var spawner = Spawners[index].GetComponent<ChanceToSpawn>();
+
+			spawner.AltStart();
+
+			var weaponPercent = spawner.GetChanceOfWeapon();
+			var ammoPercent = spawner.GetChanceOfAmmo();
+			var powerPercent = spawner.GetChanceOfPowerUp();
+
+			int chance = Random.Range(0, 100);
+			if (chance < weaponPercent)
+			{
+				SpawnWeapon(Spawners[index]);
+			}
+			else if (chance > weaponPercent & chance < (weaponPercent + ammoPercent))
+			{
+				SpawnAmmo(Spawners[index]);
+			}
+			else if (chance > weaponPercent + ammoPercent)
+			{
+				SpawnPowerUp(Spawners[index]);
+			}
 		}
 	}
 
@@ -76,35 +58,61 @@ public class ItemSpawner : NetworkBehaviour
 	{
 	}
 
-	// Randoms a weapon to spawn (Might what to add a rarity to weapons.. then internal values like above would work nice.)
-	public void SpawnWeapon()
+	public List<int> GetRandom(int min, int max, uint num)
 	{
-		Debug.Log("Spawn a Weapon");
+		List<int> result = new List<int>();
+		for (int i = 0; i < num; i++)
+		{
+			int randomNum = Random.Range(min, max);
+
+			if (result.Contains(randomNum))
+			{
+				i--;
+				continue;
+			}
+			else
+				result.Add(randomNum);
+		}
+
+		if (result.Count == num)
+		{
+			return result;
+		}
+		else
+		{
+			Debug.Log("ERROR: List not correct size.");
+			return null;
+		}
+	}
+
+	// Randoms a weapon to spawn (Might what to add a rarity to weapons.. then internal values like above would work nice.)
+	public void SpawnWeapon(GameObject spawner)
+	{
 
 		int WeaponIndex = Random.Range(0, WeaponList.Length);
-		CmdSpawnItem(WeaponList[WeaponIndex]);
+		CmdSpawnItem(spawner, WeaponList[WeaponIndex]);
 
 	}
 	// Spawns a Ammo prefab.
-	public void SpawnAmmo()
+	public void SpawnAmmo(GameObject spawner)
 	{
 		Debug.Log("Spawn a Ammo");
 
-		CmdSpawnItem(AmmoItem);
+		CmdSpawnItem(spawner, AmmoItem);
 	}
 	// Spawns a PowerUp prefab.
-	public void SpawnPowerUp()
+	public void SpawnPowerUp(GameObject spawner)
 	{
 		Debug.Log("Spawn a PowerUp");
 
-		CmdSpawnItem(PowerUpItem);
+		CmdSpawnItem(spawner, PowerUpItem);
 	}
 	[Command]
-	public void CmdSpawnItem(GameObject item)
+	public void CmdSpawnItem(GameObject spawner, GameObject item)
 	{
-		Debug.Log("Weapon spawned");
-		Instantiate(item);
-		NetworkServer.Spawn(item);
+		Debug.Log("Item Spawned");
+		var spawnableObject = Instantiate(item, spawner.transform);
+		NetworkServer.Spawn(spawnableObject);
 	}
 
 }

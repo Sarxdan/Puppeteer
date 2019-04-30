@@ -46,6 +46,9 @@ GameObject:
   - component: {fileID: 2588813443623990338}
   - component: {fileID: 2588813443623990349}
   - component: {fileID: 2588813443623990351}
+  - component: {fileID: 9072156382243598690}
+  - component: {fileID: 2928727379121632358}
+  - component: {fileID: 3063719693229289577}
   m_Layer: 0
   m_Name: Spike
   m_TagString: Untagged
@@ -161,6 +164,50 @@ MonoBehaviour:
   DestroyTime: 2
   Puppets: []
   Anim: {fileID: 0}
+--- !u!114 &9072156382243598690
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2588813443623990350}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b91ecbcc199f4492b9a91e820070131, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  serverOnly: 0
+  localPlayerAuthority: 0
+  m_AssetId: 544cab8dfe3776442a06fa2e6d7b8ad7
+  m_SceneId: 0
+--- !u!114 &2928727379121632358
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2588813443623990350}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f6f3bf89aa97405989c802ba270f815, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncInterval: 0.1
+  animator: {fileID: 0}
+--- !u!114 &3063719693229289577
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2588813443623990350}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 41da09f073a954b4dae28c974e911522, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncInterval: 0.1
+  compressRotation: 1
 --- !u!1 &2588813444105902905
 GameObject:
   m_ObjectHideFlags: 0
