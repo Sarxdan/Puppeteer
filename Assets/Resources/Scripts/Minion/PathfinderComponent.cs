@@ -6,24 +6,37 @@ using UnityEngine;
 
 public class PathfinderComponent : MonoBehaviour
 {
-    public float MovementSpeed = 1;
-    public float RotationSpeed = 0.5f;
+    public bool UseRootMotion;
+    public float MovementSpeed = 50;
+    public float RotationSpeed = 10;
     public int MaxRecursionDepth = 20;
     public List<AStarRoomNode> path;
     public List<Vector3> subPath;
     public bool HasPath = false;
     public Transform navmeshTransform;
-    public NavMesh previousNavmesh;
+
+    public Vector3 TransformRaycastOffset;
 
     public float LegHeight;
-    // Start is called before the first frame update
 
     public float InteractRayLength = 0.4f;
 
+    //Unstuck
+    public float MinVelocityThreshold;
+    public float StuckTimeThreshold;
+    public float UnstuckRadius;
+    private Vector3 lastPosition;
+    private float currentStuckTime = 0;
+
+    public bool debug;
+    private NavMesh previousNavmesh;
+
     private Rigidbody rigidBody;
+    private Animator animController;
     void Start()
     {
         this.rigidBody = GetComponent<Rigidbody>();
+        this.animController = GetComponent<Animator>();
     }
 
     // Update is called once per frame
@@ -31,7 +44,27 @@ public class PathfinderComponent : MonoBehaviour
     {
         if(HasPath){
             move();
+            if((transform.position - lastPosition).magnitude/Time.deltaTime < MinVelocityThreshold){
+                currentStuckTime += Time.deltaTime;
+                if(currentStuckTime >= StuckTimeThreshold){
+                    unstuck();
+                    currentStuckTime = 0;
+                }
+            }else{
+                currentStuckTime = 0;
+            }
+        }else{
+            if(UseRootMotion)
+                animController.SetBool("IsWalking", false);
         }
+        lastPosition = transform.position;
+    }
+
+    //Method for helping stuck entities
+    private void unstuck(){
+        Debug.Log("Attempting to unstuck!");
+        Vector3 unstuckPoint = transform.position + new Vector3(Random.Range(-UnstuckRadius, UnstuckRadius), transform.position.y, Random.Range(-UnstuckRadius, UnstuckRadius));
+        MoveTo(unstuckPoint);
     }
 
     
@@ -41,14 +74,18 @@ public class PathfinderComponent : MonoBehaviour
         
         if(this.path.Count <= 0 && this.subPath.Count <= 0){
             this.HasPath = false;
-            rigidBody.velocity = Vector3.zero;
+            if(UseRootMotion){
+                animController.SetBool("IsWalking", false);
+            }else{
+                rigidBody.velocity = Vector3.zero;
+            }
             return;
         }
         //If subpath is empty, create new subpath
         if(this.subPath.Count <= 0){
             
             RaycastHit hit;
-            if(!Physics.Raycast(transform.position, -Vector3.up, out hit, 4)){
+            if(!Physics.Raycast(transform.position + TransformRaycastOffset, -Vector3.up, out hit, 4)){
                 Debug.LogError("Object " + transform.name + " could not find the floor and therefore not pathfind. This is very bad and cannot happen");
                 this.HasPath = false;
                 return;
@@ -62,10 +99,12 @@ public class PathfinderComponent : MonoBehaviour
 
             this.path.RemoveAt(path.Count-1);
 
-            if(previousNavmesh != null) previousNavmesh.draw = false;
             NavMesh navmesh = navmeshTransform.GetComponent<NavMesh>();
-            previousNavmesh = navmesh;
-            navmesh.draw = true;
+            if(debug){
+                if(previousNavmesh != null) previousNavmesh.draw = false;
+                previousNavmesh = navmesh;
+                navmesh.draw = true;
+            }
 
             if(navmesh == null){
                 Debug.LogError("Object " + hit.transform.name + " does not have a NavMesh component! Plz fix!");
@@ -100,7 +139,12 @@ public class PathfinderComponent : MonoBehaviour
             Vector3 deltaPos = navmeshTransform.TransformPoint(subPath[0]) - transform.position + transform.up * LegHeight;
             float distance = 0;
             Quaternion goalRot = Quaternion.LookRotation(deltaPos, transform.up);
-            Debug.DrawRay(transform.position, transform.forward, Color.magenta, Time.deltaTime);
+
+            if(debug){
+                Debug.DrawRay(transform.position, transform.forward, Color.magenta, Time.deltaTime);
+                Debug.DrawRay(transform.position, goalRot*transform.forward, Color.red, Time.deltaTime);
+            }
+            
             transform.rotation = Quaternion.RotateTowards(transform.rotation, goalRot, RotationSpeed);
             
             if(deltaPos.magnitude <= 0.1f){
@@ -110,19 +154,28 @@ public class PathfinderComponent : MonoBehaviour
                 distance = this.MovementSpeed * Time.deltaTime;
             }
             //rigidBody.MovePosition(transform.position + transform.forward * this.MovementSpeed * Time.deltaTime );
-            rigidBody.velocity = transform.forward * this.MovementSpeed * Time.deltaTime;
-        }
-        if(this.subPath.Count > 0){
-            for(int i = 0; i < this.subPath.Count - 1; i++){
-                Debug.DrawLine(navmeshTransform.TransformPoint(this.subPath[i]), navmeshTransform.TransformPoint(this.subPath[i+1]), Color.magenta, 5);
+            if(UseRootMotion){
+                animController.SetBool("IsWalking", true);
+            }else{
+                rigidBody.velocity = transform.forward * this.MovementSpeed * Time.deltaTime;
             }
-        }
-        if(this.path.Count > 0){
-            for(int i = 0; i < this.path.Count - 1; i++){
-                Debug.DrawLine(this.path[i].EntrancePos, this.path[i+1].EntrancePos, Color.cyan, 5);
-            }
+            
         }
 
+        if(debug){
+            for(int i = 0; i < this.subPath.Count - 1; i++){
+                Debug.DrawLine(navmeshTransform.TransformPoint(this.subPath[i]), navmeshTransform.TransformPoint(this.subPath[i+1]), Color.magenta, Time.deltaTime);
+            }
+
+            if(this.subPath.Count > 0 ) Debug.DrawLine(transform.position, navmeshTransform.TransformPoint(this.subPath[0]), Color.magenta, Time.deltaTime);
+
+            for(int i = 0; i < this.path.Count - 1; i++){
+                Debug.DrawLine(this.path[i].EntrancePos, this.path[i+1].EntrancePos, Color.cyan, Time.deltaTime);
+            }
+
+            if(this.path.Count > 0 ) Debug.DrawLine(transform.position, this.path[0].EntrancePos, Color.cyan, Time.deltaTime);
+        }
+        
         RaycastHit doorHit;
         if(Physics.Raycast(transform.position, transform.forward, out doorHit, InteractRayLength)){
             DoorComponent doorComponent = doorHit.transform.GetComponent<DoorComponent>();
@@ -136,21 +189,52 @@ public class PathfinderComponent : MonoBehaviour
 
 
 
-    public void MoveTo(Vector3 endPos, Transform endRoom)
+    public void MoveTo(Vector3 endPos)
     {
 
-        RaycastHit hit;
-        Transform startRoom;
-        if (Physics.Raycast(transform.position, -transform.up, out hit))
+        //Raycasts to floor on destination
+        RaycastHit endHit;
+        Transform endRoom = null;
+        if(Physics.Raycast(endPos + TransformRaycastOffset, Vector3.down, out endHit))
         {
-            startRoom = hit.transform.parent;
+            endRoom = endHit.transform.parent;
+            endPos = endHit.point;
         }else{
             return;
         }
 
+        //Raycasts to floor on start
+        RaycastHit startHit;
+        Transform startRoom;
+        if (Physics.Raycast(transform.position + TransformRaycastOffset, -transform.up, out startHit))
+        {
+            startRoom = startHit.transform.parent;
+        }else{
+            return;
+        }
+
+        //Clears previous path
+        this.path.Clear();
+        this.subPath.Clear();
+        this.HasPath = false;
+
+        //If a room was not hit, abort
+        if(endRoom.GetComponent<NavMesh>() == null || startRoom.GetComponent<NavMesh>() == null){
+            return;
+        }
+
+        //Creates room pathfind
         this.path = aStarRoomPathfind(startRoom, endRoom);
-        if(this.path.Count > 0){
-            this.path.Insert(0,new AStarRoomNode(0,this.path[0].RoomRef, this.path[0], endPos));
+
+        //If roompath was not found, abort
+        if(this.path == null){
+            this.path = new List<AStarRoomNode>();
+            return;
+        }
+
+        //Adds destination to roompath
+        if(this.path.Count > 0){ 
+            this.path.Insert(0, new AStarRoomNode(0,this.path[0].RoomRef, this.path[0], endPos));
         }else{
             this.path.Insert(0, new AStarRoomNode(0, startRoom, null, endPos));
             this.path[0].Parent = this.path[0];
@@ -182,15 +266,20 @@ public class PathfinderComponent : MonoBehaviour
                 }
             }
 
+            //If destination is reached, follow room parents back and return as list
             if(currentNode.RoomRef == endRoom){
-                break;
+                while(currentNode.Parent != null){
+                    returnList.Add(currentNode);
+                    currentNode = currentNode.Parent;
+                }
+                return returnList;
             }
 
             unevaluatedNodes.Remove(currentNode);
             evaluatedNodes.Add(currentNode);
 
             foreach(AnchorPoint door in currentNode.RoomRef.GetComponent<DoorReferences>().doors){
-                if(door.Connected){
+                if(door.Connected && door.ConnectedTo != null){
                     Transform adjacentRoom = door.ConnectedTo.transform.parent.transform.parent;
                     if(!checkedRooms.Contains(adjacentRoom)){
                         unevaluatedNodes.Add(new AStarRoomNode(Vector3.Distance(startRoom.position, adjacentRoom.position) + Vector3.Distance(endRoom.position, adjacentRoom.position), adjacentRoom, currentNode, door.transform.position));
@@ -200,12 +289,9 @@ public class PathfinderComponent : MonoBehaviour
             }
 
         }
+        return null;
+        //If path was not found
         
-        while(currentNode.Parent != null){
-            returnList.Add(currentNode);
-            currentNode = currentNode.Parent;
-        }
-        return returnList;
     }
 
     [System.Serializable]
@@ -244,8 +330,10 @@ public class PathfinderComponent : MonoBehaviour
         navmeshFace endFace = navmesh.getFaceFromPoint(end);
 
 
-        Debug.DrawRay(startFace.Origin + navmeshTransform.position, navmeshTransform.up * 5, Color.green,3);
-        Debug.DrawRay(endFace.Origin + navmeshTransform.position, navmeshTransform.up * 5, Color.red,3);
+        if(debug){
+            Debug.DrawRay(startFace.Origin + navmeshTransform.position, navmeshTransform.up * 5, Color.green,5);
+            Debug.DrawRay(endFace.Origin + navmeshTransform.position, navmeshTransform.up * 5, Color.red,5);
+        }
 
         if(startFace == null || endFace == null) return null;
 

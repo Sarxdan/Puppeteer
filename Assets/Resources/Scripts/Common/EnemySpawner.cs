@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using Mirror;
 /*
  * AUTHOR:
  * Carl Appelkvist
@@ -14,53 +15,85 @@ using UnityEngine.UI;
  * Ludvig Björk Förare
  * 
  * CONTRIBUTORS:
- * 
+ * Ludvig Björk Förare (Integration to game)
  */
 
-public class EnemySpawner : MonoBehaviour
+public class EnemySpawner : NetworkBehaviour
 {
     public GameObject EnemyPrefab;
-    private GameObject spawnedEnemies;
-    public float SpawnRate;
     public int MaxEnemyCount;
-    public Transform[] SpawnPoints;
-    public List<GameObject> EnemyCount = new List<GameObject>();
+    public int MinDelay = 5;
+    public int MaxDelay = 10;
+    public List<GameObject> SpawnedEnemies = new List<GameObject>();
+
+    public float ChooseThisChance = .3f;
 
 
     public void Start()
     {
-        //A little snippet to make sure the spawnrate isnt negative and it sets it to 3 wich is "default"
-        if (SpawnRate <= 0)
-        {
-            SpawnRate = 3;
-        }
         gameObject.tag = "EnemySpawner";
-        //Creates Spawn and defines the start delay and time between runs
-        InvokeRepeating("Spawn", SpawnRate, SpawnRate);
-        //Create an empty GameObject to use as a folder for the npc prefabs
-        spawnedEnemies = new GameObject
-        {
-            name = "Spawned Enemies"
-        };
+
+        if(isServer){
+            StartCoroutine("Spawn");
+        }
+
+    }
+
+    public void Update(){
+        if(Input.GetKey(KeyCode.P)){
+            Debug.DrawRay(GetNearbyDestination(), Vector3.up * 5, Color.cyan, 2);
+        }
     }
 
     //Spawn is a modified Update with a set amount of time (SpawnRate) between runs
-    public void Spawn()
+    private IEnumerator Spawn()
     { 
-        //Steps through all spawners in order to spawn enemies
-        for (int i = 0; i < SpawnPoints.Length; i++)
-        { 
+        while(true){
             //Check if max amount of enemies has been reached
-            if (EnemyCount.Count >= MaxEnemyCount && MaxEnemyCount > 0)
+            if (SpawnedEnemies.Count < MaxEnemyCount && MaxEnemyCount > 0)
             {
-                return;
+                //If not then create a GameObject from attached prefab at the spawners position and make them children of the "folder" created earlier
+                GameObject npcEnemy = Instantiate(EnemyPrefab, transform.position, transform.rotation, transform) as GameObject;
+                NetworkServer.Spawn(npcEnemy);
+                SpawnedEnemies.Add(npcEnemy);
+                npcEnemy.GetComponent<StateMachine>().EnemySpawner = this;
             }
-            //If not then create a GameObject from attached prefab at the spawners position and make them children of the "folder" created earlier
-            GameObject npcEnemy = Instantiate(EnemyPrefab, SpawnPoints[i].position, SpawnPoints[i].rotation) as GameObject;
-            npcEnemy.transform.parent = GameObject.Find("Spawned Enemies").transform;
 
-            npcEnemy.tag = "Enemy";
-            EnemyCount.Add(npcEnemy);
+            yield return new WaitForSeconds(Random.Range(MinDelay, MaxDelay));
         }
+    }
+
+    public Vector3 GetNearbyDestination(){
+        
+        Transform currentRoom = transform.parent;
+        AnchorPoint currentDoor = null;
+        DoorReferences doorReferences = currentRoom.GetComponent<DoorReferences>();
+        while(currentRoom != null){
+            //Checks if this room is to be chosen
+            if(Random.Range(0.0f,1.0f) <= ChooseThisChance){
+                break;
+            }
+
+            List<AnchorPoint> availableDoors = new List<AnchorPoint>();
+            if(doorReferences == null) break;
+            foreach(AnchorPoint door in doorReferences.doors){
+                if(door.Connected && door != currentDoor && door.ConnectedTo != null){ //TODO remove nullprodection
+                    availableDoors.Add(door);
+                }
+            }
+            
+            if(availableDoors.Count == 0){
+                break;
+            }
+
+            currentDoor = availableDoors[Random.Range(0,availableDoors.Count-1)].ConnectedTo;
+            doorReferences = currentDoor.transform.parent.parent.GetComponent<DoorReferences>();
+            if(doorReferences == null) break;
+            currentRoom = currentDoor.transform.parent.parent;
+        }
+
+        NavMesh navMesh = currentRoom.GetComponent<NavMesh>();
+        return currentRoom.TransformPoint(navMesh.faces[Random.Range(0,navMesh.faces.Length-1)].Origin);
+
     }
 }
