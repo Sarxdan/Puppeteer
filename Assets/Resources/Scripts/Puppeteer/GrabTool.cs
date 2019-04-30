@@ -43,6 +43,7 @@ public class GrabTool : NetworkBehaviour
 	private RoomInteractable lastHit;
 	private Vector3 grabOffset = new Vector3();
 
+	// Mouse position of current Puppeteer. Used when server is not puppeteer.
 	private Vector3 localPlayerMousePos;
 
 	// Original parent node used for updating tree when dropping without snapping to something.
@@ -56,11 +57,13 @@ public class GrabTool : NetworkBehaviour
 
     void Update()
     {
+		// Update local players rooms and send data to server. Purely visual.
 		if (isLocalPlayer)
 		{
 			ClientUpdate();
 		}
 
+		// Main update and checks always run on server
 		if (isServer)
 		{
 			if (selectedObject != null)
@@ -70,6 +73,7 @@ public class GrabTool : NetworkBehaviour
 		}
     }
 
+	// Decide what the server should do with inputs.
 	private void ClientUpdate()
 	{
 		if (selectedObject == null)
@@ -125,6 +129,7 @@ public class GrabTool : NetworkBehaviour
 		}
 		else
 		{
+			// Send current mouseposition to server
 			CmdUpdateMousePos(MouseToWorldPosition());
 
 			if (Input.GetButtonUp("Fire"))
@@ -149,12 +154,14 @@ public class GrabTool : NetworkBehaviour
 		}
 	}
 
+	// Rotate room on server
 	[Command]
 	public void CmdRotate(Quaternion rot)
 	{
 		selectedObject.transform.rotation = rot;
 	}
-
+	
+	// Update mouse position on server
 	[Command]
 	public void CmdUpdateMousePos(Vector3 pos)
 	{
@@ -184,6 +191,7 @@ public class GrabTool : NetworkBehaviour
 		CmdPickup(pickupObject);
 	}
 
+	// Method for picking up objects on server and making them invisible if server is not Puppeteer.
 	[Command]
 	public void CmdPickup(GameObject pickupObject)
 	{
@@ -218,6 +226,7 @@ public class GrabTool : NetworkBehaviour
 		}
 	}
 
+	// Method to drop rooms to snapped position.
 	private void Drop()
 	{
 		CmdDrop();
@@ -230,6 +239,7 @@ public class GrabTool : NetworkBehaviour
 		}
 	}
 
+	// Method to update position of source object on server when drop happens.
 	[Command]
 	public void CmdDrop()
 	{
@@ -252,6 +262,7 @@ public class GrabTool : NetworkBehaviour
 		level.ConnectDoorsInRoomIfPossible(sourceObject);
 	}
 
+	// Move local selected object for client.
 	private void ClientUpdatePositions()
 	{
 		Vector3 newPosition = MouseToWorldPosition() + grabOffset;
@@ -305,6 +316,7 @@ public class GrabTool : NetworkBehaviour
 		}
 	}
 
+	// Method to send data from server to client about position of guideRoom.
 	[ClientRpc]
 	public void RpcUpdateGuide(TransformStruct target)
 	{

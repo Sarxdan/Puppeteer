@@ -2,6 +2,19 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/*
+* AUTHOR:
+* Anton Jonsson
+*
+* DESCRIPTION:
+* Struct used to send position and rotation of an object over network
+*
+* CODE REVIEWED BY:
+* 
+*
+* CONTRIBUTORS:
+*/
+
 public struct TransformStruct
 {
 	public Vector3 Position;

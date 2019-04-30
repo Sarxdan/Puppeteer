@@ -2,6 +2,19 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/*
+* AUTHOR:
+* Anton Jonsson, Filip Renman
+*
+* DESCRIPTION:
+* Struct used to send information about interacted gameobjects over network
+*
+* CODE REVIEWED BY:
+* 
+*
+* CONTRIBUTORS:
+*/
+
 public struct InteractStruct
 {
 	public GameObject Source;

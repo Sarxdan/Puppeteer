@@ -121,12 +121,6 @@ public class AnchorPoint : NetworkBehaviour
 		}
 	}
 
-	[ClientRpc]
-	public void RpcConnectDoors(GameObject door)
-	{
-
-	}
-
 	// Reconnects a door to a new door.
 	public void ReConnectTo(AnchorPoint to)
 	{

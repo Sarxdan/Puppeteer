@@ -128,7 +128,6 @@ public class CustomNetworkLobbyPlayer : NetworkLobbyPlayer
     [ClientRpc]
     public void RpcSelectCharacter(int characterIndex)
     {
-        Debug.Log(characterIndex);
         //TODO Change Index.ToString() to be the players name
         GameObject.Find("CharacterSelecter").GetComponent<CharacterSelect>().CharacterSelected(characterIndex, Nickname, Index);
     }
