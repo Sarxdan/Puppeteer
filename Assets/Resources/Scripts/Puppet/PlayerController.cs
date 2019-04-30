@@ -23,7 +23,11 @@ using UnityEngine;
 */
 public class PlayerController : MonoBehaviour
 {
-    //Movement
+    // Sound Events
+    [FMODUnity.EventRef]
+    public string Footstep; 
+
+    // Movement
     public float MovementSpeed;
     public float AccelerationRate;
     public float SprintSpeed;
@@ -35,32 +39,32 @@ public class PlayerController : MonoBehaviour
     // Added by Krig, used for disabling the input when in the pause menu.
     public bool DisableInput = false;
 
-    // movement speed modifier used by power up
+    // Movement speed modifier used by power up
     public float MovementSpeedMod = 1.0f;
 
-    //Animation
+    // Animation
     private Animator animController;
 
-    //Movement private variables
+    // Movement private variables
     private float currentMovementSpeed;
     private float accSave;
     private float speedSave;
     private bool isDown;
     private bool reachedZero;
 
-    //Jumping
+    // Jumping
     public float JumpForce;
     public float JumpRayLength;
 
-    //Looking
+    // Looking
     public Transform HeadTransform;
     public float LookVerticalMin, LookVerticalMax;
     public float MouseSensitivity;
 
-    //Revive
+    // Revive
     public bool HasMedkit;
     
-    //Weapons
+    // Weapons
     public GameObject CurrentWeapon;
     public int Ammunition;
     public bool CanShoot = true;
@@ -83,7 +87,7 @@ public class PlayerController : MonoBehaviour
         rigidBody = GetComponent<Rigidbody>();
         gameObject.GetComponent<HealthComponent>().AddDeathAction(Stunned);
         animController = GetComponent<Animator>();
-        //Saves the original input from the variables
+        // Saves the original input from the variables
         speedSave = MovementSpeed;
         accSave = AccelerationRate;
     }
@@ -94,14 +98,14 @@ public class PlayerController : MonoBehaviour
         {
               if(CurrentWeapon != null && CanShoot)
         {
-            // fire current weapon
+            // Fire current weapon
             if(Input.GetButton("Fire"))
             {
                 CurrentWeapon.GetComponent<WeaponComponent>().Use();
                 animController.SetTrigger("Fire");
             }
 
-            // reload current weapon
+            // Reload current weapon
             if(Input.GetButton("Reload"))
             {
                 CurrentWeapon.GetComponent<WeaponComponent>().Reload(ref Ammunition);
@@ -113,27 +117,27 @@ public class PlayerController : MonoBehaviour
             StartCoroutine(GetComponent<PowerupBase>().Run());
         }
 
-        //Keeps cursor within screen
+        // Keeps cursor within screen
         if(Input.GetButton("Fire"))
         {
             Cursor.lockState = CursorLockMode.Locked;
         }
 
 
-        //Escape releases cursor
+        // Escape releases cursor
         if (Input.GetButton("Cancel"))
         {
             Cursor.lockState = CursorLockMode.None;
         }
 
-        //Mouse movement
+        // Mouse movement
         if (Input.GetAxis("Mouse X") != 0)
         {
             transform.Rotate(Vector3.up * MouseSensitivity * Input.GetAxis("Mouse X"));
         }
         if (Input.GetAxis("Mouse Y") != 0)
         {
-            //Checks if within legal rotation limit
+            // Checks if within legal rotation limit
             if (HeadTransform.localEulerAngles.x - MouseSensitivity * Input.GetAxis("Mouse Y") < LookVerticalMax || HeadTransform.localEulerAngles.x - MouseSensitivity * Input.GetAxis("Mouse Y") > LookVerticalMin + 360)
             {
                 HeadTransform.localEulerAngles = HeadTransform.localEulerAngles - Vector3.right * MouseSensitivity * Input.GetAxis("Mouse Y");
@@ -153,7 +157,7 @@ public class PlayerController : MonoBehaviour
     {
         if(!DisableInput)
         {
-                //Horizontal movement
+                // Horizontal movement
 
             if ( Input.GetAxisRaw("Horizontal") != 0 || Input.GetAxisRaw("Vertical") != 0)
             {
@@ -167,8 +171,8 @@ public class PlayerController : MonoBehaviour
             }
 
 
-            //Sprinting
-            //Checks the most important task, if the sprint button is released
+            // Sprinting
+            // Checks the most important task, if the sprint button is released
             if (Input.GetButtonUp("Sprint"))
             {
                 animController.SetBool("Sprint", false);
@@ -177,7 +181,7 @@ public class PlayerController : MonoBehaviour
                 reachedZero = false;
                 isDown = false;
             }
-            //Makes sure stamina can't be negative
+            // Makes sure stamina can't be negative
             else if (reachedZero == true && isDown == true)
             {
                 animController.SetBool("Sprint", false);
@@ -186,7 +190,7 @@ public class PlayerController : MonoBehaviour
                 AccelerationRate = accSave;
                 StartCoroutine("StaminaRegenRoutine");
             }
-            //Checks for sprint key and acts accordingly
+            // Checks for sprint key and acts accordingly
             else if (Input.GetButton("Sprint"))
             {
                 animController.SetBool("Sprint", true);
@@ -207,7 +211,7 @@ public class PlayerController : MonoBehaviour
                     StartCoroutine("StaminaRegenRoutine");
                 }
             }
-            //Basic stamina regen 
+            // Basic stamina regen 
             else
             {
                 MovementSpeed = speedSave;
@@ -218,7 +222,7 @@ public class PlayerController : MonoBehaviour
 
             Debug.DrawRay(transform.position, -transform.up*JumpRayLength, Color.red, Time.deltaTime);
 
-            //Jumping
+            // Jumping
             if (Input.GetButtonDown("Jump") && Physics.Raycast(transform.position, -transform.up, JumpRayLength))
             {
                 rigidBody.AddForce(transform.up * JumpForce, ForceMode.Impulse);
@@ -227,7 +231,7 @@ public class PlayerController : MonoBehaviour
         
     }
 
-    //Freezes the position of the puppet and disables shooting and interacting
+    // Freezes the position of the puppet and disables shooting and interacting
     public void Stunned()
     {
         rigidBody.constraints = RigidbodyConstraints.FreezePosition | RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
@@ -238,11 +242,16 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    //Unstunns the enemy and enables shooting and interacting
+    // Unstunns the enemy and enables shooting and interacting
     public void UnStunned()
     {
         rigidBody.constraints = RigidbodyConstraints.None | RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
         CanShoot = true;
         gameObject.GetComponent<InteractionController>().enabled = true;
+    }
+
+    public void Step()
+    {
+        FMODUnity.RuntimeManager.PlayOneShot(Footstep, transform.position);
     }
 }
