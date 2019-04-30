@@ -39,15 +39,15 @@ public class Main_Menu : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (NetworkClient.isConnected && !ClientScene.ready)
-        {
-            ClientScene.Ready(NetworkClient.connection);
+        //if (NetworkClient.isConnected && !ClientScene.ready)
+        //{
+        //    ClientScene.Ready(NetworkClient.connection);
 
-            if (ClientScene.localPlayer == null)
-            {
-                ClientScene.AddPlayer();
-            }
-        }
+        //    if (ClientScene.localPlayer == null)
+        //    {
+        //        ClientScene.AddPlayer();
+        //    }
+        //}
     }
 
     void HostGame()
