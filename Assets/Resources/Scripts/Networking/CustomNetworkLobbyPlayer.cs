@@ -69,7 +69,7 @@ public class CustomNetworkLobbyPlayer : NetworkLobbyPlayer
     public override void OnStartServer()
     {
         base.OnStartServer();
-        GameObject.Find("ReadyButton").GetComponent<Button>().onClick.AddListener(delegate { ToggleReadyState(); });
+        //GameObject.Find("ReadyButton").GetComponent<Button>().onClick.AddListener(delegate { ToggleReadyState(); });
         GameObject.Find("StartCharacterSelectButton").SetActive(true);
     }
 
