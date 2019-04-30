@@ -169,27 +169,6 @@ public class GrabTool : NetworkBehaviour
 	// Method used for picking up an object.
 	private void Pickup(GameObject pickupObject)
 	{
-		if (!isServer)
-		{
-			sourceObject = pickupObject;
-			sourceObject.name = "CurrentSourceObject";
-
-			selectedObject = Instantiate(sourceObject);
-			selectedObject.name = "SelectedObject";
-
-			guideObject = Instantiate(sourceObject);
-			guideObject.name = "GuideObject";
-
-			grabOffset = sourceObject.transform.position - MouseToWorldPosition();
-		}
-
-		CmdUpdateMousePos(MouseToWorldPosition());
-		CmdPickup(pickupObject);
-	}
-
-	[Command]
-	public void CmdPickup(GameObject pickupObject)
-	{
 		sourceObject = pickupObject;
 		sourceObject.name = "CurrentSourceObject";
 
@@ -199,10 +178,44 @@ public class GrabTool : NetworkBehaviour
 		guideObject = Instantiate(sourceObject);
 		guideObject.name = "GuideObject";
 
+		grabOffset = sourceObject.transform.position - MouseToWorldPosition();
+
+		CmdUpdateMousePos(MouseToWorldPosition());
+		CmdPickup(pickupObject);
+	}
+
+	[Command]
+	public void CmdPickup(GameObject pickupObject)
+	{
+		if (!isLocalPlayer)
+		{
+			sourceObject = pickupObject;
+			sourceObject.name = "CurrentSourceObject";
+
+			selectedObject = Instantiate(sourceObject);
+			selectedObject.name = "SelectedObject";
+
+			guideObject = Instantiate(sourceObject);
+			guideObject.name = "GuideObject";
+		}
+		
 		grabOffset = sourceObject.transform.position - localPlayerMousePos;
 
 		// Save the parent node of the picked up room to be able to reset if the position doesn't change.
 		firstParentNode = sourceObject.GetComponent<RoomTreeNode>().GetParent();
+
+		if (!isLocalPlayer)
+		{
+			foreach (MeshRenderer renderer in selectedObject.GetComponentsInChildren<MeshRenderer>())
+			{
+				renderer.enabled = false;
+			}
+
+			foreach (MeshRenderer renderer in guideObject.GetComponentsInChildren<MeshRenderer>())
+			{
+				renderer.enabled = false;
+			}
+		}
 	}
 
 	private void Drop()
@@ -273,7 +286,7 @@ public class GrabTool : NetworkBehaviour
 		// Move guideObject to best availible position. If there is none, move it to source.
 		if (bestDstPoint != null)
 		{
-			RpcUpdateGuide(new TransformStruct(selectedObject.transform.position - (bestSrcPoint.transform.position - bestDstPoint.transform.position), selectedObject.transform.rotation));
+			RpcUpdateGuide(new TransformStruct(selectedObject.transform.position - (bestSrcPoint.transform.position - bestDstPoint.transform.position), selectedObject.transform.rotation.normalized));
 			guideObject.transform.position = selectedObject.transform.position - (bestSrcPoint.transform.position - bestDstPoint.transform.position);
 			guideObject.transform.rotation = selectedObject.transform.rotation;
 
@@ -286,7 +299,7 @@ public class GrabTool : NetworkBehaviour
 		}
 		else
 		{
-			RpcUpdateGuide(new TransformStruct(sourceObject.transform.position, sourceObject.transform.rotation));
+			RpcUpdateGuide(new TransformStruct(sourceObject.transform.position, sourceObject.transform.rotation.normalized));
 			guideObject.transform.position = sourceObject.transform.position;
 			guideObject.transform.rotation = sourceObject.transform.rotation;
 		}
@@ -295,7 +308,7 @@ public class GrabTool : NetworkBehaviour
 	[ClientRpc]
 	public void RpcUpdateGuide(TransformStruct target)
 	{
-		if (isLocalPlayer)
+		if (isLocalPlayer && guideObject != null)
 		{
 			guideObject.transform.rotation = target.Rotation;
 			guideObject.transform.position = target.Position;
