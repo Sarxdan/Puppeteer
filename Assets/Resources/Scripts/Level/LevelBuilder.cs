@@ -51,7 +51,6 @@ public class LevelBuilder : NetworkBehaviour
 			RandomizeRooms();
 			SpawnRooms();
 			SpawnRoomsOnNetwork();
-			RpcSetParents();
 		}
 	}
 
@@ -294,52 +293,5 @@ public class LevelBuilder : NetworkBehaviour
 	public GameObject GetLevel()
 	{
 		return parent;
-	}
-	
-	[ClientRpc]
-	public void RpcSetParents()
-	{
-		parent = GameObject.Find("Level");
-
-		// Move rooms into level GameObject
-		foreach (RoomInteractable room in FindObjectsOfType<RoomInteractable>())
-		{
-			room.transform.SetParent(parent.transform);
-		}
-
-		// Move physical doors into room door GameObjects
-		foreach (DoorComponent door in FindObjectsOfType<DoorComponent>())
-		{
-			foreach (AnchorPoint anchor in FindObjectsOfType<AnchorPoint>())
-			{
-				if ((anchor.transform.position - door.transform.position).magnitude <= 0.8f && Quaternion.Angle(anchor.transform.rotation, door.transform.rotation) <= 5)
-				{
-					door.transform.SetParent(anchor.transform);
-					break;
-				}
-			}
-		}
-
-		// Connect Anchorpoints that are 
-		foreach (AnchorPoint anchor in FindObjectsOfType<AnchorPoint>())
-		{
-			foreach (AnchorPoint otherAnchor in FindObjectsOfType<AnchorPoint>())
-			{
-				if (anchor != otherAnchor && anchor.GetPosition() == otherAnchor.GetPosition())
-				{
-					anchor.ConnectDoorClient(otherAnchor);
-				}
-			}
-		}
-	}
-
-	public void BuildTree()
-	{
-		if (isLocalPlayer)
-		{
-			// Build tree on client
-			GetStartNode().ReconnectToTree();
-			GetStartNode().BuildTree();
-		}
 	}
 }
