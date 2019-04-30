@@ -2,6 +2,20 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/*
+* AUTHOR:
+* Filip Renman
+*
+* DESCRIPTION:
+* Moves the camera when the mouse is at the edge of the screen or by using the movement keys
+*
+* CODE REVIEWED BY:
+* Anton Jonsson (30/04-2019)
+*
+* CONTRIBUTORS:
+* 
+*/
+
 public class PuppeteerCameraController : MonoBehaviour
 {
     //The speed the camera moves in
@@ -14,13 +28,9 @@ public class PuppeteerCameraController : MonoBehaviour
     public float PlayerArea;
 
     //Everything inside these positions are the playable area
-    [SerializeField]
     private float RightHorizontalBorder;
-    [SerializeField]
     private float LeftHorizontalBorder;
-    [SerializeField]
     private float TopVerticalBorder;
-    [SerializeField]
     private float BottomVerticalBorder;
 
     void Start()
@@ -28,14 +38,11 @@ public class PuppeteerCameraController : MonoBehaviour
         //How far from the start position you are able to go before you can move the camera anymore
         float lenghtFromCenter = PlayerArea / 2;
 
-
-
         Vector3 pos = transform.position;
         RightHorizontalBorder = pos.x + lenghtFromCenter;
         LeftHorizontalBorder = pos.x - lenghtFromCenter;
         TopVerticalBorder = pos.z + lenghtFromCenter;
         BottomVerticalBorder = pos.z - lenghtFromCenter;
-
     }
 
     void Update()
@@ -60,6 +67,5 @@ public class PuppeteerCameraController : MonoBehaviour
         }
 
         transform.position = pos;
-
     }
 }
