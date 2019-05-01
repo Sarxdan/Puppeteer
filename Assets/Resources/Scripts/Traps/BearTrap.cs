@@ -17,6 +17,8 @@ using UnityEngine;
 
 public class BearTrap : TrapComponent
 {
+    //[FMODUnity.EventRef] public string opening;
+    
     public GameObject Target;
 
     public override void OnTriggerEnter(Collider other)
@@ -29,6 +31,7 @@ public class BearTrap : TrapComponent
             {
                 Debug.Log("Start Timer");
                 StartCoroutine("TrapTimer");
+                Anim.SetBool("HasTarget",true);
             }
 
             Puppets.Add(other.gameObject);
@@ -43,16 +46,27 @@ public class BearTrap : TrapComponent
     {
         other.gameObject.GetComponent<HealthComponent>().RemoveDeathAction(DestroyTrap);
         Puppets.Remove(other.gameObject);
+
+        if (Puppets.Count == 0)
+        {
+            Anim.SetBool("HasTarget", false);
+        }
     }
     
     //Stun and damage the puppet that last entered the trap
     //and enable interaction with it for releasing puppet
+    //TODO: Maybe snap the puppet to center of bear trap?
+    //TODO: Play Opening sound
     public override void ActivateTrap()
     {
-        Target = Puppets[0];
-        Target.GetComponent<HealthComponent>().Damage(Damage);
-        Target.GetComponent<PlayerController>().Stunned();
+        if (Puppets.Count > 0)
+        {
+            Target = Puppets[0];
+            //TODO: Make sure it doesn't do damage when releasing is cancelled?
+            Target.GetComponent<HealthComponent>().Damage(Damage);
+            Target.GetComponent<PlayerController>().Stunned();
 
-        gameObject.GetComponent<BearInteract>().Activated = true;
+            gameObject.GetComponent<BearInteract>().Activated = true;
+        }
     }
 }

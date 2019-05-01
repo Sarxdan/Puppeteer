@@ -20,6 +20,7 @@ using UnityEngine;
  * CONTRIBUTORS:
  * Philip Stenmark
  * Ludvig Björk Förare (Animation integration)
+ * Sandra Andersson (Sound Impl.)
 */
 public class PlayerController : MonoBehaviour
 {

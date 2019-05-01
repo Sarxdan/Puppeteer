@@ -20,13 +20,16 @@ public class BearInteract : Interactable
     public float ReleaseTimer;  //Time it takes to release a puppet from trap
     public uint ReleaseDamage;  //The amount of damage dealt to the puppet if it releases itself
     public bool Activated = false;
+    public Animator anim;
+
+    //[FMODUnity.EventRef] public string closing;
 
     private void Start()
     {
-        
+        anim = gameObject.GetComponent<Animator>();
     }
 
-    //Start release timer
+    //Start release timer and open animation
     public override void OnInteractBegin(GameObject interactor)
     {
         if (!Activated)
@@ -34,20 +37,24 @@ public class BearInteract : Interactable
             return;
         }
 
+        anim.SetBool("Releasing", true);
         StartCoroutine("ReleaseFromTrap", interactor);
     }
 
-    //Stop release timer
+    //Stop release timer and close animation
     public override void OnInteractEnd(GameObject interactor)
     {
         if (!Activated)
         {
             return;
         }
+
+        anim.SetBool("Releasing", false);
         StopCoroutine("ReleaseFromTrap");
     }
 
     //Release the puppet from the trap after the interaction timer is full
+    //TODO: Play opening sound
     public IEnumerator ReleaseFromTrap(GameObject interactor)
     {
         //Timer for releasing the puppet

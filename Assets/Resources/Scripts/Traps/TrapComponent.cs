@@ -46,7 +46,10 @@ public abstract class TrapComponent : MonoBehaviour
     }
     public void DestroyTrap()
     {
-        Destroy(gameObject);
+        if (gameObject != null)
+        {
+            Destroy(gameObject);
+        }
     }
 
     public abstract void OnTriggerEnter(Collider other);
