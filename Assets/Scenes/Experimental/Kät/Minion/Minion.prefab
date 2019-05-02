@@ -2102,14 +2102,12 @@ MonoBehaviour:
   UseRootMotion: 1
   MovementSpeed: 50
   RotationSpeed: 30
-  MaxRecursionDepth: 20
-  path: []
-  subPath: []
-  HasPath: 0
-  navmeshTransform: {fileID: 0}
-  TransformRaycastOffset: {x: 0, y: 0.2, z: 0}
   LegHeight: 0
+  MaxRecursionDepth: 20
+  HasPath: 0
+  TransformRaycastOffset: {x: 0, y: 0.2, z: 0}
   InteractRayLength: 0.4
+  ArrivalMargin: 0.2
   MinVelocityThreshold: 0.1
   StuckTimeThreshold: 1
   UnstuckRadius: 2
@@ -2131,18 +2129,17 @@ MonoBehaviour:
   TargetEntity: {fileID: 0}
   ProxyCooldown: 0
   AttackCooldown: 1
-  AttackDamage: 0
+  AttackDamage: 1
   AttackRange: 1
-  AggroRange: 10
+  InstantAggroRange: 3
+  ConeAggroRange: 10
+  FOVConeAngle: 30
+  RaycastOffset: {x: 0, y: 1, z: 0}
   Puppets: []
   CoRunning: 0
-  EnInRange: 0
-  ClosestPuppDist: 0
-  Follow: 0
   AnimController: {fileID: 0}
-  rigidbody: {fileID: 0}
-  eDebug: 0
   PathFinder: {fileID: 0}
+  eDebug: 0
 --- !u!1 &4710719491978506576
 GameObject:
   m_ObjectHideFlags: 0

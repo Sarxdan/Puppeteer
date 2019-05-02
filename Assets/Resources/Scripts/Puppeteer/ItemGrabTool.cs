@@ -1,275 +1,360 @@
-﻿// using System.Collections;
-// using System.Collections.Generic;
-// using Mirror;
-// using UnityEngine;
+﻿using System.Collections;
+using System.Collections.Generic;
+using Mirror;
+using UnityEngine;
 
-// public class ItemGrabTool : NetworkBehaviour
-// {
+/*
+* AUTHOR:
+* Benjamin "Boris" Vesterlund, Kristoffer "Krig" Lundgren
+*
+* DESCRIPTION:
+* Tool used for grabbing and dropping traps and spawners as puppeteer. Also does checks to determine if drop is legal.
+*
+* CODE REVIEWED BY:
+* 
+* CONTRIBUTORS:
+* Philip Stenmark, Anton "Knugen" Jonsson
+*/
 
-//     private LevelBuilder level;
-// 	// The maximum distance for snapping modules
-// 	public int SnapDistance = 10;
-// 	// Maximum raycast ray length
-// 	public float RaycastDistance = 500;
-// 	// The lift height when grabbing an object
-// 	public float LiftHeight = 3.0f;
-// 	// The lift speed when grabbing an object
-// 	public float LiftSpeed = 50.0f;
+public class ItemGrabTool : NetworkBehaviour
+{
+    private LevelBuilder level;
 
-// 	// enables camera movement using mouse scroll
-// 	public bool EnableMovement = true;
+	// The maximum distance for snapping modules
+	public int SnapDistance = 10;
+	// Maximum raycast ray length
+	public float RaycastDistance = 500;
+	// The lift height when grabbing an object
+	public float LiftHeight = 3.0f;
+	// The lift speed when grabbing an object
+	public float LiftSpeed = 50.0f;
 
-// 	private GameObject sourceObject;
-// 	private GameObject selectedObject;
-// 	private GameObject guideObject;
+	// enables camera movement using mouse scroll
+	public bool EnableMovement = true;
 
-// 	private TrapSnapPoint bestDstPoint;
+	private GameObject sourceObject;
+	private GameObject selectedObject;
+	private GameObject guideObject;
 
-// 	private TrapComponent lastHit;
-// 	private Vector3 grabOffset = new Vector3();
+	private SnapPointBase bestDstPoint;
 
-// 	private Vector3 localPlayerMousePos;
+	private TrapComponent lastHit;
+	private Vector3 grabOffset = new Vector3();
 
-// 	// Original parent node used for updating tree when dropping without snapping to something.
-// 	private RoomTreeNode firstParentNode;
+	// Mouse position of current Puppeteer. Used when server is not puppeteer.
+	private Vector3 localPlayerMousePos;
 
-//     // Start is called before the first frame update
-//     void Start()
-//     {
-//         level = GetComponent<LevelBuilder>();
-//     }
+    // Start is called before the first frame update
+    void Start()
+    {
+        level = GetComponent<LevelBuilder>();
+    }
 
-//     // Update is called once per frame
-//     void Update()
-//     {
-//         if (isLocalPlayer)
-//             ClientUpdate();
-//         if (isServer)
-//         {
-//             if (selectedObject != null)
-//                 ServerUpdate();
-//         }
-//     }
+    // Update is called once per frame
+    void Update()
+	{
+		// Update local players rooms and send data to server. Purely visual.
+		if (isLocalPlayer)
+            ClientUpdate();
 
-//     private void ClientUpdate()
-//     {
-//         if (selectedObject != null)
-//         {
-//             RaycastHit hit;
-//             int layermask = 1 << LayerMask.NameToLayer("Puppeteer Interact");
-//             if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition),out hit, RaycastDistance, layermask, QueryTriggerInteraction.Collide))
-//             {
-//                 GameObject hitObject = hit.transform.gameObject;
+		// Main update and checks always run on server
+		if (isServer)
+            if (selectedObject != null)
+                ServerUpdate();
+    }
 
-//                 TrapComponent trapComponent = hitObject.GetComponent<TrapComponent>();
-//                 if (trapComponent != null)
-//                 {
-//                     if (trapComponent != lastHit)
-//                     {
-//                         if (lastHit != null)
-//                         {
-//                             lastHit.OnRaycastExit();
-//                         }
-//                         lastHit = trapComponent;
-//                         if(!lastHit.Placed)
-//                         {
-//                             lastHit.OnRaycastEnter();
-//                         }
-//                     }
-//                     if (Input.GetButtonDown("Fire"))
-// 					{
-// 						if (!trapComponent.Placed)
-// 						{
-// 							Pickup(hitObject);
-// 						}
-// 					}
-//                 }
-//                 else
-//                 {
-//                     lastHit.OnRaycastExit();
-//                     lastHit = null;
-//                 }
-//             }
-//             else
-// 			{
-// 				// If raycast doesn't hit any objects
-// 				if (lastHit != null)
-// 				{
-// 					lastHit.OnRaycastExit();
-// 					lastHit = null;
-// 				}
-// 			}
-//         }
-//         else
-// 		{
-// 			CmdUpdateMousePos(MouseToWorldPosition());
+    private void ClientUpdate()
+    {
+        if (selectedObject == null)
+        {
+			// Raycast only on Puppeteer Interact layer.
+			RaycastHit hit;
+            int layermask = 1 << LayerMask.NameToLayer("Puppeteer Interact");
+            if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition),out hit, RaycastDistance, layermask, QueryTriggerInteraction.Collide))
+            {
+                GameObject hitObject = hit.transform.gameObject;
 
-// 			if (Input.GetButtonUp("Fire"))
-// 			{
-// 				Drop();
-// 			}
-// 			else
-// 			{
-// 				if (Input.GetButtonDown("Rotate"))
-// 				{
-// 					// Rotate room around its own up-axis
+				// Start and stop glow
+				var trapComponent = hitObject.GetComponent<TrapComponent>();
+                if (trapComponent != null)
+                {
+                    if (trapComponent != lastHit)
+                    {
+                        if (lastHit != null)
+                        {
+                            var glow = lastHit.GetComponent<Glowable>();
+                            if (glow)
+                            {
+                                glow.Toggle(false);
+                            }
+                        }
+                        lastHit = trapComponent;
+                        if(!lastHit.Placed)
+                        {
+                            var glow = lastHit.GetComponent<Glowable>();
+                            if (glow)
+                            {
+                                glow.Toggle(true);
+                            }
+                        }
+                    }
+					// If pickup button is pressed, call pickup method.
+					if (Input.GetButtonDown("Fire"))
+					{
+						if (!trapComponent.Placed)
+						{
+							Pickup(hitObject);
+						}
+					}
+                }
+                else
+                {
+					// If raycast doesn't hit a valid object, stop previus glow.
+					if (lastHit != null)
+                    {
+                        var glow = lastHit.GetComponent<Glowable>();
+                        if (glow)
+                        {
+                            glow.Toggle(false);
+                        }
+                        lastHit = null;
+                    }
+                }
+            }
+            else
+			{
+				// If raycast doesn't hit any objects, stop previus glow.
+                if (lastHit != null)
+                {
+                    var glow = lastHit.GetComponent<Glowable>();
+                    if (glow)
+                    {
+                        glow.Toggle(false);
+                    }
+                    lastHit = null;
+                }
+			}
+        }
+        else
+		{
+			// Send current mouseposition to server
+			CmdUpdateMousePos(MouseToWorldPosition());
 
-// 					selectedObject.transform.RotateAround(selectedObject.transform.position, selectedObject.transform.up, 90);
-// 					CmdRotate(selectedObject.transform.rotation);
-// 				}
-// 				if (!isServer)
-// 				{
-// 					ClientUpdatePositions();
-// 				}
+			if (Input.GetButtonUp("Fire"))
+			{
+				Drop();
+			}
+			else
+			{
+				if (Input.GetButtonDown("Rotate"))
+				{
+					// Rotate room around its own up-axis
 
-// 			}
-//         }
-//     }
-//     [Command]
-//     public void CmdRotate(Quaternion rot)
-//     {
-//         selectedObject.transform.rotation = rot;
-//     }
-//     [Command]
-//     public void CmdUpdateMousePos(Vector3 pos)
-//     {
-//         localPlayerMousePos = pos;
-//     }
-//     private void ServerUpdate()
-//     {
-//         ServerUpdatePositions();
-//     }
-//     private void Pickup(GameObject pickupTrap)
-//     {
-//         if (!isServer)
-//         {
-//             sourceObject = pickupTrap;
+					selectedObject.transform.RotateAround(selectedObject.transform.position, selectedObject.transform.up, 90);
+					CmdRotate(selectedObject.transform.rotation);
+				}
+				if (!isServer)
+				{
+					ClientUpdatePositions();
+				}
 
-//             selectedObject  = Instantiate(sourceObject);
-//             selectedObject.name =  "SelectedObject";
+			}
+        }
+    }
 
-            
-// 			guideObject = Instantiate(sourceObject);
-// 			guideObject.name = "GuideObject";
+	// Rotate trap on server
+	[Command]
+    public void CmdRotate(Quaternion rot)
+    {
+        selectedObject.transform.rotation = rot;
+    }
 
-// 			grabOffset = sourceObject.transform.position - MouseToWorldPosition();
-//         }
+	// Update mouse position on server
+	[Command]
+    public void CmdUpdateMousePos(Vector3 pos)
+    {
+        localPlayerMousePos = pos;
+    }
 
-//         CmdUpdateMousePos(MouseToWorldPosition());
-//         CmdPickup(pickupTrap);
-//     }
+    private void ServerUpdate()
+    {
+        ServerUpdatePositions();
+    }
+	// Method used for picking up an object.
+	private void Pickup(GameObject pickupTrap)
+    {
+		sourceObject = pickupTrap;
+		selectedObject = Instantiate(sourceObject);
+		selectedObject.name = "SelectedObject";
 
-//     [Command]
-//     public void CmdPickup(GameObject pickupTrap)
-//     {
-//         sourceObject = pickupTrap;
+		guideObject = Instantiate(sourceObject);
+		guideObject.name = "GuideObject";
 
-// 		selectedObject = Instantiate(sourceObject);
-// 		selectedObject.name = "SelectedObject";
+		grabOffset = sourceObject.transform.position - MouseToWorldPosition();
 
-// 		guideObject = Instantiate(sourceObject);
-// 		guideObject.name = "GuideObject";
+        CmdUpdateMousePos(MouseToWorldPosition());
+        CmdPickup(pickupTrap);
+    }
 
-// 		grabOffset = sourceObject.transform.position - localPlayerMousePos;
+    [Command]
+    public void CmdPickup(GameObject pickupTrap)
+    {
+		if (!isLocalPlayer)
+		{
+			sourceObject = pickupTrap;
+			selectedObject = Instantiate(sourceObject);
+			selectedObject.name = "SelectedObject";
+			guideObject = Instantiate(sourceObject);
+			guideObject.name = "GuideObject";
+			// Disable colliders on server when server is not puppeteer.
+			foreach (BoxCollider collider in guideObject.GetComponentsInChildren<BoxCollider>())
+			{
+				collider.enabled = false;
+			}
+		}
 
-//         if (!isLocalPlayer)
-//         {
-//             foreach (MeshRenderer renderer in selectedObject.GetComponentsInChildren<MeshRenderer>())
-//             {
-//                 renderer.enabled = false;
-//             }
-// 			foreach (MeshRenderer renderer in guideObject.GetComponentsInChildren<MeshRenderer>())
-// 			{
-// 				renderer.enabled = false;
-// 			}
-//         }
-//     }
+		grabOffset = sourceObject.transform.position - localPlayerMousePos;
 
-//     private void Drop()
-//     {
-//         CmdDrop();
-// 		if (!isServer)
-// 		{
-// 			Destroy(selectedObject);
-// 			selectedObject = null;
+        if (!isLocalPlayer)
+        {
+            foreach (MeshRenderer renderer in selectedObject.GetComponentsInChildren<MeshRenderer>())
+            {
+                renderer.enabled = false;
+            }
+			foreach (MeshRenderer renderer in guideObject.GetComponentsInChildren<MeshRenderer>())
+			{
+				renderer.enabled = false;
+			}
+        }
+    }
+
+    private void Drop()
+    {
+        CmdDrop();
+		if (!isServer)
+		{
+			Destroy(selectedObject);
+			selectedObject = null;
 			
-//             guideObject.name = "Placed Trap";
-//             guideObject.GetComponent<TrapComponent>().Placed = true;
-// 			guideObject = null;
-// 		}
-//     }
+            guideObject.name = "Placed Trap";
+            guideObject.GetComponent<TrapComponent>().Placed = true;
+			guideObject = null;
+		}
+    }
 
-//     [Command]
-//     public void CmdDrop()
-//     {
-//         Destroy(selectedObject);
-// 		selectedObject = null;
-			
-//         guideObject.name = "Placed Trap";
-//         guideObject.GetComponent<TrapComponent>().Placed = true;
-// 		guideObject = null;
-//     }
+	// Method to update position of source object on server when drop happens.
+	[Command]
+    public void CmdDrop()
+    {
+		// Reset everything if trap is droped without a target place.
+		if (sourceObject.transform.position == guideObject.transform.position && sourceObject.transform.rotation == guideObject.transform.rotation)
+		{
+			Destroy(selectedObject);
+			selectedObject = null;
+			Destroy(guideObject);
+			guideObject = null;
+		}
+		else
+		{
+			Destroy(selectedObject);
+			selectedObject = null;
 
-//     private void  ClientUpdatePositions()
-//     {
-//         Vector3  newPosition = MouseToWorldPosition() + grabOffset;
-//         selectedObject.transform.position = Vector3.Lerp(selectedObject.transform.position, new Vector3(newPosition.x, LiftHeight,newPosition.z), LiftSpeed * Time.deltaTime);
-//     }
+			guideObject.name = "Placed Trap";
+			guideObject.GetComponent<TrapComponent>().Placed = true;
+			guideObject = null;
+		}
+    }
 
-//     private void ServerUpdatePositions()
-//     {
-//         Vector3 newPosition = localPlayerMousePos + grabOffset;
-//         selectedObject.transform.position = Vector3.Lerp(selectedObject.transform.position, new Vector3(newPosition.x, LiftHeight, newPosition.z), LiftSpeed *  Time.deltaTime);
+	// Move local selected object for client.
+	private void  ClientUpdatePositions()
+    {
+        Vector3  newPosition = MouseToWorldPosition() + grabOffset;
+        selectedObject.transform.position = Vector3.Lerp(selectedObject.transform.position, new Vector3(newPosition.x, LiftHeight,newPosition.z), LiftSpeed * Time.deltaTime);
+    }
 
-//         float bestDist = Mathf.Infinity;
-//         bestDstPoint = null;
+	// Moves all objects to their positions.
+	private void ServerUpdatePositions()
+    {
+		// Move source object to mouse.
+		Vector3 newPosition = localPlayerMousePos + grabOffset;
+        selectedObject.transform.position = Vector3.Lerp(selectedObject.transform.position, new Vector3(newPosition.x, LiftHeight, newPosition.z), LiftSpeed *  Time.deltaTime);
 
-//         var nearestPoint = FindNearestFreePoint(selectedObject.transform, ref bestDist);
-//         if (nearestPoint != null)
-//         {
-//             bestDstPoint = nearestPoint;
+        float bestDist = Mathf.Infinity;
+        bestDstPoint = null;
+		// Decide which snap point is best to snap to.
+		var nearestPoint = FindNearestFreePoint(selectedObject, ref bestDist);
+        if (nearestPoint != null)
+        {
+            bestDstPoint = nearestPoint;
 
-//             Debug.DrawLine(bestDstPoint.transform.position, selectedObject.transform.position, Color.yellow);
-//         }
+            Debug.DrawLine(bestDstPoint.transform.position, selectedObject.transform.position, Color.yellow);
+        }
+		// Move guideObject to best availible position. If there is none, move it to source.
+		if (bestDstPoint != null)
+        {
+            RpcUpdateGuide(new TransformStruct(selectedObject.transform.position - (selectedObject.transform.position - bestDstPoint.transform.position), selectedObject.transform.rotation));
+			guideObject.transform.position = selectedObject.transform.position - (selectedObject.transform.position - bestDstPoint.transform.position);
+			guideObject.transform.rotation = selectedObject.transform.rotation;
+        }
+        else
+        {
+        	RpcUpdateGuide(new TransformStruct(sourceObject.transform.position, sourceObject.transform.rotation));
+			guideObject.transform.position = sourceObject.transform.position;
+			guideObject.transform.rotation = sourceObject.transform.rotation;
+        }
+    }
+	// Method to send data from server to client about position of guideObject.
+	[ClientRpc]
+    public void RpcUpdateGuide(TransformStruct target)
+    {
+        if (isLocalPlayer)
+        {
+            guideObject.transform.position = target.Position;
+            gameObject.transform.rotation = target.Rotation;
+        }
+    }
+	// Checks all other snap points in the level and picks the best one.
+	private SnapPointBase FindNearestFreePoint(in GameObject heldTrap, ref float bestDist)
+    {
+        List<SnapPointBase> snapPoints = new List<SnapPointBase>();
+        var rooms = level.GetRooms();
+        SnapPointBase result = null;
+        foreach (var room in rooms)
+        {
+            var trapSnapContainer = room.GetComponent<SnapPointContainer>().SnapPoints;
+            foreach (var snapPoint in trapSnapContainer)
+            {
+                if (!CanBePlaced(heldTrap.transform, snapPoint))
+                    continue;
+                float curDist = (heldTrap.transform.position - snapPoint.transform.position).sqrMagnitude;
+                if(curDist < bestDist)
+                {
+                    bestDist = curDist;
+                    result = snapPoint;
+                }
+            }
+        }
+        return result;
 
-//         if (bestDstPoint != null)
-//         {
-//             RpcUpdateGuide(new TransformStruct(selectedObject.transform.position - (selectedObject.transform.position - bestDstPoint.transform.position), selectedObject.transform.rotation));
-// 			guideObject.transform.position = selectedObject.transform.position - (selectedObject.transform.position - bestDstPoint.transform.position);
-// 			guideObject.transform.rotation = selectedObject.transform.rotation;
-//         }
-//         else
-//         {
-//         	RpcUpdateGuide(new TransformStruct(sourceObject.transform.position, sourceObject.transform.rotation));
-// 			guideObject.transform.position = sourceObject.transform.position;
-// 			guideObject.transform.rotation = sourceObject.transform.rotation;
-//         }
-//     }
+    } 
 
-//     [ClientRpc]
-//     public void RpcUpdateGuide(TransformStruct target)
-//     {
-//         if (isLocalPlayer)
-//         {
-//             guideObject.transform.position = target.Position;
-//             gameObject.transform.rotation = target.Rotation;
-//         }
-//     }
-//     private  TrapSnapPoint FindNearestFreePoint(in Transform heldTrap, ref float bestDist)
-//     {
-//         List<TrapSnapPoint> trapSnapPoints = new List<TrapSnapPoint>();
-//         var rooms = level.GetRooms();
-//         foreach (var room in rooms)
-//         {
-//             var trapSnapContainers = room.GetComponent<SnapPointContainer>().TrapSnapPoint;
-//             TrapSnapPoint result = null;
-//             foreach (var snapPoint in trapSnapContainers)
-//             {
-//                 if (!CanBePlaced(heldTrap, snapPoint))
-//                     continue;
-//             }
+    bool CanBePlaced(Transform heldTrap, SnapPointBase snapPoint)
+    {
+		if (heldTrap == null || snapPoint == null)
+			return false;
+		if (!(snapPoint is TrapSnapPoint))
+			return false;
+		var snap = snapPoint.GetComponent<TrapSnapPoint>();
+        if(snap.Used)
+            return false;
 
+		return true;
+    }
 
-//         }
-//     }
-// }
+    private Vector3 MouseToWorldPosition()
+	{
+		Vector3 mousePos = Input.mousePosition;
+		mousePos.z = Camera.main.WorldToScreenPoint(selectedObject.transform.position).z;
+		return Camera.main.ScreenToWorldPoint(mousePos);
+	}
+}

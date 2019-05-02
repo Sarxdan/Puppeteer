@@ -114,7 +114,8 @@ public class GrabTool : NetworkBehaviour
 				else
 				{
 					// If raycast doesn't hit a valid object
-					lastHit.OnRaycastExit();
+					if (lastHit != null)
+						lastHit.OnRaycastExit();
 					lastHit = null;
 				}
 			}
@@ -254,6 +255,8 @@ public class GrabTool : NetworkBehaviour
 			// Connect all doors in the new position.
 			level.ConnectDoorsInRoomIfPossible(sourceObject);
 		}
+
+		firstParentNode.ResetGlow();
 
 		Destroy(selectedObject);
 		selectedObject = null;

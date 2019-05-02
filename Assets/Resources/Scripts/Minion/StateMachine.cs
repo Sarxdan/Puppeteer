@@ -17,33 +17,40 @@ using MinionStates;
 
 public class StateMachine : MonoBehaviour
 {
+    //General
     public uint tickRate = 10;
+    public string CurrentStateName;
     public State CurrentState;
+    [HideInInspector]
     public EnemySpawner EnemySpawner;
     public GameObject TargetEntity;
     public float ProxyCooldown;
     public float AttackCooldown;
     public uint AttackDamage;
     public float AttackRange;
-    public float AggroRange;
-    public List<GameObject> Puppets;
-    public bool CoRunning;
-    public bool EnInRange;
-    public float ClosestPuppDist = 0;
-    public bool Follow;
+    public float InstantAggroRange;
+    public float ConeAggroRange;
+    public float FOVConeAngle;
+    public Vector3 RaycastOffset;
 
+    [HideInInspector]
+    public List<GameObject> Puppets;
+    [HideInInspector]
+    public bool CoRunning;
+    private float closestPuppDist = 0;
+
+    [HideInInspector]
     public Animator AnimController;
-    public Rigidbody rigidbody;
+    [HideInInspector]
+    public PathfinderComponent PathFinder;
 
     public bool eDebug;
     //Pathfind component reference (pathFinder)
-    public PathfinderComponent PathFinder;
 
     public void Start()
     {
         PathFinder = GetComponent<PathfinderComponent>();
         AnimController = GetComponent<Animator>();
-        Follow = false;
         SetState(new WanderState(this));
     }
 
@@ -85,30 +92,39 @@ public class StateMachine : MonoBehaviour
     //REEEEEE FUCKING FIXA FRAMTIDA FLOOF
     private IEnumerator ProxyRoutine()
     {
-        ClosestPuppDist = Mathf.Infinity;
+        int mask = ~(1 << LayerMask.NameToLayer("Puppeteer Interact"));
+        closestPuppDist = Mathf.Infinity;
         foreach (GameObject pupp in Puppets)
         {
-            if (pupp != null)
+            if (pupp != null && pupp.GetComponent<HealthComponent>().Health > 0)
             {
                 float puppDist = Vector3.Distance(pupp.transform.position, gameObject.transform.position);
-                if (ClosestPuppDist == 0)
+                if (closestPuppDist == 0 || closestPuppDist > puppDist)
                 {
-                    Follow = false;
-                    ClosestPuppDist = puppDist;
+                    closestPuppDist = puppDist;
                 }
-                else if (ClosestPuppDist > puppDist)
+
+                //If within cone range
+                if (closestPuppDist <= ConeAggroRange)
                 {
-                    Follow = false;
-                    ClosestPuppDist = puppDist;
-                }
-                if (ClosestPuppDist <= AggroRange)
-                {
-                    Follow = true;
-                    TargetEntity = pupp.gameObject;
-                    //EnInRange = true;
-                    if (CoRunning == false)
+                    //If outside instant-aggro range
+                    if(closestPuppDist > InstantAggroRange)
                     {
-                        StartCoroutine("AttackRoutine", TargetEntity);
+                        //If within vision cone angle and in direct line of sight
+                        if(Vector3.Angle(transform.forward, pupp.transform.position - transform.position) <= FOVConeAngle &&
+                        Physics.Raycast(transform.position + RaycastOffset, pupp.transform.position - transform.position, out RaycastHit hit, ConeAggroRange, mask))
+                        {
+                            if(hit.transform.tag.Equals("Player")){
+                                TargetEntity = pupp.gameObject;
+                                SetState(new AttackingState(this));
+                            }
+                        }
+                    }
+                    else
+                    {
+                        //Instant aggro
+                        TargetEntity = pupp.gameObject;
+                        SetState(new AttackingState(this));
                     }
                 
                     
@@ -121,7 +137,17 @@ public class StateMachine : MonoBehaviour
             yield return new WaitForSeconds(ProxyCooldown);
         }
     }
+
+    public void Attack(){
+        HealthComponent health = TargetEntity.GetComponent<HealthComponent>();
+        if (health.Health > 0)
+        {
+            health.Damage(AttackDamage);
+        }
+    }
 }
+
+
 
 //-------------------------------------------------------------
 public abstract class State
