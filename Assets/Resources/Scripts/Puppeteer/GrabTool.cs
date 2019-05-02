@@ -312,6 +312,7 @@ public class GrabTool : NetworkBehaviour
 		}
 		else
 		{
+			sourceObject.GetComponent<RoomTreeNode>().GlowBranch(Color.red);
 			RpcUpdateGuide(new TransformStruct(sourceObject.transform.position, sourceObject.transform.rotation.normalized));
 			guideObject.transform.position = sourceObject.transform.position;
 			guideObject.transform.rotation = sourceObject.transform.rotation;
