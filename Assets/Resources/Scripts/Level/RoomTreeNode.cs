@@ -61,6 +61,8 @@ public class RoomTreeNode : MonoBehaviour
 		{
 			if (!child.FindNewParent())
 			{
+				child.gameObject.GetComponent<Glowable>().GlowColor = Color.red;
+				child.GetComponent<RoomInteractable>().OnRaycastEnter();
 				return false;
 			}
 		}
@@ -102,6 +104,21 @@ public class RoomTreeNode : MonoBehaviour
 		foreach (RoomTreeNode child in children)
 		{
 			child.ReconnectToTree();
+		}
+	}
+
+	// Recursively resets glow values for all children
+	public void ResetGlow()
+	{
+		foreach (RoomTreeNode child in children)
+		{
+			child.ResetGlow();
+			Glowable glow = child.GetComponent<Glowable>();
+			if (glow != null)
+			{
+				glow.GlowColor = Color.white;
+				child.GetComponent<RoomInteractable>().OnRaycastExit();
+			}
 		}
 	}
 

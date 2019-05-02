@@ -255,6 +255,8 @@ public class GrabTool : NetworkBehaviour
 			level.ConnectDoorsInRoomIfPossible(sourceObject);
 		}
 
+		firstParentNode.ResetGlow();
+
 		Destroy(selectedObject);
 		selectedObject = null;
 		Destroy(guideObject);
