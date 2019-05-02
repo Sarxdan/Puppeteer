@@ -62,16 +62,26 @@ public class RoomTreeNode : MonoBehaviour
 		{
 			if (!child.FindNewParent())
 			{
-				Glowable glow = child.GetComponent<Glowable>();
-				if (glow != null)
-				{
-					glow.GlowColor = Color.red;
-					child.GetComponent<RoomInteractable>().OnRaycastEnter();
-				}
+				GlowBranch(Color.red);
 				ret = false;
 			}
 		}
 		return ret;
+	}
+
+	public void GlowBranch(Color color)
+	{
+		Glowable glow = GetComponent<Glowable>();
+		if (glow != null)
+		{
+			glow.GlowColor = color;
+			GetComponent<RoomInteractable>().OnRaycastEnter();
+		}
+
+		foreach (RoomTreeNode child in children.ToArray())
+		{
+			child.GlowBranch(new Color(color.r - 0.2f, color.g, color.b));
+		}
 	}
 
 	// Goes thorugh all connected doors and checks if they are connected to a branch that has not been cut off. If they are, set them as parent.
