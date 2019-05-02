@@ -62,7 +62,6 @@ public class BearTrap : TrapComponent
         if (Puppets.Count > 0)
         {
             Target = Puppets[0];
-            //TODO: Make sure it doesn't do damage when releasing is cancelled?
             Target.GetComponent<HealthComponent>().Damage(Damage);
             Target.GetComponent<PlayerController>().Stunned();
 
