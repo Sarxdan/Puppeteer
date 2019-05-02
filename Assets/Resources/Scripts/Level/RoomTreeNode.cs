@@ -57,14 +57,31 @@ public class RoomTreeNode : MonoBehaviour
 	// Special case of FindNewParent() method where all children must find a suitable parent for the tree to still be valid. Used to initiate the search.
 	public bool CutBranch()
 	{
+		bool ret = true;
 		foreach (RoomTreeNode child in children.ToArray())
 		{
 			if (!child.FindNewParent())
 			{
-				return false;
+				GlowBranch(Color.red);
+				ret = false;
 			}
 		}
-		return true;
+		return ret;
+	}
+
+	public void GlowBranch(Color color)
+	{
+		Glowable glow = GetComponent<Glowable>();
+		if (glow != null)
+		{
+			glow.GlowColor = color;
+			GetComponent<RoomInteractable>().OnRaycastEnter();
+		}
+
+		foreach (RoomTreeNode child in children.ToArray())
+		{
+			child.GlowBranch(new Color(color.r - 0.2f, color.g, color.b));
+		}
 	}
 
 	// Goes thorugh all connected doors and checks if they are connected to a branch that has not been cut off. If they are, set them as parent.
@@ -102,6 +119,21 @@ public class RoomTreeNode : MonoBehaviour
 		foreach (RoomTreeNode child in children)
 		{
 			child.ReconnectToTree();
+		}
+	}
+
+	// Recursively resets glow values for all children
+	public void ResetGlow()
+	{
+		foreach (RoomTreeNode child in children)
+		{
+			child.ResetGlow();
+			Glowable glow = child.GetComponent<Glowable>();
+			if (glow != null)
+			{
+				glow.GlowColor = Color.white;
+				child.GetComponent<RoomInteractable>().OnRaycastExit();
+			}
 		}
 	}
 
