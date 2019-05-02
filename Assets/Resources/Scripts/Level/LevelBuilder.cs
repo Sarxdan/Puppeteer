@@ -25,6 +25,8 @@ public class LevelBuilder : NetworkBehaviour
 	public List<GameObject> MultiDoorRooms;
 	// Rooms with only one door.
 	public List<GameObject> DeadEnds;
+	// Puppeteer items.
+	public List<GameObject> PuppeteerItems; 
 	// Start and End rooms
 	public GameObject StartRoom, EndRoom;
 	// Door to be placed between rooms.
@@ -52,6 +54,7 @@ public class LevelBuilder : NetworkBehaviour
 			RandomizeRooms();
 			SpawnRooms();
 			SpawnRoomsOnNetwork();
+			SpawnPuppeteerItem();
 		}
 	}
 
@@ -234,6 +237,25 @@ public class LevelBuilder : NetworkBehaviour
 			NetworkServer.Spawn(door.gameObject);
 		}
     }
+
+	// Spawns the items and adds them to the network.
+	private void SpawnPuppeteerItem()
+	{
+		var table = GameObject.Find("Table");
+		Vector3[] pos = new Vector3[4];
+		pos[0] = new Vector3(35, 0, 10);
+		pos[1] = new Vector3(35, 2, 2.5f);
+		pos[2] = new Vector3(35, 0, -2.5f);
+		pos[3] = new Vector3(35, 0, -10);
+		int i = 0;
+		foreach (var item in PuppeteerItems)
+		{
+			var spawnable = Instantiate(item, table.transform);
+			spawnable.transform.position = pos[i]; 
+			NetworkServer.Spawn(spawnable);
+			i++;
+		}
+	}
 
 	// Returns a List of rooms.
 	public List<GameObject> GetRooms()

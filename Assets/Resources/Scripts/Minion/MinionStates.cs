@@ -40,15 +40,20 @@ namespace MinionStates
                 if (target.collider.tag == ("Player"))
                 {
                     //If canAttack, perform attack. Otherwise stop moving
-                    if(machine.CanAttack){
-                        machine.StartAttackCooldown();
+                    if(machine.CanAttack)
+                    {
+                        machine.StartCoroutine("attackTimer");
                         machine.AnimController.SetInteger("RandomAnimationIndex", Random.Range(0,6));
                         machine.AnimController.SetTrigger("Attack");
-                    }else{
+                    }
+                    else
+                    {
                         machine.PathFinder.Stop();
                     }
                 }
-            }else{
+            }
+            else
+            {
                 //Moves towards player
                 machine.PathFinder.MoveTo(machine.TargetEntity.transform.position);
             }
@@ -70,9 +75,7 @@ namespace MinionStates
             {
                 lostTime = 0;
             }
-
             lastTime = Time.time;
-
         }
     
         public override void Exit()
@@ -100,11 +103,14 @@ namespace MinionStates
             //Fetches navmesh from spawner room and walks to a (semi)random point on it
             NavMesh navmesh = machine.EnemySpawner.transform.GetComponentInParent<NavMesh>();
             Vector3 destination;
-            if(navmesh!=null){
+            if(navmesh!=null)
+            {
                 //Fetches random face from navmesh as destination
                 destination = machine.EnemySpawner.transform.parent.TransformPoint(navmesh.faces[Random.Range(0, navmesh.faces.Length - 1)].Origin);
                 machine.PathFinder.MoveTo(destination);
-            }else{
+            }
+            else
+            {
                 //If navmesh isn't found, goes idle
                 Debug.LogError("Entity " + machine.transform.name + " could not find navmesh in spawnRoom!");
                 machine.AnimController.SetBool("Running", false);
@@ -117,7 +123,8 @@ namespace MinionStates
             machine.CheckProxy();
 
             //If no path, go idle
-            if(!machine.PathFinder.HasPath){
+            if(!machine.PathFinder.HasPath)
+            {
                 machine.SetState(new WanderState(machine));
             }
         }
@@ -157,7 +164,8 @@ namespace MinionStates
             machine.CheckProxy();
 
             //If no path, restart
-            if(!machine.PathFinder.HasPath){
+            if(!machine.PathFinder.HasPath)
+            {
                 machine.SetState(new WanderState(machine));
             }
         }
@@ -189,7 +197,8 @@ namespace MinionStates
         public override void Run()
         {
             machine.CheckProxy();
-            if(!machine.PathFinder.HasPath){
+            if(!machine.PathFinder.HasPath)
+            {
                 machine.SetState(new WanderState(machine));
             }
         }

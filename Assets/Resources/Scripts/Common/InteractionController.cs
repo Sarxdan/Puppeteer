@@ -27,7 +27,7 @@ public class InteractionController : NetworkBehaviour
     {
         RaycastHit hitInfo;
         //If raycast hits an object
-        if(Physics.Raycast(Camera.main.ViewportPointToRay(new Vector3(0.5f, 0.5f)), out hitInfo, Lookahead, ~(1 << 8)))
+        if(Physics.Raycast(Camera.main.ViewportPointToRay(new Vector3(0.5f, 0.5f)), out hitInfo, Lookahead, ~(1 << LayerMask.NameToLayer("Puppeteer Interact"))))
         {
             var hit = hitInfo.transform.GetComponent<Interactable>();
             //Sets current interactable object

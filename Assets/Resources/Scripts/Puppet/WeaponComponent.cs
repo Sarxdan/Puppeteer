@@ -26,6 +26,7 @@ public class WeaponComponent : Interactable
     public int LiquidLeft;
     public int LiquidPerRound;
 
+
     //Weapon attributes
     public uint Damage;
     public uint NumShots;
@@ -46,6 +47,7 @@ public class WeaponComponent : Interactable
 
     public static float RecoilRecovery = 20.0f;
     public Transform HeadTransform;
+    public Quaternion HoldRotation;
 
     //Time left until weapon can be used again
     private float cooldown;
@@ -139,7 +141,7 @@ public class WeaponComponent : Interactable
             var rotation = HeadTransform.localEulerAngles + Vector3.left * recoil;
             HeadTransform.localEulerAngles = rotation;
             rotation.y = 180.0f;
-            transform.localEulerAngles = -rotation;
+            //transform.localEulerAngles = -rotation;
         }
     }
 
@@ -162,10 +164,16 @@ public class WeaponComponent : Interactable
         }
 
         this.HeadTransform = interactor.GetComponentInChildren<Camera>().transform;
-        interactor.GetComponent<PlayerController>().CurrentWeapon = gameObject;
-        transform.SetParent(interactor.transform);
-        // TODO: attach to player
-        transform.localPosition = new Vector3(0.5f, -0.5f, 0.5f);
+       
+        PlayerController pc = interactor.GetComponent<PlayerController>();
+        pc.CurrentWeapon = gameObject;
+        transform.SetParent(pc.HandTransform);
+        pc.SetWeaponAnimation(1);
+
+        transform.localPosition = Vector3.zero;
+        transform.localRotation = HoldRotation;
+
+        GetComponent<CapsuleCollider>().enabled = false;
     }
 
     public override void OnInteractEnd(GameObject interactor)

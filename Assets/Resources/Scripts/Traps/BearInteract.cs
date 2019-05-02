@@ -22,7 +22,7 @@ public class BearInteract : Interactable
     public GameObject interactor;
     public Animator anim;
 
-    [FMODUnity.EventRef]
+    [FMODUnity.EventRef] 
     public string opening;
     FMOD.Studio.EventInstance open;
 
@@ -41,8 +41,8 @@ public class BearInteract : Interactable
 
         anim.SetBool("Releasing", true);
         this.interactor = interactor;
-
         open = FMODUnity.RuntimeManager.CreateInstance(opening);
+        open.setParameterByName("Stop", 0f);
         open.set3DAttributes(FMODUnity.RuntimeUtils.To3DAttributes(gameObject));
         open.start();
     }
@@ -56,6 +56,8 @@ public class BearInteract : Interactable
         }
 
         anim.SetBool("Releasing", false);
+        open.setParameterByName("Stop", 1f);
+        open.release();
     }
 
     //Release the puppet from the trap after the interaction timer is full

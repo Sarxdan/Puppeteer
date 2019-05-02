@@ -70,6 +70,8 @@ public class PlayerController : MonoBehaviour
     public int Ammunition;
     public bool CanShoot = true;
 
+    public Transform HandTransform;
+
     private Rigidbody rigidBody;
 
     private IEnumerator StaminaRegenRoutine()
@@ -158,7 +160,7 @@ public class PlayerController : MonoBehaviour
     {
         if(!DisableInput)
         {
-                // Horizontal movement
+            // Horizontal movement
 
             if ( Input.GetAxisRaw("Horizontal") != 0 || Input.GetAxisRaw("Vertical") != 0)
             {
@@ -232,6 +234,10 @@ public class PlayerController : MonoBehaviour
         
     }
 
+    public void SetWeaponAnimation(int animationIndex){
+        animController.SetInteger("Weapon", animationIndex);
+    }
+
     // Freezes the position of the puppet and disables shooting and interacting
     public void Stunned()
     {
@@ -257,4 +263,5 @@ public class PlayerController : MonoBehaviour
     {
         FMODUnity.RuntimeManager.PlayOneShot(Footstep, transform.position);
     }
+
 }
