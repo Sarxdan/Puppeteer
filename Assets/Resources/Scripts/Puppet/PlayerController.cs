@@ -235,7 +235,8 @@ public class PlayerController : MonoBehaviour
     // Freezes the position of the puppet and disables shooting and interacting
     public void Stunned()
     {
-        rigidBody.constraints = RigidbodyConstraints.FreezePosition | RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
+        
+        //rigidBody.constraints = RigidbodyConstraints.FreezePosition | RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
         CanShoot = false;
         if(gameObject.GetComponent<HealthComponent>().Health <= 0)
         {
@@ -251,6 +252,7 @@ public class PlayerController : MonoBehaviour
         gameObject.GetComponent<InteractionController>().enabled = true;
     }
 
+    // Plays footstep sound
     public void Step()
     {
         FMODUnity.RuntimeManager.PlayOneShot(Footstep, transform.position);

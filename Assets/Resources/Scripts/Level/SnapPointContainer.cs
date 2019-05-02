@@ -8,7 +8,7 @@ public class SnapPointContainer : MonoBehaviour
 
     public List<SnapPointBase> FindSnapPoints()
     {
-        if (SnapPoints != null)
+        if (SnapPoints.Count == 0)
             SnapPoints.AddRange(GetComponentsInChildren<SnapPointBase>());
         
         return SnapPoints;

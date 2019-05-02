@@ -46,7 +46,7 @@ public class PathfinderComponent : MonoBehaviour
     void Update()
     {
         if(HasPath){
-            move();
+            performMove();
             if((transform.position - lastPosition).magnitude/Time.deltaTime < MinVelocityThreshold){
                 currentStuckTime += Time.deltaTime;
                 if(currentStuckTime >= StuckTimeThreshold){
@@ -63,15 +63,72 @@ public class PathfinderComponent : MonoBehaviour
         lastPosition = transform.position;
     }
 
+    public void Stop()
+    {
+        this.path.Clear();
+        this.subPath.Clear();
+        this.HasPath = false;
+    }
+
+    public void MoveTo(Vector3 endPos)
+    {
+
+        //Raycasts to floor on destination
+        RaycastHit endHit;
+        Transform endRoom = null;
+        if(Physics.Raycast(endPos + TransformRaycastOffset, Vector3.down, out endHit))
+        {
+            endRoom = endHit.transform.parent;
+            endPos = endHit.point;
+        }else{
+            return;
+        }
+
+        //Raycasts to floor on start
+        RaycastHit startHit;
+        Transform startRoom;
+        if (Physics.Raycast(transform.position + TransformRaycastOffset, -transform.up, out startHit))
+        {
+            startRoom = startHit.transform.parent;
+        }else{
+            return;
+        }
+
+        //Clears previous path
+        Stop();
+
+        //If a room was not hit, abort
+        if(endRoom.GetComponent<NavMesh>() == null || startRoom.GetComponent<NavMesh>() == null){
+            return;
+        }
+
+        //Creates room pathfind
+        this.path = aStarRoomPathfind(startRoom, endRoom);
+
+        //If roompath was not found, abort
+        if(this.path == null){
+            this.path = new List<AStarRoomNode>();
+            return;
+        }
+
+        //Adds destination to roompath
+        if(this.path.Count > 0){ 
+            this.path.Insert(0, new AStarRoomNode(0,this.path[0].RoomRef, this.path[0], endPos));
+        }else{
+            this.path.Insert(0, new AStarRoomNode(0, startRoom, null, endPos));
+            this.path[0].Parent = this.path[0];
+        }
+
+        HasPath = true;
+    }
+    
     //Method for helping stuck entities
     private void unstuck(){
         Vector3 unstuckPoint = transform.position + new Vector3(Random.Range(-UnstuckRadius, UnstuckRadius), transform.position.y, Random.Range(-UnstuckRadius, UnstuckRadius));
         MoveTo(unstuckPoint);
     }
 
-    
-
-    private void move(){
+    private void performMove(){
 
         //If both path and subpath are empty, stop pathfinding
         if(this.path.Count <= 0 && this.subPath.Count <= 0){
@@ -192,59 +249,7 @@ public class PathfinderComponent : MonoBehaviour
 
 
 
-    public void MoveTo(Vector3 endPos)
-    {
-
-        //Raycasts to floor on destination
-        RaycastHit endHit;
-        Transform endRoom = null;
-        if(Physics.Raycast(endPos + TransformRaycastOffset, Vector3.down, out endHit))
-        {
-            endRoom = endHit.transform.parent;
-            endPos = endHit.point;
-        }else{
-            return;
-        }
-
-        //Raycasts to floor on start
-        RaycastHit startHit;
-        Transform startRoom;
-        if (Physics.Raycast(transform.position + TransformRaycastOffset, -transform.up, out startHit))
-        {
-            startRoom = startHit.transform.parent;
-        }else{
-            return;
-        }
-
-        //Clears previous path
-        this.path.Clear();
-        this.subPath.Clear();
-        this.HasPath = false;
-
-        //If a room was not hit, abort
-        if(endRoom.GetComponent<NavMesh>() == null || startRoom.GetComponent<NavMesh>() == null){
-            return;
-        }
-
-        //Creates room pathfind
-        this.path = aStarRoomPathfind(startRoom, endRoom);
-
-        //If roompath was not found, abort
-        if(this.path == null){
-            this.path = new List<AStarRoomNode>();
-            return;
-        }
-
-        //Adds destination to roompath
-        if(this.path.Count > 0){ 
-            this.path.Insert(0, new AStarRoomNode(0,this.path[0].RoomRef, this.path[0], endPos));
-        }else{
-            this.path.Insert(0, new AStarRoomNode(0, startRoom, null, endPos));
-            this.path[0].Parent = this.path[0];
-        }
-
-        HasPath = true;
-    }
+    
 
     #region room
     private List<AStarRoomNode> aStarRoomPathfind(Transform startRoom, Transform endRoom){

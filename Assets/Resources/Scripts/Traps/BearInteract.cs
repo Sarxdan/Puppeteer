@@ -17,12 +17,14 @@ using UnityEngine;
 
 public class BearInteract : Interactable
 {
-    public float ReleaseTimer;  //Time it takes to release a puppet from trap
     public uint ReleaseDamage;  //The amount of damage dealt to the puppet if it releases itself
     public bool Activated = false;
+    public GameObject interactor;
     public Animator anim;
 
-    //[FMODUnity.EventRef] public string closing;
+    [FMODUnity.EventRef]
+    public string opening;
+    FMOD.Studio.EventInstance open;
 
     private void Start()
     {
@@ -38,7 +40,11 @@ public class BearInteract : Interactable
         }
 
         anim.SetBool("Releasing", true);
-        StartCoroutine("ReleaseFromTrap", interactor);
+        this.interactor = interactor;
+
+        open = FMODUnity.RuntimeManager.CreateInstance(opening);
+        open.set3DAttributes(FMODUnity.RuntimeUtils.To3DAttributes(gameObject));
+        open.start();
     }
 
     //Stop release timer and close animation
@@ -50,29 +56,21 @@ public class BearInteract : Interactable
         }
 
         anim.SetBool("Releasing", false);
-        StopCoroutine("ReleaseFromTrap");
     }
 
     //Release the puppet from the trap after the interaction timer is full
     //TODO: Play opening sound
-    public IEnumerator ReleaseFromTrap(GameObject interactor)
+    public void ReleaseFromTrapTest()
     {
-        //Timer for releasing the puppet
-        float time = 0;
-        while (++time < ReleaseTimer)
-        {
-            yield return new WaitForSeconds(1);
-        }
-
         GameObject target = gameObject.GetComponent<BearTrap>().Target;
         target.GetComponent<PlayerController>().UnStunned();
 
         //If the puppet is releasing itself, do damage
-        if(interactor == target)
+        if (interactor == target)
         {
             target.GetComponent<HealthComponent>().Damage(ReleaseDamage);
         }
-       
+
         gameObject.GetComponent<BearTrap>().DestroyTrap();
     }
 }
