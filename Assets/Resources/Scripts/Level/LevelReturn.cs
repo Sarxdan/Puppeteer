@@ -2,6 +2,17 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/*
+* AUTHOR:
+* Anton Jonsson
+*
+* DESCRIPTION:
+* Script used for returning game objects to the startRoom when they have fallen off the level.
+*
+* CODE REVIEWED BY:
+* Sandra "Sanders" Andersson (02/05-2019)
+*/
+
 public class LevelReturn : MonoBehaviour
 {
     // Start is called before the first frame update
