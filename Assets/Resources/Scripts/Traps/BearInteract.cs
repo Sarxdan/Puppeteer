@@ -27,7 +27,6 @@ public class BearInteract : Interactable
     private void Start()
     {
         anim = gameObject.GetComponent<Animator>();
-        
     }
 
     //Start release timer and open animation
