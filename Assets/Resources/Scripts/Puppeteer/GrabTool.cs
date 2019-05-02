@@ -34,6 +34,9 @@ public class GrabTool : NetworkBehaviour
 	// enables camera movement using mouse scroll
 	public bool EnableMovement = true;
 
+	[Range(0, 1)]
+	public float GlowDropoff = 0.14f;
+
 	private GameObject sourceObject;
 	private GameObject selectedObject;
 	private GameObject guideObject;
@@ -312,6 +315,7 @@ public class GrabTool : NetworkBehaviour
 		}
 		else
 		{
+			sourceObject.GetComponent<RoomTreeNode>().GlowBranch(Color.red);
 			RpcUpdateGuide(new TransformStruct(sourceObject.transform.position, sourceObject.transform.rotation.normalized));
 			guideObject.transform.position = sourceObject.transform.position;
 			guideObject.transform.rotation = sourceObject.transform.rotation;
