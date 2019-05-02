@@ -46,10 +46,4 @@ public class BasicTrap : TrapComponent
 
         StartCoroutine("DestroyTimer");
     }
-
-    private IEnumerator DestroyTimer()
-    {
-        yield return new WaitForSeconds(DestroyTime);
-        DestroyTrap();
-    }
 }

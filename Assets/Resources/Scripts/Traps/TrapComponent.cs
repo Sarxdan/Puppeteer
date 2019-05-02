@@ -22,7 +22,6 @@ public abstract class TrapComponent : MonoBehaviour
     public float DestroyTime;   //Time until trap gets destroyed after activated
     public List<GameObject> Puppets;
     public Animator Anim;
-    public bool Placed;
 
     // Start is called before the first frame update
     void Start()

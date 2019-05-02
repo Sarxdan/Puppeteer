@@ -21,15 +21,28 @@ public class BearTrap : TrapComponent
     
     public GameObject Target;
 
+    public void Start()
+    {
+        Puppets = new List<GameObject>();
+        Anim = gameObject.GetComponent<Animator>();
+        GetComponent<Glowable>().enabled = false;
+    }
+
+    public void FixedUpdate()
+    {
+        if(Target != null)
+        {
+            Target.transform.position = Vector3.Lerp(Target.transform.position, transform.position, 0.5f);
+        }
+    }
+
     public override void OnTriggerEnter(Collider other)
     {
-
-        Debug.Log("Entered");
+        
         if (other.gameObject.tag == "Player")
         {
             if (Puppets.Count <= 0)
             {
-                Debug.Log("Start Timer");
                 StartCoroutine("TrapTimer");
                 Anim.SetBool("HasTarget",true);
             }
@@ -55,8 +68,7 @@ public class BearTrap : TrapComponent
     
     //Stun and damage the puppet that last entered the trap
     //and enable interaction with it for releasing puppet
-    //TODO: Maybe snap the puppet to center of bear trap?
-    //TODO: Play Opening sound
+    //TODO: Play snapping sound
     public override void ActivateTrap()
     {
         if (Puppets.Count > 0)
@@ -65,7 +77,13 @@ public class BearTrap : TrapComponent
             Target.GetComponent<HealthComponent>().Damage(Damage);
             Target.GetComponent<PlayerController>().Stunned();
 
+            GetComponent<Glowable>().enabled = true;
             gameObject.GetComponent<BearInteract>().Activated = true;
+        }
+        //Destroy the trap if it closes empty
+        else
+        {
+            StartCoroutine("DestroyTimer");
         }
     }
 }

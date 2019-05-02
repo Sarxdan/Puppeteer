@@ -13,11 +13,15 @@ using UnityEngine;
 * Anton Jonsson (30/04-2019)
 *
 * CONTRIBUTORS:
-* 
+*
+ * Sandra "Sanders" Andersson (MouseMovement is opt.)
 */
 
 public class PuppeteerCameraController : MonoBehaviour
 {
+    //Movement with Mouse is optional
+    public bool MouseMovement;
+
     //The speed the camera moves in
     public float CameraMovementSpeed;
 
@@ -49,19 +53,19 @@ public class PuppeteerCameraController : MonoBehaviour
     {
         Vector3 pos = transform.position;
 
-        if ( (Input.GetAxis("Vertical") > 0 && Input.GetButton("Vertical") || Input.mousePosition.y >= Screen.height - SideBorderThickness) && pos.z < TopVerticalBorder)
+        if ( (Input.GetAxis("Vertical") > 0 && Input.GetButton("Vertical") || Input.mousePosition.y >= Screen.height - SideBorderThickness && MouseMovement) && pos.z < TopVerticalBorder)
         {
             pos.z += CameraMovementSpeed * Time.deltaTime;
         }
-        if ( (Input.GetAxis("Vertical") < 0 && Input.GetButton("Vertical") || Input.mousePosition.y <=SideBorderThickness) && pos.z > BottomVerticalBorder)
+        if ( (Input.GetAxis("Vertical") < 0 && Input.GetButton("Vertical") || Input.mousePosition.y <=SideBorderThickness && MouseMovement) && pos.z > BottomVerticalBorder)
         {
             pos.z -= CameraMovementSpeed * Time.deltaTime;
         }
-        if ( (Input.GetAxis("Horizontal") > 0 && Input.GetButton("Horizontal") || Input.mousePosition.x >= Screen.width - SideBorderThickness) && pos.x < RightHorizontalBorder)
+        if ( (Input.GetAxis("Horizontal") > 0 && Input.GetButton("Horizontal") || Input.mousePosition.x >= Screen.width - SideBorderThickness && MouseMovement) && pos.x < RightHorizontalBorder)
         {
             pos.x += CameraMovementSpeed * Time.deltaTime;
         }
-        if ( (Input.GetAxis("Horizontal") < 0 && Input.GetButton("Horizontal") || Input.mousePosition.x <= SideBorderThickness) && pos.x > LeftHorizontalBorder)
+        if ( (Input.GetAxis("Horizontal") < 0 && Input.GetButton("Horizontal") || Input.mousePosition.x <= SideBorderThickness && MouseMovement) && pos.x > LeftHorizontalBorder)
         {
             pos.x -= CameraMovementSpeed * Time.deltaTime;
         }
