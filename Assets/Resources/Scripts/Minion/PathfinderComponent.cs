@@ -6,20 +6,21 @@ using UnityEngine;
 
 public class PathfinderComponent : MonoBehaviour
 {
+    //Motion
     public bool UseRootMotion;
     public float MovementSpeed = 50;
     public float RotationSpeed = 10;
-    public int MaxRecursionDepth = 20;
-    public List<AStarRoomNode> path;
-    public List<Vector3> subPath;
-    public bool HasPath = false;
-    public Transform navmeshTransform;
-
-    public Vector3 TransformRaycastOffset;
-
     public float LegHeight;
 
+    //Pathfinding
+    public int MaxRecursionDepth = 20;
+    public bool HasPath = false;
+    public Vector3 TransformRaycastOffset;
     public float InteractRayLength = 0.4f;
+    public float ArrivalMargin;
+    private Transform navmeshTransform;
+    private List<AStarRoomNode> path;
+    private List<Vector3> subPath;
 
     //Unstuck
     public float MinVelocityThreshold;
@@ -37,6 +38,8 @@ public class PathfinderComponent : MonoBehaviour
     {
         this.rigidBody = GetComponent<Rigidbody>();
         this.animController = GetComponent<Animator>();
+        this.path = new List<AStarRoomNode>();
+        this.subPath = new List<Vector3>();
     }
 
     // Update is called once per frame
@@ -62,7 +65,6 @@ public class PathfinderComponent : MonoBehaviour
 
     //Method for helping stuck entities
     private void unstuck(){
-        Debug.Log("Attempting to unstuck!");
         Vector3 unstuckPoint = transform.position + new Vector3(Random.Range(-UnstuckRadius, UnstuckRadius), transform.position.y, Random.Range(-UnstuckRadius, UnstuckRadius));
         MoveTo(unstuckPoint);
     }
@@ -71,7 +73,7 @@ public class PathfinderComponent : MonoBehaviour
 
     private void move(){
 
-        
+        //If both path and subpath are empty, stop pathfinding
         if(this.path.Count <= 0 && this.subPath.Count <= 0){
             this.HasPath = false;
             if(UseRootMotion){
@@ -81,6 +83,7 @@ public class PathfinderComponent : MonoBehaviour
             }
             return;
         }
+
         //If subpath is empty, create new subpath
         if(this.subPath.Count <= 0){
             
@@ -128,7 +131,6 @@ public class PathfinderComponent : MonoBehaviour
                 }
             }
             this.subPath.Add(endPos);
-            Debug.Log("Subpath generated for room " + navmeshTransform);
 
         if(subPath.Count <= 0){
             Debug.LogError("Subpath was not created! This is very bad");
@@ -140,6 +142,7 @@ public class PathfinderComponent : MonoBehaviour
             float distance = 0;
             Quaternion goalRot = Quaternion.LookRotation(deltaPos, transform.up);
 
+            //Debug rays for rotation
             if(debug){
                 Debug.DrawRay(transform.position, transform.forward, Color.magenta, Time.deltaTime);
                 Debug.DrawRay(transform.position, goalRot*transform.forward, Color.red, Time.deltaTime);
@@ -147,7 +150,7 @@ public class PathfinderComponent : MonoBehaviour
             
             transform.rotation = Quaternion.RotateTowards(transform.rotation, goalRot, RotationSpeed);
             
-            if(deltaPos.magnitude <= 0.1f){
+            if(deltaPos.magnitude <= ArrivalMargin){
                 distance = deltaPos.magnitude;
                 this.subPath.RemoveAt(0);
             }else{
@@ -419,6 +422,8 @@ public class PathfinderComponent : MonoBehaviour
         {
             AStarFaceNode nextNode = currentNode.Parent;
             //Defines next AStarNode
+
+            if(debug) Debug.DrawRay(navmeshTransform.TransformPoint(currentNode.Face.Origin), Vector3.up, Color.white, 2);
 
 
             //If next face does not contain current left vert
