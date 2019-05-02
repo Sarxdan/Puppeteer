@@ -23,9 +23,16 @@ public class RoomTreeNode : MonoBehaviour
 	private List<RoomTreeNode> children = new List<RoomTreeNode>();
 
 	private bool inTree = false;
+	private float glowDropoff;
+
+	// Start used to collect glow dropoff amount from grabtool
+	void Start()
+	{
+		glowDropoff = FindObjectOfType<GrabTool>().GlowDropoff;
+	}
 
 	// Update used to draw tree on level.
-    void Update()
+	void Update()
     {
 		if (parent != null)
 		{
@@ -80,7 +87,7 @@ public class RoomTreeNode : MonoBehaviour
 
 		foreach (RoomTreeNode child in children.ToArray())
 		{
-			child.GlowBranch(new Color(color.r - 0.2f, color.g, color.b));
+			child.GlowBranch(new Color(color.r - glowDropoff, color.g, color.b));
 		}
 	}
 
