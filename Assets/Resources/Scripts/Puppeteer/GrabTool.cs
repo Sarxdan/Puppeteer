@@ -180,6 +180,7 @@ public class GrabTool : NetworkBehaviour
 		sourceObject = pickupObject;
 		selectedObject = Instantiate(sourceObject);
 		guideObject = Instantiate(sourceObject);
+		
 
 		grabOffset = sourceObject.transform.position - MouseToWorldPosition();
 
@@ -196,6 +197,11 @@ public class GrabTool : NetworkBehaviour
 			sourceObject = pickupObject;
 			selectedObject = Instantiate(sourceObject);
 			guideObject = Instantiate(sourceObject);
+			// Disable colliders on server when server is not puppeteer.
+			foreach (BoxCollider collider in guideObject.GetComponentsInChildren<BoxCollider>())
+			{
+				collider.enabled = false;
+			}
 		}
 		
 		grabOffset = sourceObject.transform.position - localPlayerMousePos;
@@ -239,18 +245,20 @@ public class GrabTool : NetworkBehaviour
 		{
 			sourceObject.GetComponent<RoomTreeNode>().SetParent(firstParentNode);
 		}
-
-		// Move sourceobject to guideobject. Guideobject is already in the best availible position.
-		sourceObject.transform.position = guideObject.transform.position;
-		sourceObject.transform.rotation = guideObject.transform.rotation;
+		else
+		{
+			// Move sourceobject to guideobject. Guideobject is already in the best availible position.
+			sourceObject.transform.position = guideObject.transform.position;
+			sourceObject.transform.rotation = guideObject.transform.rotation;
+			
+			// Connect all doors in the new position.
+			level.ConnectDoorsInRoomIfPossible(sourceObject);
+		}
 
 		Destroy(selectedObject);
 		selectedObject = null;
 		Destroy(guideObject);
 		guideObject = null;
-
-		// Connect all doors in the new position.
-		level.ConnectDoorsInRoomIfPossible(sourceObject);
 	}
 
 	// Move local selected object for client.
