@@ -30,13 +30,13 @@ public class PauseMenu : MonoBehaviour
     void Start()
     {
 		var temp = Owner.GetComponent<PlayerController>();
-		if (temp)
+		if (temp != null)
 		{
 			playerController = temp;
 		}
 		else
 		{
-			puppeteerController = Owner.GetComponent<PuppeteerCameraController>();
+			puppeteerController = Owner.GetComponentInChildren<PuppeteerCameraController>();
 		}
     }
 
@@ -61,7 +61,7 @@ public class PauseMenu : MonoBehaviour
     {
 		PauseMenuUI.SetActive(true);
 		paused = true;
-		if (playerController)
+		if (playerController != null)
 			playerController.DisableInput = true;
 		else
 			puppeteerController.DisableInput = true;
@@ -71,7 +71,7 @@ public class PauseMenu : MonoBehaviour
     {
         PauseMenuUI.SetActive(false);
         paused = false;
-		if (playerController)
+		if (playerController != null)
 			playerController.DisableInput = true;
 		else
 			puppeteerController.DisableInput = true;

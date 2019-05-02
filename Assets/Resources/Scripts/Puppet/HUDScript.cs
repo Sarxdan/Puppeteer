@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using Mirror;
 /*
  * AUTHOR:
  * Kristoffer Lundgren
@@ -18,7 +19,7 @@ using UnityEngine.UI;
  * CONTRIBUTORS:
  * 
 */
-public class HUDScript : MonoBehaviour
+public class HUDScript : NetworkBehaviour
 {
 
     // The player whose health is to me monitored
@@ -82,6 +83,11 @@ public class HUDScript : MonoBehaviour
         previousHP = healthComponent.Health;
         maxHealth = healthComponent.MaxHealth;
         previousStamina = playerController.CurrentStamina;
+        if(!GetComponentInParent<NetworkIdentity>().isLocalPlayer)
+        {
+            this.enabled = false;
+            gameObject.SetActive(false);
+        }
     }   
 
     // Draw the HUD
