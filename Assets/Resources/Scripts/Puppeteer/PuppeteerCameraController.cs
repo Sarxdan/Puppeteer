@@ -37,6 +37,8 @@ public class PuppeteerCameraController : MonoBehaviour
     private float TopVerticalBorder;
     private float BottomVerticalBorder;
 
+	public bool DisableInput;
+
     void Start()
     {
         //How far from the start position you are able to go before you can move the camera anymore
@@ -49,27 +51,30 @@ public class PuppeteerCameraController : MonoBehaviour
         BottomVerticalBorder = pos.z - lenghtFromCenter;
     }
 
-    void Update()
-    {
-        Vector3 pos = transform.position;
+	void Update()
+	{
+		if (!DisableInput)
+		{
+			Vector3 pos = transform.position;
 
-        if ( (Input.GetAxis("Vertical") > 0 && Input.GetButton("Vertical") || Input.mousePosition.y >= Screen.height - SideBorderThickness && MouseMovement) && pos.z < TopVerticalBorder)
-        {
-            pos.z += CameraMovementSpeed * Time.deltaTime;
-        }
-        if ( (Input.GetAxis("Vertical") < 0 && Input.GetButton("Vertical") || Input.mousePosition.y <=SideBorderThickness && MouseMovement) && pos.z > BottomVerticalBorder)
-        {
-            pos.z -= CameraMovementSpeed * Time.deltaTime;
-        }
-        if ( (Input.GetAxis("Horizontal") > 0 && Input.GetButton("Horizontal") || Input.mousePosition.x >= Screen.width - SideBorderThickness && MouseMovement) && pos.x < RightHorizontalBorder)
-        {
-            pos.x += CameraMovementSpeed * Time.deltaTime;
-        }
-        if ( (Input.GetAxis("Horizontal") < 0 && Input.GetButton("Horizontal") || Input.mousePosition.x <= SideBorderThickness && MouseMovement) && pos.x > LeftHorizontalBorder)
-        {
-            pos.x -= CameraMovementSpeed * Time.deltaTime;
-        }
+			if ((Input.GetAxis("Vertical") > 0 && Input.GetButton("Vertical") || Input.mousePosition.y >= Screen.height - SideBorderThickness && MouseMovement) && pos.z < TopVerticalBorder)
+			{
+				pos.z += CameraMovementSpeed * Time.deltaTime;
+			}
+			if ((Input.GetAxis("Vertical") < 0 && Input.GetButton("Vertical") || Input.mousePosition.y <= SideBorderThickness && MouseMovement) && pos.z > BottomVerticalBorder)
+			{
+				pos.z -= CameraMovementSpeed * Time.deltaTime;
+			}
+			if ((Input.GetAxis("Horizontal") > 0 && Input.GetButton("Horizontal") || Input.mousePosition.x >= Screen.width - SideBorderThickness && MouseMovement) && pos.x < RightHorizontalBorder)
+			{
+				pos.x += CameraMovementSpeed * Time.deltaTime;
+			}
+			if ((Input.GetAxis("Horizontal") < 0 && Input.GetButton("Horizontal") || Input.mousePosition.x <= SideBorderThickness && MouseMovement) && pos.x > LeftHorizontalBorder)
+			{
+				pos.x -= CameraMovementSpeed * Time.deltaTime;
+			}
 
-        transform.position = pos;
-    }
+			transform.position = pos;
+		}
+	}
 }

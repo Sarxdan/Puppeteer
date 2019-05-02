@@ -25,10 +25,19 @@ public class PauseMenu : MonoBehaviour
     public Transform Owner;
     // Playercontroller is use for disabling the movement and the mouse camera control when paused
     private PlayerController playerController;
+    private PuppeteerCameraController puppeteerController;
     // Start is called before the first frame update
     void Start()
     {
-        playerController = Owner.GetComponent<PlayerController>();
+		var temp = Owner.GetComponent<PlayerController>();
+		if (temp)
+		{
+			playerController = temp;
+		}
+		else
+		{
+			puppeteerController = Owner.GetComponent<PuppeteerCameraController>();
+		}
     }
 
     // Update is called once per frame
@@ -50,15 +59,21 @@ public class PauseMenu : MonoBehaviour
     // Turn on the UI and disable the controls
     void Pause()
     {
-        PauseMenuUI.SetActive(true);
-        paused = true;
-        playerController.DisableInput = true;
+		PauseMenuUI.SetActive(true);
+		paused = true;
+		if (playerController)
+			playerController.DisableInput = true;
+		else
+			puppeteerController.DisableInput = true;
     }
     // Turn off the UI and reenable the controls
     public void UnPause()
     {
         PauseMenuUI.SetActive(false);
         paused = false;
-        playerController.DisableInput = false;
-    }
+		if (playerController)
+			playerController.DisableInput = true;
+		else
+			puppeteerController.DisableInput = true;
+	}
 }
