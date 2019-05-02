@@ -54,6 +54,7 @@ public class StateMachine : MonoBehaviour
         AnimController = GetComponent<Animator>();
         SetState(new WanderState(this));
         CanAttack = true;
+        GetComponent<HealthComponent>().AddDeathAction(StartDeath);
     }
 
     public void SetState(State newState)
@@ -61,7 +62,6 @@ public class StateMachine : MonoBehaviour
         if (CurrentState != null) CurrentState.Exit();
         CurrentState = newState;
         CurrentState.Enter();
-
     }
 
     public void Update()
@@ -123,6 +123,20 @@ public class StateMachine : MonoBehaviour
         }
     }
 
+    public void StartDeath(){
+        this.GetComponent<Collider>().enabled = false;
+        this.enabled = false;
+        PathFinder.Stop();
+        PathFinder.enabled = false;
+        AnimController.SetTrigger("Death");
+        AnimController.SetInteger("RandomAnimationIndex", Random.Range(0,3));
+    }
+
+    public void Despawn(){
+        EnemySpawner.SpawnedEnemies.Remove(this.gameObject);
+        Destroy(this.gameObject);
+    }
+
     public void Attack(){
         HealthComponent health = TargetEntity.GetComponent<HealthComponent>();
         if (health.Health > 0)
@@ -131,11 +145,8 @@ public class StateMachine : MonoBehaviour
         }
     }
 
-    public void StartAttackCooldown(){
-            StartCoroutine("attackEnum");
-    }
 
-    private IEnumerator attackEnum(){
+    private IEnumerator attackTimer(){
         CanAttack = false;
         yield return new WaitForSeconds(AttackCooldown);
         CanAttack = true;

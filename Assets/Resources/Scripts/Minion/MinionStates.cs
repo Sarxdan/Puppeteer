@@ -41,7 +41,7 @@ namespace MinionStates
                 {
                     //If canAttack, perform attack. Otherwise stop moving
                     if(machine.CanAttack){
-                        machine.StartAttackCooldown();
+                        machine.StartCoroutine("attackTimer");
                         machine.AnimController.SetInteger("RandomAnimationIndex", Random.Range(0,6));
                         machine.AnimController.SetTrigger("Attack");
                     }else{
