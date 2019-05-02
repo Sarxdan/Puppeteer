@@ -22,7 +22,9 @@ public class BearInteract : Interactable
     public GameObject interactor;
     public Animator anim;
 
-    //[FMODUnity.EventRef] public string opening;
+    [FMODUnity.EventRef]
+    public string opening;
+    FMOD.Studio.EventInstance open;
 
     private void Start()
     {
@@ -39,6 +41,10 @@ public class BearInteract : Interactable
 
         anim.SetBool("Releasing", true);
         this.interactor = interactor;
+
+        open = FMODUnity.RuntimeManager.CreateInstance(opening);
+        open.set3DAttributes(FMODUnity.RuntimeUtils.To3DAttributes(gameObject));
+        open.start();
     }
 
     //Stop release timer and close animation
