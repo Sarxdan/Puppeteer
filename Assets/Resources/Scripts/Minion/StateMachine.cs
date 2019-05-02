@@ -75,7 +75,6 @@ public class StateMachine : MonoBehaviour
         }
     }
 
-    //REEEEEE FUCKING FIXA FRAMTIDA FLOOF
     public void CheckProxy()
     {
         int mask = ~(1 << LayerMask.NameToLayer("Puppeteer Interact"));
@@ -100,7 +99,8 @@ public class StateMachine : MonoBehaviour
                         if(Vector3.Angle(transform.forward, pupp.transform.position - transform.position) <= FOVConeAngle &&
                         Physics.Raycast(transform.position + RaycastOffset, pupp.transform.position - transform.position, out RaycastHit hit, ConeAggroRange, mask))
                         {
-                            if(hit.transform.tag.Equals("Player")){
+                            if(hit.transform.tag.Equals("Player"))
+                            {
                                 TargetEntity = pupp.gameObject;
                                 SetState(new AttackState(this));
                             }
@@ -112,8 +112,6 @@ public class StateMachine : MonoBehaviour
                         TargetEntity = pupp.gameObject;
                         SetState(new AttackState(this));
                     }
-                
-                    
                 }
             }
             else if (pupp == null)
@@ -123,7 +121,8 @@ public class StateMachine : MonoBehaviour
         }
     }
 
-    public void Attack(){
+    public void Attack()
+    {
         HealthComponent health = TargetEntity.GetComponent<HealthComponent>();
         if (health.Health > 0)
         {
@@ -131,14 +130,40 @@ public class StateMachine : MonoBehaviour
         }
     }
 
-    public void StartAttackCooldown(){
+    public void StartAttackCooldown()
+    {
             StartCoroutine("attackEnum");
     }
 
-    private IEnumerator attackEnum(){
+    private IEnumerator attackEnum()
+    {
         CanAttack = false;
         yield return new WaitForSeconds(AttackCooldown);
         CanAttack = true;
+    }
+
+    private IEnumerator attackPriority()
+    {
+        foreach (GameObject pupp in Puppets)
+        {
+            float puppH = pupp.GetComponent<HealthComponent>().Health;
+            float puppA = pupp.GetComponent<PlayerController>().Ammunition;
+            float puppR = pupp.GetComponent<ReviveComponent>().DeathDelay;
+            if (pupp)
+            //Gör distance framtida floof
+            //float puppD = pupp.transform.
+            if (pupp.GetComponent<PlayerController>().HasMedkit)
+            {
+                float threat = -puppH + (puppA / 2) * 10 - puppR;
+            }
+            else
+            {
+                float threat = -puppH + (puppA / 2) - puppR;
+            }
+
+            
+        }
+        yield return new WaitForSeconds(1);
     }
 }
 
