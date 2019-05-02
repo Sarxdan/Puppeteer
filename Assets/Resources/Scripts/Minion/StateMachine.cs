@@ -54,6 +54,7 @@ public class StateMachine : MonoBehaviour
         AnimController = GetComponent<Animator>();
         SetState(new WanderState(this));
         CanAttack = true;
+        GetComponent<HealthComponent>().AddDeathAction(StartDeath);
     }
 
     public void SetState(State newState)
@@ -61,7 +62,6 @@ public class StateMachine : MonoBehaviour
         if (CurrentState != null) CurrentState.Exit();
         CurrentState = newState;
         CurrentState.Enter();
-
     }
 
     public void Update()
@@ -75,6 +75,7 @@ public class StateMachine : MonoBehaviour
         }
     }
 
+    //REEEEEE FUCKING FIXA FRAMTIDA FLOOF
     public void CheckProxy()
     {
         int mask = ~(1 << LayerMask.NameToLayer("Puppeteer Interact"));
@@ -99,8 +100,7 @@ public class StateMachine : MonoBehaviour
                         if(Vector3.Angle(transform.forward, pupp.transform.position - transform.position) <= FOVConeAngle &&
                         Physics.Raycast(transform.position + RaycastOffset, pupp.transform.position - transform.position, out RaycastHit hit, ConeAggroRange, mask))
                         {
-                            if(hit.transform.tag.Equals("Player"))
-                            {
+                            if(hit.transform.tag.Equals("Player")){
                                 TargetEntity = pupp.gameObject;
                                 SetState(new AttackState(this));
                             }
@@ -112,6 +112,8 @@ public class StateMachine : MonoBehaviour
                         TargetEntity = pupp.gameObject;
                         SetState(new AttackState(this));
                     }
+                
+                    
                 }
             }
             else if (pupp == null)
@@ -121,8 +123,21 @@ public class StateMachine : MonoBehaviour
         }
     }
 
-    public void Attack()
-    {
+    public void StartDeath(){
+        this.GetComponent<Collider>().enabled = false;
+        this.enabled = false;
+        PathFinder.Stop();
+        PathFinder.enabled = false;
+        AnimController.SetTrigger("Death");
+        AnimController.SetInteger("RandomAnimationIndex", Random.Range(0,3));
+    }
+
+    public void Despawn(){
+        EnemySpawner.SpawnedEnemies.Remove(this.gameObject);
+        Destroy(this.gameObject);
+    }
+
+    public void Attack(){
         HealthComponent health = TargetEntity.GetComponent<HealthComponent>();
         if (health.Health > 0)
         {
@@ -130,40 +145,11 @@ public class StateMachine : MonoBehaviour
         }
     }
 
-    public void StartAttackCooldown()
-    {
-            StartCoroutine("attackEnum");
-    }
 
-    private IEnumerator attackEnum()
-    {
+    private IEnumerator attackTimer(){
         CanAttack = false;
         yield return new WaitForSeconds(AttackCooldown);
         CanAttack = true;
-    }
-
-    private IEnumerator attackPriority()
-    {
-        foreach (GameObject pupp in Puppets)
-        {
-            float puppH = pupp.GetComponent<HealthComponent>().Health;
-            float puppA = pupp.GetComponent<PlayerController>().Ammunition;
-            float puppR = pupp.GetComponent<ReviveComponent>().DeathDelay;
-            if (pupp)
-            //Gör distance framtida floof
-            //float puppD = pupp.transform.
-            if (pupp.GetComponent<PlayerController>().HasMedkit)
-            {
-                float threat = -puppH + (puppA / 2) * 10 - puppR;
-            }
-            else
-            {
-                float threat = -puppH + (puppA / 2) - puppR;
-            }
-
-            
-        }
-        yield return new WaitForSeconds(1);
     }
 }
 
