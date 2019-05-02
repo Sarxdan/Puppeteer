@@ -44,6 +44,6 @@ public class BasicTrap : TrapComponent
             puppet.GetComponent<HealthComponent>().Damage(Damage);
         }
 
-        StartCoroutine("DestroyTimer");
+        //StartCoroutine("DestroyTimer");
     }
 }
