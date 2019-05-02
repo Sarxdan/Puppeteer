@@ -6,7 +6,7 @@ using UnityEngine;
 public class ItemSpawner : NetworkBehaviour
 {
 	public uint NumberOfSpawns;
-	public GameObject[] Spawners;
+	private List<SnapPointBase> Spawners;
 	private GameObject level;
 
 	// Refrences to all prefabs that can spawn.
@@ -22,15 +22,16 @@ public class ItemSpawner : NetworkBehaviour
 		if (!isServer)
 		{
 			return;
-		}
-		if (NumberOfSpawns > Spawners.Length)
+		} 
+		Spawners = GetComponent<SnapPointContainer>().FindSnapPoints();
+		if (NumberOfSpawns > Spawners.Count)
 		{
-			NumberOfSpawns = (uint)Spawners.Length;
+			NumberOfSpawns = (uint)Spawners.Count;
 		}
-		var randomList = GetRandom(0, Spawners.Length, NumberOfSpawns);
+		var randomList = GetRandom(0, Spawners.Count, NumberOfSpawns);
 		foreach (var index in randomList)
 		{
-			var spawner = Spawners[index].GetComponent<ChanceToSpawn>();
+			var spawner = Spawners[index].GetComponent<ItemSnapPoint>();
 
 			spawner.AltStart();
 
@@ -41,15 +42,15 @@ public class ItemSpawner : NetworkBehaviour
 			int chance = Random.Range(0, 100);
 			if (chance < weaponPercent)
 			{
-				SpawnWeapon(Spawners[index]);
+				SpawnWeapon(Spawners[index].gameObject);
 			}
 			else if (chance > weaponPercent & chance < (weaponPercent + ammoPercent))
 			{
-				SpawnAmmo(Spawners[index]);
+				SpawnAmmo(Spawners[index].gameObject);
 			}
 			else if (chance > weaponPercent + ammoPercent)
 			{
-				SpawnPowerUp(Spawners[index]);
+				SpawnPowerUp(Spawners[index].gameObject);
 			}
 		}
 	}
