@@ -4,11 +4,14 @@ using UnityEngine;
 
 public class SnapPointContainer : MonoBehaviour
 {
-    public List<TrapSnapPoint> TrapSnapPoint;
+    public List<SnapPointBase> SnapPoints;
 
-    public void FindTrapSnapPoint()
+    public List<SnapPointBase> FindSnapPoints()
     {
-        TrapSnapPoint.AddRange(GetComponentsInChildren<TrapSnapPoint>());
+        if (SnapPoints != null)
+            SnapPoints.AddRange(GetComponentsInChildren<SnapPointBase>());
+        
+        return SnapPoints;
     }
 
     // Start is called before the first frame update

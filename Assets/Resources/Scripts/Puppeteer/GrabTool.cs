@@ -114,7 +114,8 @@ public class GrabTool : NetworkBehaviour
 				else
 				{
 					// If raycast doesn't hit a valid object
-					lastHit.OnRaycastExit();
+					if (lastHit != null)
+						lastHit.OnRaycastExit();
 					lastHit = null;
 				}
 			}

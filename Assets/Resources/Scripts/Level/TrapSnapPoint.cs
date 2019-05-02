@@ -2,8 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TrapSnapPoint : MonoBehaviour
+public class TrapSnapPoint : SnapPointBase
 {
+
+    public bool Used;
+
     // Start is called before the first frame update
     void Start()
     {
