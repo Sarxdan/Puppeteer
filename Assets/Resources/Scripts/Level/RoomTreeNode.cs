@@ -40,6 +40,18 @@ public class RoomTreeNode : MonoBehaviour
 		}
     }
 
+	// Method to reduce the number of children connected to this node by as much as possible
+	public void ReduceChildren()
+	{
+		inTree = false;
+
+		foreach (RoomTreeNode child in children)
+		{
+			child.ConnectToOtherRoom();
+			child.inTree = false;
+		}
+	}
+
 	// Method that recursively goes through tree (depth first) to find a new suitable parent node for the part of the tree that has been cut off.
 	public bool FindNewParent()
 	{
