@@ -28,6 +28,7 @@ public class StateMachine : MonoBehaviour
     public float AttackCooldown;
     public uint AttackDamage;
     public float AttackRange;
+    public bool CanAttack;
     public float InstantAggroRange;
     public float ConeAggroRange;
     public float FOVConeAngle;
@@ -52,6 +53,7 @@ public class StateMachine : MonoBehaviour
         PathFinder = GetComponent<PathfinderComponent>();
         AnimController = GetComponent<Animator>();
         SetState(new WanderState(this));
+        CanAttack = true;
     }
 
     public void SetState(State newState)
@@ -73,24 +75,8 @@ public class StateMachine : MonoBehaviour
         }
     }
 
-    private IEnumerator AttackRoutine(GameObject target)
-    {
-        CoRunning = true;
-        HealthComponent health = target.transform.GetComponent<HealthComponent>();
-        while (target != null && health.Health > 0)
-        {
-            
-            health.Damage(AttackDamage);
-            yield return new WaitForSeconds(AttackCooldown);
-            if (health.Health == 0)
-            {
-                CoRunning = false;
-                yield break;
-            }
-        }
-    }
     //REEEEEE FUCKING FIXA FRAMTIDA FLOOF
-    private IEnumerator ProxyRoutine()
+    public void CheckProxy()
     {
         int mask = ~(1 << LayerMask.NameToLayer("Puppeteer Interact"));
         closestPuppDist = Mathf.Infinity;
@@ -116,7 +102,7 @@ public class StateMachine : MonoBehaviour
                         {
                             if(hit.transform.tag.Equals("Player")){
                                 TargetEntity = pupp.gameObject;
-                                SetState(new AttackingState(this));
+                                SetState(new AttackState(this));
                             }
                         }
                     }
@@ -124,7 +110,7 @@ public class StateMachine : MonoBehaviour
                     {
                         //Instant aggro
                         TargetEntity = pupp.gameObject;
-                        SetState(new AttackingState(this));
+                        SetState(new AttackState(this));
                     }
                 
                     
@@ -134,7 +120,6 @@ public class StateMachine : MonoBehaviour
             {
                 Puppets.Remove(pupp);
             }
-            yield return new WaitForSeconds(ProxyCooldown);
         }
     }
 
@@ -144,6 +129,16 @@ public class StateMachine : MonoBehaviour
         {
             health.Damage(AttackDamage);
         }
+    }
+
+    public void StartAttackCooldown(){
+            StartCoroutine("attackEnum");
+    }
+
+    private IEnumerator attackEnum(){
+        CanAttack = false;
+        yield return new WaitForSeconds(AttackCooldown);
+        CanAttack = true;
     }
 }
 

@@ -4,16 +4,16 @@ using UnityEngine;
 
 namespace MinionStates
 {
-    public class AttackingState : State
+    public class AttackState : State
     {
 
         private StateMachine machine;
-        private int mask = ~(1 << LayerMask.NameToLayer("Puppeteer Interact"));
-        private float maxLostTime = 1;
+        private int mask = ~(1 << LayerMask.NameToLayer("Puppeteer Interact")); //Layer mask to ignore puppeteer interact colliders
+        private float maxLostTime = 5;
         private float lostTime = 0;
         private float lastTime = 0;
 
-        public AttackingState(StateMachine machine)
+        public AttackState(StateMachine machine)
         {
             this.machine = machine;
         }
@@ -27,42 +27,52 @@ namespace MinionStates
 
         public override void Run()
         {
+
+            //If no target, go idle
             if(machine.TargetEntity == null) machine.SetState(new WanderState(machine));
 
-            Ray attackRay = new Ray(machine.transform.position + new Vector3(0,.5f,0), machine.TargetEntity.transform.position - machine.transform.position + new Vector3(0,.5f,0));
-            if (machine.eDebug == true) Debug.DrawRay(machine.transform.position, Vector3.forward * machine.AttackRange, Color.green, 0.2f);
+            Ray attackRay = new Ray(machine.transform.position + new Vector3(0,.5f,0), machine.transform.forward);
+            if (machine.eDebug) Debug.DrawRay(machine.transform.position, Vector3.forward * machine.AttackRange, Color.green, 0.2f);
 
-            machine.PathFinder.MoveTo(machine.TargetEntity.transform.position);
-            
+            //Tests if player is in front
             if (Physics.Raycast(attackRay, out RaycastHit target, machine.AttackRange, mask))
             {
                 if (target.collider.tag == ("Player"))
                 {
-                    //machine.TargetEntity = target.transform.gameObject;
-                    machine.AnimController.SetTrigger("Attack");
+                    //If canAttack, perform attack. Otherwise stop moving
+                    if(machine.CanAttack){
+                        machine.StartAttackCooldown();
+                        machine.AnimController.SetInteger("RandomAnimationIndex", Random.Range(0,6));
+                        machine.AnimController.SetTrigger("Attack");
+                    }else{
+                        machine.PathFinder.Stop();
+                    }
                 }
+            }else{
+                //Moves towards player
+                machine.PathFinder.MoveTo(machine.TargetEntity.transform.position);
             }
+            
 
-            //If player is lost
+            //Tests if player is visible
             RaycastHit hit;
-            if (!Physics.Raycast(attackRay, out hit, machine.ConeAggroRange, mask) || hit.transform.tag != ("Player"))
+            if (!Physics.Raycast(machine.transform.position + new Vector3(0,.5f,0), machine.TargetEntity.transform.position - machine.transform.position + new Vector3(0,.5f,0), out hit, machine.ConeAggroRange, mask) || hit.transform.tag != ("Player"))
             {
+                //Counts seconds since player was lost, goes idle if past threshold 
                 lostTime += (Time.time - lastTime);
                 if(lostTime > maxLostTime)
                 {
-                    machine.StopCoroutine("AttackRoutine");
-                    //machine.SetState(new SeekState(machine, machine.TargetEntity.transform.position));
-                    machine.SetState(new ReturnToSpawnerState(machine));
+                    machine.SetState(new WanderState(machine));
                     machine.TargetEntity = null;
-                    return;
                 }
             }
             else
             {
-                Debug.DrawRay(hit.point, Vector3.up, Color.magenta, 1);
                 lostTime = 0;
             }
+
             lastTime = Time.time;
+
         }
     
         public override void Exit()
@@ -83,15 +93,20 @@ namespace MinionStates
         }
         public override void Enter()
         {
+            //Setup
             machine.CurrentStateName = "ReturnToSpawn";
-            machine.StartCoroutine("ProxyRoutine");
             machine.AnimController.SetBool("Running", true);
+
+            //Fetches navmesh from spawner room and walks to a (semi)random point on it
             NavMesh navmesh = machine.EnemySpawner.transform.GetComponentInParent<NavMesh>();
             Vector3 destination;
             if(navmesh!=null){
+                //Fetches random face from navmesh as destination
                 destination = machine.EnemySpawner.transform.parent.TransformPoint(navmesh.faces[Random.Range(0, navmesh.faces.Length - 1)].Origin);
                 machine.PathFinder.MoveTo(destination);
             }else{
+                //If navmesh isn't found, goes idle
+                Debug.LogError("Entity " + machine.transform.name + " could not find navmesh in spawnRoom!");
                 machine.AnimController.SetBool("Running", false);
                 machine.SetState(new WanderState(machine));
             }
@@ -99,17 +114,20 @@ namespace MinionStates
 
         public override void Run()
         {
-            //if (machine.EnemySpawner.GetComponent<HealthComponent>().Health == 0 || machine.EnemySpawner == null);
+            machine.CheckProxy();
+
+            //If no path, go idle
             if(!machine.PathFinder.HasPath){
                 machine.SetState(new WanderState(machine));
             }
-
         }
 
         public override void Exit()
         {
-
+            machine.AnimController.SetBool("Running", false);
         }
+
+
     }
 
     //-------------------------------------------------------------
@@ -125,15 +143,20 @@ namespace MinionStates
         }
         public override void Enter()
         {
+            //Setup
             machine.CurrentStateName = "Wander";
+
+            //Fetches random destination close to spawner
             destination = machine.EnemySpawner.GetNearbyDestination();
-            machine.AnimController.SetBool("Walking", true);
             machine.PathFinder.MoveTo(destination);
+            
         }
 
         public override void Run()
         {
-            machine.StartCoroutine("ProxyRoutine");
+            machine.CheckProxy();
+
+            //If no path, restart
             if(!machine.PathFinder.HasPath){
                 machine.SetState(new WanderState(machine));
             }
@@ -141,7 +164,6 @@ namespace MinionStates
 
         public override void Exit()
         {
-            machine.AnimController.SetBool("Walking", false);
         }
     }
 
@@ -166,7 +188,7 @@ namespace MinionStates
 
         public override void Run()
         {
-            machine.StartCoroutine("ProxyRoutine");
+            machine.CheckProxy();
             if(!machine.PathFinder.HasPath){
                 machine.SetState(new WanderState(machine));
             }
