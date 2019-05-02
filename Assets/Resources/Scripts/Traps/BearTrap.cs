@@ -17,7 +17,9 @@ using UnityEngine;
 
 public class BearTrap : TrapComponent
 {
-    //[FMODUnity.EventRef] public string opening;
+    // Sound Event
+    [FMODUnity.EventRef]
+    public string closing;
     
     public GameObject Target;
 
@@ -71,6 +73,8 @@ public class BearTrap : TrapComponent
     //TODO: Play snapping sound
     public override void ActivateTrap()
     {
+        FMODUnity.RuntimeManager.PlayOneShot(closing, transform.position);
+
         if (Puppets.Count > 0)
         {
             Target = Puppets[0];

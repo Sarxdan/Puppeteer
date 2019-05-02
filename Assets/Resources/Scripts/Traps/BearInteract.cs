@@ -22,7 +22,7 @@ public class BearInteract : Interactable
     public GameObject interactor;
     public Animator anim;
 
-    //[FMODUnity.EventRef] public string closing;
+    //[FMODUnity.EventRef] public string opening;
 
     private void Start()
     {
