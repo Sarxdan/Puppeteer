@@ -9,7 +9,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5146294192322519022}
-  - component: {fileID: 616806850607559286}
+  - component: {fileID: 7976977488357788781}
+  - component: {fileID: 1126584072818960182}
   m_Layer: 0
   m_Name: ItemSpawnPoint
   m_TagString: ItemSpawner
@@ -31,7 +32,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &616806850607559286
+--- !u!114 &7976977488357788781
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -40,12 +41,29 @@ MonoBehaviour:
   m_GameObject: {fileID: 5146294192322519023}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 53e369920be96af4b89e740d5dbfb188, type: 3}
+  m_Script: {fileID: 11500000, guid: 9b91ecbcc199f4492b9a91e820070131, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  SpawningWeapons: 1
-  SpawningAmmo: 1
-  SpawningPowerUps: 1
-  ChanceToSpawnWeapon: 100
-  ChanceToSpawnAmmo: 100
-  ChanceToSpawnPowerUp: 100
+  serverOnly: 0
+  localPlayerAuthority: 0
+  m_AssetId: e964d494762c2b74ebcc1d86ac72f24c
+  m_SceneId: 0
+--- !u!114 &1126584072818960182
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5146294192322519023}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd8ea4fb68191c247bcfcd874a498e94, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncInterval: 0.1
+  SpawningWeapons: 0
+  SpawningAmmo: 0
+  SpawningPowerUps: 0
+  ChanceToSpawnWeapon: 0
+  ChanceToSpawnAmmo: 0
+  ChanceToSpawnPowerUp: 0
