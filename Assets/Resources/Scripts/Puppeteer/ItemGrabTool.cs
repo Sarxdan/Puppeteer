@@ -239,6 +239,8 @@ public class ItemGrabTool : NetworkBehaviour
             guideObject.name = "Placed Trap";
 			guideObject.transform.SetParent(bestDstPoint.transform.parent);
             guideObject.GetComponent<TrapComponent>().Placed = true;
+			NetworkServer.Spawn(guideObject);
+			guideObject.layer = 0;
 			bestDstPoint.GetComponent<TrapSnapPoint>().Used = true;
 			guideObject = null;
 		}
@@ -264,6 +266,8 @@ public class ItemGrabTool : NetworkBehaviour
 			guideObject.name = "Placed Trap";
 			guideObject.transform.SetParent(bestDstPoint.transform.parent);
 			guideObject.GetComponent<TrapComponent>().Placed = true;
+			NetworkServer.Spawn(guideObject);
+			guideObject.layer = 0;
 			bestDstPoint.GetComponent<TrapSnapPoint>().Used = true;
 			guideObject = null;
 		}
