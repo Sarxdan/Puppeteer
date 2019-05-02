@@ -58,7 +58,7 @@ public class PathfinderComponent : MonoBehaviour
             }
         }else{
             if(UseRootMotion)
-                animController.SetBool("IsWalking", false);
+                animController.SetBool("Moving", false);
         }
         lastPosition = transform.position;
     }
@@ -77,7 +77,7 @@ public class PathfinderComponent : MonoBehaviour
         if(this.path.Count <= 0 && this.subPath.Count <= 0){
             this.HasPath = false;
             if(UseRootMotion){
-                animController.SetBool("IsWalking", false);
+                animController.SetBool("Moving", false);
             }else{
                 rigidBody.velocity = Vector3.zero;
             }
@@ -158,7 +158,7 @@ public class PathfinderComponent : MonoBehaviour
             }
             //rigidBody.MovePosition(transform.position + transform.forward * this.MovementSpeed * Time.deltaTime );
             if(UseRootMotion){
-                animController.SetBool("IsWalking", true);
+                animController.SetBool("Moving", true);
             }else{
                 rigidBody.velocity = transform.forward * this.MovementSpeed * Time.deltaTime;
             }

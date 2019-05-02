@@ -19,6 +19,7 @@ public class StateMachine : MonoBehaviour
 {
     //General
     public uint tickRate = 10;
+    public string CurrentStateName;
     public State CurrentState;
     [HideInInspector]
     public EnemySpawner EnemySpawner;
