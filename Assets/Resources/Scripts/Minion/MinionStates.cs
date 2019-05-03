@@ -2,6 +2,18 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/*
+ * AUTHOR:
+ * Ludvig Björk Förare
+ * Carl Appelkvist
+ * 
+ * DESCRIPTION:
+ * A class containing minion states. Used by StateMachine
+ *
+ * CODE REVIEWED BY:
+ * 
+ */
+
 namespace MinionStates
 {
     public class AttackState : State
@@ -9,9 +21,11 @@ namespace MinionStates
 
         private StateMachine machine;
         private int mask = ~(1 << LayerMask.NameToLayer("Puppeteer Interact")); //Layer mask to ignore puppeteer interact colliders
+
+        //Timekeeping (TODO move somewhere more accessible)
         private float maxLostTime = 5;
-        private float lostTime = 0;
-        private float lastTime = 0;
+        private float playerLostTime = 0;
+        private float lastSeenTime = 0;
 
         public AttackState(StateMachine machine)
         {
@@ -31,15 +45,15 @@ namespace MinionStates
             //If no target, go idle
             if(machine.TargetEntity == null) machine.SetState(new WanderState(machine));
 
-            Ray attackRay = new Ray(machine.transform.position + new Vector3(0,.5f,0), machine.transform.forward);
-            if (machine.eDebug) Debug.DrawRay(machine.transform.position, Vector3.forward * machine.AttackRange, Color.green, 0.2f);
+            //Debug ray for attack range
+            if (machine.debug) Debug.DrawRay(machine.transform.position, Vector3.forward * machine.AttackRange, Color.green, 0.2f);
 
             //Tests if player is in front
-            if (Physics.Raycast(attackRay, out RaycastHit target, machine.AttackRange, mask))
+            if (Physics.Raycast(machine.transform.position + new Vector3(0,.5f,0), machine.transform.forward, out RaycastHit target, machine.AttackRange, mask))
             {
                 if (target.collider.tag == ("Player"))
                 {
-                    //If canAttack, perform attack. Otherwise stop moving
+                    //If canAttack, perform attack. Otherwise stop moving (so minions don't push around the player)
                     if(machine.CanAttack)
                     {
                         machine.StartCoroutine("attackTimer");
@@ -59,23 +73,23 @@ namespace MinionStates
             }
             
 
-            //Tests if player is visible
+            //Tests if player is concealed
             RaycastHit hit;
             if (!Physics.Raycast(machine.transform.position + new Vector3(0,.5f,0), machine.TargetEntity.transform.position - machine.transform.position + new Vector3(0,.5f,0), out hit, machine.ConeAggroRange, mask) || hit.transform.tag != ("Player"))
             {
                 //Counts seconds since player was lost, goes idle if past threshold 
-                lostTime += (Time.time - lastTime);
-                if(lostTime > maxLostTime)
+                playerLostTime += (Time.time - lastSeenTime);
+                if(playerLostTime > maxLostTime)
                 {
-                    machine.SetState(new WanderState(machine));
+                    machine.SetState(new IdleState(machine));
                     machine.TargetEntity = null;
                 }
             }
             else
             {
-                lostTime = 0;
+                playerLostTime = 0;
             }
-            lastTime = Time.time;
+            lastSeenTime = Time.time;
         }
     
         public override void Exit()
@@ -94,6 +108,7 @@ namespace MinionStates
         {
             this.machine = machine;
         }
+
         public override void Enter()
         {
             //Setup
@@ -114,18 +129,18 @@ namespace MinionStates
                 //If navmesh isn't found, goes idle
                 Debug.LogError("Entity " + machine.transform.name + " could not find navmesh in spawnRoom!");
                 machine.AnimController.SetBool("Running", false);
-                machine.SetState(new WanderState(machine));
+                machine.SetState(new IdleState(machine));
             }
         }
 
         public override void Run()
         {
-            machine.CheckProxy();
+            machine.CheckProximity();
 
             //If no path, go idle
             if(!machine.PathFinder.HasPath)
             {
-                machine.SetState(new WanderState(machine));
+                machine.SetState(new IdleState(machine));
             }
         }
 
@@ -161,7 +176,7 @@ namespace MinionStates
 
         public override void Run()
         {
-            machine.CheckProxy();
+            machine.CheckProximity();
 
             //If no path, restart
             if(!machine.PathFinder.HasPath)
@@ -187,8 +202,10 @@ namespace MinionStates
             this.machine = machine;
             this.destination = destination;
         }
+
         public override void Enter()
         {
+            //Setup
             machine.CurrentStateName = "Seek";
             machine.AnimController.SetBool("Running", true);
             machine.PathFinder.MoveTo(destination);
@@ -196,8 +213,53 @@ namespace MinionStates
 
         public override void Run()
         {
-            machine.CheckProxy();
+            //Checks for nearby players
+            machine.CheckProximity();
+
+            //If done moving, wander randomly
             if(!machine.PathFinder.HasPath)
+                machine.SetState(new WanderState(machine));
+        }
+
+        public override void Exit()
+        {
+            machine.AnimController.SetBool("Running", false);
+        }
+    }
+
+//---------------------------------------------------------------------------------
+    public class IdleState : State
+    {
+        private StateMachine machine;
+
+        private float waitTime;
+        private float currentWaitTime;
+        private float lastTime;
+
+        public IdleState(StateMachine machine)
+        {
+            this.machine = machine;
+            this.waitTime = Random.Range(0,7.0f);
+        }
+
+        public override void Enter()
+        {
+            //Setup
+            machine.CurrentStateName = "Idle";
+            machine.PathFinder.Stop();
+            machine.AnimController.SetBool("Running", false);
+        }
+
+        public override void Run()
+        {
+            //Checks for nearby players
+            machine.CheckProximity();
+
+            //Counts seconds standing idle
+            currentWaitTime += (Time.time - lastTime);
+
+            //If idletime has expended, wander around 
+            if(currentWaitTime > waitTime)
             {
                 machine.SetState(new WanderState(machine));
             }
@@ -205,7 +267,7 @@ namespace MinionStates
 
         public override void Exit()
         {
-            machine.AnimController.SetBool("Running", false);
+
         }
     }
 }

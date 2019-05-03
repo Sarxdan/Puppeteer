@@ -13,6 +13,7 @@ using Mirror;
 * Benjamin "Boris" Vesterlund 23/4/2019
 *
 * CONTRIBUTORS:
+* Ludvig Björk Förare (added null protection)
 */
 
 public class DisableRemoteClientComponents : NetworkBehaviour
@@ -28,6 +29,7 @@ public class DisableRemoteClientComponents : NetworkBehaviour
         {
             for (int i = 0; i < componentsToDisable.Length; i++)
             {
+                if(componentsToDisable[i] == null) continue;
                 componentsToDisable[i].enabled = false;
             }
         }

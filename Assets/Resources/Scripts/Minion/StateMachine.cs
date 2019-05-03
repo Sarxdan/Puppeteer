@@ -2,56 +2,73 @@
 using System.Collections.Generic;
 using UnityEngine;
 using MinionStates;
+using Mirror;
+
 /*
  * AUTHOR:
  * Ludvig Björk Förare
  * Carl Appelkvist
  * 
  * DESCRIPTION:
- * 
- * 
+ * A finite state machine used to drive minion AI.
+ * Requires separate class for states 
+ *
  * CODE REVIEWED BY:
  * 
  */
 
 
-public class StateMachine : MonoBehaviour
+public class StateMachine : NetworkBehaviour
 {
     //General
     public uint tickRate = 10;
+
+    //States
     public string CurrentStateName;
     public State CurrentState;
+
+    //References
     [HideInInspector]
     public EnemySpawner EnemySpawner;
+    [HideInInspector]
     public GameObject TargetEntity;
-    public float ProxyCooldown;
-    public float AttackCooldown;
-    public uint AttackDamage;
-    public float AttackRange;
-    public bool CanAttack;
-    public float InstantAggroRange;
-    public float ConeAggroRange;
-    public float FOVConeAngle;
-    public Vector3 RaycastOffset;
-
-    [HideInInspector]
-    public List<GameObject> Puppets;
-    [HideInInspector]
-    public bool CoRunning;
-    private float closestPuppDist = 0;
-
     [HideInInspector]
     public Animator AnimController;
     [HideInInspector]
     public PathfinderComponent PathFinder;
+    [HideInInspector]
+    public List<GameObject> Puppets;
 
-    public bool eDebug;
-    //Pathfind component reference (pathFinder)
+    //Attack
+    public float AttackCooldown;
+    public uint AttackDamage;
+    public float AttackRange;
+    [HideInInspector]
+    public bool CanAttack;
+
+    //Aggro
+    public float InstantAggroRange;
+    public float ConeAggroRange;
+    public float FOVConeAngle;
+    private float closestPuppDist = 0;
+
+    //Other shit
+    public Vector3 RaycastOffset; //Safety offset so raycast doesn't hit ground instantly
+    public bool debug;
 
     public void Start()
     {
-        PathFinder = GetComponent<PathfinderComponent>();
         AnimController = GetComponent<Animator>();
+
+        //If not server, disable self
+        if(!isServer)
+        {
+            this.enabled = false;
+            AnimController.applyRootMotion = false;
+            return;
+        }
+
+        PathFinder = GetComponent<PathfinderComponent>();
         SetState(new WanderState(this));
         CanAttack = true;
         GetComponent<HealthComponent>().AddDeathAction(StartDeath);
@@ -66,22 +83,22 @@ public class StateMachine : MonoBehaviour
 
     public void Update()
     {
-        if (System.Environment.TickCount % tickRate == 0)
+        if (System.Environment.TickCount % tickRate == 0) //Runs current state every 'tickRate' ticks
         {
-            Puppets.Clear();
+            Puppets.Clear(); //TODO move this to Start(). Currently in update for dev purposes
             Puppets.AddRange(GameObject.FindGameObjectsWithTag("Player"));
             if (CurrentState != null) CurrentState.Run();
-
         }
     }
 
-    //REEEEEE FUCKING FIXA FRAMTIDA FLOOF
-    public void CheckProxy()
+    //Method to check if players are within proximity
+    public void CheckProximity()
     {
         int mask = ~(1 << LayerMask.NameToLayer("Puppeteer Interact"));
         closestPuppDist = Mathf.Infinity;
         foreach (GameObject pupp in Puppets)
-        {
+        {   
+            //Finds closest alive puppet
             if (pupp != null && pupp.GetComponent<HealthComponent>().Health > 0)
             {
                 float puppDist = Vector3.Distance(pupp.transform.position, gameObject.transform.position);
@@ -90,30 +107,20 @@ public class StateMachine : MonoBehaviour
                     closestPuppDist = puppDist;
                 }
 
-                //If within cone range
-                if (closestPuppDist <= ConeAggroRange)
+                //If within cone range and not obscured
+                if (closestPuppDist <= ConeAggroRange && Physics.Raycast(transform.position + RaycastOffset, pupp.transform.position - transform.position, out RaycastHit hit, ConeAggroRange, mask)) 
                 {
-                    //If outside instant-aggro range
-                    if(closestPuppDist > InstantAggroRange)
+                    if(hit.transform.tag.Equals("Player"))
                     {
-                        //If within vision cone angle and in direct line of sight
-                        if(Vector3.Angle(transform.forward, pupp.transform.position - transform.position) <= FOVConeAngle &&
-                        Physics.Raycast(transform.position + RaycastOffset, pupp.transform.position - transform.position, out RaycastHit hit, ConeAggroRange, mask))
+                        
+                        //If inside instant-aggro range or within vision cone
+                        if(closestPuppDist < InstantAggroRange|| Vector3.Angle(transform.forward, pupp.transform.position - transform.position) <= FOVConeAngle)
                         {
-                            if(hit.transform.tag.Equals("Player")){
-                                TargetEntity = pupp.gameObject;
-                                SetState(new AttackState(this));
-                            }
+                            //Attack player
+                            TargetEntity = pupp.gameObject;
+                            SetState(new AttackState(this));
                         }
                     }
-                    else
-                    {
-                        //Instant aggro
-                        TargetEntity = pupp.gameObject;
-                        SetState(new AttackState(this));
-                    }
-                
-                    
                 }
             }
             else if (pupp == null)
@@ -123,7 +130,9 @@ public class StateMachine : MonoBehaviour
         }
     }
 
-    public void StartDeath(){
+    //Runs when health = 0
+    public void StartDeath()
+    {
         this.GetComponent<Collider>().enabled = false;
         this.enabled = false;
         PathFinder.Stop();
@@ -132,24 +141,43 @@ public class StateMachine : MonoBehaviour
         AnimController.SetInteger("RandomAnimationIndex", Random.Range(0,3));
     }
 
-    public void Despawn(){
+    //Runs when death animation is complete, despawns object
+    public void Despawn()
+    {
+        Noise.Minions.Remove(this);
         EnemySpawner.SpawnedEnemies.Remove(this.gameObject);
         Destroy(this.gameObject);
     }
 
-    public void Attack(){
+    //Runs during attack animation, deals damage to player
+    public void Attack()
+    {
+        if(!isServer) return;
         HealthComponent health = TargetEntity.GetComponent<HealthComponent>();
+        if(health == null)
+        {
+            TargetEntity = null;
+            SetState(new WanderState(this));
+            return;
+        }
         if (health.Health > 0)
         {
             health.Damage(AttackDamage);
         }
     }
 
-
-    private IEnumerator attackTimer(){
+    //Starts attack cooldown
+    private IEnumerator attackTimer()
+    {
         CanAttack = false;
         yield return new WaitForSeconds(AttackCooldown);
         CanAttack = true;
+    }
+
+    //Placeholder for sound
+    public void Step()
+    {
+
     }
 }
 

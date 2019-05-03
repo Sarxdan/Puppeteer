@@ -31,19 +31,12 @@ public class EnemySpawner : NetworkBehaviour
 
     public void Start()
     {
-        gameObject.tag = "EnemySpawner";
-
         if(isServer){
             StartCoroutine("Spawn");
         }
 
     }
 
-    public void Update(){
-        if(Input.GetKey(KeyCode.P)){
-            Debug.DrawRay(GetNearbyDestination(), Vector3.up * 5, Color.cyan, 2);
-        }
-    }
 
     //Spawn is a modified Update with a set amount of time (SpawnRate) between runs
     private IEnumerator Spawn()
@@ -54,9 +47,10 @@ public class EnemySpawner : NetworkBehaviour
             {
                 //If not then create a GameObject from attached prefab at the spawners position and make them children of the "folder" created earlier
                 GameObject npcEnemy = Instantiate(EnemyPrefab, transform.position, transform.rotation, transform) as GameObject;
+                npcEnemy.GetComponent<StateMachine>().EnemySpawner = this;
                 NetworkServer.Spawn(npcEnemy);
                 SpawnedEnemies.Add(npcEnemy);
-                npcEnemy.GetComponent<StateMachine>().EnemySpawner = this;
+                Noise.Minions.Add(npcEnemy.GetComponent<StateMachine>());
             }
 
             yield return new WaitForSeconds(Random.Range(MinDelay, MaxDelay));

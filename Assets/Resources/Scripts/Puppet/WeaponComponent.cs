@@ -20,6 +20,8 @@ public class WeaponComponent : Interactable
 	// Sound Test
 	private SoundTest soundEmitter;
 
+    public float NoiseRadius;
+
     //Determines how much liquid this weapon can hold
     public int Capacity;
 
@@ -97,6 +99,8 @@ public class WeaponComponent : Interactable
                 }
                 Debug.DrawRay(hitInfo.point, hitInfo.normal, Color.black, 1.0f);
                 Debug.DrawRay(transform.position, -transform.forward * 100.0f, Color.red, 0.2f);
+
+                Noise.MakeNoise(transform.position, NoiseRadius);
             }
         }
 

@@ -1,10 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Mirror;
 
-
-
-public class PathfinderComponent : MonoBehaviour
+public class PathfinderComponent : NetworkBehaviour
 {
     //Motion
     public bool UseRootMotion;
@@ -27,6 +26,7 @@ public class PathfinderComponent : MonoBehaviour
     public float StuckTimeThreshold;
     public float UnstuckRadius;
     private Vector3 lastPosition;
+    public float currentVelocity;
     private float currentStuckTime = 0;
 
     public bool debug;
@@ -36,6 +36,10 @@ public class PathfinderComponent : MonoBehaviour
     private Animator animController;
     void Start()
     {
+        if(!isServer){
+            this.enabled = false;
+            return;
+        }
         this.rigidBody = GetComponent<Rigidbody>();
         this.animController = GetComponent<Animator>();
         this.path = new List<AStarRoomNode>();
@@ -47,6 +51,7 @@ public class PathfinderComponent : MonoBehaviour
     {
         if(HasPath){
             performMove();
+            currentVelocity = (transform.position - lastPosition).magnitude/Time.deltaTime;
             if((transform.position - lastPosition).magnitude/Time.deltaTime < MinVelocityThreshold){
                 currentStuckTime += Time.deltaTime;
                 if(currentStuckTime >= StuckTimeThreshold){
@@ -68,11 +73,12 @@ public class PathfinderComponent : MonoBehaviour
         this.path.Clear();
         this.subPath.Clear();
         this.HasPath = false;
+        this.animController.SetBool("Moving", false);
     }
 
     public void MoveTo(Vector3 endPos)
     {
-
+        if(!isServer) return;
         //Raycasts to floor on destination
         RaycastHit endHit;
         Transform endRoom = null;
