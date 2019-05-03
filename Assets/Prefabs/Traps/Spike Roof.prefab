@@ -1581,7 +1581,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1008527336596122550}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 1, w: 0}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -1621,7 +1621,7 @@ Transform:
   - {fileID: 1008527336595961832}
   m_Father: {fileID: 2588813442285734549}
   m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 180}
 --- !u!1 &1008527336596122554
 GameObject:
   m_ObjectHideFlags: 0
@@ -2331,14 +2331,14 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1008527336596122608}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 1, w: 0}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1008527336595961754}
   m_Father: {fileID: 2588813442285734549}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 180}
 --- !u!1 &1008527336596122610
 GameObject:
   m_ObjectHideFlags: 0
@@ -2928,7 +2928,7 @@ GameObject:
   - component: {fileID: 2597495256663299002}
   - component: {fileID: 6131904198486339952}
   - component: {fileID: 2136451015889515893}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Spike Roof
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2942,7 +2942,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2588813442285734548}
-  m_LocalRotation: {x: 0, y: 0, z: 1, w: 0}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -2950,7 +2950,7 @@ Transform:
   - {fileID: 1008527336595961750}
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 180}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!65 &499750483058790165
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -2962,8 +2962,8 @@ BoxCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 1.7826744, y: 0.62860346, z: 1.9224862}
-  m_Center: {x: 0.024851143, y: 0.18569827, z: -0.0043956637}
+  m_Size: {x: 1.8, y: 3, z: 2}
+  m_Center: {x: 0, y: -1.5, z: 0}
 --- !u!95 &4407621342713457746
 Animator:
   serializedVersion: 3
@@ -3001,6 +3001,9 @@ MonoBehaviour:
   Puppets: []
   Anim: {fileID: 0}
   Placed: 0
+  Floor: 0
+  Roof: 1
+  Wall: 0
 --- !u!114 &2597495256663299002
 MonoBehaviour:
   m_ObjectHideFlags: 0

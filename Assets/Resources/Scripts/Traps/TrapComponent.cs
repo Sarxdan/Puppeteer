@@ -12,7 +12,8 @@ using UnityEngine;
  * CODE REVIEWED BY:
  * Philip Stenmark
  * 
- * // 2019-04-30 Krig added placed bool
+ * 2019-04-30 Krig added placed bool
+ * 2019-05-03 Krig, Boris added placeable bools
  */
 
 public abstract class TrapComponent : MonoBehaviour
@@ -23,6 +24,12 @@ public abstract class TrapComponent : MonoBehaviour
     public List<GameObject> Puppets;
     public Animator Anim;
     public bool Placed;
+
+	// Added by Krig and Boris.
+	[Header("Placeable on:")]
+	public bool Floor;
+	public bool Roof;
+	public bool Wall;
 
     // Start is called before the first frame update
     void Start()

@@ -290,7 +290,7 @@ public class ItemGrabTool : NetworkBehaviour
         float bestDist = Mathf.Infinity;
         bestDstPoint = null;
 		// Decide which snap point is best to snap to.
-		var nearestPoint = FindNearestFreePoint(selectedObject, ref bestDist);
+		var nearestPoint = FindNearestFreePoint(selectedObject.GetComponent<TrapComponent>(), ref bestDist);
         if (nearestPoint != null)
         {
             bestDstPoint = nearestPoint;
@@ -322,7 +322,7 @@ public class ItemGrabTool : NetworkBehaviour
         }
     }
 	// Checks all other snap points in the level and picks the best one.
-	private SnapPointBase FindNearestFreePoint(in GameObject heldTrap, ref float bestDist)
+	private SnapPointBase FindNearestFreePoint(in TrapComponent heldTrap, ref float bestDist)
     {
         List<SnapPointBase> snapPoints = new List<SnapPointBase>();
         var rooms = level.GetRooms();
@@ -337,7 +337,7 @@ public class ItemGrabTool : NetworkBehaviour
         foreach (var snapPoint in snapPoints)
         {
 			Debug.Log("U");
-            if (!CanBePlaced(heldTrap.transform, snapPoint))
+            if (!CanBePlaced(heldTrap, snapPoint))
                 continue;
             float curDist = (heldTrap.transform.position - snapPoint.transform.position).sqrMagnitude;
             if(curDist < SnapDistance && curDist < bestDist)
@@ -350,11 +350,17 @@ public class ItemGrabTool : NetworkBehaviour
 
     } 
 
-    bool CanBePlaced(Transform heldTrap, SnapPointBase snapPoint)
+    bool CanBePlaced(TrapComponent heldTrap, SnapPointBase snapPoint)
     {
 		var snap = snapPoint.GetComponent<TrapSnapPoint>();
         if(snap == null || snap.Used)
             return false;
+		if (snap.Floor && !heldTrap.Floor)
+			return false;
+		if (snap.Roof && !heldTrap.Roof)
+			return false;
+		if (snap.Wall && !heldTrap.Wall)
+			return false;
 
 		return true;
     }
