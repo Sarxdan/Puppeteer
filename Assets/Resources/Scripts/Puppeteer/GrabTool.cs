@@ -52,8 +52,11 @@ public class GrabTool : NetworkBehaviour
 
 	// Original parent node used for updating tree when dropping without snapping to something.
 	private RoomTreeNode firstParentNode;
+	// Current selected node in tree. Used by RoomTreeNode to allow the selected object to be used in new tree.
+	public RoomTreeNode currentNode;
 
-    void Start()
+
+	void Start()
     {
 		//level = GameObject.Find("Level").GetComponent<LevelBuilder>();
 		level = GetComponent<LevelBuilder>();
@@ -184,7 +187,8 @@ public class GrabTool : NetworkBehaviour
 		sourceObject = pickupObject;
 		selectedObject = Instantiate(sourceObject);
 		guideObject = Instantiate(sourceObject);
-		
+		guideObject.name = "guideObject";
+
 
 		grabOffset = sourceObject.transform.position - MouseToWorldPosition();
 
@@ -201,6 +205,7 @@ public class GrabTool : NetworkBehaviour
 			sourceObject = pickupObject;
 			selectedObject = Instantiate(sourceObject);
 			guideObject = Instantiate(sourceObject);
+			guideObject.name = "guideObject";
 			// Disable colliders on server when server is not puppeteer.
 			foreach (BoxCollider collider in guideObject.GetComponentsInChildren<BoxCollider>())
 			{
@@ -417,14 +422,35 @@ public class GrabTool : NetworkBehaviour
 			}
 		}
 
+		foreach (AnchorPoint guideDoor in guideObject.GetComponentsInChildren<AnchorPoint>())
+		{
+			guideDoor.Connected = false;
+			guideDoor.ConnectedTo = null;
+
+			foreach (AnchorPoint placedDoor in GameObject.Find("Level").GetComponentsInChildren<AnchorPoint>())
+			{
+				if (guideDoor == placedDoor)
+				{
+					continue;
+				}
+				if (guideDoor.GetPosition() == placedDoor.GetPosition())
+				{
+					guideDoor.NoSpawnConnectDoor(placedDoor);
+					guideDoor.GetComponentInParent<RoomTreeNode>().InTree = true;
+					break;
+				}
+			}
+		}
+
 		// Check if it is possible to create a new valid tree when the room is moved. This should be done last.
-		RoomTreeNode currentNode = sourceObject.GetComponent<RoomTreeNode>();
+		currentNode = sourceObject.GetComponent<RoomTreeNode>();
 		RoomTreeNode parentNode = currentNode.GetParent();
 
 		currentNode.DisconnectFromTree();
 		
-		if (!dst.GetComponentInParent<RoomTreeNode>().InTree())
+		if (!dst.GetComponentInParent<RoomTreeNode>().InTree)
 		{
+			DisconnectGuideDoors();
 			return false;
 		}
 
@@ -433,11 +459,13 @@ public class GrabTool : NetworkBehaviour
 		if (sourceObject.GetComponent<RoomTreeNode>().CutBranch())
 		{
 			level.GetStartNode().ReconnectToTree();
+			DisconnectGuideDoors();
 		}
 		else
 		{
 			currentNode.SetParent(parentNode);
 			level.GetStartNode().ReconnectToTree();
+			DisconnectGuideDoors();
 			return false;
 		}
 
@@ -450,6 +478,14 @@ public class GrabTool : NetworkBehaviour
 		Vector3 mousePos = Input.mousePosition;
 		mousePos.z = Camera.main.WorldToScreenPoint(selectedObject.transform.position).z;
 		return Camera.main.ScreenToWorldPoint(mousePos);
+	}
+
+	private void DisconnectGuideDoors()
+	{
+		foreach (AnchorPoint guideDoor in guideObject.GetComponentsInChildren<AnchorPoint>())
+		{
+			guideDoor.NoSpawnDisconnectDoor();
+		}
 	}
 }
 
