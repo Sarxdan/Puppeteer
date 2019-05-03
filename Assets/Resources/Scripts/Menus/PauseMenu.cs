@@ -72,8 +72,8 @@ public class PauseMenu : MonoBehaviour
         PauseMenuUI.SetActive(false);
         paused = false;
 		if (playerController != null)
-			playerController.DisableInput = true;
+			playerController.DisableInput = false;
 		else
-			puppeteerController.DisableInput = true;
+			puppeteerController.DisableInput = false;
 	}
 }

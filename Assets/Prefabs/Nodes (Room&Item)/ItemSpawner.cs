@@ -17,10 +17,24 @@ public class ItemSpawner : NetworkBehaviour
 
 	// Calculates the correct percentage of all spawnable entitys and then randoms a percentile, spawning its corresponding entity type.
 	public void SpawnItems()
-  {
+  	{
 		//level = transform.parent.gameObject;
 
 		Spawners = GetComponent<SnapPointContainer>().FindSnapPoints();
+		List<SnapPointBase> itemSpawnPoint = new List<SnapPointBase>();
+		foreach (var snapPoint in Spawners)
+		{
+			if (snapPoint is TrapSnapPoint)
+			{
+				//Spawners.Remove(snapPoint);
+
+			}
+			else
+			{
+				itemSpawnPoint.Add(snapPoint);
+			}
+		}
+		Spawners = itemSpawnPoint;
 		if (NumberOfSpawns > Spawners.Count)
 		{
 			NumberOfSpawns = (uint)Spawners.Count;
@@ -109,8 +123,9 @@ public class ItemSpawner : NetworkBehaviour
 	public void SpawnItem(GameObject spawner, GameObject item)
 	{
 		Debug.Log("Item Spawned");
+		spawner.GetComponent<ItemSnapPoint>().Occupied = true;
 		var spawnableObject = Instantiate(item, spawner.transform);
-		//NetworkServer.Spawn(spawnableObject);
+		NetworkServer.Spawn(spawnableObject);
 	}
 
 }
