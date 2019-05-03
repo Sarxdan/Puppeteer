@@ -352,14 +352,14 @@ public class ItemGrabTool : NetworkBehaviour
 
     bool CanBePlaced(TrapComponent heldTrap, SnapPointBase snapPoint)
     {
-		if (heldTrap is FakeItem)
-		{
-			var snap = snapPoint.GetComponent<ItemSnapPoint>();
-			if (snap == null || snap.Occupied)
-				return false;
-		}
-		else
-		{
+		//if (heldTrap is FakeItem)
+		//{
+		//	var snap = snapPoint.GetComponent<ItemSnapPoint>();
+		//	if (snap == null || snap.Occupied)
+		//		return false;
+		//}
+		//else
+		//{
 			var snap = snapPoint.GetComponent<TrapSnapPoint>();
 			if (snap == null || snap.Used)
 				return false;
@@ -369,7 +369,7 @@ public class ItemGrabTool : NetworkBehaviour
 				return false;
 			if (snap.Wall && !heldTrap.Wall)
 				return false;
-		}
+		//}
 		return true;
     }
 

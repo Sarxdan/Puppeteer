@@ -24,6 +24,13 @@ public class ItemSpawner : NetworkBehaviour
 			return;
 		}
 		Spawners = GetComponent<SnapPointContainer>().FindSnapPoints();
+		foreach (var snapPoint in Spawners)
+		{
+			if (snapPoint is TrapSnapPoint)
+			{
+				Spawners.Remove(snapPoint);
+			}
+		}
 		if (NumberOfSpawns > Spawners.Count)
 		{
 			NumberOfSpawns = (uint)Spawners.Count;
