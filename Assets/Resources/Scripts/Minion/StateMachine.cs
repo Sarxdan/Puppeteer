@@ -20,9 +20,9 @@ using Mirror;
 
 public class StateMachine : NetworkBehaviour
 {
-    //General
-    public uint tickRate = 10;
 
+    [Header("General settings")]
+    public uint tickRate = 10;
     //States
     public string CurrentStateName;
     public State CurrentState;
@@ -39,21 +39,22 @@ public class StateMachine : NetworkBehaviour
     [HideInInspector]
     public List<GameObject> Puppets;
 
-    //Attack
+    [Header("Attack settings")]
     public float AttackCooldown;
     public uint AttackDamage;
     public float AttackRange;
     [HideInInspector]
     public bool CanAttack;
 
-    //Aggro
+
+    [Header("Aggro settings")]
     public float InstantAggroRange;
     public float ConeAggroRange;
     public float FOVConeAngle;
     public bool AtkPrioRunning;
     private float PostThreat;
 
-    //Other shit
+    [Header("Misc. settings")]
     public Vector3 RaycastOffset; //Safety offset so raycast doesn't hit ground instantly
     public bool debug;
 
