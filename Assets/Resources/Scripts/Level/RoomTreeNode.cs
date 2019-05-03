@@ -66,7 +66,8 @@ public class RoomTreeNode : MonoBehaviour
 		{
 			if (child.FindNewParent())
 			{
-				SetParent(child); 
+				SetParent(child);
+				inTree = true;
 				return true;
 			}
 		}
@@ -76,12 +77,28 @@ public class RoomTreeNode : MonoBehaviour
 	// Special case of FindNewParent() method where all children must find a suitable parent for the tree to still be valid. Used to initiate the search.
 	public bool CutBranch()
 	{
+		// Redoes search if one child finds a new parent because that new connected branch might allow the other childrens branches to find a new parent.
+		bool redo = true;
 		bool ret = true;
-		foreach (RoomTreeNode child in children.ToArray())
+		while (redo)
 		{
-			if (!child.FindNewParent())
+			redo = false;
+			ret = true;
+			foreach (RoomTreeNode child in children.ToArray())
 			{
-				ret = false;
+				if (child.inTree)
+				{
+					continue;
+				}
+
+				if (!child.FindNewParent())
+				{
+					ret = false;
+				}
+				else
+				{
+					redo = true;
+				}
 			}
 		}
 		return ret;
@@ -113,7 +130,15 @@ public class RoomTreeNode : MonoBehaviour
 				RoomTreeNode newNode = door.ConnectedTo.GetComponentInParent<RoomTreeNode>();
 				if (newNode.inTree)
 				{
-					SetParent(newNode);
+					if (newNode.gameObject.name == "guideObject")
+					{
+						SetParent(FindObjectOfType<GrabTool>().currentNode); // Might not always find server script first (?)
+					}
+					else
+					{
+						SetParent(newNode);
+					}
+					inTree = true;
 					return true;
 				}
 			}
@@ -182,8 +207,9 @@ public class RoomTreeNode : MonoBehaviour
 		return parent;
 	}
 
-	public bool InTree()
+	public bool InTree
 	{
-		return inTree;
+		get { return inTree; }
+		set { inTree = value; }
 	}
 }

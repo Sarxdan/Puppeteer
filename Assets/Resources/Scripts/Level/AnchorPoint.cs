@@ -114,6 +114,30 @@ public class AnchorPoint : NetworkBehaviour
 		}
 	}
 
+	// Method to connect anchor points without spawning doors. Used for temporary connections with the guide object.
+	public void NoSpawnConnectDoor(AnchorPoint to)
+	{
+		if (!to.Connected)
+		{
+			to.Connected = true;
+			to.ConnectedTo = this;
+			Connected = true;
+			ConnectedTo = to;
+		}
+	}
+
+	// Method to disconnect anchor points without despawning doors. Used for temporary connections with the guide object.
+	public void NoSpawnDisconnectDoor()
+	{
+		if (Connected)
+		{
+			ConnectedTo.Connected = false;
+			ConnectedTo.ConnectedTo = null;
+			Connected = false;
+			ConnectedTo = null;
+		}
+	}
+
 	// Reconnects a door to a new door.
 	public void ReConnectTo(AnchorPoint to)
 	{
