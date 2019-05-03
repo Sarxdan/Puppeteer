@@ -50,7 +50,9 @@ public class StateMachine : NetworkBehaviour
     public float InstantAggroRange;
     public float ConeAggroRange;
     public float FOVConeAngle;
+    public bool AtkPrioRunning;
     private float closestPuppDist = 0;
+    private float PostThreat;
 
     //Other shit
     public Vector3 RaycastOffset; //Safety offset so raycast doesn't hit ground instantly
@@ -72,6 +74,7 @@ public class StateMachine : NetworkBehaviour
         SetState(new WanderState(this));
         CanAttack = true;
         GetComponent<HealthComponent>().AddDeathAction(StartDeath);
+        PostThreat = Mathf.NegativeInfinity;
     }
 
     public void SetState(State newState)

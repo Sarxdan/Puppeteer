@@ -25,12 +25,16 @@ public class LevelBuilder : NetworkBehaviour
 	public List<GameObject> MultiDoorRooms;
 	// Rooms with only one door.
 	public List<GameObject> DeadEnds;
+	// Puppeteer items.
+	public List<GameObject> PuppeteerItems; 
 	// Start and End rooms
 	public GameObject StartRoom, EndRoom;
 	// Door to be placed between rooms.
 	public GameObject Door;
 
 	public int RoomsToSpawnBeforeDeadEndRooms = 10;
+	// Used for deciding how many rooms should have items
+	public float PercentageOfRoomsWithItems;
 
 	// List for storing RoomCollider scripts, used for checking if rooms are on the same position.
 	private List<RoomCollider> roomColliderPositions = new List<RoomCollider>();
@@ -52,6 +56,7 @@ public class LevelBuilder : NetworkBehaviour
 			RandomizeRooms();
 			SpawnRooms();
 			SpawnRoomsOnNetwork();
+			SpawnPuppeteerItem();
 		}
 	}
 
@@ -223,8 +228,24 @@ public class LevelBuilder : NetworkBehaviour
     //Tells the network to spawn the rooms on every client
     private void SpawnRoomsOnNetwork()
     {
-        foreach (RoomInteractable room in parent.gameObject.GetComponentsInChildren<RoomInteractable>())
+		RoomInteractable[] rooms = parent.gameObject.GetComponentsInChildren<RoomInteractable>();
+		int numberOfRooms = rooms.Length;
+		int numberOfRoomsToSpawnItemsIn = Mathf.FloorToInt((PercentageOfRoomsWithItems/100) * parent.gameObject.GetComponentsInChildren<RoomInteractable>().Length);
+		List<int> roomIndices = GetRandom(0,numberOfRooms, numberOfRoomsToSpawnItemsIn);
+		int index = 0;
+        foreach (RoomInteractable room in rooms)
         {
+			if(roomIndices.Contains(index))
+			{
+				var spawner = room.GetComponent<ItemSpawner>();
+				if(spawner != null)
+				{
+					spawner.SpawnItems();
+
+				}
+			}
+
+			index++;
             NetworkServer.Spawn(room.gameObject);
             room.transform.SetParent(parent.transform);
         }
@@ -234,6 +255,25 @@ public class LevelBuilder : NetworkBehaviour
 			NetworkServer.Spawn(door.gameObject);
 		}
     }
+
+	// Spawns the items and adds them to the network.
+	private void SpawnPuppeteerItem()
+	{
+		var table = GameObject.Find("Table");
+		Vector3[] pos = new Vector3[4];
+		pos[0] = new Vector3(35, 0, 10);
+		pos[1] = new Vector3(35, 2, 2.5f);
+		pos[2] = new Vector3(35, 0, -2.5f);
+		pos[3] = new Vector3(35, 0, -10);
+		int i = 0;
+		foreach (var item in PuppeteerItems)
+		{
+			var spawnable = Instantiate(item, table.transform);
+			spawnable.transform.position = pos[i]; 
+			NetworkServer.Spawn(spawnable);
+			i++;
+		}
+	}
 
 	// Returns a List of rooms.
 	public List<GameObject> GetRooms()
@@ -297,5 +337,32 @@ public class LevelBuilder : NetworkBehaviour
 	public GameObject GetLevel()
 	{
 		return parent;
+	}
+	//Krig added, used for spawning items in random rooms.
+	public List<int> GetRandom(int min, int max, int num)
+	{
+		List<int> result = new List<int>();
+		for (int i = 0; i < num; i++)
+		{
+			int randomNum = Random.Range(min, max);
+
+			if (result.Contains(randomNum))
+			{
+				i--;
+				continue;
+			}
+			else
+				result.Add(randomNum);
+		}
+
+		if (result.Count == num)
+		{
+			return result;
+		}
+		else
+		{
+			Debug.Log("ERROR: List not correct size.");
+			return null;
+		}
 	}
 }

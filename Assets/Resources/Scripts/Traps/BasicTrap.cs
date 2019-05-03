@@ -17,6 +17,8 @@ using UnityEngine;
 
 public class BasicTrap : TrapComponent
 {
+    [FMODUnity.EventRef] public string activate;
+
     //Add only puppets to those who are to take damage
     public override void OnTriggerEnter(Collider other)
     {
@@ -44,6 +46,25 @@ public class BasicTrap : TrapComponent
             puppet.GetComponent<HealthComponent>().Damage(Damage);
         }
 
-        //StartCoroutine("DestroyTimer");
+        FMODUnity.RuntimeManager.PlayOneShot(activate, transform.position);
+
+        StartCoroutine("StunPuppet");
+        StartCoroutine("DestroyTimer");
+    }
+
+    //Stun puppet to make clear that spike was activated
+    public IEnumerator StunPuppet()
+    {
+        foreach (GameObject puppet in Puppets)
+        {
+            puppet.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezePosition | RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
+        }
+
+        yield return new WaitForSeconds(.7f);
+
+        foreach (GameObject puppet in Puppets)
+        {
+            puppet.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.None | RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
+        }
     }
 }
