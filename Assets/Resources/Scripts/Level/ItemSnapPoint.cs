@@ -16,6 +16,8 @@ public class ItemSnapPoint : SnapPointBase
 	private float realChanceToSpawnAmmo;
 	private float realChanceToSpawnPowerUp;
 
+	public bool Occupied;
+
 	public void AltStart()
 	{
 		uint percent = 0;
