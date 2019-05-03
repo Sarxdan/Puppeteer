@@ -27,6 +27,8 @@ public class PlayerController : MonoBehaviour
     // Sound Events
     [FMODUnity.EventRef]
     public string Footstep; 
+    [FMODUnity.EventRef]
+    public string RunFootstep; 
 
     // Movement
     public float MovementSpeed;
@@ -263,5 +265,8 @@ public class PlayerController : MonoBehaviour
     {
         FMODUnity.RuntimeManager.PlayOneShot(Footstep, transform.position);
     }
-
+    public void RunStep()
+    {
+        FMODUnity.RuntimeManager.PlayOneShot(RunFootstep, transform.position);
+    }
 }
