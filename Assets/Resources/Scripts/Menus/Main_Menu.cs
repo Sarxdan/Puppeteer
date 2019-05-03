@@ -43,7 +43,12 @@ public class Main_Menu : MonoBehaviour
 
     void JoinGame()
     {
-        manager.networkAddress = Ip_Field.text;
+		if (Ip_Field.text != "")
+		{
+			manager.networkAddress = Ip_Field.text;
+		}
+		else
+			manager.networkAddress = "localhost";
         manager.StartClient();
     }
 

@@ -156,7 +156,6 @@ namespace MinionStates
             //Fetches random destination close to spawner
             destination = machine.EnemySpawner.GetNearbyDestination();
             machine.PathFinder.MoveTo(destination);
-            
         }
 
         public override void Run()

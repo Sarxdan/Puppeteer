@@ -22,8 +22,15 @@ public class ItemSpawner : NetworkBehaviour
 		if (!isServer)
 		{
 			return;
-		} 
+		}
 		Spawners = GetComponent<SnapPointContainer>().FindSnapPoints();
+		foreach (var snapPoint in Spawners)
+		{
+			if (snapPoint is TrapSnapPoint)
+			{
+				Spawners.Remove(snapPoint);
+			}
+		}
 		if (NumberOfSpawns > Spawners.Count)
 		{
 			NumberOfSpawns = (uint)Spawners.Count;
@@ -112,6 +119,7 @@ public class ItemSpawner : NetworkBehaviour
 	public void CmdSpawnItem(GameObject spawner, GameObject item)
 	{
 		Debug.Log("Item Spawned");
+		spawner.GetComponent<ItemSnapPoint>().Occupied = true;
 		var spawnableObject = Instantiate(item, spawner.transform);
 		NetworkServer.Spawn(spawnableObject);
 	}
