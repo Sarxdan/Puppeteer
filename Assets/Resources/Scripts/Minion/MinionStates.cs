@@ -51,7 +51,7 @@ namespace MinionStates
             //Tests if player is in front
             if (Physics.Raycast(machine.transform.position + new Vector3(0,.5f,0), machine.transform.forward, out RaycastHit target, machine.AttackRange, mask))
             {
-                if (target.collider.tag == ("Player"))
+                if (target.transform == machine.TargetEntity.transform)
                 {
                     //If canAttack, perform attack. Otherwise stop moving (so minions don't push around the player)
                     if(machine.CanAttack)
@@ -64,6 +64,11 @@ namespace MinionStates
                     {
                         machine.PathFinder.Stop();
                     }
+                }
+                else
+                {
+                    //Moves towards player
+                    machine.PathFinder.MoveTo(machine.TargetEntity.transform.position);
                 }
             }
             else
@@ -177,10 +182,10 @@ namespace MinionStates
         {
             machine.CheckProximity();
 
-            //If no path, restart
+            //If no path, go idle
             if(!machine.PathFinder.HasPath)
             {
-                machine.SetState(new WanderState(machine));
+                machine.SetState(new IdleState(machine));
             }
         }
 
@@ -217,7 +222,7 @@ namespace MinionStates
 
             //If done moving, wander randomly
             if(!machine.PathFinder.HasPath)
-                machine.SetState(new WanderState(machine));
+                machine.SetState(new IdleState(machine));
         }
 
         public override void Exit()

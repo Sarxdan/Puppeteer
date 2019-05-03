@@ -170,14 +170,14 @@ public class WeaponComponent : Interactable
         this.HeadTransform = interactor.GetComponentInChildren<Camera>().transform;
        
         PlayerController pc = interactor.GetComponent<PlayerController>();
+        GetComponent<CapsuleCollider>().enabled = false;
+        
         pc.CurrentWeapon = gameObject;
         transform.SetParent(pc.HandTransform);
         pc.SetWeaponAnimation(1);
 
         transform.localPosition = Vector3.zero;
         transform.localRotation = HoldRotation;
-
-        GetComponent<CapsuleCollider>().enabled = false;
     }
 
     public override void OnInteractEnd(GameObject interactor)

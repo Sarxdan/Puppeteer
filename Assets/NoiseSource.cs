@@ -31,13 +31,6 @@ public class Noise
                 if(hit.transform != null && hit.transform == minion.transform){
                     minion.SetState(new SeekState(minion, position));
                 }
-
-                //Alternate code that ignores walls
-
-                //if(Vector3.Distance(minion.transform.position, position) <= amplitude)
-                //{
-                //    minion.SetState(new SeekState(minion, position));
-                //}
             }
         }
     }

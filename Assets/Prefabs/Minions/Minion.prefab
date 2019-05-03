@@ -672,7 +672,7 @@ GameObject:
   - component: {fileID: 3012254230700539824}
   m_Layer: 0
   m_Name: Minion
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -816,7 +816,6 @@ MonoBehaviour:
   MinVelocityThreshold: 0.2
   StuckTimeThreshold: 0.2
   UnstuckRadius: 1
-  currentVelocity: 0
   debug: 0
 --- !u!114 &4637723171867558907
 MonoBehaviour:
@@ -835,7 +834,9 @@ MonoBehaviour:
   CurrentStateName: 
   EnemySpawner: {fileID: 0}
   TargetEntity: {fileID: 0}
-  ProxyCooldown: 0
+  AnimController: {fileID: 0}
+  PathFinder: {fileID: 0}
+  Puppets: []
   AttackCooldown: 1
   AttackDamage: 1
   AttackRange: 1
@@ -843,12 +844,9 @@ MonoBehaviour:
   InstantAggroRange: 3
   ConeAggroRange: 8
   FOVConeAngle: 50
+  AtkPrioRunning: 0
   RaycastOffset: {x: 0, y: 0.2, z: 0}
-  Puppets: []
-  CoRunning: 0
-  AnimController: {fileID: 0}
-  PathFinder: {fileID: 0}
-  eDebug: 0
+  debug: 0
 --- !u!114 &3012254230700539824
 MonoBehaviour:
   m_ObjectHideFlags: 0

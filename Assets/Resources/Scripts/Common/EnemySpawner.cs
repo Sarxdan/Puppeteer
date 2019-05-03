@@ -57,6 +57,7 @@ public class EnemySpawner : NetworkBehaviour
         }
     }
 
+    //Returns a random point from a room somewhat close to the spawners room
     public Vector3 GetNearbyDestination(){
         
         Transform currentRoom = transform.parent;

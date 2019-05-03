@@ -18,15 +18,14 @@ public class PathfinderComponent : NetworkBehaviour
     public float InteractRayLength = 0.4f;
     public float ArrivalMargin;
     private Transform navmeshTransform;
-    private List<AStarRoomNode> path;
-    private List<Vector3> subPath;
+    private List<AStarRoomNode> worldPath;
+    private List<Vector3> roomPath;
 
     //Unstuck
     public float MinVelocityThreshold;
     public float StuckTimeThreshold;
     public float UnstuckRadius;
     private Vector3 lastPosition;
-    public float currentVelocity;
     private float currentStuckTime = 0;
 
     public bool debug;
@@ -36,32 +35,42 @@ public class PathfinderComponent : NetworkBehaviour
     private Animator animController;
     void Start()
     {
-        if(!isServer){
+        if(!isServer)
+        {
             this.enabled = false;
             return;
         }
         this.rigidBody = GetComponent<Rigidbody>();
         this.animController = GetComponent<Animator>();
-        this.path = new List<AStarRoomNode>();
-        this.subPath = new List<Vector3>();
+        this.worldPath = new List<AStarRoomNode>();
+        this.roomPath = new List<Vector3>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        if(HasPath){
+        if(HasPath)
+        {
+
             performMove();
-            currentVelocity = (transform.position - lastPosition).magnitude/Time.deltaTime;
-            if((transform.position - lastPosition).magnitude/Time.deltaTime < MinVelocityThreshold){
+
+            //Stuck check
+            if((transform.position - lastPosition).magnitude/Time.deltaTime < MinVelocityThreshold)
+            {
                 currentStuckTime += Time.deltaTime;
-                if(currentStuckTime >= StuckTimeThreshold){
+                if(currentStuckTime >= StuckTimeThreshold)
+                {
                     unstuck();
                     currentStuckTime = 0;
                 }
-            }else{
+            }
+            else
+            {
                 currentStuckTime = 0;
             }
-        }else{
+        }
+        else
+        {
             if(UseRootMotion)
                 animController.SetBool("Moving", false);
         }
@@ -70,8 +79,8 @@ public class PathfinderComponent : NetworkBehaviour
 
     public void Stop()
     {
-        this.path.Clear();
-        this.subPath.Clear();
+        this.worldPath.Clear();
+        this.roomPath.Clear();
         this.HasPath = false;
         this.animController.SetBool("Moving", false);
     }
@@ -86,7 +95,9 @@ public class PathfinderComponent : NetworkBehaviour
         {
             endRoom = endHit.transform.parent;
             endPos = endHit.point;
-        }else{
+        }
+        else
+        {
             return;
         }
 
@@ -96,7 +107,9 @@ public class PathfinderComponent : NetworkBehaviour
         if (Physics.Raycast(transform.position + TransformRaycastOffset, -transform.up, out startHit))
         {
             startRoom = startHit.transform.parent;
-        }else{
+        }
+        else
+        {
             return;
         }
 
@@ -104,75 +117,90 @@ public class PathfinderComponent : NetworkBehaviour
         Stop();
 
         //If a room was not hit, abort
-        if(endRoom.GetComponent<NavMesh>() == null || startRoom.GetComponent<NavMesh>() == null){
+        if(endRoom.GetComponent<NavMesh>() == null || startRoom.GetComponent<NavMesh>() == null)
+        {
             return;
         }
 
         //Creates room pathfind
-        this.path = aStarRoomPathfind(startRoom, endRoom);
+        this.worldPath = aStarRoomPathfind(startRoom, endRoom);
 
         //If roompath was not found, abort
-        if(this.path == null){
-            this.path = new List<AStarRoomNode>();
+        if(this.worldPath == null)
+        {
+            this.worldPath = new List<AStarRoomNode>();
             return;
         }
 
         //Adds destination to roompath
-        if(this.path.Count > 0){ 
-            this.path.Insert(0, new AStarRoomNode(0,this.path[0].RoomRef, this.path[0], endPos));
-        }else{
-            this.path.Insert(0, new AStarRoomNode(0, startRoom, null, endPos));
-            this.path[0].Parent = this.path[0];
+        if(this.worldPath.Count > 0)
+        { 
+            this.worldPath.Insert(0, new AStarRoomNode(0,this.worldPath[0].RoomRef, this.worldPath[0], endPos));
+        }
+        else
+        {
+            this.worldPath.Insert(0, new AStarRoomNode(0, startRoom, null, endPos));
+            this.worldPath[0].Parent = this.worldPath[0];
         }
 
         HasPath = true;
     }
     
     //Method for helping stuck entities
-    private void unstuck(){
+    private void unstuck()
+    {
         Vector3 unstuckPoint = transform.position + new Vector3(Random.Range(-UnstuckRadius, UnstuckRadius), transform.position.y, Random.Range(-UnstuckRadius, UnstuckRadius));
         MoveTo(unstuckPoint);
     }
 
-    private void performMove(){
+    private void performMove()
+    {
 
         //If both path and subpath are empty, stop pathfinding
-        if(this.path.Count <= 0 && this.subPath.Count <= 0){
+        if(this.worldPath.Count <= 0 && this.roomPath.Count <= 0)
+        {
             this.HasPath = false;
-            if(UseRootMotion){
+            if(UseRootMotion)
+            {
                 animController.SetBool("Moving", false);
-            }else{
+            }
+            else
+            {
                 rigidBody.velocity = Vector3.zero;
             }
             return;
         }
 
         //If subpath is empty, create new subpath
-        if(this.subPath.Count <= 0){
+        if(this.roomPath.Count == 0)
+        {
             
             RaycastHit hit;
-            if(!Physics.Raycast(transform.position + TransformRaycastOffset, -Vector3.up, out hit, 4)){
+            if(!Physics.Raycast(transform.position + TransformRaycastOffset, -Vector3.up, out hit, 4))
+            {
                 Debug.LogError("Object " + transform.name + " could not find the floor and therefore not pathfind. This is very bad and cannot happen");
                 this.HasPath = false;
                 return;
             }
 
 
-            this.navmeshTransform = this.path[path.Count-1].Parent.RoomRef;
+            this.navmeshTransform = this.worldPath[worldPath.Count-1].Parent.RoomRef;
 
-            Vector3 endPos = navmeshTransform.InverseTransformPoint(this.path[path.Count-1].EntrancePos);
+            Vector3 endPos = navmeshTransform.InverseTransformPoint(this.worldPath[worldPath.Count-1].EntrancePos);
             Vector3 startPos = navmeshTransform.InverseTransformPoint(hit.point);
 
-            this.path.RemoveAt(path.Count-1);
+            this.worldPath.RemoveAt(worldPath.Count-1);
 
             NavMesh navmesh = navmeshTransform.GetComponent<NavMesh>();
-            if(debug){
+            if(debug)
+            {
                 if(previousNavmesh != null) previousNavmesh.draw = false;
                 previousNavmesh = navmesh;
                 navmesh.draw = true;
             }
 
-            if(navmesh == null){
+            if(navmesh == null)
+            {
                 Debug.LogError("Object " + hit.transform.name + " does not have a NavMesh component! Plz fix!");
                 this.HasPath = false;
                 return;
@@ -185,67 +213,85 @@ public class PathfinderComponent : NetworkBehaviour
 
 
             //If A* linked list contains at least two items, run funnel stringpull
-            if(startNode != null && startNode.Parent != null){
+            if(startNode != null && startNode.Parent != null)
+            {
                 //Replaces lone point on start node with end
                 Vector3[] commonEndNodes = getCommonNodes(startNode.Face, startNode.Parent.Face);
-                if(commonEndNodes.Length == 2){
+                if(commonEndNodes.Length == 2)
+                {
                     startNode.Face = new navmeshFace(commonEndNodes[0], commonEndNodes[1], endPos);
-                    this.subPath.AddRange(funnelStringpull(startNode, endPos, startPos, new List<Vector3>(), 0));
+                    this.roomPath.AddRange(funnelStringpull(startNode, endPos, startPos, new List<Vector3>(), 0));
                 }
             }
-            this.subPath.Add(endPos);
+            this.roomPath.Add(endPos);
 
-        if(subPath.Count <= 0){
-            Debug.LogError("Subpath was not created! This is very bad");
+            if(roomPath.Count <= 0)
+            {
+                Debug.LogError("Subpath was not created! This is very bad");
+            }
+
         }
-
-        }else{
+        else
+        {
             //Does the actual movement
-            Vector3 deltaPos = navmeshTransform.TransformPoint(subPath[0]) - transform.position + transform.up * LegHeight;
+            Vector3 deltaPos = navmeshTransform.TransformPoint(roomPath[0]) - transform.position + transform.up * LegHeight;
             float distance = 0;
             Quaternion goalRot = Quaternion.LookRotation(deltaPos, transform.up);
 
             //Debug rays for rotation
-            if(debug){
+            if(debug)
+            {
                 Debug.DrawRay(transform.position, transform.forward, Color.magenta, Time.deltaTime);
                 Debug.DrawRay(transform.position, goalRot*transform.forward, Color.red, Time.deltaTime);
             }
             
             transform.rotation = Quaternion.RotateTowards(transform.rotation, goalRot, RotationSpeed);
             
-            if(deltaPos.magnitude <= ArrivalMargin){
+            if(deltaPos.magnitude <= ArrivalMargin)
+            {
                 distance = deltaPos.magnitude;
-                this.subPath.RemoveAt(0);
-            }else{
+                this.roomPath.RemoveAt(0);
+            }
+            else
+            {
                 distance = this.MovementSpeed * Time.deltaTime;
             }
             //rigidBody.MovePosition(transform.position + transform.forward * this.MovementSpeed * Time.deltaTime );
-            if(UseRootMotion){
+            if(UseRootMotion)
+            {
                 animController.SetBool("Moving", true);
-            }else{
+            }
+            else
+            {
                 rigidBody.velocity = transform.forward * this.MovementSpeed * Time.deltaTime;
             }
             
         }
 
-        if(debug){
-            for(int i = 0; i < this.subPath.Count - 1; i++){
-                Debug.DrawLine(navmeshTransform.TransformPoint(this.subPath[i]), navmeshTransform.TransformPoint(this.subPath[i+1]), Color.magenta, Time.deltaTime);
+        //Draws current path if debug is on
+        if(debug)
+        {
+            for(int i = 0; i < this.roomPath.Count - 1; i++)
+            {
+                Debug.DrawLine(navmeshTransform.TransformPoint(this.roomPath[i]), navmeshTransform.TransformPoint(this.roomPath[i+1]), Color.magenta, Time.deltaTime);
             }
 
-            if(this.subPath.Count > 0 ) Debug.DrawLine(transform.position, navmeshTransform.TransformPoint(this.subPath[0]), Color.magenta, Time.deltaTime);
+            if(this.roomPath.Count > 0 ) Debug.DrawLine(transform.position, navmeshTransform.TransformPoint(this.roomPath[0]), Color.magenta, Time.deltaTime);
 
-            for(int i = 0; i < this.path.Count - 1; i++){
-                Debug.DrawLine(this.path[i].EntrancePos, this.path[i+1].EntrancePos, Color.cyan, Time.deltaTime);
+            for(int i = 0; i < this.worldPath.Count - 1; i++)
+            {
+                Debug.DrawLine(this.worldPath[i].EntrancePos, this.worldPath[i+1].EntrancePos, Color.cyan, Time.deltaTime);
             }
 
-            if(this.path.Count > 0 ) Debug.DrawLine(transform.position, this.path[0].EntrancePos, Color.cyan, Time.deltaTime);
+            if(this.worldPath.Count > 0 ) Debug.DrawLine(transform.position, this.worldPath[0].EntrancePos, Color.cyan, Time.deltaTime);
         }
         
         RaycastHit doorHit;
-        if(Physics.Raycast(transform.position, transform.forward, out doorHit, InteractRayLength)){
+        if(Physics.Raycast(transform.position, transform.forward, out doorHit, InteractRayLength))
+        {
             DoorComponent doorComponent = doorHit.transform.GetComponent<DoorComponent>();
-            if(doorComponent != null){
+            if(doorComponent != null)
+            {
                 doorComponent.OnInteractBegin(gameObject);
             }
         }
@@ -258,7 +304,8 @@ public class PathfinderComponent : NetworkBehaviour
     
 
     #region room
-    private List<AStarRoomNode> aStarRoomPathfind(Transform startRoom, Transform endRoom){
+    private List<AStarRoomNode> aStarRoomPathfind(Transform startRoom, Transform endRoom)
+    {
         List<AStarRoomNode> returnList = new List<AStarRoomNode>();
         List<AStarRoomNode> unevaluatedNodes = new List<AStarRoomNode>();
         List<AStarRoomNode> evaluatedNodes = new List<AStarRoomNode>();
@@ -268,7 +315,8 @@ public class PathfinderComponent : NetworkBehaviour
         unevaluatedNodes.Add(new AStarRoomNode(Vector3.Distance(endRoom.position, startRoom.position), startRoom, null, new Vector3()));
         checkedRooms.Add(startRoom);
 
-        while(unevaluatedNodes.Count > 0){
+        while(unevaluatedNodes.Count > 0)
+        {
             float lowestFCost = Mathf.Infinity;
             currentNode = null;
             foreach(AStarRoomNode node in unevaluatedNodes)
@@ -281,8 +329,10 @@ public class PathfinderComponent : NetworkBehaviour
             }
 
             //If destination is reached, follow room parents back and return as list
-            if(currentNode.RoomRef == endRoom){
-                while(currentNode.Parent != null){
+            if(currentNode.RoomRef == endRoom)
+            {
+                while(currentNode.Parent != null)
+                {
                     returnList.Add(currentNode);
                     currentNode = currentNode.Parent;
                 }
@@ -292,10 +342,13 @@ public class PathfinderComponent : NetworkBehaviour
             unevaluatedNodes.Remove(currentNode);
             evaluatedNodes.Add(currentNode);
 
-            foreach(AnchorPoint door in currentNode.RoomRef.GetComponent<DoorReferences>().doors){
-                if(door.Connected && door.ConnectedTo != null){
+            foreach(AnchorPoint door in currentNode.RoomRef.GetComponent<DoorReferences>().doors)
+            {
+                if(door.Connected && door.ConnectedTo != null)
+                {
                     Transform adjacentRoom = door.ConnectedTo.transform.parent.transform.parent;
-                    if(!checkedRooms.Contains(adjacentRoom)){
+                    if(!checkedRooms.Contains(adjacentRoom))
+                    {
                         unevaluatedNodes.Add(new AStarRoomNode(Vector3.Distance(startRoom.position, adjacentRoom.position) + Vector3.Distance(endRoom.position, adjacentRoom.position), adjacentRoom, currentNode, door.transform.position));
                         checkedRooms.Add(adjacentRoom);
                     }
@@ -316,7 +369,8 @@ public class PathfinderComponent : NetworkBehaviour
         public AStarRoomNode Parent;
         public Vector3 EntrancePos;
 
-        public AStarRoomNode(float fCost, Transform roomRef, AStarRoomNode parent, Vector3 entrancePos){
+        public AStarRoomNode(float fCost, Transform roomRef, AStarRoomNode parent, Vector3 entrancePos)
+        {
             this.FCost = fCost;
             this.RoomRef = roomRef;
             this.Parent = parent;
@@ -331,7 +385,8 @@ public class PathfinderComponent : NetworkBehaviour
     #region navmesh
 
     #region face
-    private AStarFaceNode aStarFacePathfind(Vector3 start, Vector3 end, NavMesh navmesh){
+    private AStarFaceNode aStarFacePathfind(Vector3 start, Vector3 end, NavMesh navmesh)
+    {
 
         List<AStarFaceNode> unevaluatedNodes = new List<AStarFaceNode>();
         List<AStarFaceNode> evaluatedNodes = new List<AStarFaceNode>();
@@ -344,7 +399,8 @@ public class PathfinderComponent : NetworkBehaviour
         navmeshFace endFace = navmesh.getFaceFromPoint(end);
 
 
-        if(debug){
+        if(debug)
+        {
             Debug.DrawRay(startFace.Origin + navmeshTransform.position, navmeshTransform.up * 5, Color.green,5);
             Debug.DrawRay(endFace.Origin + navmeshTransform.position, navmeshTransform.up * 5, Color.red,5);
         }
@@ -373,7 +429,8 @@ public class PathfinderComponent : NetworkBehaviour
             evaluatedNodes.Add(currentNode);
 
             //Check if current face is destination
-            if (currentNode.Face == endFace){
+            if (currentNode.Face == endFace)
+            {
                 break;
             };
 
@@ -403,9 +460,12 @@ public class PathfinderComponent : NetworkBehaviour
     }
     private void createOrUpdateNode(navmeshFace face, Vector3 start, Vector3 end, List<AStarFaceNode> unEvaluatedNodes, List<navmeshFace> faceFilter, AStarFaceNode parent)
     {
-        if(faceFilter.Contains(face)){
+        if(faceFilter.Contains(face))
+        {
             unEvaluatedNodes.Find(x => x.Face == face);
-        }else{
+        }
+        else
+        {
             unEvaluatedNodes.Add(new AStarFaceNode(Vector3.Distance(start, face.Origin) + Vector3.Distance(face.Origin, end), face, parent));
             faceFilter.Add(face);
         }
@@ -413,7 +473,8 @@ public class PathfinderComponent : NetworkBehaviour
 
     #endregion
 
-    private List<Vector3> funnelStringpull(AStarFaceNode currentNode, Vector3 origin, Vector3 end, List<Vector3> nodeList, int recursionIndex){
+    private List<Vector3> funnelStringpull(AStarFaceNode currentNode, Vector3 origin, Vector3 end, List<Vector3> nodeList, int recursionIndex)
+    {
         recursionIndex ++;
         if(recursionIndex>MaxRecursionDepth || currentNode.Parent == null) return nodeList;
         //Last added left and right
@@ -459,7 +520,8 @@ public class PathfinderComponent : NetworkBehaviour
                 float newOldDot = Vector3.Dot(newOldCross, Vector3.up);
 
                 //Checks if new cone is smaller than previous. If so, narrows the cone to rightportal
-                if(newOldDot > 0){
+                if(newOldDot > 0)
+                {
                     lastLeft = leftPortal;
                     lastRightNode = nextNode;
                     if(currentNode.Face.hasVertex(lastRight))lastLeftNode = nextNode;
@@ -486,7 +548,8 @@ public class PathfinderComponent : NetworkBehaviour
                 float newOldDot = Vector3.Dot(newOldCross, Vector3.up);
 
                 //Checks if new cone is smaller than previous. If so, narrows the cone to leftPortal
-                if(newOldDot > 0){
+                if(newOldDot > 0)
+                {
                     lastRight = rightPortal;
                     lastLeftNode = nextNode;
                     if(currentNode.Face.hasVertex(lastLeft))lastRightNode = nextNode;
@@ -499,10 +562,13 @@ public class PathfinderComponent : NetworkBehaviour
         Vector3 endLeftCross = Vector3.Cross(end - origin, lastLeft - origin);
         Vector3 rightEndCross = Vector3.Cross(lastRight - origin, end - origin);
 
-        if(Vector3.Dot(endLeftCross, Vector3.up) < 0){
+        if(Vector3.Dot(endLeftCross, Vector3.up) < 0)
+        {
             nodeList.Insert(0,lastLeft);
             return funnelStringpull(getLastOccurance(lastRightNode,lastLeft), lastLeft, end, nodeList, recursionIndex);
-        }else if(Vector3.Dot(rightEndCross,Vector3.up) < 0){
+        }
+        else if(Vector3.Dot(rightEndCross,Vector3.up) < 0)
+        {
             nodeList.Insert(0,lastRight);
             return funnelStringpull(getLastOccurance(lastLeftNode,lastRight), lastRight, end, nodeList, recursionIndex);
         }
@@ -539,10 +605,14 @@ public class PathfinderComponent : NetworkBehaviour
         return getLeftOrRight(node, origin, -1);
     }
 
-    private AStarFaceNode getLastOccurance(AStarFaceNode node, Vector3 point){
-        if(node.Parent != null && node.Parent.Face.hasVertex(point)){
+    private AStarFaceNode getLastOccurance(AStarFaceNode node, Vector3 point)
+    {
+        if(node.Parent != null && node.Parent.Face.hasVertex(point))
+        {
             return getLastOccurance(node.Parent, point);
-        }else{
+        }
+        else
+        {
             return node;
         }
     }
@@ -571,7 +641,8 @@ public class PathfinderComponent : NetworkBehaviour
             A = node.Face.cPos;
             B = node.Face.bPos;
             C = node.Face.aPos;
-        }else{
+        }
+        else{
             
             return getLeftOrRight(node, getLonelyNode(node.Face, node.Parent.Face), inverse);
         }

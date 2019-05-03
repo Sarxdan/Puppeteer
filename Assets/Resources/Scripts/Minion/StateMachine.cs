@@ -51,7 +51,6 @@ public class StateMachine : NetworkBehaviour
     public float ConeAggroRange;
     public float FOVConeAngle;
     public bool AtkPrioRunning;
-    private float closestPuppDist = 0;
     private float PostThreat;
 
     //Other shit
@@ -98,37 +97,32 @@ public class StateMachine : NetworkBehaviour
     public void CheckProximity()
     {
         int mask = ~(1 << LayerMask.NameToLayer("Puppeteer Interact"));
-        closestPuppDist = Mathf.Infinity;
-        foreach (GameObject pupp in Puppets)
+        foreach (GameObject puppet in Puppets)
         {   
             //Finds closest alive puppet
-            if (pupp != null && pupp.GetComponent<HealthComponent>().Health > 0)
+            if (puppet != null && puppet.GetComponent<HealthComponent>().Health > 0)
             {
-                float puppDist = Vector3.Distance(pupp.transform.position, gameObject.transform.position);
-                if (closestPuppDist == 0 || closestPuppDist > puppDist)
-                {
-                    closestPuppDist = puppDist;
-                }
+                float puppDist = Vector3.Distance(puppet.transform.position, gameObject.transform.position);
 
                 //If within cone range and not obscured
-                if (closestPuppDist <= ConeAggroRange && Physics.Raycast(transform.position + RaycastOffset, pupp.transform.position - transform.position, out RaycastHit hit, ConeAggroRange, mask)) 
+                if (puppDist <= ConeAggroRange && Physics.Raycast(transform.position + RaycastOffset, puppet.transform.position - transform.position, out RaycastHit hit, ConeAggroRange, mask)) 
                 {
                     if(hit.transform.tag.Equals("Player"))
                     {
                         
                         //If inside instant-aggro range or within vision cone
-                        if(closestPuppDist < InstantAggroRange|| Vector3.Angle(transform.forward, pupp.transform.position - transform.position) <= FOVConeAngle)
+                        if(puppDist < InstantAggroRange|| Vector3.Angle(transform.forward, puppet.transform.position - transform.position) <= FOVConeAngle)
                         {
                             //Attack player
-                            TargetEntity = pupp.gameObject;
+                            TargetEntity = puppet.gameObject;
                             SetState(new AttackState(this));
                         }
                     }
                 }
             }
-            else if (pupp == null)
+            else if (puppet == null)
             {
-                Puppets.Remove(pupp);
+                Puppets.Remove(puppet);
             }
         }
     }
