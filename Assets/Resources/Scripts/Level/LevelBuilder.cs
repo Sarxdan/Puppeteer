@@ -17,6 +17,8 @@ using Mirror;
 *
 * CONTRIBUTORS: 
 * Filip Renman, Kristoffer Lundgren
+*
+* 2019-05-03 Krig added code to spawn items in a set amout of random rooms
 */
 
 public class LevelBuilder : NetworkBehaviour
@@ -228,6 +230,7 @@ public class LevelBuilder : NetworkBehaviour
     //Tells the network to spawn the rooms on every client
     private void SpawnRoomsOnNetwork()
     {
+		//Code added to spawn items in a set amout of random roooms
 		RoomInteractable[] rooms = parent.gameObject.GetComponentsInChildren<RoomInteractable>();
 		int numberOfRooms = rooms.Length;
 		int numberOfRoomsToSpawnItemsIn = Mathf.FloorToInt((PercentageOfRoomsWithItems/100) * parent.gameObject.GetComponentsInChildren<RoomInteractable>().Length);
@@ -238,8 +241,10 @@ public class LevelBuilder : NetworkBehaviour
 			if(roomIndices.Contains(index))
 			{
 				var spawner = room.GetComponent<ItemSpawner>();
+				// Checks so that the room has an item spawner script.
 				if(spawner != null)
 				{
+					// Spawns items in the room
 					spawner.SpawnItems();
 
 				}
@@ -338,14 +343,14 @@ public class LevelBuilder : NetworkBehaviour
 	{
 		return parent;
 	}
-	//Krig added, used for spawning items in random rooms.
+	//Krig added. Returns a list of random numbers in a given range.
 	public List<int> GetRandom(int min, int max, int num)
 	{
 		List<int> result = new List<int>();
 		for (int i = 0; i < num; i++)
 		{
 			int randomNum = Random.Range(min, max);
-
+			// If the random number already exists, generate a new one
 			if (result.Contains(randomNum))
 			{
 				i--;
@@ -361,7 +366,7 @@ public class LevelBuilder : NetworkBehaviour
 		}
 		else
 		{
-			Debug.Log("ERROR: List not correct size.");
+			Debug.LogError("ERROR: List not correct size.");
 			return null;
 		}
 	}
