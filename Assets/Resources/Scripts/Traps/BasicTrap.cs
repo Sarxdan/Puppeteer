@@ -44,6 +44,23 @@ public class BasicTrap : TrapComponent
             puppet.GetComponent<HealthComponent>().Damage(Damage);
         }
 
-        //StartCoroutine("DestroyTimer");
+        StartCoroutine("StunPuppet");
+
+        StartCoroutine("DestroyTimer");
+    }
+
+    public IEnumerator StunPuppet()
+    {
+        foreach (GameObject puppet in Puppets)
+        {
+            puppet.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezePosition | RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
+        }
+
+        yield return new WaitForSeconds(.7f);
+
+        foreach (GameObject puppet in Puppets)
+        {
+            puppet.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.None | RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
+        }
     }
 }
