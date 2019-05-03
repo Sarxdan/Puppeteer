@@ -2293,6 +2293,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Footstep: event:/Character/Footsteps/Walk
+  RunFootstep: event:/Character/Footsteps/Run
   MovementSpeed: 5
   AccelerationRate: 10
   SprintSpeed: 8
@@ -2394,11 +2395,10 @@ MonoBehaviour:
   syncInterval: 0.1
   componentsToDisable:
   - {fileID: 591953401985262530}
-  - {fileID: 0}
+  - {fileID: 7450244324667399741}
   - {fileID: 591953401651075571}
   - {fileID: 7450244324667399715}
   - {fileID: 7450244324667399718}
-  - {fileID: 7450244324667399741}
 --- !u!114 &3436252903158927089
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2990,6 +2990,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 895376273027663902, guid: 27f6f56a79bae2e4b8ada12c45a4bc54,
         type: 3}
+      propertyPath: owner
+      value: 
+      objectReference: {fileID: 591953402505392346}
+    - target: {fileID: 895376273027663902, guid: 27f6f56a79bae2e4b8ada12c45a4bc54,
+        type: 3}
       propertyPath: m_Enabled
       value: 1
       objectReference: {fileID: 0}
@@ -3108,6 +3113,21 @@ PrefabInstance:
       propertyPath: Owner
       value: 
       objectReference: {fileID: 591953402505392346}
+    - target: {fileID: 895376273027663899, guid: 27f6f56a79bae2e4b8ada12c45a4bc54,
+        type: 3}
+      propertyPath: Owner
+      value: 
+      objectReference: {fileID: 591953402505392346}
+    - target: {fileID: 895376273027663872, guid: 27f6f56a79bae2e4b8ada12c45a4bc54,
+        type: 3}
+      propertyPath: Owner
+      value: 
+      objectReference: {fileID: 591953402505392346}
+    - target: {fileID: 895376273027663872, guid: 27f6f56a79bae2e4b8ada12c45a4bc54,
+        type: 3}
+      propertyPath: PauseMenuUI
+      value: 
+      objectReference: {fileID: 7450244323197696106}
     - target: {fileID: 895376273027663872, guid: 27f6f56a79bae2e4b8ada12c45a4bc54,
         type: 3}
       propertyPath: owner

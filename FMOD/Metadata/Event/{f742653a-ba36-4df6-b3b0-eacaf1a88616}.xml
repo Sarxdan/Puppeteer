@@ -57,8 +57,8 @@
 		</relationship>
 	</object>
 	<object class="EventAutomatableProperties" id="{eab31291-b744-4d5b-9692-b44f7aaf9524}">
-		<property name="maxVoices">
-			<value>2</value>
+		<property name="voiceStealing">
+			<value>4</value>
 		</property>
 	</object>
 	<object class="MarkerTrack" id="{4bd2b9f7-1323-4fa0-acef-908546edd349}" />
@@ -99,8 +99,14 @@
 	</object>
 	<object class="MixerBusPanner" id="{0e53d3bc-12dd-4589-be99-3efc2dda65c1}" />
 	<object class="SingleSound" id="{206e0be6-be91-4904-91e7-2a2c2eaa60dd}">
+		<property name="isAsync">
+			<value>true</value>
+		</property>
 		<property name="length">
 			<value>30</value>
+		</property>
+		<property name="looping">
+			<value>true</value>
 		</property>
 		<relationship name="modulators">
 			<destination>{af4dbb69-f227-4beb-93d1-008af89cc78c}</destination>
@@ -110,9 +116,15 @@
 		</relationship>
 	</object>
 	<object class="EventMixerGroup" id="{c5a110c6-5452-4435-a6d4-b37b9fd23fef}">
+		<property name="volume">
+			<value>-8</value>
+		</property>
 		<property name="name">
 			<value>Audio 1</value>
 		</property>
+		<relationship name="modulators">
+			<destination>{6b3e6ced-e4be-4159-9bae-577ed242cc77}</destination>
+		</relationship>
 		<relationship name="effectChain">
 			<destination>{ec1c0424-0277-48cc-be6f-454f2068a201}</destination>
 		</relationship>
@@ -164,6 +176,17 @@
 			<value>100</value>
 		</property>
 	</object>
+	<object class="ADSRModulator" id="{6b3e6ced-e4be-4159-9bae-577ed242cc77}">
+		<property name="nameOfPropertyBeingModulated">
+			<value>volume</value>
+		</property>
+		<property name="initialValue">
+			<value>-80</value>
+		</property>
+		<property name="finalValue">
+			<value>-80</value>
+		</property>
+	</object>
 	<object class="MixerBusEffectChain" id="{ec1c0424-0277-48cc-be6f-454f2068a201}">
 		<relationship name="effects">
 			<destination>{01b06dc1-3916-45f4-b978-78beb9b92441}</destination>
@@ -173,10 +196,10 @@
 	<object class="MixerBusFader" id="{9db149fc-5ee8-4fd5-8f1a-68267d45ad4a}" />
 	<object class="SpatialiserEffect" id="{5dee436e-5b2b-4ac7-95c4-7cf04871d619}">
 		<property name="minimumDistance">
-			<value>2.20000005</value>
+			<value>1.80000007</value>
 		</property>
 		<property name="maximumDistance">
-			<value>7.5999999</value>
+			<value>4.80000019</value>
 		</property>
 	</object>
 	<object class="MixerBusFader" id="{01b06dc1-3916-45f4-b978-78beb9b92441}" />
