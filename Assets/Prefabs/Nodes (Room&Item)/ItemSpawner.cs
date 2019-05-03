@@ -16,13 +16,10 @@ public class ItemSpawner : NetworkBehaviour
 
 
 	// Calculates the correct percentage of all spawnable entitys and then randoms a percentile, spawning its corresponding entity type.
-	void Start()
-    {
+	public void SpawnItems()
+  {
 		//level = transform.parent.gameObject;
-		if (!isServer)
-		{
-			return;
-		} 
+
 		Spawners = GetComponent<SnapPointContainer>().FindSnapPoints();
 		if (NumberOfSpawns > Spawners.Count)
 		{
@@ -91,7 +88,7 @@ public class ItemSpawner : NetworkBehaviour
 	{
 
 		int WeaponIndex = Random.Range(0, WeaponList.Length);
-		CmdSpawnItem(spawner, WeaponList[WeaponIndex]);
+		SpawnItem(spawner, WeaponList[WeaponIndex]);
 
 	}
 	// Spawns a Ammo prefab.
@@ -99,21 +96,21 @@ public class ItemSpawner : NetworkBehaviour
 	{
 		Debug.Log("Spawn a Ammo");
 
-		CmdSpawnItem(spawner, AmmoItem);
+		SpawnItem(spawner, AmmoItem);
 	}
 	// Spawns a PowerUp prefab.
 	public void SpawnPowerUp(GameObject spawner)
 	{
 		Debug.Log("Spawn a PowerUp");
 
-		CmdSpawnItem(spawner, PowerUpItem);
+		SpawnItem(spawner, PowerUpItem);
 	}
-	[Command]
-	public void CmdSpawnItem(GameObject spawner, GameObject item)
+	//[Command]
+	public void SpawnItem(GameObject spawner, GameObject item)
 	{
 		Debug.Log("Item Spawned");
 		var spawnableObject = Instantiate(item, spawner.transform);
-		NetworkServer.Spawn(spawnableObject);
+		//NetworkServer.Spawn(spawnableObject);
 	}
 
 }

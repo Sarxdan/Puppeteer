@@ -33,6 +33,8 @@ public class LevelBuilder : NetworkBehaviour
 	public GameObject Door;
 
 	public int RoomsToSpawnBeforeDeadEndRooms = 10;
+	// Used for deciding how many rooms should have items
+	public float PercentageOfRoomsWithItems;
 
 	// List for storing RoomCollider scripts, used for checking if rooms are on the same position.
 	private List<RoomCollider> roomColliderPositions = new List<RoomCollider>();
@@ -226,8 +228,24 @@ public class LevelBuilder : NetworkBehaviour
     //Tells the network to spawn the rooms on every client
     private void SpawnRoomsOnNetwork()
     {
-        foreach (RoomInteractable room in parent.gameObject.GetComponentsInChildren<RoomInteractable>())
+		RoomInteractable[] rooms = parent.gameObject.GetComponentsInChildren<RoomInteractable>();
+		int numberOfRooms = rooms.Length;
+		int numberOfRoomsToSpawnItemsIn = Mathf.FloorToInt((PercentageOfRoomsWithItems/100) * parent.gameObject.GetComponentsInChildren<RoomInteractable>().Length);
+		List<int> roomIndices = GetRandom(0,numberOfRooms, numberOfRoomsToSpawnItemsIn);
+		int index = 0;
+        foreach (RoomInteractable room in rooms)
         {
+			if(roomIndices.Contains(index))
+			{
+				var spawner = room.GetComponent<ItemSpawner>();
+				if(spawner != null)
+				{
+					spawner.SpawnItems();
+
+				}
+			}
+
+			index++;
             NetworkServer.Spawn(room.gameObject);
             room.transform.SetParent(parent.transform);
         }
@@ -319,5 +337,32 @@ public class LevelBuilder : NetworkBehaviour
 	public GameObject GetLevel()
 	{
 		return parent;
+	}
+	//Krig added, used for spawning items in random rooms.
+	public List<int> GetRandom(int min, int max, int num)
+	{
+		List<int> result = new List<int>();
+		for (int i = 0; i < num; i++)
+		{
+			int randomNum = Random.Range(min, max);
+
+			if (result.Contains(randomNum))
+			{
+				i--;
+				continue;
+			}
+			else
+				result.Add(randomNum);
+		}
+
+		if (result.Count == num)
+		{
+			return result;
+		}
+		else
+		{
+			Debug.Log("ERROR: List not correct size.");
+			return null;
+		}
 	}
 }
