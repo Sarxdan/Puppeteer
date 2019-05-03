@@ -2928,8 +2928,8 @@ GameObject:
   - component: {fileID: 2597495256663299002}
   - component: {fileID: 6131904198486339952}
   - component: {fileID: 2136451015889515893}
-  m_Layer: 0
-  m_Name: Spike
+  m_Layer: 8
+  m_Name: Spike Floor
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2962,8 +2962,8 @@ BoxCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 1.7826744, y: 0.62860346, z: 1.9224862}
-  m_Center: {x: 0.024851143, y: 0.18569827, z: -0.0043956637}
+  m_Size: {x: 1.7826744, y: 0.25832093, z: 1.9224862}
+  m_Center: {x: 0.024851143, y: 0.0005570054, z: -0.0043956637}
 --- !u!95 &4407621342713457746
 Animator:
   serializedVersion: 3
@@ -2997,10 +2997,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Damage: 5
   ActivationTime: 0.15
-  DestroyTime: 0
+  DestroyTime: 2
   Puppets: []
   Anim: {fileID: 0}
   Placed: 0
+  Floor: 1
+  Roof: 0
+  Wall: 0
 --- !u!114 &2597495256663299002
 MonoBehaviour:
   m_ObjectHideFlags: 0

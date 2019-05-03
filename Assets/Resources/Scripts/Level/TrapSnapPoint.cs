@@ -4,8 +4,13 @@ using UnityEngine;
 
 public class TrapSnapPoint : SnapPointBase
 {
+	[Header("Type of Trapnode")]
+	public bool Floor;
+	public bool Roof;
+	public bool Wall;
 
-    public bool Used;
+	[Header("Is node in use")]
+	public bool Used;
 
     // Start is called before the first frame update
     void Start()
