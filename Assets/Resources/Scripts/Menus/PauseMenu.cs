@@ -21,6 +21,11 @@ public class PauseMenu : MonoBehaviour
     private bool paused = false;
     // The UI for the pause menu
     public GameObject PauseMenuUI;
+    // All the UI containers
+    public GameObject MainUI;
+    public GameObject MainOptionsUI;
+    public GameObject AudioSettingsUI;
+    public GameObject VideoSettingsUI;
     // The owner of the pause menu ui
     public Transform Owner;
     // Playercontroller is use for disabling the movement and the mouse camera control when paused
@@ -60,6 +65,7 @@ public class PauseMenu : MonoBehaviour
     void Pause()
     {
 		PauseMenuUI.SetActive(true);
+        MainUI.SetActive(true);
 		paused = true;
 		if (playerController != null)
 			playerController.DisableInput = true;
@@ -70,6 +76,9 @@ public class PauseMenu : MonoBehaviour
     public void UnPause()
     {
         PauseMenuUI.SetActive(false);
+        MainOptionsUI.SetActive(false);
+        AudioSettingsUI.SetActive(false);
+        VideoSettingsUI.SetActive(false);
         paused = false;
 		if (playerController != null)
 			playerController.DisableInput = false;
