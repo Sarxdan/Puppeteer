@@ -38,7 +38,7 @@ public class ItemGrabTool : NetworkBehaviour
 
 	private SnapPointBase bestDstPoint;
 
-	private TrapComponent lastHit;
+	private TrapBaseFunctionality lastHit;
 	private Vector3 grabOffset = new Vector3();
 
 	// Mouse position of current Puppeteer. Used when server is not puppeteer.
@@ -75,7 +75,7 @@ public class ItemGrabTool : NetworkBehaviour
                 GameObject hitObject = hit.transform.gameObject;
 
 				// Start and stop glow
-				var trapComponent = hitObject.GetComponent<TrapComponent>();
+				var trapComponent = hitObject.GetComponent<TrapBaseFunctionality>();
                 if (trapComponent != null)
                 {
                     if (trapComponent != lastHit)
@@ -238,7 +238,7 @@ public class ItemGrabTool : NetworkBehaviour
 			
             guideObject.name = "Placed Trap";
 			guideObject.transform.SetParent(bestDstPoint.transform.parent);
-            guideObject.GetComponent<TrapComponent>().Placed = true;
+            guideObject.GetComponent<TrapBaseFunctionality>().Placed = true;
 			NetworkServer.Spawn(guideObject);
 			guideObject.layer = 0;
 			bestDstPoint.GetComponent<TrapSnapPoint>().Used = true;
@@ -265,7 +265,7 @@ public class ItemGrabTool : NetworkBehaviour
 
 			guideObject.name = "Placed Trap";
 			guideObject.transform.SetParent(bestDstPoint.transform.parent);
-			guideObject.GetComponent<TrapComponent>().Placed = true;
+			guideObject.GetComponent<TrapBaseFunctionality>().Placed = true;
 			NetworkServer.Spawn(guideObject);
 			guideObject.layer = 0;
 			bestDstPoint.GetComponent<TrapSnapPoint>().Used = true;
@@ -290,7 +290,7 @@ public class ItemGrabTool : NetworkBehaviour
         float bestDist = Mathf.Infinity;
         bestDstPoint = null;
 		// Decide which snap point is best to snap to.
-		var nearestPoint = FindNearestFreePoint(selectedObject.GetComponent<TrapComponent>(), ref bestDist);
+		var nearestPoint = FindNearestFreePoint(selectedObject.GetComponent<TrapBaseFunctionality>(), ref bestDist);
         if (nearestPoint != null)
         {
             bestDstPoint = nearestPoint;
@@ -322,7 +322,7 @@ public class ItemGrabTool : NetworkBehaviour
         }
     }
 	// Checks all other snap points in the level and picks the best one.
-	private SnapPointBase FindNearestFreePoint(in TrapComponent heldTrap, ref float bestDist)
+	private SnapPointBase FindNearestFreePoint(in TrapBaseFunctionality heldTrap, ref float bestDist)
     {
         List<SnapPointBase> snapPoints = new List<SnapPointBase>();
         var rooms = level.GetRooms();
@@ -350,7 +350,7 @@ public class ItemGrabTool : NetworkBehaviour
 
     } 
 
-    bool CanBePlaced(TrapComponent heldTrap, SnapPointBase snapPoint)
+    bool CanBePlaced(TrapBaseFunctionality heldTrap, SnapPointBase snapPoint)
     {
 		//if (heldTrap is FakeItem)
 		//{
