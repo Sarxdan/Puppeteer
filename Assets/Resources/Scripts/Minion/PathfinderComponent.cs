@@ -93,6 +93,7 @@ public class PathfinderComponent : NetworkBehaviour
         Transform endRoom = null;
         if(Physics.Raycast(endPos + TransformRaycastOffset, Vector3.down, out endHit))
         {
+            
             endRoom = endHit.transform.parent;
             endPos = endHit.point;
         }
@@ -287,7 +288,7 @@ public class PathfinderComponent : NetworkBehaviour
         }
         
         RaycastHit doorHit;
-        if(Physics.Raycast(transform.position, transform.forward, out doorHit, InteractRayLength))
+        if(Physics.Raycast(transform.position + TransformRaycastOffset, transform.forward, out doorHit, InteractRayLength))
         {
             DoorComponent doorComponent = doorHit.transform.GetComponent<DoorComponent>();
             if(doorComponent != null)
