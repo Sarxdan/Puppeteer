@@ -38,8 +38,11 @@ public class ItemGrabTool : NetworkBehaviour
 
 	private SnapPointBase bestDstPoint;
 
-	private TrapBaseFunctionality lastHit;
+	private SnapFunctionality lastHit;
 	private Vector3 grabOffset = new Vector3();
+
+	private Currency currency;
+	private int cost;
 
 	// Mouse position of current Puppeteer. Used when server is not puppeteer.
 	private Vector3 localPlayerMousePos;
@@ -48,6 +51,7 @@ public class ItemGrabTool : NetworkBehaviour
     void Start()
     {
         level = GetComponent<LevelBuilder>();
+		currency = GetComponent<Currency>();
     }
 
     // Update is called once per frame
@@ -75,7 +79,7 @@ public class ItemGrabTool : NetworkBehaviour
                 GameObject hitObject = hit.transform.gameObject;
 
 				// Start and stop glow
-				var trapComponent = hitObject.GetComponent<TrapBaseFunctionality>();
+				var trapComponent = hitObject.GetComponent<SnapFunctionality>();
                 if (trapComponent != null)
                 {
                     if (trapComponent != lastHit)
@@ -187,6 +191,9 @@ public class ItemGrabTool : NetworkBehaviour
 		selectedObject = Instantiate(sourceObject);
 		selectedObject.name = "SelectedObject";
 
+		cost = selectedObject.GetComponent<SnapFunctionality>().Cost;
+		currency.TemporaryCurrency = currency.CurrentCurrency - cost;
+
 		guideObject = Instantiate(sourceObject);
 		guideObject.name = "GuideObject";
 
@@ -204,8 +211,13 @@ public class ItemGrabTool : NetworkBehaviour
 			sourceObject = pickupTrap;
 			selectedObject = Instantiate(sourceObject);
 			selectedObject.name = "SelectedObject";
+
+			cost = selectedObject.GetComponent<SnapFunctionality>().Cost;
+			currency.TemporaryCurrency = currency.CurrentCurrency - cost;
+
 			guideObject = Instantiate(sourceObject);
 			guideObject.name = "GuideObject";
+
 			// Disable colliders on server when server is not puppeteer.
 			foreach (BoxCollider collider in guideObject.GetComponentsInChildren<BoxCollider>())
 			{
@@ -235,10 +247,12 @@ public class ItemGrabTool : NetworkBehaviour
 		{
 			Destroy(selectedObject);
 			selectedObject = null;
-			
-            guideObject.name = "Placed Trap";
+
+			currency.CurrentCurrency = currency.CurrentCurrency - cost;
+
+			guideObject.name = "Placed Trap";
 			guideObject.transform.SetParent(bestDstPoint.transform.parent);
-            guideObject.GetComponent<TrapBaseFunctionality>().Placed = true;
+            guideObject.GetComponent<SnapFunctionality>().Placed = true;
 			NetworkServer.Spawn(guideObject);
 			guideObject.layer = 0;
 			TrapSnapPoint trapPoint = bestDstPoint.GetComponent<TrapSnapPoint>();
@@ -268,9 +282,11 @@ public class ItemGrabTool : NetworkBehaviour
 			Destroy(selectedObject);
 			selectedObject = null;
 
+			currency.CurrentCurrency = currency.CurrentCurrency - cost;
+
 			guideObject.name = "Placed Trap";
 			guideObject.transform.SetParent(bestDstPoint.transform.parent);
-			guideObject.GetComponent<TrapBaseFunctionality>().Placed = true;
+			guideObject.GetComponent<SnapFunctionality>().Placed = true;
 			NetworkServer.Spawn(guideObject);
 			guideObject.layer = 0;
 			TrapSnapPoint trapPoint = bestDstPoint.GetComponent<TrapSnapPoint>();
@@ -301,7 +317,7 @@ public class ItemGrabTool : NetworkBehaviour
         float bestDist = Mathf.Infinity;
         bestDstPoint = null;
 		// Decide which snap point is best to snap to.
-		var nearestPoint = FindNearestFreePoint(selectedObject.GetComponent<TrapBaseFunctionality>(), ref bestDist);
+		var nearestPoint = FindNearestFreePoint(selectedObject.GetComponent<SnapFunctionality>(), ref bestDist);
         if (nearestPoint != null)
         {
             bestDstPoint = nearestPoint;
@@ -333,7 +349,7 @@ public class ItemGrabTool : NetworkBehaviour
         }
     }
 	// Checks all other snap points in the level and picks the best one.
-	private SnapPointBase FindNearestFreePoint(in TrapBaseFunctionality heldTrap, ref float bestDist)
+	private SnapPointBase FindNearestFreePoint(in SnapFunctionality heldTrap, ref float bestDist)
     {
         List<SnapPointBase> snapPoints = new List<SnapPointBase>();
         var rooms = level.GetRooms();
@@ -361,9 +377,12 @@ public class ItemGrabTool : NetworkBehaviour
 
     } 
 
-    bool CanBePlaced(TrapBaseFunctionality heldTrap, SnapPointBase snapPoint)
+    bool CanBePlaced(SnapFunctionality heldTrap, SnapPointBase snapPoint)
     {
-		if (heldTrap.FakeItem)
+		if (cost > currency.CurrentCurrency)
+			return false;
+
+		else if (heldTrap.FakeItem)
 		{
 			var snap = snapPoint.GetComponent<ItemSnapPoint>();
 			if (snap == null || snap.Occupied)
