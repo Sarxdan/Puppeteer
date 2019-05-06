@@ -11,7 +11,7 @@ using UnityEngine.UI;
 * Saves the value of a toggle button to toggle the mouse camera movement as a puppeteer
 *
 * CODE REVIEWED BY:
-* Anton Jonsson (06/05/2019)
+* Anton Jonsson (06/05-2019)
 *
 * CONTRIBUTORS:
 *
