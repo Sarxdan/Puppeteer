@@ -25,4 +25,6 @@ public class SnapFunctionality : MonoBehaviour
     public bool BearTrap;
     public bool RoofSpike;
     public bool FloorSpike;
+	[Header("Cost of placing")]
+	public int Cost;
 }

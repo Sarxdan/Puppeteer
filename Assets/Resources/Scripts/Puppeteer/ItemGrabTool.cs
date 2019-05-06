@@ -41,6 +41,9 @@ public class ItemGrabTool : NetworkBehaviour
 	private SnapFunctionality lastHit;
 	private Vector3 grabOffset = new Vector3();
 
+	private Currency currency;
+	private int cost;
+
 	// Mouse position of current Puppeteer. Used when server is not puppeteer.
 	private Vector3 localPlayerMousePos;
 
@@ -48,6 +51,7 @@ public class ItemGrabTool : NetworkBehaviour
     void Start()
     {
         level = GetComponent<LevelBuilder>();
+		currency = GetComponent<Currency>();
     }
 
     // Update is called once per frame
@@ -187,6 +191,10 @@ public class ItemGrabTool : NetworkBehaviour
 		selectedObject = Instantiate(sourceObject);
 		selectedObject.name = "SelectedObject";
 
+		// handels the change in temporary currency. can be used to show currency left after placement.
+		cost = selectedObject.GetComponent<SnapFunctionality>().Cost;
+		currency.TemporaryCurrency = currency.CurrentCurrency - cost;
+
 		guideObject = Instantiate(sourceObject);
 		guideObject.name = "GuideObject";
 
@@ -204,8 +212,14 @@ public class ItemGrabTool : NetworkBehaviour
 			sourceObject = pickupTrap;
 			selectedObject = Instantiate(sourceObject);
 			selectedObject.name = "SelectedObject";
+
+			// handels the change in temporary currency. can be used to show currency left after placement.
+			cost = selectedObject.GetComponent<SnapFunctionality>().Cost;
+			currency.TemporaryCurrency = currency.CurrentCurrency - cost;
+
 			guideObject = Instantiate(sourceObject);
 			guideObject.name = "GuideObject";
+
 			// Disable colliders on server when server is not puppeteer.
 			foreach (BoxCollider collider in guideObject.GetComponentsInChildren<BoxCollider>())
 			{
@@ -235,18 +249,17 @@ public class ItemGrabTool : NetworkBehaviour
 		{
 			Destroy(selectedObject);
 			selectedObject = null;
-			
-            guideObject.name = "Placed Trap";
+
+			// removes currency from the puppeteer when placed.
+			currency.CurrentCurrency = currency.CurrentCurrency - cost;
+
+			guideObject.name = "Placed Trap";
 			guideObject.transform.SetParent(bestDstPoint.transform.parent);
             guideObject.GetComponent<SnapFunctionality>().Placed = true;
 			NetworkServer.Spawn(guideObject);
 			guideObject.layer = 0;
-			TrapSnapPoint trapPoint = bestDstPoint.GetComponent<TrapSnapPoint>();
-			ItemSnapPoint itemPoint = bestDstPoint.GetComponent<ItemSnapPoint>();
-			if(trapPoint != null)
-				trapPoint.Used = true;
-			else if(itemPoint != null)
-				itemPoint.Occupied = true;
+			SnapPointBase point = bestDstPoint.GetComponent<SnapPointBase>();
+			point.Used = true;
 			guideObject = null;
 		}
     }
@@ -268,17 +281,16 @@ public class ItemGrabTool : NetworkBehaviour
 			Destroy(selectedObject);
 			selectedObject = null;
 
+			// removes currency from the puppeteer when placed.
+			currency.CurrentCurrency = currency.CurrentCurrency - cost;
+
 			guideObject.name = "Placed Trap";
 			guideObject.transform.SetParent(bestDstPoint.transform.parent);
 			guideObject.GetComponent<SnapFunctionality>().Placed = true;
 			NetworkServer.Spawn(guideObject);
 			guideObject.layer = 0;
-			TrapSnapPoint trapPoint = bestDstPoint.GetComponent<TrapSnapPoint>();
-			ItemSnapPoint itemPoint = bestDstPoint.GetComponent<ItemSnapPoint>();
-			if(trapPoint != null)
-				trapPoint.Used = true;
-			else if(itemPoint != null)
-				itemPoint.Occupied = true;
+			SnapPointBase point = bestDstPoint.GetComponent<SnapPointBase>();
+			point.Used = true;
 			//bestDstPoint.GetComponent<TrapSnapPoint>().Used = true;
 			guideObject = null;
 		}
@@ -347,7 +359,6 @@ public class ItemGrabTool : NetworkBehaviour
         SnapPointBase result = null;
         foreach (var snapPoint in snapPoints)
         {
-			Debug.Log("U");
             if (!CanBePlaced(heldTrap, snapPoint))
                 continue;
             float curDist = (heldTrap.transform.position - snapPoint.transform.position).sqrMagnitude;
@@ -363,10 +374,13 @@ public class ItemGrabTool : NetworkBehaviour
 
     bool CanBePlaced(SnapFunctionality heldTrap, SnapPointBase snapPoint)
     {
-		if (heldTrap.FakeItem)
+		if (cost > currency.CurrentCurrency)
+			return false;
+
+		else if (heldTrap.FakeItem)
 		{
 			var snap = snapPoint.GetComponent<ItemSnapPoint>();
-			if (snap == null || snap.Occupied)
+			if (snap == null || snap.Used)
 				return false;
 		}
 		else

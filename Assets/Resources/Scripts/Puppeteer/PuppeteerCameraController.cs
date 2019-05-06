@@ -56,6 +56,12 @@ public class PuppeteerCameraController : MonoBehaviour
         LeftHorizontalBorder = pos.x - lenghtFromCenter;
         TopVerticalBorder = pos.z + lenghtFromCenter;
         BottomVerticalBorder = pos.z - lenghtFromCenter;
+
+        if (PlayerPrefs.GetInt("MouseCameraMovementPuppeteer") == 1)
+            MouseMovement = true;
+        else
+            MouseMovement = false;
+
     }
 
 	void Update()
@@ -82,16 +88,17 @@ public class PuppeteerCameraController : MonoBehaviour
 			}
 
 			transform.position = pos;
+
+            float deltaScrollWheel = Input.mouseScrollDelta.y;
+            if (deltaScrollWheel != 0)
+            {
+                Vector3 newCameraPosition = new Vector3(transform.position.x, transform.position.y - (deltaScrollWheel * CameraZoomSpeed), transform.position.z);
+                if (newCameraPosition.y >= NearCameraZoomLimit && newCameraPosition.y <= FarCameraZoomLimit)
+                {
+                    transform.position = newCameraPosition;
+                }
+            }
 		}
 
-        float deltaScrollWheel = Input.mouseScrollDelta.y;
-        if (deltaScrollWheel != 0)
-        {
-            Vector3 newCameraPosition = new Vector3(transform.position.x, transform.position.y - (deltaScrollWheel * CameraZoomSpeed), transform.position.z);
-            if (newCameraPosition.y >= NearCameraZoomLimit && newCameraPosition.y <= FarCameraZoomLimit)
-            {
-            transform.position = newCameraPosition;
-            }
-        }
 	}
 }
