@@ -26,6 +26,7 @@ public class EnemySpawner : NetworkBehaviour
     public int MaxDelay = 10;
     public List<GameObject> SpawnedEnemies = new List<GameObject>();
 
+    //TODO: change to SnapFunctionality
     private TrapBaseFunctionality trapBase;
 
     public float ChooseThisChance = .3f;
