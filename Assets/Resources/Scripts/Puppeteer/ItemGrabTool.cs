@@ -258,11 +258,8 @@ public class ItemGrabTool : NetworkBehaviour
             guideObject.GetComponent<SnapFunctionality>().Placed = true;
 			NetworkServer.Spawn(guideObject);
 			guideObject.layer = 0;
-			SnapPointBase point = GetComponent<SnapPointBase>();
-			if (point is TrapSnapPoint)
-				point.Used = true;
-			else if (point is ItemSnapPoint)
-				point.Used = true;
+			SnapPointBase point = bestDstPoint.GetComponent<SnapPointBase>();
+			point.Used = true;
 			guideObject = null;
 		}
     }
@@ -292,11 +289,8 @@ public class ItemGrabTool : NetworkBehaviour
 			guideObject.GetComponent<SnapFunctionality>().Placed = true;
 			NetworkServer.Spawn(guideObject);
 			guideObject.layer = 0;
-			SnapPointBase point = GetComponent<SnapPointBase>();
-			if(point is TrapSnapPoint)
-				point.Used = true;
-			else if(point is ItemSnapPoint)
-				point.Used = true;
+			SnapPointBase point = bestDstPoint.GetComponent<SnapPointBase>();
+			point.Used = true;
 			//bestDstPoint.GetComponent<TrapSnapPoint>().Used = true;
 			guideObject = null;
 		}
@@ -365,7 +359,6 @@ public class ItemGrabTool : NetworkBehaviour
         SnapPointBase result = null;
         foreach (var snapPoint in snapPoints)
         {
-			Debug.Log("U");
             if (!CanBePlaced(heldTrap, snapPoint))
                 continue;
             float curDist = (heldTrap.transform.position - snapPoint.transform.position).sqrMagnitude;
