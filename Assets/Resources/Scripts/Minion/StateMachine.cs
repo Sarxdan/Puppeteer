@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using MinionStates;
 using Mirror;
-
+#pragma warning disable IDE1006 // Naming Styles
 /*
  * AUTHOR:
  * Ludvig Björk Förare
@@ -26,6 +26,7 @@ public class StateMachine : NetworkBehaviour
     //States
     public string CurrentStateName;
     public State CurrentState;
+    public string MinionType;
 
     //References
     [HideInInspector]
@@ -38,6 +39,9 @@ public class StateMachine : NetworkBehaviour
     public PathfinderComponent PathFinder;
     [HideInInspector]
     public List<GameObject> Puppets;
+
+
+
 
     [Header("Attack settings")]
     public float AttackCooldown;
@@ -52,6 +56,8 @@ public class StateMachine : NetworkBehaviour
     public float ConeAggroRange;
     public float FOVConeAngle;
     public bool AtkPrioRunning;
+    public bool AssholeMode;
+    private float PreThreat;
     private float PostThreat;
 
     [Header("Misc. settings")]
@@ -71,7 +77,16 @@ public class StateMachine : NetworkBehaviour
         }
 
         PathFinder = GetComponent<PathfinderComponent>();
-        SetState(new WanderState(this));
+        //If regular Minion or Tank
+        if (MinionType == "Minion")
+        {
+            SetState(new WanderState(this));
+        }
+        else
+        {
+            SetState(new IdleState(this));
+        }
+
         CanAttack = true;
         GetComponent<HealthComponent>().AddDeathAction(Die);
         PostThreat = Mathf.NegativeInfinity;
@@ -103,22 +118,20 @@ public class StateMachine : NetworkBehaviour
             //Finds closest alive puppet
             if (puppet != null && puppet.GetComponent<HealthComponent>().Health > 0)
             {
-                float puppDist = Vector3.Distance(puppet.transform.position, gameObject.transform.position);
-
                 //If within cone range and not obscured
-                if (puppDist <= ConeAggroRange && Physics.Raycast(transform.position + RaycastOffset, puppet.transform.position - transform.position, out RaycastHit hit, ConeAggroRange, mask)) 
-                {
-                    if(hit.transform.tag.Equals("Player"))
+                if (WithinCone(transform, puppet.transform, FOVConeAngle, ConeAggroRange, InstantAggroRange))
+                {     //Attack player
+                    TargetEntity = puppet.gameObject;
+                    if (MinionType == "Minion")
                     {
-                        
-                        //If inside instant-aggro range or within vision cone
-                        if(puppDist < InstantAggroRange|| Vector3.Angle(transform.forward, puppet.transform.position - transform.position) <= FOVConeAngle)
-                        {
-                            //Attack player
-                            TargetEntity = puppet.gameObject;
-                            SetState(new AttackState(this));
-                        }
+                        SetState(new AttackState(this));
                     }
+                    else
+                    {
+                        SetState(new BigAttackState(this));
+                    }
+                        
+                    
                 }
             }
             else if (puppet == null)
@@ -155,7 +168,14 @@ public class StateMachine : NetworkBehaviour
         if(health == null)
         {
             TargetEntity = null;
-            SetState(new WanderState(this));
+            if (MinionType == "Minion")
+            {
+                SetState(new WanderState(this));
+            }
+            else
+            {
+                SetState(new IdleState(this));
+            }
             return;
         }
         if (health.Health > 0)
@@ -177,6 +197,78 @@ public class StateMachine : NetworkBehaviour
     {
 
     }
+
+    public bool WithinCone(Transform source, Transform target, float coneAngle, float coneLength, float coneIgnoreRadius)
+    {
+        int mask = ~(1 << LayerMask.NameToLayer("Puppeteer Interact"));
+        float distance = Vector3.Distance(source.position, target.position);
+        if (distance <= coneLength && Physics.Raycast(source.position + RaycastOffset, target.position - source.position, out RaycastHit hit, coneLength, mask))
+        {
+            if (hit.transform.tag.Equals("Player"))
+            {
+                //If inside instant-aggro range or within vision cone
+                if (distance < coneIgnoreRadius || Vector3.Angle(source.forward, target.position - source.position) <= coneAngle)
+                {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+
+    //Isn't used at the time this file is reviewed
+
+    private IEnumerator attackPriority()
+    {
+        AtkPrioRunning = true;
+
+        foreach (GameObject pupp in Puppets)
+        {
+            float puppDist = Vector3.Distance(pupp.transform.position, gameObject.transform.position);
+            float puppH = pupp.GetComponent<HealthComponent>().Health;
+            float puppA = pupp.GetComponent<PlayerController>().Ammunition;
+            float puppR = pupp.GetComponent<ReviveComponent>().DeathDelay;
+
+            if (puppA == 0f) puppA = 150f;
+            if (pupp.GetComponent<HealthComponent>().Health == 0 || puppDist > ConeAggroRange * 1.5f)
+            {
+                AtkPrioRunning = false;
+                yield break;
+            }
+
+            if (AssholeMode)
+            {
+                if (pupp.GetComponent<PlayerController>().HasMedkit)
+                {
+                    PreThreat = ((-puppA / -puppH) * 3 - puppR) / puppDist;
+                }
+                else
+                {
+                    PreThreat = ((-puppA / -puppH) - puppR) / puppDist;
+                }
+
+            }
+            else
+            {
+                if (pupp.GetComponent<PlayerController>().HasMedkit)
+                {
+                    PreThreat = (150 - puppH) / puppDist;
+                }
+                else
+                {
+                    PreThreat = (100 - puppH) / puppDist;
+                }
+            }
+
+            if (PostThreat > PreThreat)
+            {
+                PostThreat = PreThreat;
+            }
+        }
+        yield return new WaitForSeconds(0.1f);
+    }
+
 }
 
 

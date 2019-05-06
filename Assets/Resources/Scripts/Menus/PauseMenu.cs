@@ -85,4 +85,19 @@ public class PauseMenu : MonoBehaviour
 		else
 			puppeteerController.DisableInput = false;
 	}
+
+    public void OnExit()
+    {
+        var temp = GameObject.Find("NetworkManager").GetComponent<CustomNetworkManager>();
+        if(temp == null)
+        {
+            Debug.LogError("No Network manager found: Does it have the right name?(NetworkManager)");
+        }
+        else
+        {
+            temp.StopHost();
+        }
+
+
+    }
 }

@@ -487,6 +487,20 @@ public class GrabTool : NetworkBehaviour
 			guideDoor.NoSpawnDisconnectDoor();
 		}
 	}
+
+	[ClientRpc]
+	public void RpcGlowRoom(GameObject room)
+	{
+		if (isLocalPlayer)
+		{
+			Glowable glow = room.GetComponent<Glowable>();
+			if (glow != null)
+			{
+				glow.GlowColor = Color.red;
+				room.GetComponent<RoomInteractable>().OnRaycastEnter();
+			}
+		}
+	}
 }
 
 

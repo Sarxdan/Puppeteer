@@ -28,7 +28,12 @@ public class EnemySpawner : NetworkBehaviour
     public List<GameObject> SpawnedEnemies = new List<GameObject>();
     public static Transform minionContainer;
 
+<<<<<<< HEAD
+    //TODO: change to SnapFunctionality
+    private TrapBaseFunctionality trapBase;
+=======
     private SnapFunctionality trapBase;
+>>>>>>> f38f5cb396f057198058762d657339239be39f7b
 
     public float ChooseThisChance = .3f;
 

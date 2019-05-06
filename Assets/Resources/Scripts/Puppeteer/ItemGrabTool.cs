@@ -28,6 +28,8 @@ public class ItemGrabTool : NetworkBehaviour
 	public float LiftHeight = 3.0f;
 	// The lift speed when grabbing an object
 	public float LiftSpeed = 50.0f;
+	//The distance of the groud that the preview trap is
+	private float PreviewLiftHeight = 2.0f;
 
 	// enables camera movement using mouse scroll
 	public bool EnableMovement = true;
@@ -36,6 +38,7 @@ public class ItemGrabTool : NetworkBehaviour
 	private GameObject selectedObject;
 	private GameObject guideObject;
 
+	private Vector3 previewLiftVector = new Vector3(0,2.0f,0);
 	private SnapPointBase bestDstPoint;
 
 	private SnapFunctionality lastHit;
@@ -52,6 +55,8 @@ public class ItemGrabTool : NetworkBehaviour
     {
         level = GetComponent<LevelBuilder>();
 		currency = GetComponent<Currency>();
+		previewLiftVector = new Vector3(0,PreviewLiftHeight,0);
+
     }
 
     // Update is called once per frame
@@ -255,14 +260,12 @@ public class ItemGrabTool : NetworkBehaviour
 
 			guideObject.name = "Placed Trap";
 			guideObject.transform.SetParent(bestDstPoint.transform.parent);
+			guideObject.transform.position -=previewLiftVector;
             guideObject.GetComponent<SnapFunctionality>().Placed = true;
 			NetworkServer.Spawn(guideObject);
 			guideObject.layer = 0;
-			SnapPointBase point = GetComponent<SnapPointBase>();
-			if (point is TrapSnapPoint)
-				point.Used = true;
-			else if (point is ItemSnapPoint)
-				point.Used = true;
+			SnapPointBase point = bestDstPoint.GetComponent<SnapPointBase>();
+			point.Used = true;
 			guideObject = null;
 		}
     }
@@ -272,7 +275,7 @@ public class ItemGrabTool : NetworkBehaviour
     public void CmdDrop()
     {
 		// Reset everything if trap is droped without a target place.
-		if (sourceObject.transform.position == guideObject.transform.position && sourceObject.transform.rotation == guideObject.transform.rotation)
+		if (sourceObject.transform.position.x == guideObject.transform.position.x && sourceObject.transform.position.z == guideObject.transform.position.z && sourceObject.transform.rotation == guideObject.transform.rotation)
 		{
 			Destroy(selectedObject);
 			selectedObject = null;
@@ -289,14 +292,12 @@ public class ItemGrabTool : NetworkBehaviour
 
 			guideObject.name = "Placed Trap";
 			guideObject.transform.SetParent(bestDstPoint.transform.parent);
+			guideObject.transform.position -=previewLiftVector;
 			guideObject.GetComponent<SnapFunctionality>().Placed = true;
 			NetworkServer.Spawn(guideObject);
 			guideObject.layer = 0;
-			SnapPointBase point = GetComponent<SnapPointBase>();
-			if(point is TrapSnapPoint)
-				point.Used = true;
-			else if(point is ItemSnapPoint)
-				point.Used = true;
+			SnapPointBase point = bestDstPoint.GetComponent<SnapPointBase>();
+			point.Used = true;
 			//bestDstPoint.GetComponent<TrapSnapPoint>().Used = true;
 			guideObject = null;
 		}
@@ -326,17 +327,17 @@ public class ItemGrabTool : NetworkBehaviour
 
             Debug.DrawLine(bestDstPoint.transform.position, selectedObject.transform.position, Color.yellow);
         }
-		// Move guideObject to best availible position. If there is none, move it to source.
+		// Move guideObject to best available position. If there is none, move it to source.
 		if (bestDstPoint != null)
         {
             RpcUpdateGuide(new TransformStruct(selectedObject.transform.position - (selectedObject.transform.position - bestDstPoint.transform.position), selectedObject.transform.rotation));
-			guideObject.transform.position = selectedObject.transform.position - (selectedObject.transform.position - bestDstPoint.transform.position);
+			guideObject.transform.position = selectedObject.transform.position - (selectedObject.transform.position - bestDstPoint.transform.position) + previewLiftVector;
 			guideObject.transform.rotation = selectedObject.transform.rotation;
         }
         else
         {
         	RpcUpdateGuide(new TransformStruct(sourceObject.transform.position, sourceObject.transform.rotation));
-			guideObject.transform.position = sourceObject.transform.position;
+			guideObject.transform.position = sourceObject.transform.position + previewLiftVector;
 			guideObject.transform.rotation = sourceObject.transform.rotation;
         }
     }
@@ -346,7 +347,7 @@ public class ItemGrabTool : NetworkBehaviour
     {
         if (isLocalPlayer)
         {
-            guideObject.transform.position = target.Position;
+			guideObject.transform.position = target.Position + previewLiftVector;
             gameObject.transform.rotation = target.Rotation;
         }
     }
@@ -365,7 +366,6 @@ public class ItemGrabTool : NetworkBehaviour
         SnapPointBase result = null;
         foreach (var snapPoint in snapPoints)
         {
-			Debug.Log("U");
             if (!CanBePlaced(heldTrap, snapPoint))
                 continue;
             float curDist = (heldTrap.transform.position - snapPoint.transform.position).sqrMagnitude;
