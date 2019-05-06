@@ -12,7 +12,7 @@ using UnityEngine;
  * 
  * 
  */
-public class TrapBaseFunctionality : MonoBehaviour
+public class SnapFunctionality : MonoBehaviour
 {
     [Header("Changed by script")]
     public bool Placed;
