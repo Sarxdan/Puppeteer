@@ -49,9 +49,8 @@ public class NavMesh : MonoBehaviour
     public Mesh inputMesh;
     
     //Cached faces
+    [HideInInspector]
     public navmeshFace[] faces;
-
-    public bool bake;
     public bool draw;
 
     //Optional rotation offset to fix mismatching coordinate systems
@@ -61,28 +60,6 @@ public class NavMesh : MonoBehaviour
 
     private void OnDrawGizmos()
     {
-        if (bake)
-        {
-            bake = false;
-            //Fetches vertex data from mesh
-            Vector3[] vertices = new Vector3[inputMesh.vertices.Length];
-
-            //Rotates vertices
-            for(int i = 0; i < inputMesh.vertices.Length; i++)
-            {
-                vertices[i] = rotation * inputMesh.vertices[i];
-            }
-
-            //Saves faces from mesh
-            faces = new navmeshFace[(int)(inputMesh.triangles.Length / 3)];
-            for(int i = 0; i < faces.Length; i++)
-            {
-                faces[i] = new navmeshFace(vertices[inputMesh.triangles[i*3]], vertices[inputMesh.triangles[i * 3 + 1]], vertices[inputMesh.triangles[i * 3 + 2]]); 
-            }
-            
-
-
-        }
         if (draw) //Draws navmesh as wireframe
         {
             if (inputMesh != null)
@@ -170,5 +147,34 @@ public class NavMesh : MonoBehaviour
 
     }
 
+    public void BakeNavmesh(){
+            //Fetches vertex data from mesh
+            Vector3[] vertices = new Vector3[inputMesh.vertices.Length];
+
+            //Rotates vertices
+            for(int i = 0; i < inputMesh.vertices.Length; i++)
+            {
+                vertices[i] = rotation * inputMesh.vertices[i];
+            }
+
+            //Saves faces from mesh
+            faces = new navmeshFace[(int)(inputMesh.triangles.Length / 3)];
+            for(int i = 0; i < faces.Length; i++)
+            {
+                faces[i] = new navmeshFace(vertices[inputMesh.triangles[i*3]], vertices[inputMesh.triangles[i * 3 + 1]], vertices[inputMesh.triangles[i * 3 + 2]]); 
+            }
+    }
+
+    public void ClearNavmesh(){
+        faces = null;
+    }
     
+    private  IEnumerator showNavmesh(){
+        if(!draw){
+            draw = true;
+            yield return new WaitForSeconds(3);
+            draw = false;
+        }
+        yield return null;
+    }
 }

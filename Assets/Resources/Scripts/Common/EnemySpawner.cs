@@ -20,11 +20,13 @@ using Mirror;
 
 public class EnemySpawner : NetworkBehaviour
 {
+    public bool server;
     public GameObject EnemyPrefab;
     public int MaxEnemyCount;
     public int MinDelay = 5;
     public int MaxDelay = 10;
     public List<GameObject> SpawnedEnemies = new List<GameObject>();
+    public static Transform minionContainer;
 
     private SnapFunctionality trapBase;
 
@@ -33,10 +35,12 @@ public class EnemySpawner : NetworkBehaviour
 
     public void Start()
     {
-        trapBase = GetComponent<SnapFunctionality>();
-        if(isServer){
-            StartCoroutine("Spawn");
+        if(minionContainer == null){
+            minionContainer = GameObject.Find("MinionContainer").transform;
         }
+        trapBase = GetComponent<SnapFunctionality>();
+        server = true;
+        StartCoroutine("Spawn");
 
     }
 
@@ -45,7 +49,8 @@ public class EnemySpawner : NetworkBehaviour
     private IEnumerator Spawn()
     { 
         while(true){
-            if(trapBase.Placed){
+            Debug.Log("Server: " + isServer);
+            if(isServer && trapBase.Placed){
                 //Check if max amount of enemies has been reached
                 if (SpawnedEnemies.Count < MaxEnemyCount && MaxEnemyCount > 0)
                 {
@@ -64,10 +69,9 @@ public class EnemySpawner : NetworkBehaviour
     //Returns a random point from a room somewhat close to the spawners room
     public Vector3 GetNearbyDestination(){
         
-        Transform currentRoom = transform.parent.parent;
         AnchorPoint currentDoor = null;
-        DoorReferences doorReferences = currentRoom.GetComponent<DoorReferences>();
-        while(currentRoom != null){
+        DoorReferences doorReferences = transform.GetComponentInParent<DoorReferences>();
+        while(doorReferences != null){
             //Checks if this room is to be chosen
             if(Random.Range(0.0f,1.0f) <= ChooseThisChance){
                 break;
@@ -86,13 +90,29 @@ public class EnemySpawner : NetworkBehaviour
             }
 
             currentDoor = availableDoors[Random.Range(0,availableDoors.Count-1)].ConnectedTo;
-            doorReferences = currentDoor.transform.parent.parent.GetComponent<DoorReferences>();
+            doorReferences = currentDoor.GetComponentInParent<DoorReferences>();
             if(doorReferences == null) break;
-            currentRoom = currentDoor.transform.parent.parent;
         }
 
-        NavMesh navMesh = currentRoom.GetComponent<NavMesh>();
-        return currentRoom.TransformPoint(navMesh.faces[Random.Range(0,navMesh.faces.Length-1)].Origin);
+        NavMesh navMesh = null;
 
+        try
+        {
+            navMesh = doorReferences.GetComponent<NavMesh>();
+        }
+        catch(System.NullReferenceException e)
+        {
+            Debug.LogWarning("EnemySpawner tried to send minion to a room which had no navmesh: " + doorReferences.name);
+            return GetNearbyDestination(); //Attempts again
+        }
+
+        return doorReferences.transform.TransformPoint(navMesh.faces[Random.Range(0,navMesh.faces.Length-1)].Origin);
+
+    }
+
+    public void onDeath(){
+        foreach(GameObject enemy in SpawnedEnemies){
+            enemy.GetComponent<StateMachine>().Die();
+        }
     }
 }
