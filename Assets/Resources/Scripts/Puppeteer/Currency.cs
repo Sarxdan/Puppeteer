@@ -2,6 +2,20 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/*
+ * AUTHOR:
+ * Benjamin "Boris" Vesterlund
+ * 
+ * DESCRIPTION:
+ * Code to increment currency. sits on puppeteer prefab.
+ * 
+ * CODE REVIEWED BY:
+ * Ludvig Björk Förare
+ * 
+ * CONTRIBUTORS:
+ * 
+ */
+
 public class Currency : MonoBehaviour
 {
 	public int CurrencyIncrease;
@@ -12,12 +26,6 @@ public class Currency : MonoBehaviour
     void Start()
     {
 		StartCoroutine("CountUpCurrency");
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 
 	public IEnumerator CountUpCurrency()

@@ -9,9 +9,6 @@ public class TrapSnapPoint : SnapPointBase
 	public bool Roof;
 	public bool Wall;
 
-	[Header("Is node in use")]
-	public bool Used;
-
     // Start is called before the first frame update
     void Start()
     {

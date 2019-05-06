@@ -191,6 +191,7 @@ public class ItemGrabTool : NetworkBehaviour
 		selectedObject = Instantiate(sourceObject);
 		selectedObject.name = "SelectedObject";
 
+		// handels the change in temporary currency. can be used to show currency left after placement.
 		cost = selectedObject.GetComponent<SnapFunctionality>().Cost;
 		currency.TemporaryCurrency = currency.CurrentCurrency - cost;
 
@@ -212,6 +213,7 @@ public class ItemGrabTool : NetworkBehaviour
 			selectedObject = Instantiate(sourceObject);
 			selectedObject.name = "SelectedObject";
 
+			// handels the change in temporary currency. can be used to show currency left after placement.
 			cost = selectedObject.GetComponent<SnapFunctionality>().Cost;
 			currency.TemporaryCurrency = currency.CurrentCurrency - cost;
 
@@ -248,6 +250,7 @@ public class ItemGrabTool : NetworkBehaviour
 			Destroy(selectedObject);
 			selectedObject = null;
 
+			// removes currency from the puppeteer when placed.
 			currency.CurrentCurrency = currency.CurrentCurrency - cost;
 
 			guideObject.name = "Placed Trap";
@@ -255,12 +258,11 @@ public class ItemGrabTool : NetworkBehaviour
             guideObject.GetComponent<SnapFunctionality>().Placed = true;
 			NetworkServer.Spawn(guideObject);
 			guideObject.layer = 0;
-			TrapSnapPoint trapPoint = bestDstPoint.GetComponent<TrapSnapPoint>();
-			ItemSnapPoint itemPoint = bestDstPoint.GetComponent<ItemSnapPoint>();
-			if(trapPoint != null)
-				trapPoint.Used = true;
-			else if(itemPoint != null)
-				itemPoint.Occupied = true;
+			SnapPointBase point = GetComponent<SnapPointBase>();
+			if (point is TrapSnapPoint)
+				point.Used = true;
+			else if (point is ItemSnapPoint)
+				point.Used = true;
 			guideObject = null;
 		}
     }
@@ -282,6 +284,7 @@ public class ItemGrabTool : NetworkBehaviour
 			Destroy(selectedObject);
 			selectedObject = null;
 
+			// removes currency from the puppeteer when placed.
 			currency.CurrentCurrency = currency.CurrentCurrency - cost;
 
 			guideObject.name = "Placed Trap";
@@ -289,12 +292,11 @@ public class ItemGrabTool : NetworkBehaviour
 			guideObject.GetComponent<SnapFunctionality>().Placed = true;
 			NetworkServer.Spawn(guideObject);
 			guideObject.layer = 0;
-			TrapSnapPoint trapPoint = bestDstPoint.GetComponent<TrapSnapPoint>();
-			ItemSnapPoint itemPoint = bestDstPoint.GetComponent<ItemSnapPoint>();
-			if(trapPoint != null)
-				trapPoint.Used = true;
-			else if(itemPoint != null)
-				itemPoint.Occupied = true;
+			SnapPointBase point = GetComponent<SnapPointBase>();
+			if(point is TrapSnapPoint)
+				point.Used = true;
+			else if(point is ItemSnapPoint)
+				point.Used = true;
 			//bestDstPoint.GetComponent<TrapSnapPoint>().Used = true;
 			guideObject = null;
 		}
@@ -385,7 +387,7 @@ public class ItemGrabTool : NetworkBehaviour
 		else if (heldTrap.FakeItem)
 		{
 			var snap = snapPoint.GetComponent<ItemSnapPoint>();
-			if (snap == null || snap.Occupied)
+			if (snap == null || snap.Used)
 				return false;
 		}
 		else
