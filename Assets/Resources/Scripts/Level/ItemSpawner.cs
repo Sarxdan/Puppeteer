@@ -123,7 +123,7 @@ public class ItemSpawner : NetworkBehaviour
 	public void SpawnItem(GameObject spawner, GameObject item)
 	{
 		Debug.Log("Item Spawned");
-		spawner.GetComponent<ItemSnapPoint>().Occupied = true;
+		spawner.GetComponent<ItemSnapPoint>().Used = true;
 		var spawnableObject = Instantiate(item, spawner.transform);
 		NetworkServer.Spawn(spawnableObject);
 	}

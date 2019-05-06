@@ -107,12 +107,7 @@ public class RoomTreeNode : MonoBehaviour
 	// Recursively apply a fading red glow to a branch.
 	public void GlowBranch(Color color)
 	{
-		Glowable glow = GetComponent<Glowable>();
-		if (glow != null)
-		{
-			glow.GlowColor = color;
-			GetComponent<RoomInteractable>().OnRaycastEnter();
-		}
+		FindObjectOfType<GrabTool>().RpcGlowRoom(gameObject);
 
 		foreach (RoomTreeNode child in children.ToArray())
 		{
