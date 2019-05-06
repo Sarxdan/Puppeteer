@@ -2,6 +2,20 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/*
+ * AUTHOR:
+ * Ludvig Björk Förare
+ * 
+ * DESCRIPTION:
+ * A container class for holding and generating a navmesh from a given mesh.
+ * Also contains some navmesh operations 
+ *
+ * CODE REVIEWED BY:
+ * 
+ */
+
+
+//Class for defining triangles in navmesh
 [System.Serializable]
 public class navmeshFace : System.Object
 {
@@ -19,7 +33,7 @@ public class navmeshFace : System.Object
 
     }
 
-
+    //Returns if face has vertex 'vertexPos'
     public bool hasVertex(Vector3 vertexPos)
     {
         return this.aPos == vertexPos || this.bPos == vertexPos || this.cPos == vertexPos;
@@ -31,13 +45,16 @@ public class navmeshFace : System.Object
 [ExecuteInEditMode]
 public class NavMesh : MonoBehaviour
 {
+    //Mesh to base navmesh upon
     public Mesh inputMesh;
     
-    //Cache
+    //Cached faces
     public navmeshFace[] faces;
 
     public bool bake;
     public bool draw;
+
+    //Optional rotation offset to fix mismatching coordinate systems
     Quaternion rotation = Quaternion.Euler(0, 0, 0);
 
     private Mesh highlight;
@@ -46,18 +63,18 @@ public class NavMesh : MonoBehaviour
     {
         if (bake)
         {
-            rotation = Quaternion.Euler(0, 0, 0);
             bake = false;
-
+            //Fetches vertex data from mesh
             Vector3[] vertices = new Vector3[inputMesh.vertices.Length];
 
+            //Rotates vertices
             for(int i = 0; i < inputMesh.vertices.Length; i++)
             {
                 vertices[i] = rotation * inputMesh.vertices[i];
             }
 
+            //Saves faces from mesh
             faces = new navmeshFace[(int)(inputMesh.triangles.Length / 3)];
-
             for(int i = 0; i < faces.Length; i++)
             {
                 faces[i] = new navmeshFace(vertices[inputMesh.triangles[i*3]], vertices[inputMesh.triangles[i * 3 + 1]], vertices[inputMesh.triangles[i * 3 + 2]]); 
@@ -66,19 +83,16 @@ public class NavMesh : MonoBehaviour
 
 
         }
-        if (draw)
+        if (draw) //Draws navmesh as wireframe
         {
             if (inputMesh != null)
             {
                 Gizmos.DrawWireMesh(inputMesh, transform.position, rotation * transform.rotation);
             }
-            if(highlight != null)
-            {
-                Gizmos.DrawMesh(highlight, transform.position);
-            }
         }
     }
 
+    //Fetches a face that contains edge AB that is not included in filter
     public navmeshFace getFaceFromEdge(Vector3 A, Vector3 B, List<navmeshFace> filter)
     {
         foreach(navmeshFace face in faces)
@@ -93,9 +107,13 @@ public class NavMesh : MonoBehaviour
         return null;
     }
 
+    //Fetches face closest to point (according to face origin)
+    //Should return which face a point is within but that shit broke ATM
     public navmeshFace getFaceFromPoint(Vector3 point)
     {
         return getClosestFace(point, new List<navmeshFace>());
+
+        //Disabled
         List<navmeshFace> filteredFaces = new List<navmeshFace>();
         foreach (navmeshFace face in faces) {
             if (PointWithinFace(point, face))
@@ -110,6 +128,7 @@ public class NavMesh : MonoBehaviour
 
     }
 
+    //Gets face with closest origin to point that is not included in filter
     public navmeshFace getClosestFace(Vector3 position, List<navmeshFace> filter)
     {
         float closestDistance = Mathf.Infinity;
@@ -132,7 +151,7 @@ public class NavMesh : MonoBehaviour
 
     }
     
-
+    //Returns true if point is within face
     public bool PointWithinFace(Vector3 point, navmeshFace triangle)
     {
         bool A = SameSideOf(point, triangle.aPos, triangle.bPos, triangle.cPos);
@@ -141,9 +160,9 @@ public class NavMesh : MonoBehaviour
         return A && B && C;
     }
 
+    //Returns true if pA and pB are on the same side of line AB
     public bool SameSideOf(Vector3 pA, Vector3 pB, Vector3 A, Vector3 B)
     {
-        //Returns whether pA and pB are on the same side of the line AB or not
         Vector3 crossA = Vector3.Cross(B - A, pA - A);
         Vector3 crossB = Vector3.Cross(B - A, pB - A);
         float dot = Vector3.Dot(crossA,crossB);
@@ -151,27 +170,5 @@ public class NavMesh : MonoBehaviour
 
     }
 
-    private RaycastHit[] recursiveRaycast(Ray ray, float length, int layerMask)
-    {
-       
-        return performRecursiveRaycast(new List<RaycastHit>(), ray, length, layerMask).ToArray();
-    }
-
-    private List<RaycastHit> performRecursiveRaycast(List<RaycastHit> hitList, Ray ray, float lengthRemaining, int layerMask)
-    {
-        RaycastHit hit;
-
-        if (Physics.Raycast(ray, out hit, lengthRemaining))
-        {
-            lengthRemaining -= hit.distance;
-            hitList.Add(hit);
-            Ray nextRay = new Ray(hit.point + ray.direction*.01f, ray.direction);
-            return performRecursiveRaycast(hitList, nextRay, lengthRemaining, layerMask);
-        }
-        else
-        {
-            return hitList;
-        }
-        
-    }
+    
 }

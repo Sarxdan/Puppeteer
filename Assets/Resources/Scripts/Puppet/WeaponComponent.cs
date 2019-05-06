@@ -20,6 +20,8 @@ public class WeaponComponent : Interactable
 	// Sound Test
 	private SoundTest soundEmitter;
 
+    public float NoiseRadius;
+
     //Determines how much liquid this weapon can hold
     public int Capacity;
 
@@ -97,6 +99,8 @@ public class WeaponComponent : Interactable
                 }
                 Debug.DrawRay(hitInfo.point, hitInfo.normal, Color.black, 1.0f);
                 Debug.DrawRay(transform.position, -transform.forward * 100.0f, Color.red, 0.2f);
+
+                Noise.MakeNoise(transform.position, NoiseRadius);
             }
         }
 
@@ -166,14 +170,14 @@ public class WeaponComponent : Interactable
         this.HeadTransform = interactor.GetComponentInChildren<Camera>().transform;
        
         PlayerController pc = interactor.GetComponent<PlayerController>();
+        GetComponent<CapsuleCollider>().enabled = false;
+        
         pc.CurrentWeapon = gameObject;
         transform.SetParent(pc.HandTransform);
         pc.SetWeaponAnimation(1);
 
         transform.localPosition = Vector3.zero;
         transform.localRotation = HoldRotation;
-
-        GetComponent<CapsuleCollider>().enabled = false;
     }
 
     public override void OnInteractEnd(GameObject interactor)

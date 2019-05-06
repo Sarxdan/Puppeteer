@@ -26,46 +26,45 @@ public class EnemySpawner : NetworkBehaviour
     public int MaxDelay = 10;
     public List<GameObject> SpawnedEnemies = new List<GameObject>();
 
+    private TrapBaseFunctionality trapBase;
+
     public float ChooseThisChance = .3f;
 
 
     public void Start()
     {
-        gameObject.tag = "EnemySpawner";
-
+        trapBase = GetComponent<TrapBaseFunctionality>();
         if(isServer){
             StartCoroutine("Spawn");
         }
 
     }
 
-    public void Update(){
-        if(Input.GetKey(KeyCode.P)){
-            Debug.DrawRay(GetNearbyDestination(), Vector3.up * 5, Color.cyan, 2);
-        }
-    }
 
     //Spawn is a modified Update with a set amount of time (SpawnRate) between runs
     private IEnumerator Spawn()
     { 
         while(true){
-            //Check if max amount of enemies has been reached
-            if (SpawnedEnemies.Count < MaxEnemyCount && MaxEnemyCount > 0)
-            {
-                //If not then create a GameObject from attached prefab at the spawners position and make them children of the "folder" created earlier
-                GameObject npcEnemy = Instantiate(EnemyPrefab, transform.position, transform.rotation, transform) as GameObject;
-                NetworkServer.Spawn(npcEnemy);
-                SpawnedEnemies.Add(npcEnemy);
-                npcEnemy.GetComponent<StateMachine>().EnemySpawner = this;
+            if(trapBase.Placed){
+                //Check if max amount of enemies has been reached
+                if (SpawnedEnemies.Count < MaxEnemyCount && MaxEnemyCount > 0)
+                {
+                    //If not then create a GameObject from attached prefab at the spawners position and make them children of the "folder" created earlier
+                    GameObject npcEnemy = Instantiate(EnemyPrefab, transform.position, transform.rotation, transform) as GameObject;
+                    npcEnemy.GetComponent<StateMachine>().EnemySpawner = this;
+                    NetworkServer.Spawn(npcEnemy);
+                    SpawnedEnemies.Add(npcEnemy);
+                    Noise.Minions.Add(npcEnemy.GetComponent<StateMachine>());
+                }
             }
-
             yield return new WaitForSeconds(Random.Range(MinDelay, MaxDelay));
         }
     }
 
+    //Returns a random point from a room somewhat close to the spawners room
     public Vector3 GetNearbyDestination(){
         
-        Transform currentRoom = transform.parent;
+        Transform currentRoom = transform.parent.parent;
         AnchorPoint currentDoor = null;
         DoorReferences doorReferences = currentRoom.GetComponent<DoorReferences>();
         while(currentRoom != null){
