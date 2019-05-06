@@ -26,14 +26,14 @@ public class EnemySpawner : NetworkBehaviour
     public int MaxDelay = 10;
     public List<GameObject> SpawnedEnemies = new List<GameObject>();
 
-    private TrapBaseFunctionality trapBase;
+    private SnapFunctionality trapBase;
 
     public float ChooseThisChance = .3f;
 
 
     public void Start()
     {
-        trapBase = GetComponent<TrapBaseFunctionality>();
+        trapBase = GetComponent<SnapFunctionality>();
         if(isServer){
             StartCoroutine("Spawn");
         }
