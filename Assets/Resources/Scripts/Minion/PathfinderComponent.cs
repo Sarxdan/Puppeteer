@@ -57,6 +57,7 @@ public class PathfinderComponent : NetworkBehaviour
             //Stuck check
             if((transform.position - lastPosition).magnitude/Time.deltaTime < MinVelocityThreshold)
             {
+                
                 currentStuckTime += Time.deltaTime;
                 if(currentStuckTime >= StuckTimeThreshold)
                 {
