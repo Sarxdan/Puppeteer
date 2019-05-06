@@ -46,9 +46,10 @@ Camera:
   m_ClearFlags: 2
   m_BackGroundColor: {r: 0, g: 0, b: 0, a: 0}
   m_projectionMatrixMode: 1
+  m_GateFitMode: 2
+  m_FOVAxisMode: 0
   m_SensorSize: {x: 36, y: 24}
   m_LensShift: {x: 0, y: 0}
-  m_GateFitMode: 2
   m_FocalLength: 50
   m_NormalizedViewPortRect:
     serializedVersion: 2
@@ -2227,7 +2228,7 @@ Transform:
   - {fileID: 591953402505392326}
   - {fileID: 591953402505392294}
   - {fileID: 591953401985262541}
-  - {fileID: 7450244324667399714}
+  - {fileID: 7712861057991771759}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -2395,10 +2396,10 @@ MonoBehaviour:
   syncInterval: 0.1
   componentsToDisable:
   - {fileID: 591953401985262530}
-  - {fileID: 7450244324667399741}
+  - {fileID: 7712861057991771922}
   - {fileID: 591953401651075571}
-  - {fileID: 7450244324667399715}
-  - {fileID: 7450244324667399718}
+  - {fileID: 7712861057991771694}
+  - {fileID: 7712861057991771917}
 --- !u!114 &3436252903158927089
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2988,61 +2989,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 591953402505392346}
     m_Modifications:
-    - target: {fileID: 895376273027663898, guid: 27f6f56a79bae2e4b8ada12c45a4bc54,
-        type: 3}
-      propertyPath: m_Name
-      value: PuppetCanvas
-      objectReference: {fileID: 0}
-    - target: {fileID: 895376273027663902, guid: 27f6f56a79bae2e4b8ada12c45a4bc54,
-        type: 3}
-      propertyPath: owner
-      value: 
-      objectReference: {fileID: 591953402505392346}
-    - target: {fileID: 895376273027663902, guid: 27f6f56a79bae2e4b8ada12c45a4bc54,
-        type: 3}
-      propertyPath: m_Enabled
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 895376273027663872, guid: 27f6f56a79bae2e4b8ada12c45a4bc54,
-        type: 3}
-      propertyPath: Owner
-      value: 
-      objectReference: {fileID: 591953402505392346}
-    - target: {fileID: 895376273027663872, guid: 27f6f56a79bae2e4b8ada12c45a4bc54,
-        type: 3}
-      propertyPath: PauseMenuUI
-      value: 
-      objectReference: {fileID: 7450244323197696106}
-    - target: {fileID: 895376273027663872, guid: 27f6f56a79bae2e4b8ada12c45a4bc54,
-        type: 3}
-      propertyPath: owner
-      value: 
-      objectReference: {fileID: 591953402505392346}
-    - target: {fileID: 895376273027663872, guid: 27f6f56a79bae2e4b8ada12c45a4bc54,
-        type: 3}
-      propertyPath: Owner
-      value: 
-      objectReference: {fileID: 591953402505392346}
-    - target: {fileID: 895376273027663872, guid: 27f6f56a79bae2e4b8ada12c45a4bc54,
-        type: 3}
-      propertyPath: PauseMenuUI
-      value: 
-      objectReference: {fileID: 7450244323197696106}
-    - target: {fileID: 895376273027663872, guid: 27f6f56a79bae2e4b8ada12c45a4bc54,
-        type: 3}
-      propertyPath: MainUI
-      value: 
-      objectReference: {fileID: 7450244323333733886}
-    - target: {fileID: 895376273027663899, guid: 27f6f56a79bae2e4b8ada12c45a4bc54,
-        type: 3}
-      propertyPath: Owner
-      value: 
-      objectReference: {fileID: 591953402505392346}
-    - target: {fileID: 895376273027663899, guid: 27f6f56a79bae2e4b8ada12c45a4bc54,
-        type: 3}
-      propertyPath: Owner
-      value: 
-      objectReference: {fileID: 591953402505392346}
     - target: {fileID: 895376273027663903, guid: 27f6f56a79bae2e4b8ada12c45a4bc54,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -3148,6 +3094,61 @@ PrefabInstance:
       propertyPath: m_Pivot.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 895376273027663902, guid: 27f6f56a79bae2e4b8ada12c45a4bc54,
+        type: 3}
+      propertyPath: owner
+      value: 
+      objectReference: {fileID: 591953402505392346}
+    - target: {fileID: 895376273027663902, guid: 27f6f56a79bae2e4b8ada12c45a4bc54,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 895376273027663899, guid: 27f6f56a79bae2e4b8ada12c45a4bc54,
+        type: 3}
+      propertyPath: Owner
+      value: 
+      objectReference: {fileID: 591953402505392346}
+    - target: {fileID: 895376273027663899, guid: 27f6f56a79bae2e4b8ada12c45a4bc54,
+        type: 3}
+      propertyPath: Owner
+      value: 
+      objectReference: {fileID: 591953402505392346}
+    - target: {fileID: 895376273027663872, guid: 27f6f56a79bae2e4b8ada12c45a4bc54,
+        type: 3}
+      propertyPath: Owner
+      value: 
+      objectReference: {fileID: 591953402505392346}
+    - target: {fileID: 895376273027663872, guid: 27f6f56a79bae2e4b8ada12c45a4bc54,
+        type: 3}
+      propertyPath: PauseMenuUI
+      value: 
+      objectReference: {fileID: 7712861057991776227}
+    - target: {fileID: 895376273027663872, guid: 27f6f56a79bae2e4b8ada12c45a4bc54,
+        type: 3}
+      propertyPath: owner
+      value: 
+      objectReference: {fileID: 591953402505392346}
+    - target: {fileID: 895376273027663872, guid: 27f6f56a79bae2e4b8ada12c45a4bc54,
+        type: 3}
+      propertyPath: Owner
+      value: 
+      objectReference: {fileID: 591953402505392346}
+    - target: {fileID: 895376273027663872, guid: 27f6f56a79bae2e4b8ada12c45a4bc54,
+        type: 3}
+      propertyPath: PauseMenuUI
+      value: 
+      objectReference: {fileID: 7712861057991776227}
+    - target: {fileID: 895376273027663872, guid: 27f6f56a79bae2e4b8ada12c45a4bc54,
+        type: 3}
+      propertyPath: MainUI
+      value: 
+      objectReference: {fileID: 7712861057991776231}
+    - target: {fileID: 895376273027663898, guid: 27f6f56a79bae2e4b8ada12c45a4bc54,
+        type: 3}
+      propertyPath: m_Name
+      value: PuppetCanvas
+      objectReference: {fileID: 0}
     - target: {fileID: 895376272160003193, guid: 27f6f56a79bae2e4b8ada12c45a4bc54,
         type: 3}
       propertyPath: m_Material
@@ -3240,13 +3241,13 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 27f6f56a79bae2e4b8ada12c45a4bc54, type: 3}
---- !u!223 &7450244324667399715 stripped
+--- !u!223 &7712861057991771694 stripped
 Canvas:
   m_CorrespondingSourceObject: {fileID: 895376273027663902, guid: 27f6f56a79bae2e4b8ada12c45a4bc54,
     type: 3}
   m_PrefabInstance: {fileID: 7712861057991775805}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &7450244324667399718 stripped
+--- !u!114 &7712861057991771917 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 895376273027663899, guid: 27f6f56a79bae2e4b8ada12c45a4bc54,
     type: 3}
@@ -3258,7 +3259,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4439b951fd877a542bed09f051c4eb5d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &7450244324667399741 stripped
+--- !u!114 &7712861057991771922 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 895376273027663872, guid: 27f6f56a79bae2e4b8ada12c45a4bc54,
     type: 3}
@@ -3270,19 +3271,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e6c2140a449ad05499e326b07ec04ad3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!1 &7450244323197696106 stripped
+--- !u!1 &7712861057991776227 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 895376271810932311, guid: 27f6f56a79bae2e4b8ada12c45a4bc54,
     type: 3}
   m_PrefabInstance: {fileID: 7712861057991775805}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &7450244323333733886 stripped
+--- !u!1 &7712861057991776231 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 895376271677483971, guid: 27f6f56a79bae2e4b8ada12c45a4bc54,
     type: 3}
   m_PrefabInstance: {fileID: 7712861057991775805}
   m_PrefabAsset: {fileID: 0}
---- !u!224 &7450244324667399714 stripped
+--- !u!224 &7712861057991771759 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 895376273027663903, guid: 27f6f56a79bae2e4b8ada12c45a4bc54,
     type: 3}
