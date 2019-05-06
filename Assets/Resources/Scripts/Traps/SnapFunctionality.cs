@@ -12,7 +12,7 @@ using UnityEngine;
  * 
  * 
  */
-public class TrapBaseFunctionality : MonoBehaviour
+public class SnapFunctionality : MonoBehaviour
 {
     [Header("Changed by script")]
     public bool Placed;
@@ -25,4 +25,6 @@ public class TrapBaseFunctionality : MonoBehaviour
     public bool BearTrap;
     public bool RoofSpike;
     public bool FloorSpike;
+	[Header("Cost of placing")]
+	public int Cost;
 }

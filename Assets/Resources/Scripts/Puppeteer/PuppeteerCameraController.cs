@@ -31,6 +31,13 @@ public class PuppeteerCameraController : MonoBehaviour
     //The playable area. (Lenght of one side of a rectangle)
     public float PlayerArea;
 
+    //The multiplier of how fast the camera is going to zoom
+    public float CameraZoomSpeed;
+
+    //Camera zoom limits
+    public float FarCameraZoomLimit;
+    public float NearCameraZoomLimit;
+
     //Everything inside these positions are the playable area
     private float RightHorizontalBorder;
     private float LeftHorizontalBorder;
@@ -49,6 +56,12 @@ public class PuppeteerCameraController : MonoBehaviour
         LeftHorizontalBorder = pos.x - lenghtFromCenter;
         TopVerticalBorder = pos.z + lenghtFromCenter;
         BottomVerticalBorder = pos.z - lenghtFromCenter;
+
+        if (PlayerPrefs.GetInt("MouseCameraMovementPuppeteer") == 1)
+            MouseMovement = true;
+        else
+            MouseMovement = false;
+
     }
 
 	void Update()
@@ -75,6 +88,17 @@ public class PuppeteerCameraController : MonoBehaviour
 			}
 
 			transform.position = pos;
+
+            float deltaScrollWheel = Input.mouseScrollDelta.y;
+            if (deltaScrollWheel != 0)
+            {
+                Vector3 newCameraPosition = new Vector3(transform.position.x, transform.position.y - (deltaScrollWheel * CameraZoomSpeed), transform.position.z);
+                if (newCameraPosition.y >= NearCameraZoomLimit && newCameraPosition.y <= FarCameraZoomLimit)
+                {
+                    transform.position = newCameraPosition;
+                }
+            }
 		}
+
 	}
 }
