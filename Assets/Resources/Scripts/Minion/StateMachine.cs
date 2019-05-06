@@ -88,7 +88,7 @@ public class StateMachine : NetworkBehaviour
         }
 
         CanAttack = true;
-        GetComponent<HealthComponent>().AddDeathAction(StartDeath);
+        GetComponent<HealthComponent>().AddDeathAction(Die);
         PostThreat = Mathf.NegativeInfinity;
     }
 
@@ -142,7 +142,7 @@ public class StateMachine : NetworkBehaviour
     }
 
     //Runs when health = 0
-    public void StartDeath()
+    public void Die()
     {
         this.GetComponent<Collider>().enabled = false;
         this.enabled = false;
