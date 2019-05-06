@@ -189,12 +189,6 @@ public class PathfinderComponent : NetworkBehaviour
             this.worldPath.RemoveAt(worldPath.Count-1);
 
             NavMesh navmesh = navmeshTransform.GetComponent<NavMesh>();
-            if(debug)
-            {
-                if(previousNavmesh != null) previousNavmesh.draw = false;
-                previousNavmesh = navmesh;
-                navmesh.draw = true;
-            }
 
             if(navmesh == null)
             {

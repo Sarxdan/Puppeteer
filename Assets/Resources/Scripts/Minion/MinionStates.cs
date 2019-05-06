@@ -263,7 +263,7 @@ namespace MinionStates
             currentWaitTime += (Time.time - lastTime);
 
             //If idletime has expended, wander around. As for Tanks, they stay idle
-            if(currentWaitTime > waitTime && machine.MinionType == "Minion")
+            if(currentWaitTime > waitTime && machine.MinionType == EnemyType.Minion)
             {
                 machine.SetState(new WanderState(machine));
             }

@@ -51,7 +51,8 @@ public class NavMesh : MonoBehaviour
     //Cached faces
     [HideInInspector]
     public navmeshFace[] faces;
-    public bool draw;
+
+    public Vector3 NavmeshOffset;
 
     //Optional rotation offset to fix mismatching coordinate systems
     Quaternion rotation = Quaternion.Euler(0, 0, 0);
@@ -60,12 +61,9 @@ public class NavMesh : MonoBehaviour
 
     private void OnDrawGizmos()
     {
-        if (draw) //Draws navmesh as wireframe
+        if (inputMesh != null)
         {
-            if (inputMesh != null)
-            {
-                Gizmos.DrawWireMesh(inputMesh, transform.position, rotation * transform.rotation);
-            }
+            Gizmos.DrawWireMesh(inputMesh, transform.position + transform.rotation*NavmeshOffset, rotation * transform.rotation);
         }
     }
 
@@ -154,7 +152,7 @@ public class NavMesh : MonoBehaviour
             //Rotates vertices
             for(int i = 0; i < inputMesh.vertices.Length; i++)
             {
-                vertices[i] = rotation * inputMesh.vertices[i];
+                vertices[i] = rotation * inputMesh.vertices[i] + NavmeshOffset;
             }
 
             //Saves faces from mesh
@@ -169,12 +167,4 @@ public class NavMesh : MonoBehaviour
         faces = null;
     }
     
-    private  IEnumerator showNavmesh(){
-        if(!draw){
-            draw = true;
-            yield return new WaitForSeconds(3);
-            draw = false;
-        }
-        yield return null;
-    }
 }

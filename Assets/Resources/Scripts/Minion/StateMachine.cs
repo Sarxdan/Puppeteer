@@ -17,6 +17,12 @@ using Mirror;
  * 
  */
 
+public enum EnemyType
+{
+    Minion,
+    Tank
+};
+
 
 public class StateMachine : NetworkBehaviour
 {
@@ -26,7 +32,7 @@ public class StateMachine : NetworkBehaviour
     //States
     public string CurrentStateName;
     public State CurrentState;
-    public string MinionType;
+    public EnemyType MinionType;
 
     //References
     [HideInInspector]
@@ -78,7 +84,7 @@ public class StateMachine : NetworkBehaviour
 
         PathFinder = GetComponent<PathfinderComponent>();
         //If regular Minion or Tank
-        if (MinionType == "Minion")
+        if (MinionType == EnemyType.Minion)
         {
             SetState(new WanderState(this));
         }
@@ -122,7 +128,7 @@ public class StateMachine : NetworkBehaviour
                 if (WithinCone(transform, puppet.transform, FOVConeAngle, ConeAggroRange, InstantAggroRange))
                 {     //Attack player
                     TargetEntity = puppet.gameObject;
-                    if (MinionType == "Minion")
+                    if (MinionType == EnemyType.Minion)
                     {
                         SetState(new AttackState(this));
                     }
@@ -168,7 +174,7 @@ public class StateMachine : NetworkBehaviour
         if(health == null)
         {
             TargetEntity = null;
-            if (MinionType == "Minion")
+            if (MinionType == EnemyType.Minion)
             {
                 SetState(new WanderState(this));
             }
