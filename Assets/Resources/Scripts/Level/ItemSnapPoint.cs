@@ -10,6 +10,7 @@ using UnityEngine;
 * Point holding info for placing items (pickups).
 *
 * CODE REVIEWED BY:
+* Sandra "Sanders" Andersson
 *
 * CONTRIBUTORS:
 * 

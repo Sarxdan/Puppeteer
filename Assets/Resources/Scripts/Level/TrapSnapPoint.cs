@@ -10,7 +10,8 @@ using UnityEngine;
 * Point holding info for placing traps.
 *
 * CODE REVIEWED BY:
-*
+* Sandra "Sanders" Andersson
+* 
 * CONTRIBUTORS:
 * 
 */
