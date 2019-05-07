@@ -7,7 +7,7 @@ using UnityEngine;
  * Sandra "Sanders" Andersson
  * 
  * DESCRIPTION:
- * This script on the bear trap when it is activated to enable interacting with it to release the trapped puppet.
+ * This script is placed on the bear trap when it is activated to enable interacting with it to release the trapped puppet.
  * 
  * CODE REVIEWED BY:
  * 
