@@ -2335,6 +2335,8 @@ MonoBehaviour:
   RegenSpeed: 1
   RegenDelay: 10
   AllowRegen: 0
+  DamageTakenSound: event:/Character/Hits/Froggo
+  DeathSound: event:/Character/Hits/Gekko
 --- !u!114 &591953401651075576
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2349,8 +2351,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   serverOnly: 0
   localPlayerAuthority: 1
-  m_AssetId: 33b9c727c533647419579d7e52a92de5
-  m_SceneId: 0
+  m_AssetId: 
+  m_SceneId: 306260848
 --- !u!114 &591953401651075578
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2400,6 +2402,7 @@ MonoBehaviour:
   - {fileID: 591953401651075571}
   - {fileID: 7450244324667399715}
   - {fileID: 7450244324667399718}
+  - {fileID: 3360391716243011983}
 --- !u!114 &3436252903158927089
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2440,6 +2443,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 78f562d2d19aedb43b0e9b3f678d3fdc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncInterval: 0.1
   Duration: 5
   Charged: 0
   SpeedModifier: 2
@@ -2989,21 +2993,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 591953402505392346}
     m_Modifications:
-    - target: {fileID: 895376273027663902, guid: 27f6f56a79bae2e4b8ada12c45a4bc54,
-        type: 3}
-      propertyPath: owner
-      value: 
-      objectReference: {fileID: 591953402505392346}
-    - target: {fileID: 895376273027663902, guid: 27f6f56a79bae2e4b8ada12c45a4bc54,
-        type: 3}
-      propertyPath: m_Enabled
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 895376273027663898, guid: 27f6f56a79bae2e4b8ada12c45a4bc54,
-        type: 3}
-      propertyPath: m_Name
-      value: PuppetCanvas
-      objectReference: {fileID: 0}
     - target: {fileID: 895376273027663903, guid: 27f6f56a79bae2e4b8ada12c45a4bc54,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -3109,6 +3098,16 @@ PrefabInstance:
       propertyPath: m_Pivot.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 895376273027663902, guid: 27f6f56a79bae2e4b8ada12c45a4bc54,
+        type: 3}
+      propertyPath: owner
+      value: 
+      objectReference: {fileID: 591953402505392346}
+    - target: {fileID: 895376273027663902, guid: 27f6f56a79bae2e4b8ada12c45a4bc54,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 895376273027663899, guid: 27f6f56a79bae2e4b8ada12c45a4bc54,
         type: 3}
       propertyPath: Owner
@@ -3149,6 +3148,11 @@ PrefabInstance:
       propertyPath: MainUI
       value: 
       objectReference: {fileID: 7450244323333733886}
+    - target: {fileID: 895376273027663898, guid: 27f6f56a79bae2e4b8ada12c45a4bc54,
+        type: 3}
+      propertyPath: m_Name
+      value: PuppetCanvas
+      objectReference: {fileID: 0}
     - target: {fileID: 895376272160003193, guid: 27f6f56a79bae2e4b8ada12c45a4bc54,
         type: 3}
       propertyPath: m_Material
