@@ -38,7 +38,7 @@ public class StateMachine : NetworkBehaviour
 
     //References
     [HideInInspector]
-    public EnemySpawner EnemySpawner;
+    public EnemySpawner Spawner;
     [HideInInspector]
     public GameObject TargetEntity;
     [HideInInspector]
@@ -167,8 +167,8 @@ public class StateMachine : NetworkBehaviour
     //Runs when death animation is complete, despawns object
     public void Despawn()
     {
-        Noise.Minions.Remove(this);
-        EnemySpawner.SpawnedEnemies.Remove(this);
+        EnemySpawner.AllMinions.Remove(this);
+        if(Spawner !=null) Spawner.LocalMinions.Remove(this);
         Destroy(this.gameObject);
     }
 

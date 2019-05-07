@@ -139,6 +139,8 @@ public class PathfinderComponent : NetworkBehaviour
         catch(System.NullReferenceException e)
         {
             Debug.LogWarning("Pathfinder raycast hit something that wasn't a room! Start: " + startHit.transform.name + "end: " + endHit.transform.name);
+            if(startHit.transform.name == "LevelReturn") GetComponent<StateMachine>().Despawn();
+            
             Stop();
         }
     }
