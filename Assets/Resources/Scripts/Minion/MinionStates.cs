@@ -262,8 +262,8 @@ namespace MinionStates
             //Counts seconds standing idle
             currentWaitTime += (Time.time - lastTime);
 
-            //If idletime has expended, wander around 
-            if(currentWaitTime > waitTime)
+            //If idletime has expended, wander around. As for Tanks, they stay idle
+            if(currentWaitTime > waitTime && machine.MinionType == EnemyType.Minion)
             {
                 machine.SetState(new WanderState(machine));
             }
@@ -272,6 +272,119 @@ namespace MinionStates
         public override void Exit()
         {
 
+        }
+    }
+    //---------------------------------------------------------------------------------
+    //BIG BOY STATES
+    //WORK IN PROGRESS
+    //---------------------------------------------------------------------------------
+    public class BigAttackState : State
+    {
+        private StateMachine machine;
+        //private int mask = ~(1 << LayerMask.NameToLayer("Puppeteer Interact")); //Layer mask to ignore puppeteer interact colliders
+
+
+        public BigAttackState(StateMachine machine)
+        {
+            this.machine = machine;
+        }
+
+        public override void Enter()
+        {
+            machine.CurrentStateName = "BigAttack";
+            machine.AnimController.SetBool("Running", true);
+        }
+
+        public override void Run()
+        {
+            //If no target, go idle
+            if (machine.TargetEntity == null) machine.SetState(new WanderState(machine));
+
+            //Debug ray for attack range
+            if (machine.debug) Debug.DrawRay(machine.transform.position, Vector3.forward * machine.AttackRange, Color.green, 0.2f);
+
+
+            if (machine.WithinCone(machine.transform, machine.TargetEntity.transform, 60f, 5f, 10f))
+            {
+                if (machine.CanAttack)
+                {
+                    machine.StartCoroutine("attackTimer");
+                    //Insert animations & attack types
+                    //Placeholders from regular minion code:
+                    machine.AnimController.SetInteger("RandomAnimationIndex", Random.Range(0, 6));
+                    machine.AnimController.SetTrigger("Attack");
+                }
+                else
+                {
+                    machine.PathFinder.Stop();
+                }
+            }
+            else
+            {
+                machine.PathFinder.MoveTo(machine.TargetEntity.transform.position);
+            }
+
+
+            ////Tests if player is in front
+            //if (Physics.Raycast(machine.transform.position + new Vector3(0, .5f, 0), machine.transform.forward, out RaycastHit target, machine.AttackRange, mask))
+            //{
+            //    if (target.transform == machine.TargetEntity.transform)
+            //    {
+            //        //If canAttack, perform attack. Otherwise stop moving (so minions don't push around the player)
+            //        if (machine.CanAttack)
+            //        {
+            //            //machine.StartCoroutine("attackTimer");
+            //            //machine.AnimController.SetInteger("RandomAnimationIndex", Random.Range(0, 6));
+            //            //machine.AnimController.SetTrigger("Attack");
+            //        }
+            //        else
+            //        {
+            //            machine.PathFinder.Stop();
+            //        }
+            //    }
+            //    else
+            //    {
+            //        //Moves towards player
+            //        machine.PathFinder.MoveTo(machine.TargetEntity.transform.position);
+            //    }
+            //}
+            //else
+            //{
+            //    //Moves towards player
+            //    machine.PathFinder.MoveTo(machine.TargetEntity.transform.position);
+            //}
+
+        }
+
+        public override void Exit()
+        {
+            machine.AnimController.SetBool("Running", false);
+        }
+    }
+
+    public class ChargeAttackState : State
+    {
+        private StateMachine machine;
+
+        public ChargeAttackState(StateMachine machine)
+        {
+            this.machine = machine;
+        }
+
+        public override void Enter()
+        {
+            machine.CurrentStateName = "ChargeAttack";
+            machine.AnimController.SetBool("Running", true);
+        }
+
+        public override void Run()
+        {
+            machine.PathFinder.MoveTo(machine.TargetEntity.transform.position);
+        }
+
+        public override void Exit()
+        {
+            machine.AnimController.SetBool("Running", false);
         }
     }
 }

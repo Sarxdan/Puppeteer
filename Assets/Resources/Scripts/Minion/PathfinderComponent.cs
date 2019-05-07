@@ -89,63 +89,58 @@ public class PathfinderComponent : NetworkBehaviour
     public void MoveTo(Vector3 endPos)
     {
         if(!isServer) return;
-        //Raycasts to floor on destination
-        RaycastHit endHit;
-        Transform endRoom = null;
-        if(Physics.Raycast(endPos + TransformRaycastOffset, Vector3.down, out endHit))
-        {
+
+        RaycastHit startHit = new RaycastHit();
+        RaycastHit endHit = new RaycastHit();
+        try{
+            //Raycasts to floor on destination
+            if(!Physics.Raycast(endPos + TransformRaycastOffset, Vector3.down, out endHit))
+                return;
+
+            //Raycasts to floor on start
+            if (!Physics.Raycast(transform.position + TransformRaycastOffset, -transform.up, out startHit))
+                return;
+
+            //Clears previous path
+            Stop();
+
+            Transform endRoom = endHit.transform.GetComponentInParent<NavMesh>().transform;
+            Transform startRoom = startHit.transform.GetComponentInParent<NavMesh>().transform;
+            //If a room was not hit, abort
+            if(endRoom == null || startRoom == null)
+            {
+                return;
+            }
+
             
-            endRoom = endHit.transform.parent;
-            endPos = endHit.point;
+            //Creates room pathfind
+            this.worldPath = aStarRoomPathfind(startRoom, endRoom);
+
+            //If roompath was not found, abort
+            if(this.worldPath == null)
+            {
+                this.worldPath = new List<AStarRoomNode>();
+                return;
+            }
+
+            //Adds destination to roompath
+            if(this.worldPath.Count > 0)
+            { 
+                this.worldPath.Insert(0, new AStarRoomNode(0,this.worldPath[0].RoomRef, this.worldPath[0], endPos));
+            }
+            else
+            {
+                this.worldPath.Insert(0, new AStarRoomNode(0, startRoom, null, endPos));
+                this.worldPath[0].Parent = this.worldPath[0];
+            }
+
+            HasPath = true;
         }
-        else
+        catch(System.NullReferenceException e)
         {
-            return;
+            Debug.LogWarning("Pathfinder raycast hit something that wasn't a room! Start: " + startHit.transform.name + "end: " + endHit.transform.name);
+            Stop();
         }
-
-        //Raycasts to floor on start
-        RaycastHit startHit;
-        Transform startRoom;
-        if (Physics.Raycast(transform.position + TransformRaycastOffset, -transform.up, out startHit))
-        {
-            startRoom = startHit.transform.parent;
-        }
-        else
-        {
-            return;
-        }
-
-        //Clears previous path
-        Stop();
-
-        //If a room was not hit, abort
-        if(endRoom.GetComponent<NavMesh>() == null || startRoom.GetComponent<NavMesh>() == null)
-        {
-            return;
-        }
-
-        //Creates room pathfind
-        this.worldPath = aStarRoomPathfind(startRoom, endRoom);
-
-        //If roompath was not found, abort
-        if(this.worldPath == null)
-        {
-            this.worldPath = new List<AStarRoomNode>();
-            return;
-        }
-
-        //Adds destination to roompath
-        if(this.worldPath.Count > 0)
-        { 
-            this.worldPath.Insert(0, new AStarRoomNode(0,this.worldPath[0].RoomRef, this.worldPath[0], endPos));
-        }
-        else
-        {
-            this.worldPath.Insert(0, new AStarRoomNode(0, startRoom, null, endPos));
-            this.worldPath[0].Parent = this.worldPath[0];
-        }
-
-        HasPath = true;
     }
     
     //Method for helping stuck entities
@@ -194,12 +189,6 @@ public class PathfinderComponent : NetworkBehaviour
             this.worldPath.RemoveAt(worldPath.Count-1);
 
             NavMesh navmesh = navmeshTransform.GetComponent<NavMesh>();
-            if(debug)
-            {
-                if(previousNavmesh != null) previousNavmesh.draw = false;
-                previousNavmesh = navmesh;
-                navmesh.draw = true;
-            }
 
             if(navmesh == null)
             {
@@ -348,7 +337,7 @@ public class PathfinderComponent : NetworkBehaviour
             {
                 if(door.Connected && door.ConnectedTo != null)
                 {
-                    Transform adjacentRoom = door.ConnectedTo.transform.parent.transform.parent;
+                    Transform adjacentRoom = door.ConnectedTo.transform.GetComponentInParent<DoorReferences>().transform; //Ugly but secure way to get room transform
                     if(!checkedRooms.Contains(adjacentRoom))
                     {
                         unevaluatedNodes.Add(new AStarRoomNode(Vector3.Distance(startRoom.position, adjacentRoom.position) + Vector3.Distance(endRoom.position, adjacentRoom.position), adjacentRoom, currentNode, door.transform.position));
