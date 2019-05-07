@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Mirror;
 
 /*
  * AUTHOR:
@@ -14,7 +15,7 @@ using UnityEngine;
  * Benjamin Vesterlund
  * 
  */
-public abstract class PowerupBase : MonoBehaviour
+public abstract class PowerupBase : NetworkBehaviour
 {
     // the duration of the powerup
     public int Duration;

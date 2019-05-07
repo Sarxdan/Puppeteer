@@ -132,7 +132,7 @@ GameObject:
   - component: {fileID: 7486441159829495019}
   - component: {fileID: 8831175885927916761}
   - component: {fileID: 4169553516647260126}
-  - component: {fileID: 5339703489816243929}
+  - component: {fileID: 1531770269187720022}
   m_Layer: 8
   m_Name: Corridor_L
   m_TagString: Connectable
@@ -386,9 +386,8 @@ MonoBehaviour:
     bPos: {x: -0.32823533, y: 0.0000000025347349, z: 4.5155582}
     cPos: {x: 0.32823515, y: 0.0000000025347349, z: 4.5155582}
     Origin: {x: -0.109411836, y: -0.00000001748888, z: 4.392654}
-  bake: 0
-  draw: 0
---- !u!114 &5339703489816243929
+  NavmeshOffset: {x: 0, y: 0, z: 0}
+--- !u!114 &1531770269187720022
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -397,9 +396,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 5331288348174855767}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fa7e8dce1e321cc4894ef7832307275e, type: 3}
+  m_Script: {fileID: 11500000, guid: 8c94458f987ced34fb132c26c2ca9393, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncInterval: 0.1
+  NumberOfSpawns: 0
+  WeaponList: []
+  AmmoItem: {fileID: 0}
+  PowerUpItem: {fileID: 0}
   SnapPoints: []
 --- !u!65 &5459451289381854423
 BoxCollider:

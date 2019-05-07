@@ -371,9 +371,9 @@ GameObject:
   - component: {fileID: 7399165049425453541}
   - component: {fileID: 7239393779811461024}
   - component: {fileID: 8624535642099884806}
+  - component: {fileID: 2402776159091138563}
   - component: {fileID: 6530032967201461496}
   - component: {fileID: 748977486984502748}
-  - component: {fileID: 7923309315593210553}
   m_Layer: 8
   m_Name: Corridor_+
   m_TagString: Connectable
@@ -526,6 +526,24 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   GlowColor: {r: 1, g: 1, b: 1, a: 1}
   LerpFactor: 10
+--- !u!114 &2402776159091138563
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4835124841400410395}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8c94458f987ced34fb132c26c2ca9393, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncInterval: 0.1
+  NumberOfSpawns: 0
+  WeaponList: []
+  AmmoItem: {fileID: 0}
+  PowerUpItem: {fileID: 0}
+  SnapPoints: []
 --- !u!114 &6530032967201461496
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -685,21 +703,7 @@ MonoBehaviour:
     bPos: {x: -0.3078599, y: 0.000003086826, z: 4.1561055}
     cPos: {x: -0.30785933, y: 0.0000033555857, z: 4.4999995}
     Origin: {x: -0.10261979, y: 0.000003265999, z: 4.3853683}
-  bake: 0
-  draw: 0
---- !u!114 &7923309315593210553
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4835124841400410395}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fa7e8dce1e321cc4894ef7832307275e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  SnapPoints: []
+  NavmeshOffset: {x: 0, y: 0, z: 0}
 --- !u!65 &8332637257478554543
 BoxCollider:
   m_ObjectHideFlags: 0

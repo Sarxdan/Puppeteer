@@ -47,6 +47,14 @@ public class HealthComponent : MonoBehaviour
 
     }
 
+    [FMODUnity.EventRef]
+    public string DamageTakenSound; 
+    
+    [FMODUnity.EventRef]
+    public string DeathSound; 
+      
+
+
     public void Damage(uint damage)
     {
         if (Health <= 0)
@@ -59,14 +67,21 @@ public class HealthComponent : MonoBehaviour
         Health = (uint)Mathf.Max(0, Health -= damage);
         if (Health == 0)
         {
+            FMODUnity.RuntimeManager.PlayOneShot(DeathSound, transform.position);
             // perform death actions
             this.zeroHealthAction();
             AllowRegen = false;
         }
+        else if(Health > 0)
+        {
+        FMODUnity.RuntimeManager.PlayOneShot(DamageTakenSound, transform.position);            
+        }
         else if (AllowRegen)
         {
             StartCoroutine("RegenRoutine");
+
         }
+
     }
     
     //Starts regenerate HP after delay, up to the max amount of regen
@@ -87,6 +102,7 @@ public class HealthComponent : MonoBehaviour
         Health = (uint)(MaxHealth * MaxReviveRatio);
         AllowRegen = true;
         AddDeathAction(gameObject.GetComponent<PlayerController>().Stunned);
+    
     }
 
     //Registers a new zero health delegate
