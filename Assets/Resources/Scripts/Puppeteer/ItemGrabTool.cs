@@ -76,9 +76,9 @@ public class ItemGrabTool : NetworkBehaviour
     {
         if (selectedObject == null)
         {
-			// Raycast only on Puppeteer Interact layer.
+			// Raycast only on Puppeteer Item Interact layer.
 			RaycastHit hit;
-            int layermask = 1 << LayerMask.NameToLayer("Puppeteer Interact");
+            int layermask = 1 << LayerMask.NameToLayer("PuppeteerItemInteract");
             if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition),out hit, RaycastDistance, layermask, QueryTriggerInteraction.Collide))
             {
                 GameObject hitObject = hit.transform.gameObject;
