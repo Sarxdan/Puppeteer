@@ -14,13 +14,28 @@ using UnityEngine;
  */
 public class InvisibilityPower : PowerupBase
 {
+    public GameObject MeshContainer;
+
+
     public override void OnActivate()
     {
-        
+        //Change rendering layers so the puppeteers camera ignores the mask
+        setLayer(1);
+        //Change so AI ignores the player when they are looking for him
     }
 
     public override void OnComplete()
     {
-        
+        //Revert all changes when the powerup is done
+        setLayer(9);
+    }
+
+    private void setLayer(int layer)
+    {
+        gameObject.layer = layer;
+        foreach (Transform item in MeshContainer.transform)
+        {
+            item.gameObject.layer = layer;
+        }
     }
 }

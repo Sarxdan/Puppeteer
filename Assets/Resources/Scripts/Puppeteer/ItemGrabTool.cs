@@ -76,9 +76,9 @@ public class ItemGrabTool : NetworkBehaviour
     {
         if (selectedObject == null)
         {
-			// Raycast only on Puppeteer Interact layer.
+			// Raycast only on Puppeteer Item Interact layer.
 			RaycastHit hit;
-            int layermask = 1 << LayerMask.NameToLayer("Puppeteer Interact");
+            int layermask = 1 << LayerMask.NameToLayer("PuppeteerItemInteract");
             if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition),out hit, RaycastDistance, layermask, QueryTriggerInteraction.Collide))
             {
                 GameObject hitObject = hit.transform.gameObject;
@@ -263,7 +263,7 @@ public class ItemGrabTool : NetworkBehaviour
 			guideObject.transform.position -=previewLiftVector;
             guideObject.GetComponent<SnapFunctionality>().Placed = true;
 			NetworkServer.Spawn(guideObject);
-			guideObject.layer = 0;
+			SetLayerOnAll(guideObject, 0);
 			SnapPointBase point = bestDstPoint.GetComponent<SnapPointBase>();
 			point.Used = true;
 			guideObject = null;
@@ -295,7 +295,7 @@ public class ItemGrabTool : NetworkBehaviour
 			guideObject.transform.position -=previewLiftVector;
 			guideObject.GetComponent<SnapFunctionality>().Placed = true;
 			NetworkServer.Spawn(guideObject);
-			guideObject.layer = 0;
+			SetLayerOnAll(guideObject, 0);
 			SnapPointBase point = bestDstPoint.GetComponent<SnapPointBase>();
 			point.Used = true;
 			//bestDstPoint.GetComponent<TrapSnapPoint>().Used = true;
@@ -411,4 +411,10 @@ public class ItemGrabTool : NetworkBehaviour
 		mousePos.z = Camera.main.WorldToScreenPoint(selectedObject.transform.position).z;
 		return Camera.main.ScreenToWorldPoint(mousePos);
 	}
+
+	private void SetLayerOnAll(GameObject obj, int layer) {
+    	foreach (Transform trans in obj.GetComponentsInChildren<Transform>(true)) {
+        	trans.gameObject.layer = layer;
+    }
+}
 }

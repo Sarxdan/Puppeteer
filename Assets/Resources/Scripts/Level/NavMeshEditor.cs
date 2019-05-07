@@ -13,7 +13,7 @@ using UnityEditor;
  * CODE REVIEWED BY:
  * 
  */
-
+#if UNITY_EDITOR
 [CustomEditor(typeof(NavMesh))]
 public class NavMeshEditor : Editor
 {
@@ -40,3 +40,4 @@ public class NavMeshEditor : Editor
 
     }
 }
+#endif

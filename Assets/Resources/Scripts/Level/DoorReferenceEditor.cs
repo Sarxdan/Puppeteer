@@ -14,6 +14,7 @@ using UnityEditor;
  * 
  */
 
+#if UNITY_EDITOR
 [CustomEditor(typeof(DoorReferences))]
 public class DoorReferenceEditor : Editor
 {
@@ -30,3 +31,4 @@ public class DoorReferenceEditor : Editor
 
     }
 }
+#endif
