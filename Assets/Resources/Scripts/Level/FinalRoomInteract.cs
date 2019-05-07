@@ -2,6 +2,19 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/*
+* AUTHOR:
+* Benjamin "Boris" Vesterlund
+*
+* DESCRIPTION:
+* Point holding info for placing traps.
+*
+* CODE REVIEWED BY:
+*
+* CONTRIBUTORS:
+* 
+*/
+
 public class FinalRoomInteract : Interactable
 {
 	public int TimeLeft;
@@ -28,7 +41,7 @@ public class FinalRoomInteract : Interactable
 			}
 			else
 			{
-
+				// DoorToOpen.transform.Rotate(Mathf.Lerp);
 			}
 			yield return new WaitForSeconds(1);
 		}
