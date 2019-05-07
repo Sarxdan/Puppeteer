@@ -1,5 +1,16 @@
 ﻿using UnityEngine;
 
+/*
+ * AUTHOR:
+ * Anton Jonsson
+ * 
+ * DESCRIPTION:
+ * Script used to simulate a fluid moving in a cylinder.
+ * 
+ * CODE REVIEWED BY:
+ * 
+ */
+
 public class FluidSimulation : MonoBehaviour
 {
 	public GameObject FluidTop;
