@@ -228,12 +228,6 @@ public class ItemGrabTool : NetworkBehaviour
 
 			guideObject = Instantiate(sourceObject);
 			guideObject.name = "GuideObject";
-
-			// Disable colliders on server when server is not puppeteer.
-			foreach (BoxCollider collider in guideObject.GetComponentsInChildren<BoxCollider>())
-			{
-				collider.enabled = false;
-			}
 		}
 
 		grabOffset = sourceObject.transform.position - localPlayerMousePos;
