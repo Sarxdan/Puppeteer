@@ -11,7 +11,7 @@ using UnityEngine;
 * Tool used for grabbing and dropping traps and spawners as puppeteer. Also does checks to determine if drop is legal.
 *
 * CODE REVIEWED BY:
-*	Filip rehman, item grabbing 2019-05-07 
+* Filip rehman 2019-05-07 
 *
 * CONTRIBUTORS:
 * Philip Stenmark, Anton "Knugen" Jonsson
@@ -363,9 +363,9 @@ public class ItemGrabTool : NetworkBehaviour
         var rooms = level.GetRooms();
 		foreach (var room in rooms)
 		{
-			if (room.GetComponent<SnapPointContainer>())
+			if (room.GetComponent<ItemSpawner>())
 			{
-				snapPoints.AddRange(room.GetComponent<SnapPointContainer>().FindSnapPoints());
+				snapPoints.AddRange(room.GetComponent<ItemSpawner>().FindSnapPoints());
 			}
 		}
         SnapPointBase result = null;
@@ -398,7 +398,9 @@ public class ItemGrabTool : NetworkBehaviour
 		else
 		{
 			var snap = snapPoint.GetComponent<TrapSnapPoint>();
-			if (snap == null || snap.Used)
+			if (snap == null)
+				return false;
+			if (snap.Used)
 				return false;
 			if (snap.Floor && !heldTrap.Floor)
 				return false;

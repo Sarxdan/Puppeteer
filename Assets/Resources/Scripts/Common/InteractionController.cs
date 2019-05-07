@@ -54,6 +54,7 @@ public class InteractionController : NetworkBehaviour
             //Attempt to start interaction
             if(Input.GetButtonDown("Use") && !isInteracting)
             {
+				Debug.Log(curInteractable);
 				//curInteractable.OnInteractBegin(gameObject);
 				CmdBeginInteract(new InteractStruct(gameObject, curInteractable.gameObject));
                 isInteracting = true; // TODO: syncvar if works :)
@@ -89,6 +90,9 @@ public class InteractionController : NetworkBehaviour
 	[Command]
 	public void CmdBeginInteract(InteractStruct info)
 	{
+		Debug.Log(info.Target);
+		Debug.Log(info.Source);
+
 		info.Target.GetComponent<Interactable>().OnInteractBegin(info.Source);
 	}
 }
