@@ -419,9 +419,11 @@ public class ItemGrabTool : NetworkBehaviour
 		return Camera.main.ScreenToWorldPoint(mousePos);
 	}
 	// Sets the layer of a game object and all of its children
-	private void SetLayerOnAll(GameObject obj, int layer) {
-    	foreach (Transform trans in obj.GetComponentsInChildren<Transform>(true)) {
-        	trans.gameObject.layer = layer;
-    }
-}
+	private void SetLayerOnAll(GameObject obj, int layer)
+	{
+		foreach (Transform trans in obj.GetComponentsInChildren<Transform>(true))
+		{
+			trans.gameObject.layer = layer;
+		}
+	}
 }
