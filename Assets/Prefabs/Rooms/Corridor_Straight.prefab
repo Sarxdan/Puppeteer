@@ -164,7 +164,7 @@ GameObject:
   - component: {fileID: 7940511491568432590}
   - component: {fileID: 7290204308159736716}
   - component: {fileID: 7750106430749341694}
-  - component: {fileID: 6284621147009356752}
+  - component: {fileID: 8362909437897222215}
   m_Layer: 8
   m_Name: Corridor_Straight
   m_TagString: Connectable
@@ -396,9 +396,8 @@ MonoBehaviour:
     bPos: {x: 4.0506177, y: -0.000000017851061, z: 0.33173156}
     cPos: {x: 4.4994493, y: 0.000000041754365, z: -0.41826838}
     Origin: {x: 4.3498387, y: 0.0000000020174145, z: 0.08173158}
-  bake: 0
-  draw: 0
---- !u!114 &6284621147009356752
+  NavmeshOffset: {x: 0, y: 0, z: 0}
+--- !u!114 &8362909437897222215
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -407,9 +406,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 5231393174559012986}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fa7e8dce1e321cc4894ef7832307275e, type: 3}
+  m_Script: {fileID: 11500000, guid: 8c94458f987ced34fb132c26c2ca9393, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncInterval: 0.1
+  NumberOfSpawns: 0
+  WeaponList: []
+  AmmoItem: {fileID: 0}
+  PowerUpItem: {fileID: 0}
   SnapPoints: []
 --- !u!1 &6240490265564129327
 GameObject:

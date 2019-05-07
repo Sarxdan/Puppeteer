@@ -1,6 +1,19 @@
 ﻿using System.Collections;
 using UnityEngine;
 
+/*
+ * AUTHOR:
+ * Sandra "Sanders" Andersson
+ * 
+ * DESCRIPTION:
+ * This script is placed on the fake item for specific attributes.
+ * 
+ * CODE REVIEWED BY:
+ * 
+ * 
+ * 
+ */
+
 public class FakeItem : Interactable
 {
     public GameObject[] Models; //[0] is default model
@@ -10,19 +23,16 @@ public class FakeItem : Interactable
     // Start is called before the first frame update
     void Start()
     {
-        StartCoroutine("Test");
+        GameObject newModel =
+            Instantiate(Models[Random.Range(1, Models.Length)], transform.position, transform.rotation);
+        newModel.transform.parent = transform;
+        Destroy(Models[0]);
     }
-
-    public IEnumerator Test()
-    {
-        yield return new WaitForSeconds(5);
-        Models[0].SetActive(false);
-        Models[Random.Range(1, Models.Length)].SetActive(true);
-    }
-
+    
     public override void OnInteractBegin(GameObject interactor)
     {
-        Collider[] hitColliders = Physics.OverlapSphere(transform.position, 5);
+        Debug.Log("Interact");
+        Collider[] hitColliders = Physics.OverlapSphere(transform.position, 4);
 
         foreach (Collider hit in hitColliders)
         {

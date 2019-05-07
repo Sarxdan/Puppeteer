@@ -3,10 +3,24 @@ using System.Collections.Generic;
 using Mirror;
 using UnityEngine;
 
+/*
+* AUTHOR:
+* Benjamin "Boris" Vesterlund
+*
+* DESCRIPTION:
+* Point holding info for placing traps.
+*
+* CODE REVIEWED BY:
+* Sandra "Sanders" Andersson
+*
+* CONTRIBUTORS:
+* 
+*/
+
 public class ItemSpawner : NetworkBehaviour
 {
 	public uint NumberOfSpawns;
-	private List<SnapPointBase> Spawners;
+	private List<SnapPointBase> spawners;
 	private GameObject level;
 
 	// Refrences to all prefabs that can spawn.
@@ -14,35 +28,44 @@ public class ItemSpawner : NetworkBehaviour
 	public GameObject AmmoItem;
 	public GameObject PowerUpItem;
 
+	// Saves refrence to SnapPoints.
+	public List<SnapPointBase> SnapPoints;
+
+	// Finds snap point and saves for later use.
+	public List<SnapPointBase> FindSnapPoints()
+	{
+		if (SnapPoints.Count == 0)
+			SnapPoints.AddRange(GetComponentsInChildren<SnapPointBase>());
+
+		return SnapPoints;
+	}
 
 	// Calculates the correct percentage of all spawnable entitys and then randoms a percentile, spawning its corresponding entity type.
 	public void SpawnItems()
   	{
-		//level = transform.parent.gameObject;
-
-		Spawners = GetComponent<SnapPointContainer>().FindSnapPoints();
+		// Get all points.
+		spawners = FindSnapPoints();
 		List<SnapPointBase> itemSpawnPoint = new List<SnapPointBase>();
-		foreach (var snapPoint in Spawners)
+		// Separates item and trap points.
+		foreach (var snapPoint in spawners)
 		{
-			if (snapPoint is TrapSnapPoint)
-			{
-				//Spawners.Remove(snapPoint);
-
-			}
-			else
+			if (snapPoint is ItemSnapPoint)
 			{
 				itemSpawnPoint.Add(snapPoint);
 			}
 		}
-		Spawners = itemSpawnPoint;
-		if (NumberOfSpawns > Spawners.Count)
+
+		// Gets x number of indexes that is going to spawn item.
+		if (NumberOfSpawns > itemSpawnPoint.Count)
 		{
-			NumberOfSpawns = (uint)Spawners.Count;
+			NumberOfSpawns = (uint)itemSpawnPoint.Count;
 		}
-		var randomList = GetRandom(0, Spawners.Count, NumberOfSpawns);
+
+		var randomList = GetRandom(0, itemSpawnPoint.Count, NumberOfSpawns);
+		// Calls Spawn on the random spawner and using the itemSpawnPoint internal spawn values. 
 		foreach (var index in randomList)
 		{
-			var spawner = Spawners[index].GetComponent<ItemSnapPoint>();
+			var spawner = itemSpawnPoint[index].GetComponent<ItemSnapPoint>();
 
 			spawner.AltStart();
 
@@ -53,23 +76,20 @@ public class ItemSpawner : NetworkBehaviour
 			int chance = Random.Range(0, 100);
 			if (chance < weaponPercent)
 			{
-				SpawnWeapon(Spawners[index].gameObject);
+				SpawnWeapon(itemSpawnPoint[index].gameObject);
 			}
 			else if (chance > weaponPercent & chance < (weaponPercent + ammoPercent))
 			{
-				SpawnAmmo(Spawners[index].gameObject);
+				SpawnAmmo(itemSpawnPoint[index].gameObject);
 			}
 			else if (chance > weaponPercent + ammoPercent)
 			{
-				SpawnPowerUp(Spawners[index].gameObject);
+				SpawnPowerUp(itemSpawnPoint[index].gameObject);
 			}
 		}
 	}
 
-	void Update()
-	{
-	}
-
+	// Gets a num long list of random but unice int that is not the same 
 	public List<int> GetRandom(int min, int max, uint num)
 	{
 		List<int> result = new List<int>();
@@ -100,29 +120,22 @@ public class ItemSpawner : NetworkBehaviour
 	// Randoms a weapon to spawn (Might what to add a rarity to weapons.. then internal values like above would work nice.)
 	public void SpawnWeapon(GameObject spawner)
 	{
-
 		int WeaponIndex = Random.Range(0, WeaponList.Length);
 		SpawnItem(spawner, WeaponList[WeaponIndex]);
-
 	}
 	// Spawns a Ammo prefab.
 	public void SpawnAmmo(GameObject spawner)
 	{
-		Debug.Log("Spawn a Ammo");
-
 		SpawnItem(spawner, AmmoItem);
 	}
 	// Spawns a PowerUp prefab.
 	public void SpawnPowerUp(GameObject spawner)
 	{
-		Debug.Log("Spawn a PowerUp");
-
 		SpawnItem(spawner, PowerUpItem);
 	}
-	//[Command]
+	// Previusly a [Command] now just does the spawning.
 	public void SpawnItem(GameObject spawner, GameObject item)
 	{
-		Debug.Log("Item Spawned");
 		spawner.GetComponent<ItemSnapPoint>().Used = true;
 		var spawnableObject = Instantiate(item, spawner.transform);
 		NetworkServer.Spawn(spawnableObject);

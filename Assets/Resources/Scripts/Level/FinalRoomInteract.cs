@@ -2,9 +2,23 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/*
+* AUTHOR:
+* Benjamin "Boris" Vesterlund
+*
+* DESCRIPTION:
+* Point holding info for placing traps.
+*
+* CODE REVIEWED BY:
+*
+* CONTRIBUTORS:
+* 
+*/
+
 public class FinalRoomInteract : Interactable
 {
 	public int TimeLeft;
+	public float LerpFactor;
 	public GameObject DoorToOpen;
 
 	public override void OnInteractBegin(GameObject interactor)
@@ -14,7 +28,7 @@ public class FinalRoomInteract : Interactable
 
 	public override void OnInteractEnd(GameObject interactor)
 	{
-		throw new System.NotImplementedException();
+		Debug.Log("Ended interact");
 	}
 
 	public IEnumerator FinalCountDown()
@@ -28,9 +42,20 @@ public class FinalRoomInteract : Interactable
 			}
 			else
 			{
-
+				StartCoroutine("OpenDoor");
+				break;
 			}
 			yield return new WaitForSeconds(1);
+		}
+	}
+
+	public IEnumerator OpenDoor()
+	{
+		while(DoorToOpen.transform.rotation.y > 13.0f)
+		{
+			DoorToOpen.transform.rotation = Quaternion.Lerp(DoorToOpen.transform.rotation, new Quaternion(0, 13, 0, 0), Time.deltaTime * LerpFactor);
+
+			yield return new WaitForFixedUpdate();
 		}
 	}
 
