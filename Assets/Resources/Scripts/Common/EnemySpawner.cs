@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using Mirror;
+using MinionStates;
 /*
  * AUTHOR:
  * Carl Appelkvist
@@ -20,15 +21,16 @@ using Mirror;
 
 public class EnemySpawner : NetworkBehaviour
 {
-    public bool server;
     public GameObject EnemyPrefab;
     public int MaxEnemyCount;
     public int MinDelay = 5;
     public int MaxDelay = 10;
-    public List<GameObject> SpawnedEnemies = new List<GameObject>();
+    public List<StateMachine> SpawnedEnemies = new List<StateMachine>();
     public static Transform minionContainer;
 
     private SnapFunctionality trapBase;
+
+    public Transform spawnPoint;
 
     public float ChooseThisChance = .3f;
 
@@ -39,8 +41,10 @@ public class EnemySpawner : NetworkBehaviour
             minionContainer = GameObject.Find("MinionContainer").transform;
         }
         trapBase = GetComponent<SnapFunctionality>();
-        server = true;
         StartCoroutine("Spawn");
+        HealthComponent hpComponent = GetComponent<HealthComponent>();
+        hpComponent.AddDeathAction(OnDeath);
+        hpComponent.AddOnDamageAction(CmdOnTakeDamage);
 
     }
 
@@ -49,17 +53,17 @@ public class EnemySpawner : NetworkBehaviour
     private IEnumerator Spawn()
     { 
         while(true){
-            Debug.Log("Server: " + isServer);
             if(isServer && trapBase.Placed){
                 //Check if max amount of enemies has been reached
                 if (SpawnedEnemies.Count < MaxEnemyCount && MaxEnemyCount > 0)
                 {
                     //If not then create a GameObject from attached prefab at the spawners position and make them children of the "folder" created earlier
-                    GameObject npcEnemy = Instantiate(EnemyPrefab, transform.position, transform.rotation, transform) as GameObject;
+                    GameObject npcEnemy = Instantiate(EnemyPrefab, spawnPoint.position, transform.rotation, minionContainer) as GameObject;
                     npcEnemy.GetComponent<StateMachine>().EnemySpawner = this;
                     NetworkServer.Spawn(npcEnemy);
-                    SpawnedEnemies.Add(npcEnemy);
-                    Noise.Minions.Add(npcEnemy.GetComponent<StateMachine>());
+                    StateMachine machine = npcEnemy.GetComponent<StateMachine>();
+                    SpawnedEnemies.Add(machine);
+                    Noise.Minions.Add(machine);
                 }
             }
             yield return new WaitForSeconds(Random.Range(MinDelay, MaxDelay));
@@ -110,9 +114,16 @@ public class EnemySpawner : NetworkBehaviour
 
     }
 
-    public void onDeath(){
-        foreach(GameObject enemy in SpawnedEnemies){
-            enemy.GetComponent<StateMachine>().Die();
+    [Command]
+    public void CmdOnTakeDamage(){
+        foreach(StateMachine enemy in SpawnedEnemies){
+            enemy.SetState(new ReturnToSpawnerState(enemy));
+        }
+    }
+
+    public void OnDeath(){
+        foreach(StateMachine enemy in SpawnedEnemies){
+            enemy.Die();
         }
     }
 }

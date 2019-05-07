@@ -43,4 +43,36 @@ public abstract class Interactable : NetworkBehaviour
             glow.Toggle(false);
         }
     }
+
+    [ClientRpc]
+    public void RpcPickupWeapon(GameObject weaponObject, GameObject userObject){
+        
+        WeaponComponent newWeapon = weaponObject.GetComponent<WeaponComponent>();
+        PlayerController user = userObject.GetComponent<PlayerController>();
+
+
+        //Disables new weapons collider
+        newWeapon.GetComponent<CapsuleCollider>().enabled = false; 
+
+        GameObject CurrentWeaponObject = user.CurrentWeapon;
+        //If carrying a weapon, detach it and place it on new weapons location
+        if(CurrentWeaponObject != null && CurrentWeaponObject.transform != transform)
+        {
+            WeaponComponent CurrentWeapon = CurrentWeaponObject.GetComponent<WeaponComponent>();
+            CurrentWeapon.HeadTransform = null;
+            CurrentWeapon.transform.SetPositionAndRotation(transform.position, transform.rotation);
+            CurrentWeapon.transform.SetParent(null);
+            CurrentWeapon.GetComponent<Collider>().enabled = true;
+        }
+        
+        //Attaches new weapon to player
+        user.CurrentWeapon = newWeapon.gameObject;
+        newWeapon.HeadTransform = user.HeadTransform;
+        newWeapon.transform.SetParent(user.HandTransform);
+        user.SetWeaponAnimation(1);
+
+        newWeapon.transform.localPosition = Vector3.zero;
+        newWeapon.transform.localRotation = newWeapon.HoldRotation;
+
+    }
 }
