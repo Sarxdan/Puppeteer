@@ -2,16 +2,32 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/*
+* AUTHOR:
+* Benjamin "Boris" Vesterlund
+*
+* DESCRIPTION:
+* Point holding info for placing items (pickups).
+*
+* CODE REVIEWED BY:
+*
+* CONTRIBUTORS:
+* 
+*/
+
 public class ItemSnapPoint : SnapPointBase
 {
+	[Header("What should spawn here.")]
     public bool SpawningWeapons;
 	public bool SpawningAmmo;
 	public bool SpawningPowerUps;
 
+	[Header("percent chance to spawn. (silent clamp)")]
 	public uint ChanceToSpawnWeapon;
 	public uint ChanceToSpawnAmmo;
 	public uint ChanceToSpawnPowerUp;
 
+	// the clamped chance of spawn.
 	private float realChanceToSpawnWeapon;
 	private float realChanceToSpawnAmmo;
 	private float realChanceToSpawnPowerUp;
