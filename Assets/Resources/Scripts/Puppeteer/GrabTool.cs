@@ -264,8 +264,6 @@ public class GrabTool : NetworkBehaviour
 			level.ConnectDoorsInRoomIfPossible(sourceObject);
 		}
 
-		firstParentNode.ResetGlow();
-
 		Destroy(selectedObject);
 		selectedObject = null;
 		Destroy(guideObject);
@@ -303,6 +301,9 @@ public class GrabTool : NetworkBehaviour
 				Debug.DrawLine(bestDstPoint.transform.position, bestSrcPoint.transform.position, Color.yellow);		
 			}
 		}
+
+		// Reset glow before possibly starting new glow on rooms.
+		firstParentNode.ResetGlow();
 
 		// Move guideObject to best availible position. If there is none, move it to source.
 		if (bestDstPoint != null)
