@@ -23,7 +23,6 @@ namespace MinionStates
         private int mask = ~(1 << LayerMask.NameToLayer("Puppeteer Interact")); //Layer mask to ignore puppeteer interact colliders
 
         //Timekeeping (TODO move somewhere more accessible)
-        private float maxLostTime = 5;
         private float playerLostTime = 0;
         private float lastSeenTime = 0;
 
@@ -84,7 +83,7 @@ namespace MinionStates
             {
                 //Counts seconds since player was lost, goes idle if past threshold 
                 playerLostTime += (Time.time - lastSeenTime);
-                if(playerLostTime > maxLostTime)
+                if(playerLostTime > machine.AggroDropTime)
                 {
                     machine.SetState(new IdleState(machine));
                     machine.TargetEntity = null;
