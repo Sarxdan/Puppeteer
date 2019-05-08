@@ -55,6 +55,11 @@ public class StateMachine : NetworkBehaviour
     public float AttackRange;
     [HideInInspector]
     public bool CanAttack;
+    [HideInInspector]
+    public bool ChargeStopped;
+    public float MaxChargeSpeed;
+    public float ChargeAccelerationSpeed;
+    public float CurrentChargeSpeed;
 
 
     [Header("Aggro settings")]
@@ -109,6 +114,7 @@ public class StateMachine : NetworkBehaviour
     {
         if (System.Environment.TickCount % tickRate == 0) //Runs current state every 'tickRate' ticks
         {
+            //TODO make it work with invisible puppet, for now the tag changes from player when it becomes invisible and reverts after
             Puppets.Clear(); //TODO move this to Start(). Currently in update for dev purposes
             Puppets.AddRange(GameObject.FindGameObjectsWithTag("Player"));
             if (CurrentState != null) CurrentState.Run();
@@ -220,6 +226,31 @@ public class StateMachine : NetworkBehaviour
             }
         }
         return false;
+    }
+
+    private IEnumerator chargeRoutine()
+    {
+        if (CurrentChargeSpeed < MaxChargeSpeed)
+        {
+            CurrentChargeSpeed = CurrentChargeSpeed + ChargeAccelerationSpeed;
+            Rigidbody rb = GetComponent<Rigidbody>();
+            rb.velocity = new Vector3(CurrentChargeSpeed, 0, 0);
+            
+        }
+
+        foreach (GameObject pupp in Puppets)
+        {
+            HealthComponent health = pupp.GetComponent<HealthComponent>();
+            if (WithinCone(transform, pupp.transform, 80f, 2f, 0f))
+            {
+                uint chargeDamage = (uint)CurrentChargeSpeed;
+                health.Damage(chargeDamage);
+                CurrentChargeSpeed = 0f;
+                ChargeStopped = true;
+                yield break;
+            }
+        }
+        yield return new WaitForSeconds(0.1f);
     }
 
 

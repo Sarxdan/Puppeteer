@@ -281,8 +281,7 @@ namespace MinionStates
     public class BigAttackState : State
     {
         private StateMachine machine;
-        //private int mask = ~(1 << LayerMask.NameToLayer("Puppeteer Interact")); //Layer mask to ignore puppeteer interact colliders
-
+        private int mask = ~(1 << LayerMask.NameToLayer("Puppeteer Interact")); //Layer mask to ignore puppeteer interact colliders
 
         public BigAttackState(StateMachine machine)
         {
@@ -298,13 +297,13 @@ namespace MinionStates
         public override void Run()
         {
             //If no target, go idle
-            if (machine.TargetEntity == null) machine.SetState(new WanderState(machine));
+            if (machine.TargetEntity == null) machine.SetState(new IdleState(machine));
 
             //Debug ray for attack range
             if (machine.debug) Debug.DrawRay(machine.transform.position, Vector3.forward * machine.AttackRange, Color.green, 0.2f);
 
 
-            if (machine.WithinCone(machine.transform, machine.TargetEntity.transform, 60f, 5f, 10f))
+            if (machine.WithinCone(machine.transform, machine.TargetEntity.transform, 75f, 2f, 0f))
             {
                 if (machine.CanAttack)
                 {
@@ -323,37 +322,6 @@ namespace MinionStates
             {
                 machine.PathFinder.MoveTo(machine.TargetEntity.transform.position);
             }
-
-
-            ////Tests if player is in front
-            //if (Physics.Raycast(machine.transform.position + new Vector3(0, .5f, 0), machine.transform.forward, out RaycastHit target, machine.AttackRange, mask))
-            //{
-            //    if (target.transform == machine.TargetEntity.transform)
-            //    {
-            //        //If canAttack, perform attack. Otherwise stop moving (so minions don't push around the player)
-            //        if (machine.CanAttack)
-            //        {
-            //            //machine.StartCoroutine("attackTimer");
-            //            //machine.AnimController.SetInteger("RandomAnimationIndex", Random.Range(0, 6));
-            //            //machine.AnimController.SetTrigger("Attack");
-            //        }
-            //        else
-            //        {
-            //            machine.PathFinder.Stop();
-            //        }
-            //    }
-            //    else
-            //    {
-            //        //Moves towards player
-            //        machine.PathFinder.MoveTo(machine.TargetEntity.transform.position);
-            //    }
-            //}
-            //else
-            //{
-            //    //Moves towards player
-            //    machine.PathFinder.MoveTo(machine.TargetEntity.transform.position);
-            //}
-
         }
 
         public override void Exit()
@@ -375,11 +343,21 @@ namespace MinionStates
         {
             machine.CurrentStateName = "ChargeAttack";
             machine.AnimController.SetBool("Running", true);
+            machine.ChargeStopped = false;
         }
 
         public override void Run()
         {
-            machine.PathFinder.MoveTo(machine.TargetEntity.transform.position);
+            //float dist = Vector3.Distance(machine.TargetEntity.transform.position, machine.transform.position);
+            if (machine.ChargeStopped)
+            {
+                machine.StopCoroutine("chargeRoutine");
+            }
+            if (machine.WithinCone(machine.transform, machine.TargetEntity.transform, 30f, 15f, 0f) && )
+            {
+                machine.StartCoroutine("chargeRoutine");
+            }
+            //machine.PathFinder.MoveTo(machine.TargetEntity.transform.position);
         }
 
         public override void Exit()
