@@ -50,7 +50,7 @@ public class ReviveComponent : Interactable
     // called when the health of this object reaches zer zo
     private void OnZeroHealth()
     {
-        hudScript.ScaleInteractionProgress(0);
+        //hudScript.ScaleInteractionProgress(0);
         StartCoroutine("DeathRoutine");
     }
 
