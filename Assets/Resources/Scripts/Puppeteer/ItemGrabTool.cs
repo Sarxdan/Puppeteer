@@ -418,9 +418,20 @@ public class ItemGrabTool : NetworkBehaviour
 
 	private void SpawnPuppeteerSpawnables()
 	{
-		if (isLocalPlayer || isServer)
+		if (isServer)
 		{
-			var table = GameObject.Find("Table");
+			GameObject localPlayer = gameObject;
+			// Find LocalPlayer Puppeteer
+			foreach (GrabTool grabToolScript in FindObjectsOfType<GrabTool>())
+			{
+				if (grabToolScript.isLocalPlayer)
+				{
+					localPlayer = grabToolScript.gameObject;
+					break;
+				}
+			}
+
+			Transform cameraTransform = localPlayer.GetComponentInChildren<Camera>().transform;
 			Vector3[] pos = new Vector3[4];
 			pos[0] = new Vector3(35, 0, 10);
 			pos[1] = new Vector3(35, 2, 2.5f);
@@ -429,9 +440,9 @@ public class ItemGrabTool : NetworkBehaviour
 			int i = 0;
 			foreach (var item in level.PuppeteerItems)
 			{
-				var spawnable = Instantiate(item, table.transform);
+				var spawnable = Instantiate(item, cameraTransform);
 				spawnable.transform.position = pos[i];
-				//NetworkServer.Spawn(spawnable);
+				NetworkServer.Spawn(spawnable);
 				i++;
 			}
 		}
