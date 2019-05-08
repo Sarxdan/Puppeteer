@@ -260,7 +260,6 @@ public class ItemGrabTool : NetworkBehaviour
 			guideObject.transform.SetParent(bestDstPoint.transform.parent);
 			guideObject.transform.position -=previewLiftVector;
             guideObject.GetComponent<SnapFunctionality>().Placed = true;
-			NetworkServer.Spawn(guideObject);
 			SetLayerOnAll(guideObject, 0);
 			SnapPointBase point = bestDstPoint.GetComponent<SnapPointBase>();
 			point.Used = true;
@@ -292,15 +291,20 @@ public class ItemGrabTool : NetworkBehaviour
 			guideObject.transform.SetParent(bestDstPoint.transform.parent);
 			guideObject.transform.position -=previewLiftVector;
 			guideObject.GetComponent<SnapFunctionality>().Placed = true;
-			NetworkServer.Spawn(guideObject);
 			// Set the layer on the item and all of its children in order to make it visible and interactable
-			SetLayerOnAll(guideObject, 0);
+			NetworkServer.Spawn(guideObject);
+			RpcUpdateLayer(guideObject);
 			SnapPointBase point = bestDstPoint.GetComponent<SnapPointBase>();
 			point.Used = true;
-			//bestDstPoint.GetComponent<TrapSnapPoint>().Used = true;
 			guideObject = null;
 		}
     }
+
+	[ClientRpc]
+	public void RpcUpdateLayer(GameObject thing)
+	{
+		SetLayerOnAll(thing, 0);
+	}
 
 	// Move local selected object for client.
 	private void  ClientUpdatePositions()

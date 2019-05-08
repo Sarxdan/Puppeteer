@@ -60,6 +60,7 @@ public class StateMachine : NetworkBehaviour
 
 
     [Header("Aggro settings")]
+    public float AggroDropTime;
     public float InstantAggroRange;
     public float ConeAggroRange;
     public float FOVConeAngle;
