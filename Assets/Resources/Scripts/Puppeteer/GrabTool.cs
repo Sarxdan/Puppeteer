@@ -256,6 +256,9 @@ public class GrabTool : NetworkBehaviour
 		}
 		else
 		{
+			// Kill minions in room
+			sourceObject.GetComponent<RoomInteractable>().KillEnemiesInRoom();
+
 			// Move sourceobject to guideobject. Guideobject is already in the best availible position.
 			sourceObject.transform.position = guideObject.transform.position;
 			sourceObject.transform.rotation = guideObject.transform.rotation;
