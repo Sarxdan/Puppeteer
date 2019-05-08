@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using UnityEngine;
+using UnityEngine.Experimental.PlayerLoop;
 
 /*
  * AUTHOR:
@@ -17,22 +18,40 @@ using UnityEngine;
 public class FakeItem : Interactable
 {
     public GameObject[] Models; //[0] is default model
+    public ParticleSystem Explosion;
+    public GameObject NewModel;
     public uint Damage;
     public float DestroyTime;
+    public float Radius;
+    public bool Activated = false;
 
     // Start is called before the first frame update
     void Start()
     {
-        GameObject newModel =
+        NewModel =
             Instantiate(Models[Random.Range(1, Models.Length)], transform.position, transform.rotation);
-        newModel.transform.parent = transform;
+        NewModel.transform.parent = transform;
         Destroy(Models[0]);
     }
-    
+
+    private void Update()
+    {
+        if (Activated && Explosion)
+        {
+            if (!Explosion.IsAlive())
+            {
+                Destroy(gameObject);
+            }
+        }
+    }
+
     public override void OnInteractBegin(GameObject interactor)
     {
         Debug.Log("Interact");
-        Collider[] hitColliders = Physics.OverlapSphere(transform.position, 4);
+        Activated = true;
+        Explosion = Instantiate(Explosion, transform.position, transform.rotation);
+        Explosion.transform.parent = gameObject.transform;
+        Collider[] hitColliders = Physics.OverlapSphere(transform.position, Radius);
 
         foreach (Collider hit in hitColliders)
         {
@@ -49,9 +68,9 @@ public class FakeItem : Interactable
     {
         yield return new WaitForSeconds(DestroyTime);
 
-        if (gameObject != null)
+        if (NewModel != null)
         {
-            Destroy(gameObject);
+            Destroy(NewModel);
         }
     }
 
