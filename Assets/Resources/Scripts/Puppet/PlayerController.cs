@@ -246,7 +246,7 @@ public class PlayerController : MonoBehaviour
     public void Stunned()
     {
         
-        rigidBody.constraints = RigidbodyConstraints.FreezePosition | RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
+        rigidBody.constraints = RigidbodyConstraints.FreezeAll;
         CanShoot = false;
         if(gameObject.GetComponent<HealthComponent>().Health <= 0)
         {
@@ -257,7 +257,7 @@ public class PlayerController : MonoBehaviour
     // Unstunns the enemy and enables shooting and interacting
     public void UnStunned()
     {
-        rigidBody.constraints = RigidbodyConstraints.None | RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
+        rigidBody.constraints = RigidbodyConstraints.None | RigidbodyConstraints.FreezeRotation;
         CanShoot = true;
         gameObject.GetComponent<InteractionController>().enabled = true;
     }
