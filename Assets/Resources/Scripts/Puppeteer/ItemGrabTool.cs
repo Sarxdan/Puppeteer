@@ -32,6 +32,8 @@ public class ItemGrabTool : NetworkBehaviour
 	//The distance of the groud that the preview trap is
 	private float PreviewLiftHeight = 2.0f;
 
+	public GameObject[] HudItems;
+
 	// enables camera movement using mouse scroll
 	public bool EnableMovement = true;
 	// The object which the player clicks on
@@ -61,6 +63,15 @@ public class ItemGrabTool : NetworkBehaviour
 		previewLiftVector = new Vector3(0,PreviewLiftHeight,0);
 		SpawnPuppeteerSpawnables();
 
+		if (isServer && HudItems.Length == 0)
+		{
+			SnapFunctionality[] snapItems = FindObjectsOfType<SnapFunctionality>();
+			HudItems = new GameObject[snapItems.Length];
+			for (int i = 0; i < snapItems.Length; i++)
+			{
+				HudItems[i] = snapItems[i].gameObject;
+			}
+		}
     }
 
     // Update is called once per frame
@@ -440,7 +451,7 @@ public class ItemGrabTool : NetworkBehaviour
 			int i = 0;
 			foreach (var item in level.PuppeteerItems)
 			{
-				var spawnable = Instantiate(item, cameraTransform);
+				var spawnable = Instantiate(item);
 				spawnable.transform.position = pos[i];
 				NetworkServer.Spawn(spawnable);
 				i++;
