@@ -128,5 +128,6 @@ public class EnemySpawner : NetworkBehaviour
         foreach(StateMachine enemy in LocalMinions){
             enemy.Die();
         }
+        Destroy(gameObject);
     }
 }
