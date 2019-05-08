@@ -46,6 +46,7 @@ public class HealthComponent : NetworkBehaviour
     }
 
     public override void OnStartLocalPlayer(){
+        base.OnStartLocalPlayer();
         Local = this;
     }
 
@@ -70,7 +71,7 @@ public class HealthComponent : NetworkBehaviour
             StopCoroutine("RegenRoutine");
 
             //Cap the HP so it doesn't go below 0
-            Health = (uint)Mathf.Max(0, Health -= damage);
+            Health = (uint)Mathf.Max(0, (int) (Health) - damage);
             if (Health == 0)
             {
                 RpcDeath();
