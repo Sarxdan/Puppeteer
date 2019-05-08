@@ -341,7 +341,7 @@ public class ItemGrabTool : NetworkBehaviour
         if (isLocalPlayer && guideObject != null)
         {
 			guideObject.transform.position = target.Position + previewLiftVector;
-            gameObject.transform.rotation = target.Rotation;
+            guideObject.transform.rotation = target.Rotation;
         }
     }
 	// Checks all other snap points in the level and picks the best one.
