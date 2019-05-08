@@ -45,4 +45,17 @@ public class RoomInteractable : Interactable
 		}
 		return false;
 	}
+
+	public void MoveMinionsWithin(Vector3 deltaPos){
+		if(EnemySpawner.AllMinions.Count == 0) return;
+		foreach(BoxCollider collider in GetComponents<BoxCollider>()){
+			foreach(StateMachine minion in EnemySpawner.AllMinions){
+				if(collider.bounds.Contains(minion.transform.position)){
+					minion.PathFinder.Stop();
+					Debug.DrawRay(minion.transform.position, deltaPos, Color.red, 7);
+					minion.transform.Translate(deltaPos);
+				}
+			}
+		}
+	}
 }

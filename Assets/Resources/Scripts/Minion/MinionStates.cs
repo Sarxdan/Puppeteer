@@ -23,7 +23,6 @@ namespace MinionStates
         private int mask = ~(1 << LayerMask.NameToLayer("Puppeteer Interact")); //Layer mask to ignore puppeteer interact colliders
 
         //Timekeeping (TODO move somewhere more accessible)
-        private float maxLostTime = 5;
         private float playerLostTime = 0;
         private float lastSeenTime = 0;
 
@@ -84,7 +83,7 @@ namespace MinionStates
             {
                 //Counts seconds since player was lost, goes idle if past threshold 
                 playerLostTime += (Time.time - lastSeenTime);
-                if(playerLostTime > maxLostTime)
+                if(playerLostTime > machine.AggroDropTime)
                 {
                     machine.SetState(new IdleState(machine));
                     machine.TargetEntity = null;
@@ -121,12 +120,12 @@ namespace MinionStates
             machine.AnimController.SetBool("Running", true);
 
             //Fetches navmesh from spawner room and walks to a (semi)random point on it
-            NavMesh navmesh = machine.EnemySpawner.transform.GetComponentInParent<NavMesh>();
+            NavMesh navmesh = machine.Spawner.transform.GetComponentInParent<NavMesh>();
             Vector3 destination;
             if(navmesh!=null)
             {
                 //Fetches random face from navmesh as destination
-                destination = machine.EnemySpawner.transform.parent.TransformPoint(navmesh.faces[Random.Range(0, navmesh.faces.Length - 1)].Origin);
+                destination = machine.Spawner.transform.parent.TransformPoint(navmesh.faces[Random.Range(0, navmesh.faces.Length - 1)].Origin);
                 machine.PathFinder.MoveTo(destination);
             }
             else
@@ -174,7 +173,7 @@ namespace MinionStates
             machine.CurrentStateName = "Wander";
 
             //Fetches random destination close to spawner
-            destination = machine.EnemySpawner.GetNearbyDestination();
+            destination = machine.Spawner.GetNearbyDestination();
             machine.PathFinder.MoveTo(destination);
         }
 

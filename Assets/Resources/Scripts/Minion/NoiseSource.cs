@@ -17,11 +17,10 @@ using MinionStates;
 public class Noise
 {
 
-    public static List<StateMachine> Minions = new List<StateMachine>();
     
     public static void MakeNoise(Vector3 position, float amplitude)
     {
-        foreach(StateMachine minion in Minions)
+        foreach(StateMachine minion in EnemySpawner.AllMinions)
         {
             if(minion.CurrentStateName != "Attack" || minion.CurrentStateName != "ReturnToSpawn")
             {

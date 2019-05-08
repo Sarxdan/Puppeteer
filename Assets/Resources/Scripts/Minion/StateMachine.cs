@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using MinionStates;
 using Mirror;
+
 #pragma warning disable IDE1006 // Naming Styles
+
 /*
  * AUTHOR:
  * Ludvig Björk Förare
@@ -36,7 +38,7 @@ public class StateMachine : NetworkBehaviour
 
     //References
     [HideInInspector]
-    public EnemySpawner EnemySpawner;
+    public EnemySpawner Spawner;
     [HideInInspector]
     public GameObject TargetEntity;
     [HideInInspector]
@@ -58,6 +60,7 @@ public class StateMachine : NetworkBehaviour
 
 
     [Header("Aggro settings")]
+    public float AggroDropTime;
     public float InstantAggroRange;
     public float ConeAggroRange;
     public float FOVConeAngle;
@@ -74,6 +77,7 @@ public class StateMachine : NetworkBehaviour
     {
         AnimController = GetComponent<Animator>();
 
+        GetComponent<HealthComponent>().AddDeathAction(Die);
         //If not server, disable self
         if(!isServer)
         {
@@ -94,7 +98,6 @@ public class StateMachine : NetworkBehaviour
         }
 
         CanAttack = true;
-        GetComponent<HealthComponent>().AddDeathAction(Die);
         PostThreat = Mathf.NegativeInfinity;
     }
 
@@ -151,9 +154,13 @@ public class StateMachine : NetworkBehaviour
     public void Die()
     {
         this.GetComponent<Collider>().enabled = false;
-        this.enabled = false;
-        PathFinder.Stop();
-        PathFinder.enabled = false;
+
+        if(isServer){
+            this.enabled = false;
+            PathFinder.Stop();
+            PathFinder.enabled = false;
+        }
+
         AnimController.SetTrigger("Death");
         AnimController.SetInteger("RandomAnimationIndex", Random.Range(0,3));
     }
@@ -161,8 +168,8 @@ public class StateMachine : NetworkBehaviour
     //Runs when death animation is complete, despawns object
     public void Despawn()
     {
-        Noise.Minions.Remove(this);
-        EnemySpawner.SpawnedEnemies.Remove(this.gameObject);
+        EnemySpawner.AllMinions.Remove(this);
+        if(Spawner !=null) Spawner.LocalMinions.Remove(this);
         Destroy(this.gameObject);
     }
 
