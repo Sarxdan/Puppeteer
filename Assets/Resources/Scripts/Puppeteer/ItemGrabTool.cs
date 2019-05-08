@@ -59,6 +59,7 @@ public class ItemGrabTool : NetworkBehaviour
         level = GetComponent<LevelBuilder>();
 		currency = GetComponent<Currency>();
 		previewLiftVector = new Vector3(0,PreviewLiftHeight,0);
+		SpawnPuppeteerSpawnables();
 
     }
 
@@ -412,6 +413,27 @@ public class ItemGrabTool : NetworkBehaviour
 		foreach (Transform trans in obj.GetComponentsInChildren<Transform>(true))
 		{
 			trans.gameObject.layer = layer;
+		}
+	}
+
+	private void SpawnPuppeteerSpawnables()
+	{
+		if (isLocalPlayer || isServer)
+		{
+			var table = GameObject.Find("Table");
+			Vector3[] pos = new Vector3[4];
+			pos[0] = new Vector3(35, 0, 10);
+			pos[1] = new Vector3(35, 2, 2.5f);
+			pos[2] = new Vector3(35, 0, -2.5f);
+			pos[3] = new Vector3(35, 0, -10);
+			int i = 0;
+			foreach (var item in level.PuppeteerItems)
+			{
+				var spawnable = Instantiate(item, table.transform);
+				spawnable.transform.position = pos[i];
+				//NetworkServer.Spawn(spawnable);
+				i++;
+			}
 		}
 	}
 }
