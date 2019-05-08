@@ -63,15 +63,15 @@ public class ItemGrabTool : NetworkBehaviour
 		previewLiftVector = new Vector3(0,PreviewLiftHeight,0);
 		SpawnPuppeteerSpawnables();
 
-		if (isServer && HudItems.Length == 0)
-		{
-			SnapFunctionality[] snapItems = FindObjectsOfType<SnapFunctionality>();
-			HudItems = new GameObject[snapItems.Length];
-			for (int i = 0; i < snapItems.Length; i++)
-			{
-				HudItems[i] = snapItems[i].gameObject;
-			}
-		}
+		//if (isServer && HudItems.Length == 0)
+		//{
+		//	SnapFunctionality[] snapItems = FindObjectsOfType<SnapFunctionality>();
+		//	HudItems = new GameObject[snapItems.Length];
+		//	for (int i = 0; i < snapItems.Length; i++)
+		//	{
+		//		HudItems[i] = snapItems[i].gameObject;
+		//	}
+		//}
     }
 
     // Update is called once per frame
@@ -451,7 +451,7 @@ public class ItemGrabTool : NetworkBehaviour
 			int i = 0;
 			foreach (var item in level.PuppeteerItems)
 			{
-				var spawnable = Instantiate(item);
+				var spawnable = Instantiate(item, cameraTransform);
 				spawnable.transform.position = pos[i];
 				NetworkServer.Spawn(spawnable);
 				i++;
