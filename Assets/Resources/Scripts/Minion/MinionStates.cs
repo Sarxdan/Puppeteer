@@ -42,7 +42,11 @@ namespace MinionStates
         {
 
             //If no target, go idle
-            if(machine.TargetEntity == null) machine.SetState(new WanderState(machine));
+            if(machine.TargetEntity == null){
+                machine.SetState(new WanderState(machine));
+                return;
+
+            }
 
             //Debug ray for attack range
             if (machine.debug) Debug.DrawRay(machine.transform.position, Vector3.forward * machine.AttackRange, Color.green, 0.2f);
