@@ -2725,7 +2725,7 @@ CapsuleCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8131932759817957886}
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 13400000, guid: 3373fd60d2c6a5c46b408618b89dfce1, type: 2}
   m_IsTrigger: 0
   m_Enabled: 1
   m_Radius: 0.51
@@ -2755,7 +2755,8 @@ MonoBehaviour:
   StaminaRegenSpeed: 2
   CurrentStamina: 200
   DisableInput: 0
-  MovementSpeedMod: 1
+  MovementSpeedMod: 5
+  currentMovementSpeed: 0
   JumpForce: 4
   JumpRayLength: 0.11
   HeadTransform: {fileID: 8131932759817959385}
@@ -2779,6 +2780,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 966551dd969a4d444a4a6f50efd09aff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncInterval: 0.1
   Health: 20
   MaxHealth: 20
   MaxRegenRatio: 0.5
@@ -2786,6 +2788,8 @@ MonoBehaviour:
   RegenSpeed: 1
   RegenDelay: 10
   AllowRegen: 0
+  DamageTakenSound: 
+  DeathSound: 
 --- !u!114 &8131932759817955260
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2800,7 +2804,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   serverOnly: 0
   localPlayerAuthority: 1
-  m_AssetId: 240fa966485d59d4c96378f7027ddba5
+  m_AssetId: 
   m_SceneId: 0
 --- !u!114 &8131932759817955251
 MonoBehaviour:
@@ -2891,6 +2895,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 753d056292195224b82e20dcba54c78d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncInterval: 0.1
   Duration: 5
   Charged: 1
   MeshContainer: {fileID: 8131932759817957760}

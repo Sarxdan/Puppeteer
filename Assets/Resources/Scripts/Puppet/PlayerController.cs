@@ -16,11 +16,13 @@ using UnityEngine;
  * Anton Jonsson (Player Movement done)
  * Ludvig Björk Förare (Sprint function)
  * Filip Renman (Animation 190425)
+ * Ludvig Björk Förare (08/05-2019 Velocity instead of move)
  * 
  * CONTRIBUTORS:
  * Philip Stenmark
  * Ludvig Björk Förare (Animation integration)
  * Sandra Andersson (Sound Impl.)
+ * Filip Renman (Velocity)
 */
 public class PlayerController : MonoBehaviour
 {
@@ -154,85 +156,85 @@ public class PlayerController : MonoBehaviour
         animController.SetFloat("Strafe", Input.GetAxis("Horizontal"));
 
         }
-      
+
+        // Jumping
+        if (Input.GetButtonDown("Jump") && Physics.Raycast(transform.position, -transform.up, JumpRayLength))
+        {
+            rigidBody.velocity = transform.up * JumpForce;
+        }
+
     }
 
 
     private void FixedUpdate()
     {
-        if(!DisableInput)
+        // Horizontal movement
+        if ((Input.GetAxisRaw("Horizontal") != 0 || Input.GetAxisRaw("Vertical") != 0) && !DisableInput)
         {
-            // Horizontal movement
-
-            if ( Input.GetAxisRaw("Horizontal") != 0 || Input.GetAxisRaw("Vertical") != 0)
-            {
-                currentMovementSpeed += currentMovementSpeed < MovementSpeed * MovementSpeedMod ? AccelerationRate * Time.deltaTime : 0; //Accelerates to MovementSpeed
-                Vector3 direction = (Input.GetAxisRaw("Horizontal") * transform.right + Input.GetAxisRaw("Vertical") * transform.forward).normalized; //Direction to move
-                rigidBody.MovePosition(transform.position + direction * currentMovementSpeed * Time.deltaTime);
-            }
-            else
-            {
-                currentMovementSpeed = 0;
-            }
+            currentMovementSpeed += currentMovementSpeed < MovementSpeed * MovementSpeedMod ? AccelerationRate * Time.deltaTime : 0; //Accelerates to MovementSpeed
+            currentMovementSpeed = Mathf.Clamp(currentMovementSpeed, 0, SprintSpeed); //Clamp the movementspeed so you dont run faster than the sprint speed
+            Vector3 direction = (Input.GetAxisRaw("Horizontal") * transform.right + Input.GetAxisRaw("Vertical") * transform.forward).normalized; //Direction to move
+            direction.x*= currentMovementSpeed; //Add Movementspeed multiplier 
+            direction.y = rigidBody.velocity.y; //Add your y velocity
+            direction.z*= currentMovementSpeed; //Add Movementspeed multiplier 
+            rigidBody.velocity = direction;
+        }
+        else
+        {
+            rigidBody.velocity = new Vector3(0, rigidBody.velocity.y, 0);
+        }
             
-            // Sprinting
-            // Checks the most important task, if the sprint button is released
-            if (Input.GetButtonUp("Sprint") && (!Input.GetButton("Horizontal") || !Input.GetButton("Vertical")))
-            {
-                animController.SetBool("Sprint", false);
-                MovementSpeed = speedSave;
-                AccelerationRate = accSave;
-                reachedZero = false;
-                isDown = false;
-            }
-            // Makes sure stamina can't be negative
-            else if (reachedZero == true && isDown == true)
-            {
-                animController.SetBool("Sprint", false);
-                MovementSpeed = speedSave;
-                currentMovementSpeed = MovementSpeed;
-                AccelerationRate = accSave;
-                StartCoroutine("StaminaRegenRoutine");
-            }
+        // Sprinting
+        // Checks the most important task, if the sprint button is released
+        if (Input.GetButtonUp("Sprint") && (!Input.GetButton("Horizontal") || !Input.GetButton("Vertical")))
+        {
+            animController.SetBool("Sprint", false);
+            MovementSpeed = speedSave;
+            AccelerationRate = accSave;
+            reachedZero = false;
+            isDown = false;
+        }
+        // Makes sure stamina can't be negative
+        else if (reachedZero == true && isDown == true)
+        {
+            animController.SetBool("Sprint", false);
+            MovementSpeed = speedSave;
+            currentMovementSpeed = MovementSpeed;
+            AccelerationRate = accSave;
+            StartCoroutine("StaminaRegenRoutine");
+        }
 
-            // Checks for sprint key and acts accordingly
-            else if (Input.GetButton("Sprint") && (Input.GetButton("Horizontal") || Input.GetButton("Vertical")))
+        // Checks for sprint key and acts accordingly
+        else if (!DisableInput && (Input.GetButton("Sprint") && (Input.GetButton("Horizontal") || Input.GetButton("Vertical"))))
+        {
+            animController.SetBool("Sprint", true);
+            isDown = true;
+            MovementSpeed = SprintSpeed;
+            AccelerationRate = SprintAcc;
+            CurrentStamina--;
+            if (isDown == true && CurrentStamina > 0)
             {
-                animController.SetBool("Sprint", true);
-                isDown = true;
-                MovementSpeed = SprintSpeed;
-                AccelerationRate = SprintAcc;
-                CurrentStamina--;
-                if (isDown == true && CurrentStamina > 0)
-                {
-                    StopCoroutine("StaminaRegenRoutine");
-                }
-                else if (CurrentStamina <= 0)
-                {
-                    MovementSpeed = speedSave;
-                    currentMovementSpeed = MovementSpeed;
-                    AccelerationRate = accSave;
-                    reachedZero = true;
-                    StartCoroutine("StaminaRegenRoutine");
-                }
+                StopCoroutine("StaminaRegenRoutine");
             }
-            // Basic stamina regen 
-            else
+            else if (CurrentStamina <= 0)
             {
                 MovementSpeed = speedSave;
                 currentMovementSpeed = MovementSpeed;
                 AccelerationRate = accSave;
+                reachedZero = true;
                 StartCoroutine("StaminaRegenRoutine");
-            }
-
-            Debug.DrawRay(transform.position, -transform.up*JumpRayLength, Color.red, Time.deltaTime);
-
-            // Jumping
-            if (Input.GetButtonDown("Jump") && Physics.Raycast(transform.position, -transform.up, JumpRayLength))
-            {
-                rigidBody.AddForce(transform.up * JumpForce, ForceMode.Impulse);
             }
         }
+        // Basic stamina regen 
+        else
+        {
+            MovementSpeed = speedSave;
+            currentMovementSpeed = MovementSpeed;
+            AccelerationRate = accSave;
+            StartCoroutine("StaminaRegenRoutine");
+        }
+
+        Debug.DrawRay(transform.position, -transform.up*JumpRayLength, Color.red, Time.deltaTime);
         
     }
 
@@ -244,7 +246,7 @@ public class PlayerController : MonoBehaviour
     public void Stunned()
     {
         
-        //rigidBody.constraints = RigidbodyConstraints.FreezePosition | RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
+        rigidBody.constraints = RigidbodyConstraints.FreezeAll;
         CanShoot = false;
         if(gameObject.GetComponent<HealthComponent>().Health <= 0)
         {
@@ -255,7 +257,7 @@ public class PlayerController : MonoBehaviour
     // Unstunns the enemy and enables shooting and interacting
     public void UnStunned()
     {
-        rigidBody.constraints = RigidbodyConstraints.None | RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
+        rigidBody.constraints = RigidbodyConstraints.None | RigidbodyConstraints.FreezeRotation;
         CanShoot = true;
         gameObject.GetComponent<InteractionController>().enabled = true;
     }

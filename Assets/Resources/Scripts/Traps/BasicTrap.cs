@@ -41,6 +41,7 @@ public class BasicTrap : TrapComponent
     //Damage all puppets inside aoe
     public override void ActivateTrap()
     {
+        
         foreach (GameObject puppet in Puppets)
         {
             puppet.GetComponent<HealthComponent>().Damage(Damage);
@@ -57,14 +58,14 @@ public class BasicTrap : TrapComponent
     {
         foreach (GameObject puppet in Puppets)
         {
-            puppet.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezePosition | RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
+            puppet.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezeAll;
         }
 
         yield return new WaitForSeconds(.7f);
 
         foreach (GameObject puppet in Puppets)
         {
-            puppet.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.None | RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
+            puppet.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.None | RigidbodyConstraints.FreezeRotation;
         }
     }
 }
