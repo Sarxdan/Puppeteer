@@ -21,6 +21,12 @@ public class PathfinderComponent : NetworkBehaviour
     private List<AStarRoomNode> worldPath;
     private List<Vector3> roomPath;
 
+    //Avoidance
+    public float AvoidRayLength;
+    public float AgentRadius;
+
+    private static int layerMask;
+
     //Unstuck
     public float MinVelocityThreshold;
     public float StuckTimeThreshold;
@@ -35,6 +41,7 @@ public class PathfinderComponent : NetworkBehaviour
     private Animator animController;
     void Start()
     {
+            layerMask = ~(1 << LayerMask.NameToLayer("Puppeteer Interact"));
         if(!isServer)
         {
             this.enabled = false;
@@ -51,7 +58,7 @@ public class PathfinderComponent : NetworkBehaviour
     {
         if(HasPath)
         {
-
+            avoidanceCheck();
             performMove();
 
             //Stuck check
@@ -150,6 +157,20 @@ public class PathfinderComponent : NetworkBehaviour
     {
         Vector3 unstuckPoint = transform.position + new Vector3(Random.Range(-UnstuckRadius, UnstuckRadius), transform.position.y, Random.Range(-UnstuckRadius, UnstuckRadius));
         MoveTo(unstuckPoint);
+    }
+
+    private void avoidanceCheck()
+    {
+        Debug.DrawRay(transform.position, transform.forward * AvoidRayLength, Color.cyan, Time.deltaTime);
+        if(Physics.Raycast(transform.position, transform.forward, out RaycastHit hit, AvoidRayLength, layerMask))
+        {
+            if(hit.transform.tag.Equals("Enemy"))
+            {
+            Vector3 delta = hit.transform.position - transform.position;
+            Vector3 avoidPoint = (transform.forward - delta.normalized) * AgentRadius;
+            Debug.DrawLine(hit.transform.position, avoidPoint, Color.red, Time.deltaTime);
+            }
+        }
     }
 
     private void performMove()
