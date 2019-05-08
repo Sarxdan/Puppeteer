@@ -252,17 +252,7 @@ public class ItemGrabTool : NetworkBehaviour
 		{
 			Destroy(selectedObject);
 			selectedObject = null;
-
-			// removes currency from the puppeteer when placed.
-			currency.CurrentCurrency = currency.CurrentCurrency - cost;
-
-			guideObject.name = "Placed Trap";
-			guideObject.transform.SetParent(bestDstPoint.transform.parent);
-			guideObject.transform.position -=previewLiftVector;
-            guideObject.GetComponent<SnapFunctionality>().Placed = true;
-			SetLayerOnAll(guideObject, 0);
-			SnapPointBase point = bestDstPoint.GetComponent<SnapPointBase>();
-			point.Used = true;
+			Destroy(guideObject);
 			guideObject = null;
 		}
     }
@@ -348,7 +338,7 @@ public class ItemGrabTool : NetworkBehaviour
 	[ClientRpc]
     public void RpcUpdateGuide(TransformStruct target)
     {
-        if (isLocalPlayer)
+        if (isLocalPlayer && guideObject != null)
         {
 			guideObject.transform.position = target.Position + previewLiftVector;
             gameObject.transform.rotation = target.Rotation;
