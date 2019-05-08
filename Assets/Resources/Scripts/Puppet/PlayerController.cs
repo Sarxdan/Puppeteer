@@ -244,7 +244,7 @@ public class PlayerController : MonoBehaviour
     public void Stunned()
     {
         
-        //rigidBody.constraints = RigidbodyConstraints.FreezePosition | RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
+        rigidBody.constraints = RigidbodyConstraints.FreezePosition | RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
         CanShoot = false;
         if(gameObject.GetComponent<HealthComponent>().Health <= 0)
         {
