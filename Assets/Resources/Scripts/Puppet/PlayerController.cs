@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Mirror;
 using UnityEngine;
 /*
  * AUTHOR:
@@ -24,7 +25,7 @@ using UnityEngine;
  * Sandra Andersson (Sound Impl.)
  * Filip Renman (Velocity)
 */
-public class PlayerController : MonoBehaviour
+public class PlayerController : NetworkBehaviour
 {
     // Sound Events
     [FMODUnity.EventRef]
@@ -270,5 +271,14 @@ public class PlayerController : MonoBehaviour
     public void RunStep()
     {
         FMODUnity.RuntimeManager.PlayOneShot(RunFootstep, transform.position);
+    }
+
+    [ClientRpc]
+    public void RpcAddAmmo(int liquid)
+    {
+        if (isLocalPlayer)
+        {
+            Ammunition += liquid;
+        }
     }
 }
