@@ -101,6 +101,8 @@ public class PathfinderComponent : NetworkBehaviour
         }
     }
 
+    
+
     public void Stop()
     {
         this.worldPath.Clear();

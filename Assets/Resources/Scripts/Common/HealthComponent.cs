@@ -127,7 +127,19 @@ public class HealthComponent : NetworkBehaviour
         PlayerController playerController = gameObject.GetComponent<PlayerController>();
         playerController.UnStunned();
         AddDeathAction(playerController.Stunned);
-    
+        RpcSendRevive();    
+    }
+
+    [ClientRpc]
+    public void RpcSendRevive()
+    {
+        if (!isLocalPlayer)
+            return;
+        Debug.Log("Rezed");
+        AllowRegen = true;
+        PlayerController playerController = gameObject.GetComponent<PlayerController>();
+        playerController.UnStunned();
+        AddDeathAction(playerController.Stunned);
     }
 
     //Registers a new zero health delegate
