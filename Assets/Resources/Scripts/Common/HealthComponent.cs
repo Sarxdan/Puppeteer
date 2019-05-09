@@ -86,8 +86,9 @@ public class HealthComponent : NetworkBehaviour
                 StartCoroutine("RegenRoutine");
 
             }
-        }else{
-            Local.CmdDamage(gameObject, damage);
+        }
+        else {
+            //Local.CmdDamage(gameObject, damage);
         }
     }
 
