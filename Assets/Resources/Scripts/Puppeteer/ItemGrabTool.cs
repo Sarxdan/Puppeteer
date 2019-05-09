@@ -274,7 +274,7 @@ public class ItemGrabTool : NetworkBehaviour
     public void CmdDrop()
     {
 		// Reset everything if trap is droped without a target place.
-		if (sourceObject.transform.position.x == guideObject.transform.position.x && sourceObject.transform.position.z == guideObject.transform.position.z && sourceObject.transform.rotation == guideObject.transform.rotation)
+		if ((sourceObject.transform.position.x == guideObject.transform.position.x && sourceObject.transform.position.z == guideObject.transform.position.z && sourceObject.transform.rotation == guideObject.transform.rotation) || bestDstPoint == null)
 		{
 			Destroy(selectedObject);
 			selectedObject = null;
@@ -303,9 +303,9 @@ public class ItemGrabTool : NetworkBehaviour
     }
 
 	[ClientRpc]
-	public void RpcUpdateLayer(GameObject thing)
+	public void RpcUpdateLayer(GameObject target)
 	{
-		SetLayerOnAll(thing, 0);
+		SetLayerOnAll(target, 0);
 	}
 
 	// Move local selected object for client.
