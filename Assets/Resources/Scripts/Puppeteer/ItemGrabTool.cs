@@ -210,6 +210,12 @@ public class ItemGrabTool : NetworkBehaviour
 		// Instansiate the floating object
 		sourceObject = pickupTrap;
 		selectedObject = Instantiate(sourceObject);
+
+		selectedObject.transform.rotation = new Quaternion();
+		Vector3 mousePos = Input.mousePosition;
+		mousePos.z = Camera.main.WorldToScreenPoint(new Vector3(0, LiftHeight, 0)).z;
+		selectedObject.transform.position = Camera.main.ScreenToWorldPoint(mousePos);
+
 		selectedObject.name = "SelectedObject";
 
 		// Handles the change in temporary currency. Can be used to show currency left after placement.
@@ -219,7 +225,11 @@ public class ItemGrabTool : NetworkBehaviour
 		guideObject = Instantiate(sourceObject);
 		guideObject.name = "GuideObject";
 
-		grabOffset = sourceObject.transform.position - MouseToWorldPosition();
+		grabOffset = selectedObject.transform.position - MouseToWorldPosition();
+		Debug.Log(selectedObject.transform.position + " - " + MouseToWorldPosition() + " = " + grabOffset);
+		//grabOffset.y = 0;
+
+
 
         CmdUpdateMousePos(MouseToWorldPosition());
         CmdPickup(pickupTrap);
@@ -242,7 +252,7 @@ public class ItemGrabTool : NetworkBehaviour
 			guideObject.name = "GuideObject";
 		}
 
-		grabOffset = sourceObject.transform.position - localPlayerMousePos;
+		grabOffset = selectedObject.transform.position - localPlayerMousePos;
 
         if (!isLocalPlayer)
         {
@@ -342,7 +352,7 @@ public class ItemGrabTool : NetworkBehaviour
         else
         {
         	RpcUpdateGuide(new TransformStruct(sourceObject.transform.position, sourceObject.transform.rotation));
-			guideObject.transform.position = sourceObject.transform.position + previewLiftVector;
+			guideObject.transform.position = sourceObject.transform.position;
 			guideObject.transform.rotation = sourceObject.transform.rotation;
         }
     }
@@ -458,4 +468,5 @@ public class ItemGrabTool : NetworkBehaviour
 			}
 		}
 	}
+
 }
