@@ -27,12 +27,6 @@ using UnityEngine;
 */
 public class PlayerController : NetworkBehaviour
 {
-    // Sound Events
-    [FMODUnity.EventRef]
-    public string Footstep; 
-    [FMODUnity.EventRef]
-    public string RunFootstep; 
-
     // Movement
     public float MovementSpeed;
     public float AccelerationRate;
@@ -267,16 +261,6 @@ public class PlayerController : NetworkBehaviour
         rigidBody.constraints = RigidbodyConstraints.None | RigidbodyConstraints.FreezeRotation;
         CanShoot = true;
         gameObject.GetComponent<InteractionController>().enabled = true;
-    }
-
-    // Plays footstep sound
-    public void Step()
-    {
-        FMODUnity.RuntimeManager.PlayOneShot(Footstep, transform.position);
-    }
-    public void RunStep()
-    {
-        FMODUnity.RuntimeManager.PlayOneShot(RunFootstep, transform.position);
     }
 
     [ClientRpc]
