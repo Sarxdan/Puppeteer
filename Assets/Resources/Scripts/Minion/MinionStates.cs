@@ -129,7 +129,7 @@ namespace MinionStates
             if(navmesh!=null)
             {
                 //Fetches random face from navmesh as destination
-                destination = machine.Spawner.transform.parent.TransformPoint(navmesh.faces[Random.Range(0, navmesh.faces.Length - 1)].Origin);
+                destination = machine.Spawner.transform.parent.TransformPoint(navmesh.Faces[Random.Range(0, navmesh.Faces.Length - 1)].Origin);
                 machine.PathFinder.MoveTo(destination);
             }
             else

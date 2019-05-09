@@ -27,6 +27,7 @@ public class DoorReferenceEditor : Editor
         if(GUILayout.Button("Update doors"))
         {
             script.GetDoors();
+            EditorUtility.SetDirty(target);
         }
 
     }

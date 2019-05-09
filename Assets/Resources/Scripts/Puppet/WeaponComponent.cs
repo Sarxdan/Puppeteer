@@ -30,6 +30,7 @@ public class WeaponComponent : Interactable
     public Transform MagazineTransform;
 
 
+
     //Weapon attributes
     public uint Damage;
     public uint NumShots;
@@ -65,6 +66,7 @@ public class WeaponComponent : Interactable
 	//Attemps to fire the weapon
 	public void Use()
     {
+        
         charge += Time.deltaTime;
 
         if (cooldown != 0 || charge < ChargeTime)
@@ -79,6 +81,7 @@ public class WeaponComponent : Interactable
 			return;
 		}
 
+        GetComponentInParent<PlayerController>().AnimController.SetBool("Fire", true);
         for(int i = 0; i < NumShots; i++)
         {
 			// Sound Test
@@ -162,7 +165,6 @@ public class WeaponComponent : Interactable
 
         this.HeadTransform = interactor.GetComponentInChildren<Camera>().transform;
        
-        PlayerController pc = interactor.GetComponent<PlayerController>();
         RpcPickupWeapon(gameObject, interactor);
 
     }

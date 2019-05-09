@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Mirror;
 
 /*
  * AUTHOR:
@@ -84,16 +85,27 @@ public class BearInteract : Interactable
     //TODO: Play opening sound
     public void ReleaseFromTrapTest()
     {
-        GameObject target = gameObject.GetComponent<BearTrap>().Target;
-        target.GetComponent<PlayerController>().UnStunned();
-
-        //If the puppet is releasing itself, do damage
-        if (interactor == target)
+        if (isServer)
         {
-            target.GetComponent<HealthComponent>().Damage(ReleaseDamage);
-        }
+            GameObject target = gameObject.GetComponent<BearTrap>().Target;
+            target.GetComponent<PlayerController>().UnStunned();
+            RpcCallUnstuck(target);
 
-        HudScript.ScaleInteractionProgress(0);
-        gameObject.GetComponent<BearTrap>().DestroyTrap();
+            //If the puppet is releasing itself, do damage
+            if (interactor == target)
+            {
+                target.GetComponent<HealthComponent>().Damage(ReleaseDamage);
+            }
+
+            HudScript.ScaleInteractionProgress(0);
+            gameObject.GetComponent<BearTrap>().DestroyTrap();
+        }
+    }
+
+
+    [ClientRpc]
+    public void RpcCallUnstuck(GameObject target)
+    {
+        target.GetComponent<PlayerController>().UnStunned();
     }
 }
