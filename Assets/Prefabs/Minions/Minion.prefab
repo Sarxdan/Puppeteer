@@ -778,8 +778,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   serverOnly: 0
   localPlayerAuthority: 0
-  m_AssetId: 
-  m_SceneId: 1857756800
+  m_AssetId: ce7345ac27c4c674f85af1382637442e
+  m_SceneId: 0
 --- !u!114 &2220566078404847079
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -816,13 +816,17 @@ MonoBehaviour:
   HasPath: 0
   TransformRaycastOffset: {x: 0, y: 0.2, z: 0}
   NodeArrivalMargin: 0.3
-  AvoidCheckDistance: 3
-  AvoidWeight: 0.1
+  PathfindDebug: 0
+  RaycastAvoidDistance: 0.5
+  RaycastAvoidAngle: 60
+  RaycastAvoidWeight: 1
+  MinionAvoidDistance: 2
+  MinionAvoidWeight: 0.2
+  ObstacleAvoidDebug: 1
   MinVelocityThreshold: 0.2
   StuckTimeThreshold: 0.2
   UnstuckRadius: 1
   DoorInteractRange: 0.5
-  debug: 0
 --- !u!114 &4637723171867558907
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -854,6 +858,8 @@ MonoBehaviour:
   FOVConeAngle: 50
   AtkPrioRunning: 0
   AssholeMode: 0
+  MinIdleTime: 4
+  MaxIdleTime: 8
   RaycastOffset: {x: 0, y: 0.2, z: 0}
   debug: 0
 --- !u!114 &3012254230700539824

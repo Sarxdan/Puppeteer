@@ -69,6 +69,11 @@ public class StateMachine : NetworkBehaviour
     private float PreThreat;
     private float PostThreat;
 
+    [Header("Idle settings")]
+
+    public float MinIdleTime;
+    public float MaxIdleTime;
+
     [Header("Misc. settings")]
     public Vector3 RaycastOffset; //Safety offset so raycast doesn't hit ground instantly
     public bool debug;
