@@ -78,7 +78,10 @@ public class BearTrap : TrapComponent
         if (Puppets.Count > 0)
         {
             Target = Puppets[0];
-            Target.GetComponent<HealthComponent>().Damage(Damage);
+            //Prevents damage from being dealt twise.
+            if (isServer)
+                Target.GetComponent<HealthComponent>().Damage(Damage);
+
             Target.GetComponent<PlayerController>().Stunned();
 
             GetComponent<Glowable>().enabled = true;
