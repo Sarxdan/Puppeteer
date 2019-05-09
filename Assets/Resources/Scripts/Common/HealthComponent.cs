@@ -128,7 +128,9 @@ public class HealthComponent : NetworkBehaviour
     {
         Health = (uint)(MaxHealth * MaxReviveRatio);
         AllowRegen = true;
-        AddDeathAction(gameObject.GetComponent<PlayerController>().Stunned);
+        PlayerController playerController = gameObject.GetComponent<PlayerController>();
+        playerController.UnStunned();
+        AddDeathAction(playerController.Stunned);
     
     }
 
