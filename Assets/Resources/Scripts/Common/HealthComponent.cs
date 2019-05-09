@@ -83,7 +83,7 @@ public class HealthComponent : NetworkBehaviour
             }
         }
         else {
-            //Local.CmdDamage(gameObject, damage);
+            Local.CmdDamage(gameObject, damage);
         }
     }
 
