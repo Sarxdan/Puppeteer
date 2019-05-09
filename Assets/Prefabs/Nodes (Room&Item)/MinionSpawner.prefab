@@ -1,5 +1,35 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &4821235158499988716
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 89670621584907357}
+  m_Layer: 0
+  m_Name: SpawnPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &89670621584907357
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4821235158499988716}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: -0.5}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 4963745196626812903}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &4963745196626812900
 GameObject:
   m_ObjectHideFlags: 0
@@ -14,7 +44,8 @@ GameObject:
   - component: {fileID: 7560926778480752341}
   - component: {fileID: 3029979402196604260}
   - component: {fileID: -4612029242079334992}
-  m_Layer: 8
+  - component: {fileID: 5323150377455828167}
+  m_Layer: 10
   m_Name: MinionSpawner
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -33,6 +64,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 6685309128243208157}
+  - {fileID: 89670621584907357}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -65,13 +97,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   syncInterval: 0.1
-  server: 0
   EnemyPrefab: {fileID: 2781805961794641847, guid: ce7345ac27c4c674f85af1382637442e,
     type: 3}
   MaxEnemyCount: 5
   MinDelay: 5
   MaxDelay: 10
   SpawnedEnemies: []
+  spawnPoint: {fileID: 89670621584907357}
   ChooseThisChance: 0.3
 --- !u!65 &7560926778480752341
 BoxCollider:
@@ -84,8 +116,8 @@ BoxCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Size: {x: 0.23, y: 2, z: 0.23}
+  m_Center: {x: 0, y: 1, z: 0}
 --- !u!114 &3029979402196604260
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -126,6 +158,22 @@ MonoBehaviour:
   RegenSpeed: 0
   RegenDelay: 0
   AllowRegen: 0
+  DamageTakenSound: 
+  DeathSound: 
+--- !u!114 &5323150377455828167
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4963745196626812900}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 41da09f073a954b4dae28c974e911522, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncInterval: 0.1
+  compressRotation: 1
 --- !u!1 &5661211153600896607
 GameObject:
   m_ObjectHideFlags: 0
@@ -153,8 +201,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5661211153600896607}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: 0, y: 1, z: 0}
+  m_LocalScale: {x: 0.25, y: 2, z: 0.25}
   m_Children: []
   m_Father: {fileID: 4963745196626812903}
   m_RootOrder: 0
@@ -213,7 +261,7 @@ BoxCollider:
   m_GameObject: {fileID: 5661211153600896607}
   m_Material: {fileID: 0}
   m_IsTrigger: 0
-  m_Enabled: 0
+  m_Enabled: 1
   serializedVersion: 2
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}

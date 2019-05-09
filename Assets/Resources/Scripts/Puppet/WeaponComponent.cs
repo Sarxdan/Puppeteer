@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
 /*
  * AUTHOR:
  * Sandra Andersson
@@ -27,6 +26,8 @@ public class WeaponComponent : Interactable
 
     public int LiquidLeft;
     public int LiquidPerRound;
+
+    public Transform MagazineTransform;
 
 
     //Weapon attributes
@@ -91,7 +92,7 @@ public class WeaponComponent : Interactable
             if(Physics.Raycast(Camera.main.ViewportToWorldPoint(new Vector3(0.5f, 0.5f)), Camera.main.transform.forward + offset, out hitInfo, Mathf.Infinity, ~(1 << 8)))
             {
                 // deal damage to target if possible
-                var health = hitInfo.transform.GetComponent<HealthComponent>();
+                var health = hitInfo.transform.GetComponentInParent<HealthComponent>();
                 if(health != null)
                 {
                     uint damage = (uint)(this.Damage * Mathf.Pow(DamageDropoff, hitInfo.distance / 10.0f));
@@ -157,31 +158,18 @@ public class WeaponComponent : Interactable
 
     public override void OnInteractBegin(GameObject interactor)
     {
-        var weapon = interactor.GetComponentInChildren<WeaponComponent>();
-
-        // swap weapon with current
-        if(weapon != null && weapon.transform != transform)
-        {
-            weapon.GetComponent<WeaponComponent>().HeadTransform = null;
-            weapon.transform.SetPositionAndRotation(transform.position, transform.rotation);
-            weapon.transform.SetParent(null);
-        }
+        Debug.Log(this);
 
         this.HeadTransform = interactor.GetComponentInChildren<Camera>().transform;
        
         PlayerController pc = interactor.GetComponent<PlayerController>();
-        GetComponent<CapsuleCollider>().enabled = false;
-        
-        pc.CurrentWeapon = gameObject;
-        transform.SetParent(pc.HandTransform);
-        pc.SetWeaponAnimation(1);
+        RpcPickupWeapon(gameObject, interactor);
 
-        transform.localPosition = Vector3.zero;
-        transform.localRotation = HoldRotation;
     }
 
     public override void OnInteractEnd(GameObject interactor)
     {
         // empty
     }
+
 }

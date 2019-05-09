@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using Mirror;
+using MinionStates;
 /*
  * AUTHOR:
  * Carl Appelkvist
@@ -20,27 +21,31 @@ using Mirror;
 
 public class EnemySpawner : NetworkBehaviour
 {
-    public bool server;
     public GameObject EnemyPrefab;
     public int MaxEnemyCount;
     public int MinDelay = 5;
     public int MaxDelay = 10;
-    public List<GameObject> SpawnedEnemies = new List<GameObject>();
-    public static Transform minionContainer;
+    public List<StateMachine> LocalMinions = new List<StateMachine>();
+    public static List<StateMachine> AllMinions = new List<StateMachine>();
+    public static Transform MinionContainerObject;
 
-    private SnapFunctionality trapBase;
+    private SnapFunctionality snapFunctionality;
+
+    public Transform spawnPoint;
 
     public float ChooseThisChance = .3f;
 
 
     public void Start()
     {
-        if(minionContainer == null){
-            minionContainer = GameObject.Find("MinionContainer").transform;
+        if(MinionContainerObject == null){
+            MinionContainerObject = GameObject.Find("MinionContainer").transform;
         }
-        trapBase = GetComponent<SnapFunctionality>();
-        server = true;
+        snapFunctionality = GetComponent<SnapFunctionality>();
         StartCoroutine("Spawn");
+        HealthComponent hpComponent = GetComponent<HealthComponent>();
+        hpComponent.AddDeathAction(OnDeath);
+        hpComponent.AddOnDamageAction(CmdOnTakeDamage);
 
     }
 
@@ -49,17 +54,19 @@ public class EnemySpawner : NetworkBehaviour
     private IEnumerator Spawn()
     { 
         while(true){
-            Debug.Log("Server: " + isServer);
-            if(isServer && trapBase.Placed){
+            if(isServer && snapFunctionality.Placed){
                 //Check if max amount of enemies has been reached
-                if (SpawnedEnemies.Count < MaxEnemyCount && MaxEnemyCount > 0)
+                if (LocalMinions.Count < MaxEnemyCount && MaxEnemyCount > 0)
                 {
                     //If not then create a GameObject from attached prefab at the spawners position and make them children of the "folder" created earlier
-                    GameObject npcEnemy = Instantiate(EnemyPrefab, transform.position, transform.rotation, transform) as GameObject;
-                    npcEnemy.GetComponent<StateMachine>().EnemySpawner = this;
+                    GameObject npcEnemy = Instantiate(EnemyPrefab, spawnPoint.position, transform.rotation, MinionContainerObject) as GameObject;
+                    StateMachine machine = npcEnemy.GetComponent<StateMachine>();
+                    machine.Spawner = this;
                     NetworkServer.Spawn(npcEnemy);
-                    SpawnedEnemies.Add(npcEnemy);
-                    Noise.Minions.Add(npcEnemy.GetComponent<StateMachine>());
+
+                    //Adds 
+                    AllMinions.Add(machine);
+                    LocalMinions.Add(machine);
                 }
             }
             yield return new WaitForSeconds(Random.Range(MinDelay, MaxDelay));
@@ -110,9 +117,16 @@ public class EnemySpawner : NetworkBehaviour
 
     }
 
-    public void onDeath(){
-        foreach(GameObject enemy in SpawnedEnemies){
-            enemy.GetComponent<StateMachine>().Die();
+    [Command]
+    public void CmdOnTakeDamage(){
+        foreach(StateMachine enemy in LocalMinions){
+            enemy.SetState(new ReturnToSpawnerState(enemy));
+        }
+    }
+
+    public void OnDeath(){
+        foreach(StateMachine enemy in LocalMinions){
+            enemy.Die();
         }
     }
 }

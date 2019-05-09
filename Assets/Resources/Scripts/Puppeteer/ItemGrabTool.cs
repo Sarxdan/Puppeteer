@@ -11,7 +11,8 @@ using UnityEngine;
 * Tool used for grabbing and dropping traps and spawners as puppeteer. Also does checks to determine if drop is legal.
 *
 * CODE REVIEWED BY:
-* 
+* Filip rehman 2019-05-07 
+*
 * CONTRIBUTORS:
 * Philip Stenmark, Anton "Knugen" Jonsson
 */
@@ -33,12 +34,14 @@ public class ItemGrabTool : NetworkBehaviour
 
 	// enables camera movement using mouse scroll
 	public bool EnableMovement = true;
-
+	// The object which the player clicks on
 	private GameObject sourceObject;
+	// The object which floats around following the mouse
 	private GameObject selectedObject;
+	// The object which snaps to points in the map
 	private GameObject guideObject;
-
-	private Vector3 previewLiftVector = new Vector3(0,2.0f,0);
+	// The vector that is added to the preview objects vector to move it up before it is placed
+	private Vector3 previewLiftVector;
 	private SnapPointBase bestDstPoint;
 
 	private SnapFunctionality lastHit;
@@ -76,9 +79,9 @@ public class ItemGrabTool : NetworkBehaviour
     {
         if (selectedObject == null)
         {
-			// Raycast only on Puppeteer Interact layer.
+			// Raycast only on Puppeteer Item Interact layer.
 			RaycastHit hit;
-            int layermask = 1 << LayerMask.NameToLayer("Puppeteer Interact");
+            int layermask = 1 << LayerMask.NameToLayer("PuppeteerItemInteract");
             if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition),out hit, RaycastDistance, layermask, QueryTriggerInteraction.Collide))
             {
                 GameObject hitObject = hit.transform.gameObject;
@@ -192,14 +195,15 @@ public class ItemGrabTool : NetworkBehaviour
 	// Method used for picking up an object.
 	private void Pickup(GameObject pickupTrap)
     {
+		// Instansiate the floating object
 		sourceObject = pickupTrap;
 		selectedObject = Instantiate(sourceObject);
 		selectedObject.name = "SelectedObject";
 
-		// handels the change in temporary currency. can be used to show currency left after placement.
+		// Handles the change in temporary currency. Can be used to show currency left after placement.
 		cost = selectedObject.GetComponent<SnapFunctionality>().Cost;
 		currency.TemporaryCurrency = currency.CurrentCurrency - cost;
-
+		// Instansiate the guide object on the ground
 		guideObject = Instantiate(sourceObject);
 		guideObject.name = "GuideObject";
 
@@ -224,12 +228,6 @@ public class ItemGrabTool : NetworkBehaviour
 
 			guideObject = Instantiate(sourceObject);
 			guideObject.name = "GuideObject";
-
-			// Disable colliders on server when server is not puppeteer.
-			foreach (BoxCollider collider in guideObject.GetComponentsInChildren<BoxCollider>())
-			{
-				collider.enabled = false;
-			}
 		}
 
 		grabOffset = sourceObject.transform.position - localPlayerMousePos;
@@ -262,8 +260,7 @@ public class ItemGrabTool : NetworkBehaviour
 			guideObject.transform.SetParent(bestDstPoint.transform.parent);
 			guideObject.transform.position -=previewLiftVector;
             guideObject.GetComponent<SnapFunctionality>().Placed = true;
-			NetworkServer.Spawn(guideObject);
-			guideObject.layer = 0;
+			SetLayerOnAll(guideObject, 0);
 			SnapPointBase point = bestDstPoint.GetComponent<SnapPointBase>();
 			point.Used = true;
 			guideObject = null;
@@ -294,14 +291,20 @@ public class ItemGrabTool : NetworkBehaviour
 			guideObject.transform.SetParent(bestDstPoint.transform.parent);
 			guideObject.transform.position -=previewLiftVector;
 			guideObject.GetComponent<SnapFunctionality>().Placed = true;
+			// Set the layer on the item and all of its children in order to make it visible and interactable
 			NetworkServer.Spawn(guideObject);
-			guideObject.layer = 0;
+			RpcUpdateLayer(guideObject);
 			SnapPointBase point = bestDstPoint.GetComponent<SnapPointBase>();
 			point.Used = true;
-			//bestDstPoint.GetComponent<TrapSnapPoint>().Used = true;
 			guideObject = null;
 		}
     }
+
+	[ClientRpc]
+	public void RpcUpdateLayer(GameObject thing)
+	{
+		SetLayerOnAll(thing, 0);
+	}
 
 	// Move local selected object for client.
 	private void  ClientUpdatePositions()
@@ -358,9 +361,9 @@ public class ItemGrabTool : NetworkBehaviour
         var rooms = level.GetRooms();
 		foreach (var room in rooms)
 		{
-			if (room.GetComponent<SnapPointContainer>())
+			if (room.GetComponent<ItemSpawner>())
 			{
-				snapPoints.AddRange(room.GetComponent<SnapPointContainer>().FindSnapPoints());
+				snapPoints.AddRange(room.GetComponent<ItemSpawner>().FindSnapPoints());
 			}
 		}
         SnapPointBase result = null;
@@ -378,7 +381,7 @@ public class ItemGrabTool : NetworkBehaviour
         return result;
 
     } 
-
+	// Checks if the currently held item can be placed on a specific point
     bool CanBePlaced(SnapFunctionality heldTrap, SnapPointBase snapPoint)
     {
 		if (cost > currency.CurrentCurrency)
@@ -393,7 +396,9 @@ public class ItemGrabTool : NetworkBehaviour
 		else
 		{
 			var snap = snapPoint.GetComponent<TrapSnapPoint>();
-			if (snap == null || snap.Used)
+			if (snap == null)
+				return false;
+			if (snap.Used)
 				return false;
 			if (snap.Floor && !heldTrap.Floor)
 				return false;
@@ -410,5 +415,13 @@ public class ItemGrabTool : NetworkBehaviour
 		Vector3 mousePos = Input.mousePosition;
 		mousePos.z = Camera.main.WorldToScreenPoint(selectedObject.transform.position).z;
 		return Camera.main.ScreenToWorldPoint(mousePos);
+	}
+	// Sets the layer of a game object and all of its children
+	private void SetLayerOnAll(GameObject obj, int layer)
+	{
+		foreach (Transform trans in obj.GetComponentsInChildren<Transform>(true))
+		{
+			trans.gameObject.layer = layer;
+		}
 	}
 }

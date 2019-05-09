@@ -9,7 +9,7 @@ using UnityEngine;
  * Script for checking what type a trap is
  * 
  * CODE REVIEWED BY:
- * 
+ * Filip Renman
  * 
  */
 public class SnapFunctionality : MonoBehaviour

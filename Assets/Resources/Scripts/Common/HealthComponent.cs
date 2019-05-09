@@ -20,6 +20,7 @@ public class HealthComponent : MonoBehaviour
 {
     //Callback function used when health reaches zero
     public delegate void OnZeroHealth();
+    public delegate void OnTakeDamage();
 
     public uint Health;
     public uint MaxHealth;
@@ -35,26 +36,52 @@ public class HealthComponent : MonoBehaviour
     public bool AllowRegen;     //Can I regen?
 
     private OnZeroHealth zeroHealthAction;
+    private OnTakeDamage takeDamageAction;
+
+    void Start(){
+        this.AddOnDamageAction(dummy);
+        this.AddDeathAction(dummy);
+    }
+
+    void dummy(){
+
+    }
+
+    [FMODUnity.EventRef]
+    public string DamageTakenSound; 
+    
+    [FMODUnity.EventRef]
+    public string DeathSound; 
+      
+
 
     public void Damage(uint damage)
     {
         if (Health <= 0)
             return;
 
+        this.takeDamageAction();
         StopCoroutine("RegenRoutine");
 
         //Cap the HP so it doesn't go below 0
         Health = (uint)Mathf.Max(0, Health -= damage);
         if (Health == 0)
         {
+            FMODUnity.RuntimeManager.PlayOneShot(DeathSound, transform.position);
             // perform death actions
             this.zeroHealthAction();
             AllowRegen = false;
         }
+        else if(Health > 0)
+        {
+        FMODUnity.RuntimeManager.PlayOneShot(DamageTakenSound, transform.position);            
+        }
         else if (AllowRegen)
         {
             StartCoroutine("RegenRoutine");
+
         }
+
     }
     
     //Starts regenerate HP after delay, up to the max amount of regen
@@ -75,6 +102,7 @@ public class HealthComponent : MonoBehaviour
         Health = (uint)(MaxHealth * MaxReviveRatio);
         AllowRegen = true;
         AddDeathAction(gameObject.GetComponent<PlayerController>().Stunned);
+    
     }
 
     //Registers a new zero health delegate
@@ -83,9 +111,21 @@ public class HealthComponent : MonoBehaviour
         this.zeroHealthAction += action;
     }
 
-    //Unregisters an existing zero health delegatew
+    //Unregisters an existing zero health delegate
     public void RemoveDeathAction(OnZeroHealth action)
     {
         this.zeroHealthAction -= action;
+    }
+
+    //Registers a new onDamage delegate
+    public void AddOnDamageAction(OnTakeDamage action)
+    {
+        this.takeDamageAction += action;
+    }
+
+    //Unregisters an existing onDamage delegate
+    public void RemoveOnDamageAction(OnTakeDamage action)
+    {
+        this.takeDamageAction -= action;
     }
 }

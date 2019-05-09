@@ -23,7 +23,6 @@ namespace MinionStates
         private int mask = ~(1 << LayerMask.NameToLayer("Puppeteer Interact")); //Layer mask to ignore puppeteer interact colliders
 
         //Timekeeping (TODO move somewhere more accessible)
-        private float maxLostTime = 5;
         private float playerLostTime = 0;
         private float lastSeenTime = 0;
 
@@ -84,7 +83,7 @@ namespace MinionStates
             {
                 //Counts seconds since player was lost, goes idle if past threshold 
                 playerLostTime += (Time.time - lastSeenTime);
-                if(playerLostTime > maxLostTime)
+                if(playerLostTime > machine.AggroDropTime)
                 {
                     machine.SetState(new IdleState(machine));
                     machine.TargetEntity = null;
@@ -121,12 +120,12 @@ namespace MinionStates
             machine.AnimController.SetBool("Running", true);
 
             //Fetches navmesh from spawner room and walks to a (semi)random point on it
-            NavMesh navmesh = machine.EnemySpawner.transform.GetComponentInParent<NavMesh>();
+            NavMesh navmesh = machine.Spawner.transform.GetComponentInParent<NavMesh>();
             Vector3 destination;
             if(navmesh!=null)
             {
                 //Fetches random face from navmesh as destination
-                destination = machine.EnemySpawner.transform.parent.TransformPoint(navmesh.faces[Random.Range(0, navmesh.faces.Length - 1)].Origin);
+                destination = machine.Spawner.transform.parent.TransformPoint(navmesh.faces[Random.Range(0, navmesh.faces.Length - 1)].Origin);
                 machine.PathFinder.MoveTo(destination);
             }
             else
@@ -174,7 +173,7 @@ namespace MinionStates
             machine.CurrentStateName = "Wander";
 
             //Fetches random destination close to spawner
-            destination = machine.EnemySpawner.GetNearbyDestination();
+            destination = machine.Spawner.GetNearbyDestination();
             machine.PathFinder.MoveTo(destination);
         }
 
@@ -292,18 +291,31 @@ namespace MinionStates
         {
             machine.CurrentStateName = "BigAttack";
             machine.AnimController.SetBool("Running", true);
+            machine.ChargeCharge = 0;
         }
 
         public override void Run()
         {
+            float dist = Vector3.Distance(machine.transform.position, machine.TargetEntity.transform.position);
+
+            machine.ChargeCharge++;
             //If no target, go idle
             if (machine.TargetEntity == null) machine.SetState(new IdleState(machine));
 
             //Debug ray for attack range
             if (machine.debug) Debug.DrawRay(machine.transform.position, Vector3.forward * machine.AttackRange, Color.green, 0.2f);
 
+            if (dist <= 30f && dist >= 10f && machine.ChargeCharge > 100)
+            {
+                machine.SetState(new ChargeAttackState(machine));
+            }
 
-            if (machine.WithinCone(machine.transform, machine.TargetEntity.transform, 75f, 2f, 0f))
+            //if (machine.WithinCone(machine.transform, machine.TargetEntity.transform, 30f, 30f, 0f) && machine.ChargeCharge > 100)
+            //{
+
+            //}
+
+            if (machine.WithinCone(machine.transform, machine.TargetEntity.transform, 90f, 2f, 0f))
             {
                 if (machine.CanAttack)
                 {
@@ -326,6 +338,7 @@ namespace MinionStates
 
         public override void Exit()
         {
+            machine.ChargeCharge = 0;
             machine.AnimController.SetBool("Running", false);
         }
     }
@@ -341,8 +354,11 @@ namespace MinionStates
 
         public override void Enter()
         {
-            machine.CurrentStateName = "ChargeAttack";
             machine.AnimController.SetBool("Running", true);
+            machine.CurrentStateName = "ChargeAttack";
+            //machine.AnimController.SetBool("Running", true);
+            machine.AnimController.SetBool("IsCharging", true);
+            //machine.AnimController.SetFloat("ChargeSpeed", machine.StartChargeSpeed);
             machine.ChargeStopped = false;
         }
 
@@ -352,8 +368,10 @@ namespace MinionStates
             if (machine.ChargeStopped)
             {
                 machine.StopCoroutine("chargeRoutine");
+                machine.ChargeStopped = false;
+                machine.SetState(new BigAttackState(machine));
             }
-            if (machine.WithinCone(machine.transform, machine.TargetEntity.transform, 30f, 15f, 0f) && )
+            if (machine.WithinCone(machine.transform, machine.TargetEntity.transform, 30f, 15f, 0f))
             {
                 machine.StartCoroutine("chargeRoutine");
             }
@@ -363,6 +381,7 @@ namespace MinionStates
         public override void Exit()
         {
             machine.AnimController.SetBool("Running", false);
+            machine.AnimController.SetBool("IsCharging", false);
         }
     }
 }

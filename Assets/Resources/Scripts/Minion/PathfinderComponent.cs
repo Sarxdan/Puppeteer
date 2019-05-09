@@ -54,21 +54,22 @@ public class PathfinderComponent : NetworkBehaviour
 
             performMove();
 
-            //Stuck check
-            if((transform.position - lastPosition).magnitude/Time.deltaTime < MinVelocityThreshold)
-            {
+            StuckCheck(transform, lastPosition, MinVelocityThreshold, currentStuckTime, StuckTimeThreshold, true);
+            ////Stuck check
+            //if((transform.position - lastPosition).magnitude/Time.deltaTime < MinVelocityThreshold)
+            //{
                 
-                currentStuckTime += Time.deltaTime;
-                if(currentStuckTime >= StuckTimeThreshold)
-                {
-                    unstuck();
-                    currentStuckTime = 0;
-                }
-            }
-            else
-            {
-                currentStuckTime = 0;
-            }
+            //    currentStuckTime += Time.deltaTime;
+            //    if(currentStuckTime >= StuckTimeThreshold)
+            //    {
+            //        unstuck();
+            //        currentStuckTime = 0;
+            //    }
+            //}
+            //else
+            //{
+            //    currentStuckTime = 0;
+            //}
         }
         else
         {
@@ -76,6 +77,23 @@ public class PathfinderComponent : NetworkBehaviour
                 animController.SetBool("Moving", false);
         }
         lastPosition = transform.position;
+    }
+
+    public void StuckCheck(Transform origin, Vector3 lastPos, float minVelocity, float curStuck, float stuckThresh,bool performUnstuck)
+    {
+        if ((origin.position - lastPos).magnitude / Time.deltaTime < minVelocity)
+        {
+            curStuck += Time.deltaTime;
+            if (curStuck >= stuckThresh)
+            {
+                if(performUnstuck) unstuck();
+                curStuck = 0;
+            }
+        }
+        else
+        {
+            curStuck = 0;
+        }
     }
 
     public void Stop()
@@ -139,6 +157,8 @@ public class PathfinderComponent : NetworkBehaviour
         catch(System.NullReferenceException e)
         {
             Debug.LogWarning("Pathfinder raycast hit something that wasn't a room! Start: " + startHit.transform.name + "end: " + endHit.transform.name);
+            if(startHit.transform.name == "LevelReturn") GetComponent<StateMachine>().Despawn();
+            
             Stop();
         }
     }

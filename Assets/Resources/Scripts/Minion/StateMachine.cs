@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using MinionStates;
 using Mirror;
+
 #pragma warning disable IDE1006 // Naming Styles
+
 /*
  * AUTHOR:
  * Ludvig Björk Förare
@@ -36,7 +38,7 @@ public class StateMachine : NetworkBehaviour
 
     //References
     [HideInInspector]
-    public EnemySpawner EnemySpawner;
+    public EnemySpawner Spawner;
     [HideInInspector]
     public GameObject TargetEntity;
     [HideInInspector]
@@ -55,14 +57,16 @@ public class StateMachine : NetworkBehaviour
     public float AttackRange;
     [HideInInspector]
     public bool CanAttack;
-    [HideInInspector]
+    //[HideInInspector]
     public bool ChargeStopped;
-    public float MaxChargeSpeed;
-    public float ChargeAccelerationSpeed;
+    public float ChargeAccelerationSpeed = 0.15f;
     public float CurrentChargeSpeed;
+    public float StartChargeSpeed = 0.15f;
+    public int ChargeCharge;
 
 
     [Header("Aggro settings")]
+    public float AggroDropTime;
     public float InstantAggroRange;
     public float ConeAggroRange;
     public float FOVConeAngle;
@@ -79,6 +83,11 @@ public class StateMachine : NetworkBehaviour
     {
         AnimController = GetComponent<Animator>();
 
+        //TODO: remove when prefab gets changed from Acceleration 0
+        ChargeAccelerationSpeed = 0.15f;
+
+
+        GetComponent<HealthComponent>().AddDeathAction(Die);
         //If not server, disable self
         if(!isServer)
         {
@@ -99,7 +108,6 @@ public class StateMachine : NetworkBehaviour
         }
 
         CanAttack = true;
-        GetComponent<HealthComponent>().AddDeathAction(Die);
         PostThreat = Mathf.NegativeInfinity;
     }
 
@@ -157,9 +165,13 @@ public class StateMachine : NetworkBehaviour
     public void Die()
     {
         this.GetComponent<Collider>().enabled = false;
-        this.enabled = false;
-        PathFinder.Stop();
-        PathFinder.enabled = false;
+
+        if(isServer){
+            this.enabled = false;
+            PathFinder.Stop();
+            PathFinder.enabled = false;
+        }
+
         AnimController.SetTrigger("Death");
         AnimController.SetInteger("RandomAnimationIndex", Random.Range(0,3));
     }
@@ -167,8 +179,8 @@ public class StateMachine : NetworkBehaviour
     //Runs when death animation is complete, despawns object
     public void Despawn()
     {
-        Noise.Minions.Remove(this);
-        EnemySpawner.SpawnedEnemies.Remove(this.gameObject);
+        EnemySpawner.AllMinions.Remove(this);
+        if(Spawner !=null) Spawner.LocalMinions.Remove(this);
         Destroy(this.gameObject);
     }
 
@@ -230,23 +242,24 @@ public class StateMachine : NetworkBehaviour
 
     private IEnumerator chargeRoutine()
     {
-        if (CurrentChargeSpeed < MaxChargeSpeed)
+        
+        if (AnimController.GetBool("IsCharging") == true && AnimController.GetFloat("ChargeSpeed") < 1)
         {
-            CurrentChargeSpeed = CurrentChargeSpeed + ChargeAccelerationSpeed;
-            Rigidbody rb = GetComponent<Rigidbody>();
-            rb.velocity = new Vector3(CurrentChargeSpeed, 0, 0);
-            
+            AnimController.SetFloat("ChargeSpeed", CurrentChargeSpeed + ChargeAccelerationSpeed);
         }
-
+        Vector3 lastPos = transform.position;
         foreach (GameObject pupp in Puppets)
         {
             HealthComponent health = pupp.GetComponent<HealthComponent>();
             if (WithinCone(transform, pupp.transform, 80f, 2f, 0f))
             {
-                uint chargeDamage = (uint)CurrentChargeSpeed;
+                uint chargeDamage = (uint)CurrentChargeSpeed * 10;
+
+                //PathFinder.StuckCheck(transform, lastPos, 0.2, 0.2,);
+
                 health.Damage(chargeDamage);
-                CurrentChargeSpeed = 0f;
                 ChargeStopped = true;
+                AnimController.SetFloat("ChargeSpeed", 0);
                 yield break;
             }
         }
