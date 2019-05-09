@@ -348,8 +348,8 @@ public class ItemGrabTool : NetworkBehaviour
         }
         else
         {
-        	RpcUpdateGuide(new TransformStruct(sourceObject.transform.position, sourceObject.transform.rotation));
-			guideObject.transform.position = sourceObject.transform.position;
+        	RpcUpdateGuide(new TransformStruct(new Vector3(0, -1000, 0), sourceObject.transform.rotation));
+			guideObject.transform.position = new Vector3(0, -1000, 0);
 			guideObject.transform.rotation = sourceObject.transform.rotation;
         }
     }
