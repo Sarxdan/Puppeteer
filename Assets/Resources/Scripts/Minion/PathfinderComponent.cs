@@ -5,49 +5,55 @@ using Mirror;
 
 public class PathfinderComponent : NetworkBehaviour
 {
-    //Motion
+
+    [Header("Movement settings")]
     public bool UseRootMotion;
     public float MovementSpeed = 50;
     public float RotationSpeed = 10;
     public float LegHeight;
 
-    private bool canCorrect;
-
     [HideInInspector]
     public Vector3 Velocity;
 
-    //Pathfinding
+    [Header("Pathfinding settings")]
     public int MaxRecursionDepth = 20;
+    [HideInInspector]
     public bool HasPath = false;
     public Vector3 TransformRaycastOffset;
-    public float InteractRayLength = 0.4f;
-    public float ArrivalMargin;
+    public float NodeArrivalMargin;
+    
     private Transform navmeshTransform;
     private List<AStarRoomNode> worldPath;
     private List<Vector3> roomPath;
 
-    //Avoidance
+
+    [Header("Obstacle avoidance settings")]
     public float AvoidRayLength;
     public float AgentRadius;
     public float AvoidTime;
     private float avoidStartTime;
 
-    private Vector3 currentAvoidPoint;
+    [HideInInspector]
+    public bool CanAvoid;
 
+    private Vector3 currentAvoidPoint;
     private static int layerMask;
 
-    //Unstuck
+
+    [Header("Unstuck settings")]
     public float MinVelocityThreshold;
     public float StuckTimeThreshold;
     public float UnstuckRadius;
     private Vector3 lastPosition;
     private float currentStuckTime = 0;
+    
 
+    [Header("Misc. settings")]
     public bool debug;
-    private NavMesh previousNavmesh;
 
     private Rigidbody rigidBody;
     private Animator animController;
+
     void Start()
     {
             layerMask = ~(1 << LayerMask.NameToLayer("Puppeteer Interact"));
@@ -173,41 +179,31 @@ public class PathfinderComponent : NetworkBehaviour
 
     private bool avoidanceCheck()
     {
-        if(!canCorrect){
-            canCorrect = true;
-            return false;
-        }
 
         if(Physics.Raycast(transform.position + TransformRaycastOffset, transform.forward, out RaycastHit hit, AvoidRayLength, layerMask))
         {
-            if(hit.transform.tag.Equals("Enemy"))
-            {
-                avoidStartTime = Time.time;
-                Vector3 predictPosition = hit.transform.position;
-                PathfinderComponent otherPathfinder = hit.transform.GetComponent<PathfinderComponent>();
-                predictPosition += otherPathfinder.Velocity; 
-
-                Vector3 deltaPos = predictPosition - transform.position;
-                currentAvoidPoint = transform.TransformPoint((transform.forward - deltaPos.normalized) * AgentRadius);
-                currentAvoidPoint = transform.InverseTransformPoint(hit.transform.position + transform.right);
-
-                Debug.DrawRay(transform.position, transform.forward * AvoidRayLength, Color.cyan, Time.deltaTime);
-                Debug.DrawRay(currentAvoidPoint, Vector3.up, Color.magenta, Time.deltaTime);
-                Debug.DrawLine(hit.transform.position, currentAvoidPoint, Color.red, Time.deltaTime);
-                Debug.DrawRay(transform.position, Vector3.up, Color.white, Time.deltaTime);
-                
-
-                Velocity = transform.forward * Velocity.magnitude;
-                return true;
+            if(hit.transform.tag.Equals("Door") && !hit.transform.GetComponent<DoorComponent>().Open){
+                hit.transform.GetComponentInChildren<DoorComponent>().OnInteractBegin(gameObject);
             }
+            else if(CanAvoid && hit.transform.tag.Equals("Enemy"))
+            {
+                hit.transform.GetComponent<PathfinderComponent>().CanAvoid = false;
+                avoidStartTime = Time.time;
+                currentAvoidPoint = hit.point - hit.transform.position;
+                currentAvoidPoint.y = 0; //Safety first
+            }
+
         }
 
         if(Time.time - avoidStartTime < AvoidTime)
         {
+            Velocity = transform.forward * Velocity.magnitude;
             Quaternion goalRot = Quaternion.LookRotation(currentAvoidPoint, transform.up);
             transform.rotation = Quaternion.RotateTowards(transform.rotation, goalRot, RotationSpeed);
+            Debug.DrawRay(transform.position, currentAvoidPoint * 3, Color.red, Time.deltaTime);
             return true;
         }
+        CanAvoid = true;
         return false;
     }
 
@@ -299,7 +295,7 @@ public class PathfinderComponent : NetworkBehaviour
             
             transform.rotation = Quaternion.RotateTowards(transform.rotation, goalRot, RotationSpeed);
             
-            if(deltaPos.magnitude <= ArrivalMargin)
+            if(deltaPos.magnitude <= NodeArrivalMargin)
             {
                 distance = deltaPos.magnitude;
                 this.roomPath.RemoveAt(0);
@@ -338,15 +334,6 @@ public class PathfinderComponent : NetworkBehaviour
             if(this.worldPath.Count > 0 ) Debug.DrawLine(transform.position, this.worldPath[0].EntrancePos, Color.cyan, Time.deltaTime);
         }
         
-        RaycastHit doorHit;
-        if(Physics.Raycast(transform.position + TransformRaycastOffset, transform.forward, out doorHit, InteractRayLength))
-        {
-            DoorComponent doorComponent = doorHit.transform.GetComponent<DoorComponent>();
-            if(doorComponent != null)
-            {
-                doorComponent.OnInteractBegin(gameObject);
-            }
-        }
 
     }
 
