@@ -20,12 +20,23 @@ public class PowerupRecharge : Interactable
     {
         var power = interactor.GetComponent<PowerupBase>();
 
-        // attempt to pickup recharge
-        if (power != null && power.PercentageLeft == 0.0f)
+        if (power.isServer && power.isLocalPlayer)
         {
-            power.Charged = true;
-            Destroy(gameObject);
+            // attempt to pickup recharge
+            if (power != null && power.PercentageLeft == 0.0f)
+            {
+                power.Charged = true;
+            }
         }
+        else
+        {
+            if (power != null)
+            {
+                power.RpcBoostPowerup();
+            }
+        }
+
+        Destroy(gameObject);
     }
 
     public override void OnInteractEnd(GameObject interactor)
