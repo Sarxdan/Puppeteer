@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Mirror;
 using UnityEngine;
 /*
  * AUTHOR:
@@ -24,14 +25,8 @@ using UnityEngine;
  * Sandra Andersson (Sound Impl.)
  * Filip Renman (Velocity)
 */
-public class PlayerController : MonoBehaviour
+public class PlayerController : NetworkBehaviour
 {
-    // Sound Events
-    [FMODUnity.EventRef]
-    public string Footstep; 
-    [FMODUnity.EventRef]
-    public string RunFootstep; 
-
     // Movement
     public float MovementSpeed;
     public float AccelerationRate;
@@ -151,7 +146,6 @@ public class PlayerController : MonoBehaviour
                 HeadTransform.localEulerAngles = HeadTransform.localEulerAngles - Vector3.right * MouseSensitivity * Input.GetAxis("Mouse Y");
             }
         }
-
         
         AnimController.SetFloat("Forward", Input.GetAxis("Vertical"));
         AnimController.SetFloat("Strafe", Input.GetAxis("Horizontal"));
@@ -268,13 +262,12 @@ public class PlayerController : MonoBehaviour
         gameObject.GetComponent<InteractionController>().enabled = true;
     }
 
-    // Plays footstep sound
-    public void Step()
+    [ClientRpc]
+    public void RpcAddAmmo(int liquid)
     {
-        FMODUnity.RuntimeManager.PlayOneShot(Footstep, transform.position);
-    }
-    public void RunStep()
-    {
-        FMODUnity.RuntimeManager.PlayOneShot(RunFootstep, transform.position);
+        if (isLocalPlayer)
+        {
+            Ammunition += liquid;
+        }
     }
 }

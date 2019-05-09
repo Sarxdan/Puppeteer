@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Mirror;
 
 /*
  * AUTHOR:
@@ -24,15 +25,15 @@ public class BearInteract : Interactable
     
     public float totalTime;
     public HUDScript HudScript;
+    [SyncVar]
     private bool interacting;
 
-    [FMODUnity.EventRef] 
-    public string opening;
-    FMOD.Studio.EventInstance open;
+    public BearTrapSounds sounds;
 
     private void Start()
     {
         anim = gameObject.GetComponent<Animator>();
+        sounds = gameObject.GetComponent<BearTrapSounds>();
     }
 
     private void Update()
@@ -45,7 +46,7 @@ public class BearInteract : Interactable
         }
     }
 
-    //Start release timer and open animation
+    //Start release timer and open animation on server
     public override void OnInteractBegin(GameObject interactor)
     {
         if (!Activated)
@@ -53,47 +54,88 @@ public class BearInteract : Interactable
             return;
         }
         anim.SetBool("Releasing", true);
-        var temp = anim.GetCurrentAnimatorClipInfo(0);
-        totalTime = temp[0].clip.length;
-        Debug.Log("total time of clip" + totalTime);
-        HudScript = interactor.GetComponentInChildren<HUDScript>();
+        var interactionController = interactor.GetComponent<InteractionController>();
+        HudScript = interactor.GetComponent<HUDScript>();
+        if(interactionController.isServer && interactionController.isLocalPlayer)
+        {
+            var clip = anim.GetCurrentAnimatorClipInfo(0);
+            totalTime = clip[0].clip.length;
+            interacting = true;
+        }
+        else
+        {
+            RpcEnableInteracting(interactor);
+        }
         interacting = true;
-
         this.interactor = interactor;
-        open = FMODUnity.RuntimeManager.CreateInstance(opening);
-        open.setParameterByName("Stop", 0f);
-        open.set3DAttributes(FMODUnity.RuntimeUtils.To3DAttributes(gameObject));
-        open.start();
+        sounds.Release();
     }
 
-    //Stop release timer and close animation
+    //Stop release timer and close animation on server
     public override void OnInteractEnd(GameObject interactor)
     {
         if (!Activated)
         {
             return;
         }
+        var interactionController = interactor.GetComponent<InteractionController>();
+        if(interactionController.isServer)
+        {
+            RpcDisableInteracting(interactor);
+
+        }
         interacting = false;
         anim.SetBool("Releasing", false);
-        open.setParameterByName("Stop", 1f);
-        open.release();
+        sounds.ReClose();
 
     }
 
     //Release the puppet from the trap after the interaction timer is full
-    //TODO: Play opening sound
     public void ReleaseFromTrapTest()
     {
-        GameObject target = gameObject.GetComponent<BearTrap>().Target;
-        target.GetComponent<PlayerController>().UnStunned();
-
-        //If the puppet is releasing itself, do damage
-        if (interactor == target)
+        if (isServer)
         {
-            target.GetComponent<HealthComponent>().Damage(ReleaseDamage);
-        }
+            GameObject target = gameObject.GetComponent<BearTrap>().Target;
+            target.GetComponent<PlayerController>().UnStunned();
+            RpcCallUnstuck(target);
 
-        HudScript.ScaleInteractionProgress(0);
-        gameObject.GetComponent<BearTrap>().DestroyTrap();
+            //If the puppet is releasing itself, do damage
+            if (interactor == target)
+            {
+                target.GetComponent<HealthComponent>().Damage(ReleaseDamage);
+            }
+
+            HudScript.ScaleInteractionProgress(0);
+            HudScript.RpcScaleZero();
+            gameObject.GetComponent<BearTrap>().DestroyTrap();
+        }
+    }
+
+    [ClientRpc]
+    public void RpcEnableInteracting(GameObject interactor)
+    {
+        if(interactor.GetComponent<InteractionController>().isLocalPlayer)
+        {
+            HudScript = interactor.GetComponent<HUDScript>();
+            var clip = anim.GetCurrentAnimatorClipInfo(0);
+            totalTime = clip[0].clip.length;
+            interacting = true;
+        }
+    }
+
+    [ClientRpc]
+    public void RpcDisableInteracting(GameObject interactor)
+    {
+        if(interactor.GetComponent<InteractionController>().isLocalPlayer)
+        {
+            interacting = false;
+        }
+    }
+
+
+    [ClientRpc]
+    public void RpcCallUnstuck(GameObject target)
+    {
+        target.GetComponent<PlayerController>().UnStunned();
     }
 }

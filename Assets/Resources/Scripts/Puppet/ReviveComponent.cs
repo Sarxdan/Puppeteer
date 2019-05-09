@@ -39,6 +39,7 @@ public class ReviveComponent : Interactable
     // an object has started to interact this object
     public override void OnInteractBegin(GameObject interactor)
     {
+        //TODO CHANGE TO GETCOMPONENT
         //hudScript = interactor.GetComponentInChildren<HUDScript>();
         StartCoroutine("ReviveRoutine", interactor);
     }
