@@ -1,4 +1,4 @@
-﻿using System.Collections;
+﻿ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
@@ -24,17 +24,19 @@ public class NavMeshEditor : Editor
         DrawDefaultInspector();
 
         script = (NavMesh)target;
-        EditorGUI.BeginDisabledGroup(script.faces != null && script.faces.Length > 0);
+        EditorGUI.BeginDisabledGroup(script.Faces != null && script.Faces.Length > 0);
         if(GUILayout.Button("Bake navmesh"))
         {
             script.BakeNavmesh();
+            EditorUtility.SetDirty(target);
         }
         EditorGUI.EndDisabledGroup();
 
-        EditorGUI.BeginDisabledGroup(script.faces == null || script.faces.Length == 0);
+        EditorGUI.BeginDisabledGroup(script.Faces == null || script.Faces.Length == 0);
         if(GUILayout.Button("Clear navmesh"))
         {
             script.ClearNavmesh();
+            EditorUtility.SetDirty(target);
         }
         EditorGUI.EndDisabledGroup();
 

@@ -50,7 +50,7 @@ public class NavMesh : MonoBehaviour
     
     //Cached faces
     [HideInInspector]
-    public navmeshFace[] faces;
+    public navmeshFace[] Faces;
 
     public Vector3 NavmeshOffset;
 
@@ -70,7 +70,7 @@ public class NavMesh : MonoBehaviour
     //Fetches a face that contains edge AB that is not included in filter
     public navmeshFace getFaceFromEdge(Vector3 A, Vector3 B, List<navmeshFace> filter)
     {
-        foreach(navmeshFace face in faces)
+        foreach(navmeshFace face in Faces)
         {
             if (!filter.Contains(face))
             {
@@ -90,7 +90,7 @@ public class NavMesh : MonoBehaviour
 
         //Disabled
         List<navmeshFace> filteredFaces = new List<navmeshFace>();
-        foreach (navmeshFace face in faces) {
+        foreach (navmeshFace face in Faces) {
             if (PointWithinFace(point, face))
             {
                 return face;
@@ -108,15 +108,15 @@ public class NavMesh : MonoBehaviour
     {
         float closestDistance = Mathf.Infinity;
         navmeshFace closestFace = null;
-        for (int i = 0; i < faces.Length; i++)
+        for (int i = 0; i < Faces.Length; i++)
         {
-            if (!filter.Contains(faces[i]))
+            if (!filter.Contains(Faces[i]))
             {
-                float distance = Vector3.Distance(faces[i].Origin, position);
+                float distance = Vector3.Distance(Faces[i].Origin, position);
                 if (distance < closestDistance)
                 {
                     closestDistance = distance;
-                    closestFace = faces[i];
+                    closestFace = Faces[i];
                 }
             }
         }
@@ -156,15 +156,15 @@ public class NavMesh : MonoBehaviour
             }
 
             //Saves faces from mesh
-            faces = new navmeshFace[(int)(inputMesh.triangles.Length / 3)];
-            for(int i = 0; i < faces.Length; i++)
+            Faces = new navmeshFace[(int)(inputMesh.triangles.Length / 3)];
+            for(int i = 0; i < Faces.Length; i++)
             {
-                faces[i] = new navmeshFace(vertices[inputMesh.triangles[i*3]], vertices[inputMesh.triangles[i * 3 + 1]], vertices[inputMesh.triangles[i * 3 + 2]]); 
+                Faces[i] = new navmeshFace(vertices[inputMesh.triangles[i*3]], vertices[inputMesh.triangles[i * 3 + 1]], vertices[inputMesh.triangles[i * 3 + 2]]); 
             }
     }
 
     public void ClearNavmesh(){
-        faces = null;
+        Faces = null;
     }
     
 }
