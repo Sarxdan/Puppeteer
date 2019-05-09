@@ -11,6 +11,11 @@ public class PathfinderComponent : NetworkBehaviour
     public float RotationSpeed = 10;
     public float LegHeight;
 
+    private bool canCorrect;
+
+    [HideInInspector]
+    public Vector3 Velocity;
+
     //Pathfinding
     public int MaxRecursionDepth = 20;
     public bool HasPath = false;
@@ -24,6 +29,10 @@ public class PathfinderComponent : NetworkBehaviour
     //Avoidance
     public float AvoidRayLength;
     public float AgentRadius;
+    public float AvoidTime;
+    private float avoidStartTime;
+
+    private Vector3 currentAvoidPoint;
 
     private static int layerMask;
 
@@ -56,13 +65,17 @@ public class PathfinderComponent : NetworkBehaviour
     // Update is called once per frame
     void Update()
     {
+        //Updates object velocity
+        Velocity = (transform.position - lastPosition)/Time.deltaTime;
+        lastPosition = transform.position;
         if(HasPath)
         {
-            avoidanceCheck();
-            performMove();
+            if(!avoidanceCheck()){
+                performMove();
+            }
 
             //Stuck check
-            if((transform.position - lastPosition).magnitude/Time.deltaTime < MinVelocityThreshold)
+            if(Velocity.magnitude < MinVelocityThreshold)
             {
                 
                 currentStuckTime += Time.deltaTime;
@@ -82,7 +95,6 @@ public class PathfinderComponent : NetworkBehaviour
             if(UseRootMotion)
                 animController.SetBool("Moving", false);
         }
-        lastPosition = transform.position;
     }
 
     public void Stop()
@@ -159,18 +171,44 @@ public class PathfinderComponent : NetworkBehaviour
         MoveTo(unstuckPoint);
     }
 
-    private void avoidanceCheck()
+    private bool avoidanceCheck()
     {
-        Debug.DrawRay(transform.position, transform.forward * AvoidRayLength, Color.cyan, Time.deltaTime);
-        if(Physics.Raycast(transform.position, transform.forward, out RaycastHit hit, AvoidRayLength, layerMask))
+        if(!canCorrect){
+            canCorrect = true;
+            return false;
+        }
+
+        if(Physics.Raycast(transform.position + TransformRaycastOffset, transform.forward, out RaycastHit hit, AvoidRayLength, layerMask))
         {
             if(hit.transform.tag.Equals("Enemy"))
             {
-            Vector3 delta = hit.transform.position - transform.position;
-            Vector3 avoidPoint = (transform.forward - delta.normalized) * AgentRadius;
-            Debug.DrawLine(hit.transform.position, avoidPoint, Color.red, Time.deltaTime);
+                avoidStartTime = Time.time;
+                Vector3 predictPosition = hit.transform.position;
+                PathfinderComponent otherPathfinder = hit.transform.GetComponent<PathfinderComponent>();
+                predictPosition += otherPathfinder.Velocity; 
+
+                Vector3 deltaPos = predictPosition - transform.position;
+                currentAvoidPoint = transform.TransformPoint((transform.forward - deltaPos.normalized) * AgentRadius);
+                currentAvoidPoint = transform.InverseTransformPoint(hit.transform.position + transform.right);
+
+                Debug.DrawRay(transform.position, transform.forward * AvoidRayLength, Color.cyan, Time.deltaTime);
+                Debug.DrawRay(currentAvoidPoint, Vector3.up, Color.magenta, Time.deltaTime);
+                Debug.DrawLine(hit.transform.position, currentAvoidPoint, Color.red, Time.deltaTime);
+                Debug.DrawRay(transform.position, Vector3.up, Color.white, Time.deltaTime);
+                
+
+                Velocity = transform.forward * Velocity.magnitude;
+                return true;
             }
         }
+
+        if(Time.time - avoidStartTime < AvoidTime)
+        {
+            Quaternion goalRot = Quaternion.LookRotation(currentAvoidPoint, transform.up);
+            transform.rotation = Quaternion.RotateTowards(transform.rotation, goalRot, RotationSpeed);
+            return true;
+        }
+        return false;
     }
 
     private void performMove()
