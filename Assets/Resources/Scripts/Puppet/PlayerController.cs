@@ -152,7 +152,6 @@ public class PlayerController : NetworkBehaviour
                 HeadTransform.localEulerAngles = HeadTransform.localEulerAngles - Vector3.right * MouseSensitivity * Input.GetAxis("Mouse Y");
             }
         }
-
         
         AnimController.SetFloat("Forward", Input.GetAxis("Vertical"));
         AnimController.SetFloat("Strafe", Input.GetAxis("Horizontal"));
