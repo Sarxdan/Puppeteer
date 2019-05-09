@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using Mirror;
 using UnityEngine;
@@ -226,23 +227,21 @@ public class ItemGrabTool : NetworkBehaviour
 		guideObject.name = "GuideObject";
 
 		grabOffset = selectedObject.transform.position - MouseToWorldPosition();
-		Debug.Log(selectedObject.transform.position + " - " + MouseToWorldPosition() + " = " + grabOffset);
-		//grabOffset.y = 0;
 
-
-
-        CmdUpdateMousePos(MouseToWorldPosition());
-        CmdPickup(pickupTrap);
+        CmdUpdateMousePos(MouseToWorldPosition() + grabOffset);
+		
+        CmdPickup(Array.IndexOf(HudItems, pickupTrap));
     }
 
     [Command]
-    public void CmdPickup(GameObject pickupTrap)
+    public void CmdPickup(int hudIndex)
     {
 		if (!isLocalPlayer)
 		{
-			sourceObject = pickupTrap;
+			sourceObject = HudItems[hudIndex];
 			selectedObject = Instantiate(sourceObject);
 			selectedObject.name = "SelectedObject";
+			selectedObject.transform.position = localPlayerMousePos;
 
 			// handels the change in temporary currency. can be used to show currency left after placement.
 			cost = selectedObject.GetComponent<SnapFunctionality>().Cost;
@@ -251,8 +250,6 @@ public class ItemGrabTool : NetworkBehaviour
 			guideObject = Instantiate(sourceObject);
 			guideObject.name = "GuideObject";
 		}
-
-		grabOffset = selectedObject.transform.position - localPlayerMousePos;
 
         if (!isLocalPlayer)
         {
@@ -329,8 +326,8 @@ public class ItemGrabTool : NetworkBehaviour
 	private void ServerUpdatePositions()
     {
 		// Move source object to mouse.
-		Vector3 newPosition = localPlayerMousePos + grabOffset;
-        selectedObject.transform.position = Vector3.Lerp(selectedObject.transform.position, new Vector3(newPosition.x, LiftHeight, newPosition.z), LiftSpeed *  Time.deltaTime);
+		Vector3 newPosition = localPlayerMousePos;
+        selectedObject.transform.position = Vector3.Lerp(selectedObject.transform.position, new Vector3(newPosition.x, LiftHeight, newPosition.z), LiftSpeed * Time.deltaTime);
 
         float bestDist = Mathf.Infinity;
         bestDstPoint = null;
@@ -439,34 +436,49 @@ public class ItemGrabTool : NetworkBehaviour
 
 	private void SpawnPuppeteerSpawnables()
 	{
-		if (isServer)
-		{
-			GameObject localPlayer = gameObject;
-			// Find LocalPlayer Puppeteer
-			foreach (GrabTool grabToolScript in FindObjectsOfType<GrabTool>())
-			{
-				if (grabToolScript.isLocalPlayer)
-				{
-					localPlayer = grabToolScript.gameObject;
-					break;
-				}
-			}
 
-			Transform cameraTransform = localPlayer.GetComponentInChildren<Camera>().transform;
-			Vector3[] pos = new Vector3[4];
-			pos[0] = new Vector3(35, 0, 10);
-			pos[1] = new Vector3(35, 2, 2.5f);
-			pos[2] = new Vector3(35, 0, -2.5f);
-			pos[3] = new Vector3(35, 0, -10);
-			int i = 0;
-			foreach (var item in level.PuppeteerItems)
+		GameObject localPlayer = gameObject;
+		// Find LocalPlayer Puppeteer
+		foreach (GrabTool grabToolScript in FindObjectsOfType<GrabTool>())
+		{
+			if (grabToolScript.isLocalPlayer)
 			{
-				var spawnable = Instantiate(item, cameraTransform);
-				spawnable.transform.position = pos[i];
-				NetworkServer.Spawn(spawnable);
-				i++;
+				localPlayer = grabToolScript.gameObject;
+				break;
+			}
+		}
+
+		Transform cameraTransform = localPlayer.GetComponentInChildren<Camera>().transform;
+		Vector3[] pos = new Vector3[4];
+		pos[0] = new Vector3(35, 0, 10);
+		pos[1] = new Vector3(35, 2, 2.5f);
+		pos[2] = new Vector3(35, 0, -2.5f);
+		pos[3] = new Vector3(35, 0, -10);
+		int i = 0;
+
+		HudItems = new GameObject[level.PuppeteerItems.Count];
+
+		foreach (var item in level.PuppeteerItems)
+		{
+			var spawnable = Instantiate(item, cameraTransform);
+			spawnable.transform.position = pos[i];
+			HudItems[i] = spawnable;
+			i++;
+		}
+
+		//RpcSetParents();
+	}
+
+	[ClientRpc]
+	public void RpcSetParents()
+	{
+		if (isLocalPlayer)
+		{
+			Transform cameraTransform = GetComponentInChildren<Camera>().transform;
+			foreach (SnapFunctionality snappable in FindObjectsOfType<SnapFunctionality>())
+			{
+				snappable.transform.SetParent(cameraTransform);
 			}
 		}
 	}
-
 }
