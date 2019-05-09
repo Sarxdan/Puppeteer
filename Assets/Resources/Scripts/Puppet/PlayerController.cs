@@ -48,7 +48,8 @@ public class PlayerController : MonoBehaviour
     public float MovementSpeedMod = 1.0f;
 
     // Animation
-    private Animator animController;
+    [HideInInspector]
+    public Animator AnimController;
 
     // Movement private variables
     private float currentMovementSpeed;
@@ -93,7 +94,7 @@ public class PlayerController : MonoBehaviour
     {
         rigidBody = GetComponent<Rigidbody>();
         gameObject.GetComponent<HealthComponent>().AddDeathAction(Stunned);
-        animController = GetComponent<Animator>();
+        AnimController = GetComponent<Animator>();
         // Saves the original input from the variables
         speedSave = MovementSpeed;
         accSave = AccelerationRate;
@@ -109,7 +110,7 @@ public class PlayerController : MonoBehaviour
             if(Input.GetButton("Fire"))
             {
                 CurrentWeapon.GetComponent<WeaponComponent>().Use();
-                animController.SetTrigger("Fire");
+                AnimController.SetTrigger("Fire");
             }
 
             // Reload current weapon
@@ -152,8 +153,8 @@ public class PlayerController : MonoBehaviour
         }
 
         
-        animController.SetFloat("Forward", Input.GetAxis("Vertical"));
-        animController.SetFloat("Strafe", Input.GetAxis("Horizontal"));
+        AnimController.SetFloat("Forward", Input.GetAxis("Vertical"));
+        AnimController.SetFloat("Strafe", Input.GetAxis("Horizontal"));
 
         }
 
@@ -188,7 +189,7 @@ public class PlayerController : MonoBehaviour
         // Checks the most important task, if the sprint button is released
         if (Input.GetButtonUp("Sprint") && (!Input.GetButton("Horizontal") || !Input.GetButton("Vertical")))
         {
-            animController.SetBool("Sprint", false);
+            AnimController.SetBool("Sprint", false);
             MovementSpeed = speedSave;
             AccelerationRate = accSave;
             reachedZero = false;
@@ -197,7 +198,7 @@ public class PlayerController : MonoBehaviour
         // Makes sure stamina can't be negative
         else if (reachedZero == true && isDown == true)
         {
-            animController.SetBool("Sprint", false);
+            AnimController.SetBool("Sprint", false);
             MovementSpeed = speedSave;
             currentMovementSpeed = MovementSpeed;
             AccelerationRate = accSave;
@@ -207,7 +208,7 @@ public class PlayerController : MonoBehaviour
         // Checks for sprint key and acts accordingly
         else if (!DisableInput && (Input.GetButton("Sprint") && (Input.GetButton("Horizontal") || Input.GetButton("Vertical"))))
         {
-            animController.SetBool("Sprint", true);
+            AnimController.SetBool("Sprint", true);
             isDown = true;
             MovementSpeed = SprintSpeed;
             AccelerationRate = SprintAcc;
@@ -238,8 +239,13 @@ public class PlayerController : MonoBehaviour
         
     }
 
+    //Animation
     public void SetWeaponAnimation(int animationIndex){
-        animController.SetInteger("Weapon", animationIndex);
+        AnimController.SetInteger("Weapon", animationIndex);
+    }
+
+    public void StopFire(){
+        AnimController.SetBool("Fire", false);
     }
 
     // Freezes the position of the puppet and disables shooting and interacting
