@@ -450,10 +450,10 @@ public class ItemGrabTool : NetworkBehaviour
 
 		Transform cameraTransform = localPlayer.GetComponentInChildren<Camera>().transform;
 		Vector3[] pos = new Vector3[4];
-		pos[0] = new Vector3(35, 0, 10);
-		pos[1] = new Vector3(35, 2, 2.5f);
-		pos[2] = new Vector3(35, 0, -2.5f);
-		pos[3] = new Vector3(35, 0, -10);
+		pos[0] = new Vector3(Screen.width - 100, Screen.height / 2 + 225, 20);
+		pos[1] = new Vector3(Screen.width - 100, Screen.height / 2 + 75, 20);
+		pos[2] = new Vector3(Screen.width - 100, Screen.height / 2 - 75, 20);
+		pos[3] = new Vector3(Screen.width - 100, Screen.height / 2 - 225, 20);
 		int i = 0;
 
 		HudItems = new GameObject[level.PuppeteerItems.Count];
@@ -461,7 +461,8 @@ public class ItemGrabTool : NetworkBehaviour
 		foreach (var item in level.PuppeteerItems)
 		{
 			var spawnable = Instantiate(item, cameraTransform);
-			spawnable.transform.position = pos[i];
+			spawnable.transform.position = Camera.main.ScreenToWorldPoint(pos[i]);
+			spawnable.transform.eulerAngles = new Vector3(0, 0, 0);
 			HudItems[i] = spawnable;
 			i++;
 		}
