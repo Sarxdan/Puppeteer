@@ -79,7 +79,7 @@ public class PuppeteerCameraController : MonoBehaviour
 
                 Vector3 tmp;
                 tmp = Vector3.Lerp(transform.position, transform.position + new Vector3(x, 0, z), Time.deltaTime);
-                tmp.y = Mathf.Lerp(tmp.y, zoomAmount, Time.deltaTime * CameraZoomSpeed);
+                tmp.y = Mathf.Lerp(tmp.y, zoomAmount, Time.deltaTime * CameraZoomSpeed * 2.0f);
                 transform.position = tmp;
             }
             else
