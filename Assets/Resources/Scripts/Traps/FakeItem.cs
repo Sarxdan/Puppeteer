@@ -25,7 +25,7 @@ public class FakeItem : Interactable
     public float Radius;
     public bool Activated = false;
 
-    // Start is called before the first frame update
+    // Switch model to a random one of some specific items
     void Start()
     {
         NewModel =
@@ -34,6 +34,7 @@ public class FakeItem : Interactable
         Destroy(Models[0]);
     }
 
+    // Destroy the whole trap if the trap is activated and particle system is done playing
     private void Update()
     {
         if (Activated && Explosion)
@@ -45,14 +46,16 @@ public class FakeItem : Interactable
         }
     }
 
+    // Activate the trap and explode and damage puppet
     public override void OnInteractBegin(GameObject interactor)
     {
-        Debug.Log("Interact");
+        // Activate trap and create explosion
         Activated = true;
         Explosion = Instantiate(Explosion, transform.position, transform.rotation);
         Explosion.transform.parent = gameObject.transform;
-        Collider[] hitColliders = Physics.OverlapSphere(transform.position, Radius);
 
+        // Damage all players in the explosion area
+        Collider[] hitColliders = Physics.OverlapSphere(transform.position, Radius);
         foreach (Collider hit in hitColliders)
         {
             if (hit.gameObject.tag == "Player")
@@ -60,18 +63,7 @@ public class FakeItem : Interactable
                 hit.GetComponent<HealthComponent>().Damage(Damage);
             }
         }
-
-        StartCoroutine("DestroyTimer");
-    }
-
-    public IEnumerator DestroyTimer()
-    {
-        yield return new WaitForSeconds(DestroyTime);
-
-        if (NewModel != null)
-        {
-            Destroy(NewModel);
-        }
+        
     }
 
     public override void OnInteractEnd(GameObject interactor)

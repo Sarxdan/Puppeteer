@@ -24,6 +24,9 @@ public class ReviveComponent : Interactable
     // determines if the revive requires a medkit
     public bool RequireMedkit = true;
 
+    // Krig interact progress stuff
+    private HUDScript hudScript;
+
     private HealthComponent healthComponent;
 
     void Start()
@@ -44,9 +47,10 @@ public class ReviveComponent : Interactable
         StopCoroutine("ReviveRoutine");
     }
 
-    // called when the health of this object reaches zero
+    // called when the health of this object reaches zer zo
     private void OnZeroHealth()
     {
+        //hudScript.ScaleInteractionProgress(0);
         StartCoroutine("DeathRoutine");
     }
 
@@ -75,21 +79,23 @@ public class ReviveComponent : Interactable
             yield break;
         }
 
-        int time = 0;
-        while(++time < ReviveDelay)
+        float time = 0;
+        while(time < ReviveDelay)
         {
             if (healthComponent.Health != 0)
             {
                 // someone has revived already
                 yield break;
             }
-
-            yield return new WaitForSeconds(1);
+            time += Time.fixedDeltaTime;
+            hudScript.ScaleInteractionProgress(time/ReviveDelay);
+            yield return new WaitForFixedUpdate();
         }
 
         // revive successful
-        healthComponent.Revive();
 
+        healthComponent.Revive();
+        hudScript.ScaleInteractionProgress(0);
         if(RequireMedkit)
         {
             // consume medkit if required

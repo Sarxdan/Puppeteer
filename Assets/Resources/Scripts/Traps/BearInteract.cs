@@ -21,6 +21,10 @@ public class BearInteract : Interactable
     public bool Activated = false;
     public GameObject interactor;
     public Animator anim;
+    
+    public float totalTime;
+    public HUDScript HudScript;
+    private bool interacting;
 
     [FMODUnity.EventRef] 
     public string opening;
@@ -31,6 +35,16 @@ public class BearInteract : Interactable
         anim = gameObject.GetComponent<Animator>();
     }
 
+    private void Update()
+    {
+        if(interacting)
+        {
+            var currentTime = anim.GetCurrentAnimatorStateInfo(0).normalizedTime;
+            Debug.Log("Current time " + currentTime * totalTime);
+            HudScript.ScaleInteractionProgress((currentTime*totalTime)/totalTime);
+        }
+    }
+
     //Start release timer and open animation
     public override void OnInteractBegin(GameObject interactor)
     {
@@ -38,8 +52,13 @@ public class BearInteract : Interactable
         {
             return;
         }
-
         anim.SetBool("Releasing", true);
+        var temp = anim.GetCurrentAnimatorClipInfo(0);
+        totalTime = temp[0].clip.length;
+        Debug.Log("total time of clip" + totalTime);
+        HudScript = interactor.GetComponentInChildren<HUDScript>();
+        interacting = true;
+
         this.interactor = interactor;
         open = FMODUnity.RuntimeManager.CreateInstance(opening);
         open.setParameterByName("Stop", 0f);
@@ -54,10 +73,11 @@ public class BearInteract : Interactable
         {
             return;
         }
-
+        interacting = false;
         anim.SetBool("Releasing", false);
         open.setParameterByName("Stop", 1f);
         open.release();
+
     }
 
     //Release the puppet from the trap after the interaction timer is full
@@ -73,6 +93,7 @@ public class BearInteract : Interactable
             target.GetComponent<HealthComponent>().Damage(ReleaseDamage);
         }
 
+        HudScript.ScaleInteractionProgress(0);
         gameObject.GetComponent<BearTrap>().DestroyTrap();
     }
 }
