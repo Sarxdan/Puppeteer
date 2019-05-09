@@ -31,7 +31,8 @@ public class MinionSounds : CharacterSounds
 
     public void DeathThud()
     {
-        FMODUnity.RuntimeManager.PlayOneShot(s_Thud, transform.position);
+        Debug.Log("Thud");
+        //FMODUnity.RuntimeManager.PlayOneShot(s_Thud, transform.position);
     }
     
     public void Spawn()
