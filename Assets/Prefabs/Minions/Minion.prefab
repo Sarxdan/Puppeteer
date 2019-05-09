@@ -736,7 +736,7 @@ CapsuleCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2781805961794641847}
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 13400000, guid: b35c6c9b81390b84ba75f7459547761a, type: 2}
   m_IsTrigger: 0
   m_Enabled: 1
   m_Radius: 0.08
@@ -809,20 +809,19 @@ MonoBehaviour:
   syncInterval: 0.1
   UseRootMotion: 1
   MovementSpeed: 50
-  RotationSpeed: 5
+  RotationSpeed: 10
   LegHeight: 0
-  Velocity: {x: 0, y: 0, z: 0}
+  Velocity: {x: -1.6254852, y: 0, z: -0.6307607}
   MaxRecursionDepth: 20
   HasPath: 0
   TransformRaycastOffset: {x: 0, y: 0.2, z: 0}
-  InteractRayLength: 0.4
-  ArrivalMargin: 0.1
-  AvoidRayLength: 1
-  AgentRadius: 0.3
-  AvoidTime: 0.3
+  NodeArrivalMargin: 0.3
+  AvoidCheckDistance: 3
+  AvoidWeight: 0.1
   MinVelocityThreshold: 0.2
   StuckTimeThreshold: 0.2
   UnstuckRadius: 1
+  DoorInteractRange: 0.5
   debug: 0
 --- !u!114 &4637723171867558907
 MonoBehaviour:
