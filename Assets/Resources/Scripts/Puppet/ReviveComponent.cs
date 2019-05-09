@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Mirror;
 
 /*
  * AUTHOR:
@@ -25,7 +26,7 @@ public class ReviveComponent : Interactable
     public bool RequireMedkit = true;
 
     // Krig interact progress stuff
-    //private HUDScript hudScript;
+    private HUDScript hudScript;
 
     private HealthComponent healthComponent;
 
@@ -39,8 +40,12 @@ public class ReviveComponent : Interactable
     // an object has started to interact this object
     public override void OnInteractBegin(GameObject interactor)
     {
-        //TODO CHANGE TO GETCOMPONENT
-        //hudScript = interactor.GetComponentInChildren<HUDScript>();
+        var interactionController = interactor.GetComponent<InteractionController>();
+        hudScript = interactor.GetComponent<HUDScript>();
+        if(!interactionController.isServer && !interactionController.isLocalPlayer)
+        {
+            RpcGetHudScript(interactor);
+        }
         StartCoroutine("ReviveRoutine", interactor);
     }
 
@@ -90,7 +95,7 @@ public class ReviveComponent : Interactable
                 yield break;
             }
             time += Time.fixedDeltaTime;
-            //hudScript.ScaleInteractionProgress(time/ReviveDelay);
+            hudScript.ScaleInteractionProgress(time/ReviveDelay);
             yield return new WaitForFixedUpdate();
         }
 
@@ -104,4 +109,14 @@ public class ReviveComponent : Interactable
             reviver.GetComponent<PlayerController>().HasMedkit = false;
         }
     }
+    [ClientRpc]
+    public void RpcGetHudScript(GameObject interactor)
+    {
+        if(interactor.GetComponent<InteractionController>().isLocalPlayer)
+        {
+            hudScript = interactor.GetComponent<HUDScript>();
+        }
+    }
 }
+
+
