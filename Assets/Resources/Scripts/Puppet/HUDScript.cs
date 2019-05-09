@@ -41,6 +41,8 @@ public class HUDScript : NetworkBehaviour
     // The base class of the powerup that the player has
     private PowerupBase powerUp;
 
+    public Image InteractionProgress;
+
     // Current health of the player
     private uint health;
     // The max health of the player
@@ -83,7 +85,7 @@ public class HUDScript : NetworkBehaviour
         previousHP = healthComponent.Health;
         maxHealth = healthComponent.MaxHealth;
         previousStamina = playerController.CurrentStamina;
-        if(!GetComponentInParent<NetworkIdentity>().isLocalPlayer)
+        if(!GetComponent<NetworkIdentity>().isLocalPlayer)
         {
             this.enabled = false;
             gameObject.SetActive(false);
@@ -187,6 +189,18 @@ public class HUDScript : NetworkBehaviour
             previousStamina = playerController.CurrentStamina;
             lerpFromStamina = previousStamina;
         }
+    }
+    [ClientRpc]
+    public void RpcScaleZero()
+    {
+        InteractionProgress.fillAmount = 0;
+    }
+
+    public void ScaleInteractionProgress(float percentage)
+    {
+        if(percentage > 1)
+            percentage = 0;
+        InteractionProgress.fillAmount = percentage;
     }
 
 }

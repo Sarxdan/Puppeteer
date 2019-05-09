@@ -15,21 +15,28 @@ using UnityEngine;
 * 
 */
 
-//TODO: Network functionality, eg. remove the medkit after it is picked up.
 public class MedKitComponent : Interactable
 {
     //Override from Interactable component
     public override void OnInteractBegin(GameObject interactor)
     {
+        PlayerController playerController = interactor.GetComponent<PlayerController>();
+
+        if (playerController.isServer && playerController.isLocalPlayer)
+        {
+            if (!playerController.HasMedkit)
+                playerController.HasMedkit = true;
+        }
+        else
+        {
+            playerController.RpcAddMedkit();
+        }
         
+        Destroy(gameObject);
     }
     //Overrides from Interactable component, adds the medkit to the players inventory.
     public override void OnInteractEnd(GameObject interactor)
     {   
-        PlayerController playerController = interactor.GetComponent<PlayerController>();
-
-        if(!playerController.HasMedkit)
-            playerController.HasMedkit = true;
-
+        // Empty
     }
 }

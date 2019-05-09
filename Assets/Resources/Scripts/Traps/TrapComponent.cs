@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Mirror;
 
 /*
  * AUTHOR:
@@ -14,7 +15,7 @@ using UnityEngine;
  * 
  */
 
-public abstract class TrapComponent : MonoBehaviour
+public abstract class TrapComponent : NetworkBehaviour
 { 
     public uint Damage;
     public float ActivationTime;
@@ -34,7 +35,6 @@ public abstract class TrapComponent : MonoBehaviour
     private IEnumerator TrapTimer()
     {
         yield return new WaitForSeconds(ActivationTime);
-        //TODO: Set correct conditions for future animations
         ActivateAnim();
     }
 

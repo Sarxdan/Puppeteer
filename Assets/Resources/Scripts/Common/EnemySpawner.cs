@@ -113,7 +113,7 @@ public class EnemySpawner : NetworkBehaviour
             return GetNearbyDestination(); //Attempts again
         }
 
-        return doorReferences.transform.TransformPoint(navMesh.faces[Random.Range(0,navMesh.faces.Length-1)].Origin);
+        return doorReferences.transform.TransformPoint(navMesh.Faces[Random.Range(0,navMesh.Faces.Length-1)].Origin);
 
     }
 
@@ -128,5 +128,6 @@ public class EnemySpawner : NetworkBehaviour
         foreach(StateMachine enemy in LocalMinions){
             enemy.Die();
         }
+        Destroy(gameObject);
     }
 }

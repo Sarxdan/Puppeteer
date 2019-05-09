@@ -5,36 +5,55 @@ using Mirror;
 
 public class PathfinderComponent : NetworkBehaviour
 {
-    //Motion
+
+    [Header("Movement settings")]
     public bool UseRootMotion;
     public float MovementSpeed = 50;
     public float RotationSpeed = 10;
     public float LegHeight;
 
-    //Pathfinding
+    [HideInInspector]
+    public Vector3 Velocity;
+
+    [Header("Pathfinding settings")]
     public int MaxRecursionDepth = 20;
+    [HideInInspector]
     public bool HasPath = false;
     public Vector3 TransformRaycastOffset;
-    public float InteractRayLength = 0.4f;
-    public float ArrivalMargin;
+    public float NodeArrivalMargin;
+    
     private Transform navmeshTransform;
     private List<AStarRoomNode> worldPath;
     private List<Vector3> roomPath;
 
-    //Unstuck
+
+    [Header("Obstacle avoidance settings")]
+    public float AvoidCheckDistance;
+    public float AvoidWeight;
+
+    private Vector3 avoidVector;
+    private static int layerMask;
+
+
+    [Header("Unstuck settings")]
     public float MinVelocityThreshold;
     public float StuckTimeThreshold;
     public float UnstuckRadius;
     private Vector3 lastPosition;
     private float currentStuckTime = 0;
+    
 
+    [Header("Misc. settings")]
+    public float DoorInteractRange;
     public bool debug;
-    private NavMesh previousNavmesh;
 
+    //References
     private Rigidbody rigidBody;
     private Animator animController;
+
     void Start()
     {
+            layerMask = ~(1 << LayerMask.NameToLayer("Puppeteer Interact"));
         if(!isServer)
         {
             this.enabled = false;
@@ -49,52 +68,24 @@ public class PathfinderComponent : NetworkBehaviour
     // Update is called once per frame
     void Update()
     {
+        //Updates object velocity
+        Velocity = (transform.position - lastPosition)/Time.deltaTime;
+        lastPosition = transform.position;
+
         if(HasPath)
         {
-
+            avoidanceCheck();
+            doorInteraction();
             performMove();
-
-            StuckCheck(transform, lastPosition, MinVelocityThreshold, currentStuckTime, StuckTimeThreshold, true);
-            ////Stuck check
-            //if((transform.position - lastPosition).magnitude/Time.deltaTime < MinVelocityThreshold)
-            //{
-                
-            //    currentStuckTime += Time.deltaTime;
-            //    if(currentStuckTime >= StuckTimeThreshold)
-            //    {
-            //        unstuck();
-            //        currentStuckTime = 0;
-            //    }
-            //}
-            //else
-            //{
-            //    currentStuckTime = 0;
-            //}
+            stuckCheck();
         }
-        else
+        else if(UseRootMotion)
         {
-            if(UseRootMotion)
-                animController.SetBool("Moving", false);
+            animController.SetBool("Moving", false);
         }
-        lastPosition = transform.position;
     }
 
-    public void StuckCheck(Transform origin, Vector3 lastPos, float minVelocity, float curStuck, float stuckThresh,bool performUnstuck)
-    {
-        if ((origin.position - lastPos).magnitude / Time.deltaTime < minVelocity)
-        {
-            curStuck += Time.deltaTime;
-            if (curStuck >= stuckThresh)
-            {
-                if(performUnstuck) unstuck();
-                curStuck = 0;
-            }
-        }
-        else
-        {
-            curStuck = 0;
-        }
-    }
+    
 
     public void Stop()
     {
@@ -164,10 +155,63 @@ public class PathfinderComponent : NetworkBehaviour
     }
     
     //Method for helping stuck entities
-    private void unstuck()
+    private void stuckCheck()
     {
-        Vector3 unstuckPoint = transform.position + new Vector3(Random.Range(-UnstuckRadius, UnstuckRadius), transform.position.y, Random.Range(-UnstuckRadius, UnstuckRadius));
-        MoveTo(unstuckPoint);
+        if(Velocity.magnitude < MinVelocityThreshold)
+        {
+            
+            currentStuckTime += Time.deltaTime;
+            if(currentStuckTime >= StuckTimeThreshold)
+            {
+                Vector3 unstuckPoint = transform.position + new Vector3(Random.Range(-UnstuckRadius, UnstuckRadius), transform.position.y, Random.Range(-UnstuckRadius, UnstuckRadius));
+                MoveTo(unstuckPoint);
+                currentStuckTime = 0;
+            }
+        }
+        else
+        {
+            currentStuckTime = 0;
+        }
+    }
+    
+    private void avoidanceCheck()
+    {
+        Transform closestMinion = null;
+        float closestMinionDistance = Mathf.Infinity;
+        foreach(StateMachine minion in EnemySpawner.AllMinions)
+        {
+            Vector3 localPos = transform.InverseTransformPoint(minion.transform.position);
+            if(localPos.z <= 0) continue;
+                if(localPos.magnitude < closestMinionDistance)
+                {
+                    closestMinion = minion.transform;
+                    closestMinionDistance = localPos.magnitude;
+                }
+
+        }
+
+        if(closestMinionDistance < AvoidCheckDistance){
+            Debug.DrawLine(transform.position, closestMinion.transform.position, Color.white, Time.deltaTime);
+            avoidVector = (transform.position - closestMinion.position).normalized/closestMinionDistance;
+        }
+        else
+        {
+            avoidVector = Vector3.zero;
+        }
+
+        
+
+        Debug.DrawRay(transform.position, avoidVector, Color.red, Time.deltaTime);
+    }
+
+    private void doorInteraction()
+    {
+        if(Physics.Raycast(transform.position + TransformRaycastOffset, transform.forward, out RaycastHit hit, DoorInteractRange, layerMask))
+        {
+            if(hit.transform.tag.Equals("Door") && !hit.transform.GetComponent<DoorComponent>().Open){
+                hit.transform.GetComponentInChildren<DoorComponent>().OnInteractBegin(gameObject);
+            }
+        }
     }
 
     private void performMove()
@@ -221,8 +265,6 @@ public class PathfinderComponent : NetworkBehaviour
             //Runs A* pathfind on faces, saves last face (reversed linked list)
             AStarFaceNode startNode = aStarFacePathfind(startPos, endPos, navmesh);
 
-
-
             //If A* linked list contains at least two items, run funnel stringpull
             if(startNode != null && startNode.Parent != null)
             {
@@ -247,18 +289,15 @@ public class PathfinderComponent : NetworkBehaviour
             //Does the actual movement
             Vector3 deltaPos = navmeshTransform.TransformPoint(roomPath[0]) - transform.position + transform.up * LegHeight;
             float distance = 0;
-            Quaternion goalRot = Quaternion.LookRotation(deltaPos, transform.up);
+            Quaternion goalRot = Quaternion.LookRotation(deltaPos + avoidVector * AvoidWeight, transform.up);
 
-            //Debug rays for rotation
-            if(debug)
-            {
-                Debug.DrawRay(transform.position, transform.forward, Color.magenta, Time.deltaTime);
-                Debug.DrawRay(transform.position, goalRot*transform.forward, Color.red, Time.deltaTime);
-            }
+            Debug.DrawRay(transform.position, deltaPos + avoidVector * AvoidWeight, Color.cyan, Time.deltaTime);
+            Debug.DrawRay(transform.position, deltaPos, Color.yellow, Time.deltaTime);
+
             
             transform.rotation = Quaternion.RotateTowards(transform.rotation, goalRot, RotationSpeed);
             
-            if(deltaPos.magnitude <= ArrivalMargin)
+            if(deltaPos.magnitude <= NodeArrivalMargin)
             {
                 distance = deltaPos.magnitude;
                 this.roomPath.RemoveAt(0);
@@ -297,15 +336,6 @@ public class PathfinderComponent : NetworkBehaviour
             if(this.worldPath.Count > 0 ) Debug.DrawLine(transform.position, this.worldPath[0].EntrancePos, Color.cyan, Time.deltaTime);
         }
         
-        RaycastHit doorHit;
-        if(Physics.Raycast(transform.position + TransformRaycastOffset, transform.forward, out doorHit, InteractRayLength))
-        {
-            DoorComponent doorComponent = doorHit.transform.GetComponent<DoorComponent>();
-            if(doorComponent != null)
-            {
-                doorComponent.OnInteractBegin(gameObject);
-            }
-        }
 
     }
 

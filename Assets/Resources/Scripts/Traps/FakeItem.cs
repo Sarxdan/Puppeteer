@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using UnityEngine;
+using UnityEngine.Experimental.PlayerLoop;
 
 /*
  * AUTHOR:
@@ -17,23 +18,44 @@ using UnityEngine;
 public class FakeItem : Interactable
 {
     public GameObject[] Models; //[0] is default model
+    public ParticleSystem Explosion;
+    public GameObject NewModel;
     public uint Damage;
     public float DestroyTime;
+    public float Radius;
+    public bool Activated = false;
 
-    // Start is called before the first frame update
+    // Switch model to a random one of some specific items
     void Start()
     {
-        GameObject newModel =
+        NewModel =
             Instantiate(Models[Random.Range(1, Models.Length)], transform.position, transform.rotation);
-        newModel.transform.parent = transform;
+        NewModel.transform.parent = transform;
         Destroy(Models[0]);
     }
-    
+
+    // Destroy the whole trap if the trap is activated and particle system is done playing
+    private void Update()
+    {
+        if (Activated && Explosion)
+        {
+            if (!Explosion.IsAlive())
+            {
+                Destroy(gameObject);
+            }
+        }
+    }
+
+    // Activate the trap and explode and damage puppet
     public override void OnInteractBegin(GameObject interactor)
     {
-        Debug.Log("Interact");
-        Collider[] hitColliders = Physics.OverlapSphere(transform.position, 4);
+        // Activate trap and create explosion
+        Activated = true;
+        Explosion = Instantiate(Explosion, transform.position, transform.rotation);
+        Explosion.transform.parent = gameObject.transform;
 
+        // Damage all players in the explosion area
+        Collider[] hitColliders = Physics.OverlapSphere(transform.position, Radius);
         foreach (Collider hit in hitColliders)
         {
             if (hit.gameObject.tag == "Player")
@@ -41,18 +63,7 @@ public class FakeItem : Interactable
                 hit.GetComponent<HealthComponent>().Damage(Damage);
             }
         }
-
-        StartCoroutine("DestroyTimer");
-    }
-
-    public IEnumerator DestroyTimer()
-    {
-        yield return new WaitForSeconds(DestroyTime);
-
-        if (gameObject != null)
-        {
-            Destroy(gameObject);
-        }
+        
     }
 
     public override void OnInteractEnd(GameObject interactor)

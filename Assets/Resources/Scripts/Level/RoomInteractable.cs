@@ -46,6 +46,22 @@ public class RoomInteractable : Interactable
 		return false;
 	}
 
+	// Kill all enemies in room. Used before room is moved.
+	public void KillEnemiesInRoom()
+	{
+		foreach (BoxCollider collider in GetComponents<BoxCollider>())
+		{
+			foreach (GameObject enemy in GameObject.FindGameObjectsWithTag("Enemy"))
+			{
+				// Check if any player is within any collider on the room.
+				if (collider.bounds.Contains(enemy.transform.position))
+				{
+					enemy.GetComponent<HealthComponent>().Damage(696969);
+				}
+			}
+		}
+	}
+
 	public void MoveMinionsWithin(Vector3 deltaPos){
 		if(EnemySpawner.AllMinions.Count == 0) return;
 		foreach(BoxCollider collider in GetComponents<BoxCollider>()){

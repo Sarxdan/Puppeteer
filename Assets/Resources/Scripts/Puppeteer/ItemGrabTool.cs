@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using Mirror;
 using UnityEngine;
@@ -32,6 +33,8 @@ public class ItemGrabTool : NetworkBehaviour
 	//The distance of the groud that the preview trap is
 	private float PreviewLiftHeight = 2.0f;
 
+	public GameObject[] HudItems;
+
 	// enables camera movement using mouse scroll
 	public bool EnableMovement = true;
 	// The object which the player clicks on
@@ -59,7 +62,17 @@ public class ItemGrabTool : NetworkBehaviour
         level = GetComponent<LevelBuilder>();
 		currency = GetComponent<Currency>();
 		previewLiftVector = new Vector3(0,PreviewLiftHeight,0);
+		SpawnPuppeteerSpawnables();
 
+		//if (isServer && HudItems.Length == 0)
+		//{
+		//	SnapFunctionality[] snapItems = FindObjectsOfType<SnapFunctionality>();
+		//	HudItems = new GameObject[snapItems.Length];
+		//	for (int i = 0; i < snapItems.Length; i++)
+		//	{
+		//		HudItems[i] = snapItems[i].gameObject;
+		//	}
+		//}
     }
 
     // Update is called once per frame
@@ -198,6 +211,12 @@ public class ItemGrabTool : NetworkBehaviour
 		// Instansiate the floating object
 		sourceObject = pickupTrap;
 		selectedObject = Instantiate(sourceObject);
+
+		selectedObject.transform.rotation = new Quaternion();
+		Vector3 mousePos = Input.mousePosition;
+		mousePos.z = Camera.main.WorldToScreenPoint(new Vector3(0, LiftHeight, 0)).z;
+		selectedObject.transform.position = Camera.main.ScreenToWorldPoint(mousePos);
+
 		selectedObject.name = "SelectedObject";
 
 		// Handles the change in temporary currency. Can be used to show currency left after placement.
@@ -207,20 +226,22 @@ public class ItemGrabTool : NetworkBehaviour
 		guideObject = Instantiate(sourceObject);
 		guideObject.name = "GuideObject";
 
-		grabOffset = sourceObject.transform.position - MouseToWorldPosition();
+		grabOffset = selectedObject.transform.position - MouseToWorldPosition();
 
-        CmdUpdateMousePos(MouseToWorldPosition());
-        CmdPickup(pickupTrap);
+        CmdUpdateMousePos(MouseToWorldPosition() + grabOffset);
+		
+        CmdPickup(Array.IndexOf(HudItems, pickupTrap));
     }
 
     [Command]
-    public void CmdPickup(GameObject pickupTrap)
+    public void CmdPickup(int hudIndex)
     {
 		if (!isLocalPlayer)
 		{
-			sourceObject = pickupTrap;
+			sourceObject = HudItems[hudIndex];
 			selectedObject = Instantiate(sourceObject);
 			selectedObject.name = "SelectedObject";
+			selectedObject.transform.position = localPlayerMousePos;
 
 			// handels the change in temporary currency. can be used to show currency left after placement.
 			cost = selectedObject.GetComponent<SnapFunctionality>().Cost;
@@ -229,8 +250,6 @@ public class ItemGrabTool : NetworkBehaviour
 			guideObject = Instantiate(sourceObject);
 			guideObject.name = "GuideObject";
 		}
-
-		grabOffset = sourceObject.transform.position - localPlayerMousePos;
 
         if (!isLocalPlayer)
         {
@@ -252,17 +271,7 @@ public class ItemGrabTool : NetworkBehaviour
 		{
 			Destroy(selectedObject);
 			selectedObject = null;
-
-			// removes currency from the puppeteer when placed.
-			currency.CurrentCurrency = currency.CurrentCurrency - cost;
-
-			guideObject.name = "Placed Trap";
-			guideObject.transform.SetParent(bestDstPoint.transform.parent);
-			guideObject.transform.position -=previewLiftVector;
-            guideObject.GetComponent<SnapFunctionality>().Placed = true;
-			SetLayerOnAll(guideObject, 0);
-			SnapPointBase point = bestDstPoint.GetComponent<SnapPointBase>();
-			point.Used = true;
+			Destroy(guideObject);
 			guideObject = null;
 		}
     }
@@ -272,7 +281,7 @@ public class ItemGrabTool : NetworkBehaviour
     public void CmdDrop()
     {
 		// Reset everything if trap is droped without a target place.
-		if (sourceObject.transform.position.x == guideObject.transform.position.x && sourceObject.transform.position.z == guideObject.transform.position.z && sourceObject.transform.rotation == guideObject.transform.rotation)
+		if ((sourceObject.transform.position.x == guideObject.transform.position.x && sourceObject.transform.position.z == guideObject.transform.position.z && sourceObject.transform.rotation == guideObject.transform.rotation) || bestDstPoint == null)
 		{
 			Destroy(selectedObject);
 			selectedObject = null;
@@ -301,9 +310,9 @@ public class ItemGrabTool : NetworkBehaviour
     }
 
 	[ClientRpc]
-	public void RpcUpdateLayer(GameObject thing)
+	public void RpcUpdateLayer(GameObject target)
 	{
-		SetLayerOnAll(thing, 0);
+		SetLayerOnAll(target, 0);
 	}
 
 	// Move local selected object for client.
@@ -317,8 +326,8 @@ public class ItemGrabTool : NetworkBehaviour
 	private void ServerUpdatePositions()
     {
 		// Move source object to mouse.
-		Vector3 newPosition = localPlayerMousePos + grabOffset;
-        selectedObject.transform.position = Vector3.Lerp(selectedObject.transform.position, new Vector3(newPosition.x, LiftHeight, newPosition.z), LiftSpeed *  Time.deltaTime);
+		Vector3 newPosition = localPlayerMousePos;
+        selectedObject.transform.position = Vector3.Lerp(selectedObject.transform.position, new Vector3(newPosition.x, LiftHeight, newPosition.z), LiftSpeed * Time.deltaTime);
 
         float bestDist = Mathf.Infinity;
         bestDstPoint = null;
@@ -339,8 +348,8 @@ public class ItemGrabTool : NetworkBehaviour
         }
         else
         {
-        	RpcUpdateGuide(new TransformStruct(sourceObject.transform.position, sourceObject.transform.rotation));
-			guideObject.transform.position = sourceObject.transform.position + previewLiftVector;
+        	RpcUpdateGuide(new TransformStruct(new Vector3(0, -1000, 0), sourceObject.transform.rotation));
+			guideObject.transform.position = new Vector3(0, -1000, 0);
 			guideObject.transform.rotation = sourceObject.transform.rotation;
         }
     }
@@ -348,10 +357,10 @@ public class ItemGrabTool : NetworkBehaviour
 	[ClientRpc]
     public void RpcUpdateGuide(TransformStruct target)
     {
-        if (isLocalPlayer)
+        if (isLocalPlayer && guideObject != null)
         {
 			guideObject.transform.position = target.Position + previewLiftVector;
-            gameObject.transform.rotation = target.Rotation;
+            guideObject.transform.rotation = target.Rotation;
         }
     }
 	// Checks all other snap points in the level and picks the best one.
@@ -422,6 +431,55 @@ public class ItemGrabTool : NetworkBehaviour
 		foreach (Transform trans in obj.GetComponentsInChildren<Transform>(true))
 		{
 			trans.gameObject.layer = layer;
+		}
+	}
+
+	private void SpawnPuppeteerSpawnables()
+	{
+
+		GameObject localPlayer = gameObject;
+		// Find LocalPlayer Puppeteer
+		foreach (GrabTool grabToolScript in FindObjectsOfType<GrabTool>())
+		{
+			if (grabToolScript.isLocalPlayer)
+			{
+				localPlayer = grabToolScript.gameObject;
+				break;
+			}
+		}
+
+		Transform cameraTransform = localPlayer.GetComponentInChildren<Camera>().transform;
+		Vector3[] pos = new Vector3[4];
+		pos[0] = new Vector3(Screen.width - 100, Screen.height / 2 + 225, 20);
+		pos[1] = new Vector3(Screen.width - 100, Screen.height / 2 + 75, 20);
+		pos[2] = new Vector3(Screen.width - 100, Screen.height / 2 - 75, 20);
+		pos[3] = new Vector3(Screen.width - 100, Screen.height / 2 - 225, 20);
+		int i = 0;
+
+		HudItems = new GameObject[level.PuppeteerItems.Count];
+
+		foreach (var item in level.PuppeteerItems)
+		{
+			var spawnable = Instantiate(item, cameraTransform);
+			spawnable.transform.position = Camera.main.ScreenToWorldPoint(pos[i]);
+			spawnable.transform.eulerAngles = new Vector3(0, 0, 0);
+			HudItems[i] = spawnable;
+			i++;
+		}
+
+		//RpcSetParents();
+	}
+
+	[ClientRpc]
+	public void RpcSetParents()
+	{
+		if (isLocalPlayer)
+		{
+			Transform cameraTransform = GetComponentInChildren<Camera>().transform;
+			foreach (SnapFunctionality snappable in FindObjectsOfType<SnapFunctionality>())
+			{
+				snappable.transform.SetParent(cameraTransform);
+			}
 		}
 	}
 }

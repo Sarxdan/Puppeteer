@@ -44,7 +44,9 @@ public class PuppeteerCameraController : MonoBehaviour
     private float TopVerticalBorder;
     private float BottomVerticalBorder;
 
-	public bool DisableInput;
+    public bool DisableInput;
+
+    public bool SmoothMovement;
 
     void Start()
     {
@@ -64,41 +66,55 @@ public class PuppeteerCameraController : MonoBehaviour
 
     }
 
-	void Update()
-	{
-		if (!DisableInput)
-		{
-			Vector3 pos = transform.position;
-
-			if ((Input.GetAxis("Vertical") > 0 && Input.GetButton("Vertical") || Input.mousePosition.y >= Screen.height - SideBorderThickness && MouseMovement) && pos.z < TopVerticalBorder)
-			{
-				pos.z += CameraMovementSpeed * Time.deltaTime;
-			}
-			if ((Input.GetAxis("Vertical") < 0 && Input.GetButton("Vertical") || Input.mousePosition.y <= SideBorderThickness && MouseMovement) && pos.z > BottomVerticalBorder)
-			{
-				pos.z -= CameraMovementSpeed * Time.deltaTime;
-			}
-			if ((Input.GetAxis("Horizontal") > 0 && Input.GetButton("Horizontal") || Input.mousePosition.x >= Screen.width - SideBorderThickness && MouseMovement) && pos.x < RightHorizontalBorder)
-			{
-				pos.x += CameraMovementSpeed * Time.deltaTime;
-			}
-			if ((Input.GetAxis("Horizontal") < 0 && Input.GetButton("Horizontal") || Input.mousePosition.x <= SideBorderThickness && MouseMovement) && pos.x > LeftHorizontalBorder)
-			{
-				pos.x -= CameraMovementSpeed * Time.deltaTime;
-			}
-
-			transform.position = pos;
-
-            float deltaScrollWheel = Input.mouseScrollDelta.y;
-            if (deltaScrollWheel != 0)
+    float zoomAmount;
+    void Update()
+    {
+        if (!DisableInput)
+        {
+            if (SmoothMovement)
             {
-                Vector3 newCameraPosition = new Vector3(transform.position.x, transform.position.y - (deltaScrollWheel * CameraZoomSpeed), transform.position.z);
-                if (newCameraPosition.y >= NearCameraZoomLimit && newCameraPosition.y <= FarCameraZoomLimit)
+                float x = Input.GetAxis("Horizontal") * CameraMovementSpeed;
+                float z = Input.GetAxis("Vertical") * CameraMovementSpeed;
+                zoomAmount = Mathf.Clamp(zoomAmount -= Input.mouseScrollDelta.y, NearCameraZoomLimit, FarCameraZoomLimit);
+
+                Vector3 tmp;
+                tmp = Vector3.Lerp(transform.position, transform.position + new Vector3(x, 0, z), Time.deltaTime);
+                tmp.y = Mathf.Lerp(tmp.y, zoomAmount, Time.deltaTime * CameraZoomSpeed * 2.0f);
+                transform.position = tmp;
+            }
+            else
+            {
+                Vector3 pos = transform.position;
+
+                if ((Input.GetAxis("Vertical") > 0 && Input.GetButton("Vertical") || Input.mousePosition.y >= Screen.height - SideBorderThickness && MouseMovement) && pos.z < TopVerticalBorder)
                 {
-                    transform.position = newCameraPosition;
+                    pos.z += CameraMovementSpeed * Time.deltaTime;
+                }
+                if ((Input.GetAxis("Vertical") < 0 && Input.GetButton("Vertical") || Input.mousePosition.y <= SideBorderThickness && MouseMovement) && pos.z > BottomVerticalBorder)
+                {
+                    pos.z -= CameraMovementSpeed * Time.deltaTime;
+                }
+                if ((Input.GetAxis("Horizontal") > 0 && Input.GetButton("Horizontal") || Input.mousePosition.x >= Screen.width - SideBorderThickness && MouseMovement) && pos.x < RightHorizontalBorder)
+                {
+                    pos.x += CameraMovementSpeed * Time.deltaTime;
+                }
+                if ((Input.GetAxis("Horizontal") < 0 && Input.GetButton("Horizontal") || Input.mousePosition.x <= SideBorderThickness && MouseMovement) && pos.x > LeftHorizontalBorder)
+                {
+                    pos.x -= CameraMovementSpeed * Time.deltaTime;
+                }
+
+                transform.position = pos;
+
+                float deltaScrollWheel = Input.mouseScrollDelta.y;
+                if (deltaScrollWheel != 0)
+                {
+                    Vector3 newCameraPosition = new Vector3(transform.position.x, transform.position.y - (deltaScrollWheel * CameraZoomSpeed), transform.position.z);
+                    if (newCameraPosition.y >= NearCameraZoomLimit && newCameraPosition.y <= FarCameraZoomLimit)
+                    {
+                        transform.position = newCameraPosition;
+                    }
                 }
             }
-		}
-
-	}
+        }
+    }
 }

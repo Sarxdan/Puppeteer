@@ -69,8 +69,7 @@ public class DoorComponent : Interactable
 
 	private float currentAngle = 0;
 
-	[SerializeField]
-	private bool open = false;
+	public bool Open = false;
 
     // Save the start angle of the door
     void Start()
@@ -84,7 +83,7 @@ public class DoorComponent : Interactable
 		{
 			float dotProduct = Vector3.Dot(transform.forward, interactor.transform.forward);
 			currentAngle = OpenAngle * Mathf.Sign(dotProduct);
-			open = !open;
+			Open = !Open;
 		}
 	}
     public override void OnInteractEnd(GameObject interactor){}
@@ -93,7 +92,7 @@ public class DoorComponent : Interactable
     {	
         if(!locked)
         {
-            if(open)
+            if(Open)
             {
                 transform.localRotation = Quaternion.RotateTowards(transform.localRotation, Quaternion.Euler(transform.localEulerAngles.x , defaultAngle + currentAngle, transform.localEulerAngles.z), RotationSpeed);
             }

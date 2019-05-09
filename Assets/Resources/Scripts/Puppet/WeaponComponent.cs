@@ -30,6 +30,7 @@ public class WeaponComponent : Interactable
     public Transform MagazineTransform;
 
 
+
     //Weapon attributes
     public uint Damage;
     public uint NumShots;
@@ -65,6 +66,7 @@ public class WeaponComponent : Interactable
 	//Attemps to fire the weapon
 	public void Use()
     {
+        
         charge += Time.deltaTime;
 
         if (cooldown != 0 || charge < ChargeTime)
@@ -79,6 +81,7 @@ public class WeaponComponent : Interactable
 			return;
 		}
 
+        GetComponentInParent<PlayerController>().AnimController.SetBool("Fire", true);
         for(int i = 0; i < NumShots; i++)
         {
 			// Sound Test
@@ -144,6 +147,16 @@ public class WeaponComponent : Interactable
 
             // rotate head according to the recoil amount
             var rotation = HeadTransform.localEulerAngles + Vector3.left * recoil;
+
+            //Prevents the recoil to go to far and making the camera turn upside down.
+            if (rotation.x < 270 && rotation.x > 90)
+            {
+                if (rotation.x > 180)
+                    rotation.x = 270;
+                else
+                    rotation.x = 90;
+            }
+
             HeadTransform.localEulerAngles = rotation;
             rotation.y = 180.0f;
             //transform.localEulerAngles = -rotation;
@@ -162,7 +175,6 @@ public class WeaponComponent : Interactable
 
         this.HeadTransform = interactor.GetComponentInChildren<Camera>().transform;
        
-        PlayerController pc = interactor.GetComponent<PlayerController>();
         RpcPickupWeapon(gameObject, interactor);
 
     }

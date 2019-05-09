@@ -42,7 +42,11 @@ namespace MinionStates
         {
 
             //If no target, go idle
-            if(machine.TargetEntity == null) machine.SetState(new WanderState(machine));
+            if(machine.TargetEntity == null){
+                machine.SetState(new WanderState(machine));
+                return;
+
+            }
 
             //Debug ray for attack range
             if (machine.debug) Debug.DrawRay(machine.transform.position, Vector3.forward * machine.AttackRange, Color.green, 0.2f);
@@ -125,7 +129,7 @@ namespace MinionStates
             if(navmesh!=null)
             {
                 //Fetches random face from navmesh as destination
-                destination = machine.Spawner.transform.parent.TransformPoint(navmesh.faces[Random.Range(0, navmesh.faces.Length - 1)].Origin);
+                destination = machine.Spawner.transform.parent.TransformPoint(navmesh.Faces[Random.Range(0, navmesh.Faces.Length - 1)].Origin);
                 machine.PathFinder.MoveTo(destination);
             }
             else

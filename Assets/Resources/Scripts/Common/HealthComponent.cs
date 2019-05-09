@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using Mirror;
 /*
  * AUTHOR:
  * Sandra Andersson
@@ -16,12 +16,14 @@ using UnityEngine;
  * 
  */
 
-public class HealthComponent : MonoBehaviour
+public class HealthComponent : NetworkBehaviour
 {
+    public static HealthComponent Local;
     //Callback function used when health reaches zero
     public delegate void OnZeroHealth();
     public delegate void OnTakeDamage();
 
+    [SyncVar]
     public uint Health;
     public uint MaxHealth;
 
@@ -38,50 +40,71 @@ public class HealthComponent : MonoBehaviour
     private OnZeroHealth zeroHealthAction;
     private OnTakeDamage takeDamageAction;
 
+    public CharacterSounds sound;
+
     void Start(){
         this.AddOnDamageAction(dummy);
         this.AddDeathAction(dummy);
+        sound = gameObject.GetComponent<CharacterSounds>();
+    }
+
+    public override void OnStartLocalPlayer(){
+        base.OnStartLocalPlayer();
+        Local = this;
     }
 
     void dummy(){
 
     }
-
-    [FMODUnity.EventRef]
-    public string DamageTakenSound; 
     
-    [FMODUnity.EventRef]
-    public string DeathSound; 
-      
-
-
     public void Damage(uint damage)
     {
-        if (Health <= 0)
-            return;
+        if(isServer){
+            if (Health <= 0)
+                return;
 
+            StopCoroutine("RegenRoutine");
+            
+            //Cap the HP so it doesn't go below 0
+            Health = (uint)Mathf.Max(0, (int) (Health) - damage);
+            if (Health == 0)
+            {
+                RpcDeath();
+                AllowRegen = false;
+            }
+            else if(Health > 0)
+            {
+                RpcDamage();         
+            }
+            else if (AllowRegen)
+            {
+                StartCoroutine("RegenRoutine");
+
+            }
+        }
+        else {
+            Local.CmdDamage(gameObject, damage);
+        }
+    }
+
+    [Command]
+    public void CmdDamage(GameObject targetObject, uint damage){
+        targetObject.GetComponent<HealthComponent>().Damage(damage);
+    }
+
+    //Sends damage update to clients
+    [ClientRpc]
+    public void RpcDamage(){
         this.takeDamageAction();
-        StopCoroutine("RegenRoutine");
+        sound.Damage(); 
+    }
 
-        //Cap the HP so it doesn't go below 0
-        Health = (uint)Mathf.Max(0, Health -= damage);
-        if (Health == 0)
-        {
-            FMODUnity.RuntimeManager.PlayOneShot(DeathSound, transform.position);
-            // perform death actions
-            this.zeroHealthAction();
-            AllowRegen = false;
-        }
-        else if(Health > 0)
-        {
-        FMODUnity.RuntimeManager.PlayOneShot(DamageTakenSound, transform.position);            
-        }
-        else if (AllowRegen)
-        {
-            StartCoroutine("RegenRoutine");
-
-        }
-
+    //Sends death update to clients
+    [ClientRpc]
+    public void RpcDeath()
+    {
+        sound.Death();
+        this.zeroHealthAction();
     }
     
     //Starts regenerate HP after delay, up to the max amount of regen
@@ -101,8 +124,22 @@ public class HealthComponent : MonoBehaviour
     {
         Health = (uint)(MaxHealth * MaxReviveRatio);
         AllowRegen = true;
-        AddDeathAction(gameObject.GetComponent<PlayerController>().Stunned);
-    
+        PlayerController playerController = gameObject.GetComponent<PlayerController>();
+        playerController.UnStunned();
+        AddDeathAction(playerController.Stunned);
+        RpcSendRevive();    
+    }
+
+    [ClientRpc]
+    public void RpcSendRevive()
+    {
+        if (!isLocalPlayer)
+            return;
+        Debug.Log("Rezed");
+        AllowRegen = true;
+        PlayerController playerController = gameObject.GetComponent<PlayerController>();
+        playerController.UnStunned();
+        AddDeathAction(playerController.Stunned);
     }
 
     //Registers a new zero health delegate
