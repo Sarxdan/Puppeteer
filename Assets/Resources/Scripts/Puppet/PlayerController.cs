@@ -270,4 +270,13 @@ public class PlayerController : NetworkBehaviour
             Ammunition += liquid;
         }
     }
+
+    [ClientRpc]
+    public void RpcAddMedkit()
+    {
+        if (isLocalPlayer && !HasMedkit)
+        {
+            HasMedkit = true;
+        }
+    }
 }
