@@ -40,9 +40,12 @@ public class HealthComponent : NetworkBehaviour
     private OnZeroHealth zeroHealthAction;
     private OnTakeDamage takeDamageAction;
 
+    public CharacterSounds sound;
+
     void Start(){
         this.AddOnDamageAction(dummy);
         this.AddDeathAction(dummy);
+        sound = gameObject.GetComponent<CharacterSounds>();
     }
 
     public override void OnStartLocalPlayer(){
@@ -53,15 +56,7 @@ public class HealthComponent : NetworkBehaviour
     void dummy(){
 
     }
-
-    [FMODUnity.EventRef]
-    public string DamageTakenSound; 
     
-    [FMODUnity.EventRef]
-    public string DeathSound; 
-      
-
-
     public void Damage(uint damage)
     {
         if(isServer){
@@ -69,7 +64,7 @@ public class HealthComponent : NetworkBehaviour
                 return;
 
             StopCoroutine("RegenRoutine");
-
+            
             //Cap the HP so it doesn't go below 0
             Health = (uint)Mathf.Max(0, (int) (Health) - damage);
             if (Health == 0)
@@ -88,7 +83,7 @@ public class HealthComponent : NetworkBehaviour
             }
         }
         else {
-            //Local.CmdDamage(gameObject, damage);
+            Local.CmdDamage(gameObject, damage);
         }
     }
 
@@ -101,13 +96,14 @@ public class HealthComponent : NetworkBehaviour
     [ClientRpc]
     public void RpcDamage(){
         this.takeDamageAction();
-        FMODUnity.RuntimeManager.PlayOneShot(DamageTakenSound, transform.position);   
+        sound.Damage(); 
     }
 
     //Sends death update to clients
     [ClientRpc]
-    public void RpcDeath(){
-        FMODUnity.RuntimeManager.PlayOneShot(DeathSound, transform.position);
+    public void RpcDeath()
+    {
+        sound.Death();
         this.zeroHealthAction();
     }
     
@@ -131,7 +127,19 @@ public class HealthComponent : NetworkBehaviour
         PlayerController playerController = gameObject.GetComponent<PlayerController>();
         playerController.UnStunned();
         AddDeathAction(playerController.Stunned);
-    
+        RpcSendRevive();    
+    }
+
+    [ClientRpc]
+    public void RpcSendRevive()
+    {
+        if (!isLocalPlayer)
+            return;
+        Debug.Log("Rezed");
+        AllowRegen = true;
+        PlayerController playerController = gameObject.GetComponent<PlayerController>();
+        playerController.UnStunned();
+        AddDeathAction(playerController.Stunned);
     }
 
     //Registers a new zero health delegate

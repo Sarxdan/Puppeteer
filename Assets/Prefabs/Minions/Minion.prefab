@@ -670,6 +670,7 @@ GameObject:
   - component: {fileID: 8956604464301979517}
   - component: {fileID: 4637723171867558907}
   - component: {fileID: 3012254230700539824}
+  - component: {fileID: -2051150632329404280}
   m_Layer: 0
   m_Name: Minion
   m_TagString: Enemy
@@ -735,7 +736,7 @@ CapsuleCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2781805961794641847}
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 13400000, guid: b35c6c9b81390b84ba75f7459547761a, type: 2}
   m_IsTrigger: 0
   m_Enabled: 1
   m_Radius: 0.08
@@ -762,8 +763,7 @@ MonoBehaviour:
   RegenSpeed: 0
   RegenDelay: 0
   AllowRegen: 0
-  DamageTakenSound: event:/Enemies/Minion/Voice/Hit
-  DeathSound: event:/Enemies/Minion/Voice/Death
+  sound: {fileID: 0}
 --- !u!114 &55003624039892553
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -779,7 +779,7 @@ MonoBehaviour:
   serverOnly: 0
   localPlayerAuthority: 0
   m_AssetId: 
-  m_SceneId: 789894955
+  m_SceneId: 1857756800
 --- !u!114 &2220566078404847079
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -809,20 +809,19 @@ MonoBehaviour:
   syncInterval: 0.1
   UseRootMotion: 1
   MovementSpeed: 50
-  RotationSpeed: 5
+  RotationSpeed: 10
   LegHeight: 0
-  Velocity: {x: 0, y: 0, z: 0}
+  Velocity: {x: -1.6254852, y: 0, z: -0.6307607}
   MaxRecursionDepth: 20
   HasPath: 0
   TransformRaycastOffset: {x: 0, y: 0.2, z: 0}
-  InteractRayLength: 0.4
-  ArrivalMargin: 0.1
-  AvoidRayLength: 1
-  AgentRadius: 0.3
-  AvoidTime: 0.3
+  NodeArrivalMargin: 0.3
+  AvoidCheckDistance: 3
+  AvoidWeight: 0.1
   MinVelocityThreshold: 0.2
   StuckTimeThreshold: 0.2
   UnstuckRadius: 1
+  DoorInteractRange: 0.5
   debug: 0
 --- !u!114 &4637723171867558907
 MonoBehaviour:
@@ -871,6 +870,26 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   syncInterval: 0
   compressRotation: 1
+--- !u!114 &-2051150632329404280
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2781805961794641847}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 746010e1f488b974d9f8b878bbc213c4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  s_Hit: event:/Enemies/Minion/Voice/Hit
+  s_Die: event:/Enemies/Minion/Voice/Death
+  s_Footstep: event:/Character/Footsteps/Walk
+  s_RunFootstep: event:/Character/Footsteps/Run
+  s_Punch: event:/Enemies/Minion/Voice/Attack
+  s_Thud: 
+  s_Spawn: 
+  s_Idle: 
 --- !u!1 &2781805961794641849
 GameObject:
   m_ObjectHideFlags: 0

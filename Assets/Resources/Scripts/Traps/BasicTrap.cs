@@ -17,7 +17,6 @@ using UnityEngine;
 
 public class BasicTrap : TrapComponent
 {
-    [FMODUnity.EventRef] public string activate;
 
     //Add only puppets to those who are to take damage
     public override void OnTriggerEnter(Collider other)
@@ -46,9 +45,7 @@ public class BasicTrap : TrapComponent
         {
             puppet.GetComponent<HealthComponent>().Damage(Damage);
         }
-
-        FMODUnity.RuntimeManager.PlayOneShot(activate, transform.position);
-
+        
         StartCoroutine("StunPuppet");
         StartCoroutine("DestroyTimer");
     }

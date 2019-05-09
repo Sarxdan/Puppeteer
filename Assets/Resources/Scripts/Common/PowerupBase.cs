@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Mirror;
@@ -64,4 +65,13 @@ public abstract class PowerupBase : NetworkBehaviour
 
     // called once when the powerup is completed
     public abstract void OnComplete();
+
+    [ClientRpc]
+    public void RpcBoostPowerup()
+    {
+        if (isLocalPlayer && PercentageLeft == 0.0f)
+        {
+            Charged = true;
+        }
+    }
 }

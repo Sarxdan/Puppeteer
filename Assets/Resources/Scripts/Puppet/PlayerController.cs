@@ -27,12 +27,6 @@ using UnityEngine;
 */
 public class PlayerController : NetworkBehaviour
 {
-    // Sound Events
-    [FMODUnity.EventRef]
-    public string Footstep; 
-    [FMODUnity.EventRef]
-    public string RunFootstep; 
-
     // Movement
     public float MovementSpeed;
     public float AccelerationRate;
@@ -152,7 +146,6 @@ public class PlayerController : NetworkBehaviour
                 HeadTransform.localEulerAngles = HeadTransform.localEulerAngles - Vector3.right * MouseSensitivity * Input.GetAxis("Mouse Y");
             }
         }
-
         
         AnimController.SetFloat("Forward", Input.GetAxis("Vertical"));
         AnimController.SetFloat("Strafe", Input.GetAxis("Horizontal"));
@@ -269,22 +262,21 @@ public class PlayerController : NetworkBehaviour
         gameObject.GetComponent<InteractionController>().enabled = true;
     }
 
-    // Plays footstep sound
-    public void Step()
-    {
-        FMODUnity.RuntimeManager.PlayOneShot(Footstep, transform.position);
-    }
-    public void RunStep()
-    {
-        FMODUnity.RuntimeManager.PlayOneShot(RunFootstep, transform.position);
-    }
-
     [ClientRpc]
     public void RpcAddAmmo(int liquid)
     {
         if (isLocalPlayer)
         {
             Ammunition += liquid;
+        }
+    }
+
+    [ClientRpc]
+    public void RpcAddMedkit()
+    {
+        if (isLocalPlayer && !HasMedkit)
+        {
+            HasMedkit = true;
         }
     }
 }

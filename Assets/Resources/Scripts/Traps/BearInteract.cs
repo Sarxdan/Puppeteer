@@ -28,13 +28,12 @@ public class BearInteract : Interactable
     [SyncVar]
     private bool interacting;
 
-    [FMODUnity.EventRef] 
-    public string opening;
-    FMOD.Studio.EventInstance open;
+    public BearTrapSounds sounds;
 
     private void Start()
     {
         anim = gameObject.GetComponent<Animator>();
+        sounds = gameObject.GetComponent<BearTrapSounds>();
     }
 
     private void Update()
@@ -69,10 +68,7 @@ public class BearInteract : Interactable
         }
         interacting = true;
         this.interactor = interactor;
-        open = FMODUnity.RuntimeManager.CreateInstance(opening);
-        open.setParameterByName("Stop", 0f);
-        open.set3DAttributes(FMODUnity.RuntimeUtils.To3DAttributes(gameObject));
-        open.start();
+        sounds.Release();
     }
 
     //Stop release timer and close animation on server
@@ -91,13 +87,11 @@ public class BearInteract : Interactable
         }
         interacting = false;
         anim.SetBool("Releasing", false);
-        open.setParameterByName("Stop", 1f);
-        open.release();
+        sounds.ReClose();
 
     }
 
     //Release the puppet from the trap after the interaction timer is full
-    //TODO: Play opening sound
     public void ReleaseFromTrapTest()
     {
         if (isServer)
