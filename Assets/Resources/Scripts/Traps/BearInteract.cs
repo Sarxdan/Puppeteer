@@ -26,6 +26,7 @@ public class BearInteract : Interactable
     
     public float totalTime;
     public HUDScript HudScript;
+    [SyncVar]
     private bool interacting;
 
     public BearTrapSounds sounds;
@@ -46,7 +47,7 @@ public class BearInteract : Interactable
         }
     }
 
-    //Start release timer and open animation
+    //Start release timer and open animation on server
     public override void OnInteractBegin(GameObject interactor)
     {
         if (!Activated)
@@ -54,22 +55,35 @@ public class BearInteract : Interactable
             return;
         }
         anim.SetBool("Releasing", true);
-        var temp = anim.GetCurrentAnimatorClipInfo(0);
-        totalTime = temp[0].clip.length;
-        Debug.Log("total time of clip" + totalTime);
-        HudScript = interactor.GetComponentInChildren<HUDScript>();
+        var interactionController = interactor.GetComponent<InteractionController>();
+        HudScript = interactor.GetComponent<HUDScript>();
+        if(interactionController.isServer && interactionController.isLocalPlayer)
+        {
+            var clip = anim.GetCurrentAnimatorClipInfo(0);
+            totalTime = clip[0].clip.length;
+            interacting = true;
+        }
+        else
+        {
+            RpcEnableInteracting(interactor);
+        }
         interacting = true;
-
         this.interactor = interactor;
         sounds.Release();
     }
 
-    //Stop release timer and close animation
+    //Stop release timer and close animation on server
     public override void OnInteractEnd(GameObject interactor)
     {
         if (!Activated)
         {
             return;
+        }
+        var interactionController = interactor.GetComponent<InteractionController>();
+        if(interactionController.isServer)
+        {
+            RpcDisableInteracting(interactor);
+
         }
         interacting = false;
         anim.SetBool("Releasing", false);
@@ -93,7 +107,29 @@ public class BearInteract : Interactable
             }
 
             HudScript.ScaleInteractionProgress(0);
+            HudScript.RpcScaleZero();
             gameObject.GetComponent<BearTrap>().DestroyTrap();
+        }
+    }
+
+    [ClientRpc]
+    public void RpcEnableInteracting(GameObject interactor)
+    {
+        if(interactor.GetComponent<InteractionController>().isLocalPlayer)
+        {
+            HudScript = interactor.GetComponent<HUDScript>();
+            var clip = anim.GetCurrentAnimatorClipInfo(0);
+            totalTime = clip[0].clip.length;
+            interacting = true;
+        }
+    }
+
+    [ClientRpc]
+    public void RpcDisableInteracting(GameObject interactor)
+    {
+        if(interactor.GetComponent<InteractionController>().isLocalPlayer)
+        {
+            interacting = false;
         }
     }
 

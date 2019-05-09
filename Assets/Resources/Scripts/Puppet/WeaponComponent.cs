@@ -147,6 +147,16 @@ public class WeaponComponent : Interactable
 
             // rotate head according to the recoil amount
             var rotation = HeadTransform.localEulerAngles + Vector3.left * recoil;
+
+            //Prevents the recoil to go to far and making the camera turn upside down.
+            if (rotation.x < 270 && rotation.x > 90)
+            {
+                if (rotation.x > 180)
+                    rotation.x = 270;
+                else
+                    rotation.x = 90;
+            }
+
             HeadTransform.localEulerAngles = rotation;
             rotation.y = 180.0f;
             //transform.localEulerAngles = -rotation;
