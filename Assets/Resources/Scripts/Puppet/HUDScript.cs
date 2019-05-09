@@ -85,7 +85,7 @@ public class HUDScript : NetworkBehaviour
         previousHP = healthComponent.Health;
         maxHealth = healthComponent.MaxHealth;
         previousStamina = playerController.CurrentStamina;
-        if(!GetComponentInParent<NetworkIdentity>().isLocalPlayer)
+        if(!GetComponent<NetworkIdentity>().isLocalPlayer)
         {
             this.enabled = false;
             gameObject.SetActive(false);
@@ -189,6 +189,11 @@ public class HUDScript : NetworkBehaviour
             previousStamina = playerController.CurrentStamina;
             lerpFromStamina = previousStamina;
         }
+    }
+    [ClientRpc]
+    public void RpcScaleZero()
+    {
+        InteractionProgress.fillAmount = 0;
     }
 
     public void ScaleInteractionProgress(float percentage)
