@@ -25,7 +25,7 @@ public class ReviveComponent : Interactable
     public bool RequireMedkit = true;
 
     // Krig interact progress stuff
-    private HUDScript hudScript;
+    //private HUDScript hudScript;
 
     private HealthComponent healthComponent;
 
@@ -39,6 +39,8 @@ public class ReviveComponent : Interactable
     // an object has started to interact this object
     public override void OnInteractBegin(GameObject interactor)
     {
+        //TODO CHANGE TO GETCOMPONENT
+        //hudScript = interactor.GetComponentInChildren<HUDScript>();
         StartCoroutine("ReviveRoutine", interactor);
     }
 
@@ -88,14 +90,14 @@ public class ReviveComponent : Interactable
                 yield break;
             }
             time += Time.fixedDeltaTime;
-            hudScript.ScaleInteractionProgress(time/ReviveDelay);
+            //hudScript.ScaleInteractionProgress(time/ReviveDelay);
             yield return new WaitForFixedUpdate();
         }
 
         // revive successful
 
         healthComponent.Revive();
-        hudScript.ScaleInteractionProgress(0);
+        //hudScript.ScaleInteractionProgress(0);
         if(RequireMedkit)
         {
             // consume medkit if required

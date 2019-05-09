@@ -533,13 +533,14 @@ GameObject:
   m_Component:
   - component: {fileID: 5025733951878215715}
   - component: {fileID: 2003450191868672706}
+  - component: {fileID: 4722464369822915087}
   - component: {fileID: 4602860582812109636}
   - component: {fileID: 724720941931044917}
+  - component: {fileID: -7799251290956367207}
   - component: {fileID: 6524870847537967573}
   - component: {fileID: 3845641326040089322}
   - component: {fileID: 5465590311773285304}
   - component: {fileID: 6370938280715159669}
-  - component: {fileID: 4722464369822915087}
   - component: {fileID: 3218547476536647343}
   m_Layer: 10
   m_Name: Bear Trap
@@ -583,6 +584,19 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!65 &4722464369822915087
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5733567816084534936}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1.1585987, y: 0.5345671, z: 1.0644671}
+  m_Center: {x: -0.0025931597, y: 0.23271644, z: -0.006383121}
 --- !u!114 &4602860582812109636
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -600,7 +614,6 @@ MonoBehaviour:
   DestroyTime: 20
   Puppets: []
   Anim: {fileID: 0}
-  closing: event:/Traps/Beartrap/Close
   Target: {fileID: 0}
 --- !u!114 &724720941931044917
 MonoBehaviour:
@@ -619,7 +632,23 @@ MonoBehaviour:
   Activated: 0
   interactor: {fileID: 0}
   anim: {fileID: 0}
-  opening: event:/Traps/Beartrap/Open
+  totalTime: 0
+  HudScript: {fileID: 0}
+  sounds: {fileID: 0}
+--- !u!114 &-7799251290956367207
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5733567816084534936}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a4e55734b0b2f4143bfb5e1f645c64c8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  s_Activate: event:/Traps/Beartrap/Close
+  s_Release: event:/Traps/Beartrap/Open
 --- !u!114 &6524870847537967573
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -634,8 +663,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   serverOnly: 0
   localPlayerAuthority: 0
-  m_AssetId: 9e1af8b73d684464dbc9b16d8dbf8097
-  m_SceneId: 0
+  m_AssetId: 
+  m_SceneId: 1728522883
 --- !u!114 &3845641326040089322
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -678,19 +707,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   GlowColor: {r: 1, g: 1, b: 1, a: 1}
   LerpFactor: 10
---- !u!65 &4722464369822915087
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5733567816084534936}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 1
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 1.1585987, y: 0.5345671, z: 1.0644671}
-  m_Center: {x: -0.0025931597, y: 0.23271644, z: -0.006383121}
 --- !u!114 &3218547476536647343
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -34,7 +34,6 @@ public abstract class TrapComponent : MonoBehaviour
     private IEnumerator TrapTimer()
     {
         yield return new WaitForSeconds(ActivationTime);
-        //TODO: Set correct conditions for future animations
         ActivateAnim();
     }
 
