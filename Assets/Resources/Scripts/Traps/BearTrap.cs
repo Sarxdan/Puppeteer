@@ -17,10 +17,6 @@ using UnityEngine;
 
 public class BearTrap : TrapComponent
 {
-    // Sound Event
-    [FMODUnity.EventRef]
-    public string closing;
-    
     public GameObject Target;
 
     public void Start()
@@ -70,10 +66,8 @@ public class BearTrap : TrapComponent
     
     //Stun and damage the puppet that last entered the trap
     //and enable interaction with it for releasing puppet
-    //TODO: Play snapping sound
     public override void ActivateTrap()
     {
-        FMODUnity.RuntimeManager.PlayOneShot(closing, transform.position);
 
         if (Puppets.Count > 0)
         {

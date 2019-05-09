@@ -35,7 +35,6 @@ public abstract class TrapComponent : NetworkBehaviour
     private IEnumerator TrapTimer()
     {
         yield return new WaitForSeconds(ActivationTime);
-        //TODO: Set correct conditions for future animations
         ActivateAnim();
     }
 
