@@ -25,15 +25,30 @@ public class PathfinderComponent : NetworkBehaviour
     private Transform navmeshTransform;
     private List<AStarRoomNode> worldPath;
     private List<Vector3> roomPath;
+    public bool PathfindDebug;
+
 
 
     [Header("Obstacle avoidance settings")]
-    public float AvoidCheckDistance;
-    public float AvoidWeight;
+    //All-that-aren't-minions stuff
+    public float RaycastAvoidDistance;
 
-    private Vector3 avoidVector;
+    public float RaycastAvoidAngle;
+    public float RaycastAvoidWeight;
+
+    private Quaternion rightRayRotation;
+    private Quaternion leftRayRotation;
+
+    private Vector3 raycastAvoidVector;
+
+    //Minion stuff
+    public float MinionAvoidDistance;
+    public float MinionAvoidWeight;
+
+    private Vector3 minionAvoidVector;
     private static int layerMask;
 
+    public bool ObstacleAvoidDebug;
 
     [Header("Unstuck settings")]
     public float MinVelocityThreshold;
@@ -45,8 +60,6 @@ public class PathfinderComponent : NetworkBehaviour
 
     [Header("Misc. settings")]
     public float DoorInteractRange;
-    public bool debug;
-
     //References
     private Rigidbody rigidBody;
     private Animator animController;
@@ -63,6 +76,8 @@ public class PathfinderComponent : NetworkBehaviour
         this.animController = GetComponent<Animator>();
         this.worldPath = new List<AStarRoomNode>();
         this.roomPath = new List<Vector3>();
+        rightRayRotation =  Quaternion.AngleAxis(RaycastAvoidAngle,Vector3.up);
+        leftRayRotation = Quaternion.AngleAxis(-RaycastAvoidAngle, Vector3.up);
     }
 
     // Update is called once per frame
@@ -76,6 +91,7 @@ public class PathfinderComponent : NetworkBehaviour
         {
             avoidanceCheck();
             doorInteraction();
+            updatePath();
             performMove();
             stuckCheck();
         }
@@ -147,7 +163,7 @@ public class PathfinderComponent : NetworkBehaviour
         }
         catch(System.NullReferenceException e)
         {
-            Debug.LogWarning("Pathfinder raycast hit something that wasn't a room! Start: " + startHit.transform.name + "end: " + endHit.transform.name);
+            Debug.LogWarning("Pathfinder error: Raycast hit something that wasn't a room! Start: " + startHit.transform.name + "end: " + endHit.transform.name);
             if(startHit.transform.name == "LevelReturn") GetComponent<StateMachine>().Despawn();
             
             Stop();
@@ -190,33 +206,60 @@ public class PathfinderComponent : NetworkBehaviour
 
         }
 
-        if(closestMinionDistance < AvoidCheckDistance){
-            Debug.DrawLine(transform.position, closestMinion.transform.position, Color.white, Time.deltaTime);
-            avoidVector = (transform.position - closestMinion.position).normalized/closestMinionDistance;
+        if(closestMinionDistance < MinionAvoidDistance){
+            minionAvoidVector = (transform.position - closestMinion.position).normalized/closestMinionDistance;
         }
         else
         {
-            avoidVector = Vector3.zero;
+            minionAvoidVector = Vector3.zero;
         }
 
-        
+        raycastAvoidVector = Vector3.zero;
 
-        Debug.DrawRay(transform.position, avoidVector, Color.red, Time.deltaTime);
+        RaycastHit hit;
+
+        if(Physics.Raycast(transform.position + TransformRaycastOffset, transform.forward, out hit, RaycastAvoidDistance, layerMask) &&
+        hit.transform.tag != "Enemy" &&
+        hit.transform.tag != "Player")
+        {
+            raycastAvoidVector += hit.normal / hit.distance;
+        }
+
+
+
+        if(Physics.Raycast(transform.position + TransformRaycastOffset, rightRayRotation * transform.forward, out hit, RaycastAvoidDistance, layerMask) &&
+        hit.transform.tag != "Enemy" &&
+        hit.transform.tag != "Player")
+        {
+            raycastAvoidVector += hit.normal / hit.distance;
+        }
+
+        if(Physics.Raycast(transform.position + TransformRaycastOffset, leftRayRotation * transform.forward, out hit, RaycastAvoidDistance, layerMask) &&
+        hit.transform.tag != "Enemy" &&
+        hit.transform.tag != "Player")
+        {
+            raycastAvoidVector += hit.normal / hit.distance;
+        }
+
+        raycastAvoidVector *= 0.3f;
     }
 
     private void doorInteraction()
     {
         if(Physics.Raycast(transform.position + TransformRaycastOffset, transform.forward, out RaycastHit hit, DoorInteractRange, layerMask))
         {
-            if(hit.transform.tag.Equals("Door") && !hit.transform.GetComponent<DoorComponent>().Open){
-                hit.transform.GetComponentInChildren<DoorComponent>().OnInteractBegin(gameObject);
+            if(hit.transform.tag.Equals("Door")){
+                DoorComponent door = hit.transform.GetComponent<DoorComponent>();
+                if(!door.Open){
+                    door.OnInteractBegin(gameObject);
+                }
             }
         }
     }
 
-    private void performMove()
+    //Rebuilds path if neccecary
+    private void updatePath()
     {
-
         //If both path and subpath are empty, stop pathfinding
         if(this.worldPath.Count <= 0 && this.roomPath.Count <= 0)
         {
@@ -235,25 +278,29 @@ public class PathfinderComponent : NetworkBehaviour
         //If subpath is empty, create new subpath
         if(this.roomPath.Count == 0)
         {
-            
+            //Raycasts to floor
             RaycastHit hit;
             if(!Physics.Raycast(transform.position + TransformRaycastOffset, -Vector3.up, out hit, 4))
             {
-                Debug.LogError("Object " + transform.name + " could not find the floor and therefore not pathfind. This is very bad and cannot happen");
+                Debug.LogError("Pathfind error: Agent " + transform.name + " could not find the floor and therefore not pathfind. This is very bad and cannot happen");
                 this.HasPath = false;
                 return;
             }
 
-
+            //Fetches room transform from worldpath
             this.navmeshTransform = this.worldPath[worldPath.Count-1].Parent.RoomRef;
 
+            //Defines start + end
             Vector3 endPos = navmeshTransform.InverseTransformPoint(this.worldPath[worldPath.Count-1].EntrancePos);
             Vector3 startPos = navmeshTransform.InverseTransformPoint(hit.point);
 
+            //Removes node from worldpath
             this.worldPath.RemoveAt(worldPath.Count-1);
 
+            //Fetches navmesh data
             NavMesh navmesh = navmeshTransform.GetComponent<NavMesh>();
 
+            //Safety check
             if(navmesh == null)
             {
                 Debug.LogError("Object " + hit.transform.name + " does not have a NavMesh component! Plz fix!");
@@ -276,6 +323,7 @@ public class PathfinderComponent : NetworkBehaviour
                     this.roomPath.AddRange(funnelStringpull(startNode, endPos, startPos, new List<Vector3>(), 0));
                 }
             }
+
             this.roomPath.Add(endPos);
 
             if(roomPath.Count <= 0)
@@ -284,19 +332,29 @@ public class PathfinderComponent : NetworkBehaviour
             }
 
         }
-        else
+    }
+
+    private void performMove()
+    {
+        if(this.roomPath.Count != 0)
         {
             //Does the actual movement
             Vector3 deltaPos = navmeshTransform.TransformPoint(roomPath[0]) - transform.position + transform.up * LegHeight;
             float distance = 0;
-            Quaternion goalRot = Quaternion.LookRotation(deltaPos + avoidVector * AvoidWeight, transform.up);
-
-            Debug.DrawRay(transform.position, deltaPos + avoidVector * AvoidWeight, Color.cyan, Time.deltaTime);
-            Debug.DrawRay(transform.position, deltaPos, Color.yellow, Time.deltaTime);
-
-            
+            Vector3 forceSum = deltaPos.normalized + minionAvoidVector * MinionAvoidWeight + raycastAvoidVector * RaycastAvoidWeight;
+            Quaternion goalRot = Quaternion.LookRotation(forceSum, transform.up);
             transform.rotation = Quaternion.RotateTowards(transform.rotation, goalRot, RotationSpeed);
             
+            if(ObstacleAvoidDebug)
+            {
+                Debug.DrawRay(transform.position, forceSum, Color.green);
+                Debug.DrawRay(transform.position, deltaPos, Color.yellow);
+                Debug.DrawRay(transform.position, minionAvoidVector * MinionAvoidWeight, Color.black);
+                Debug.DrawRay(transform.position, raycastAvoidVector * RaycastAvoidWeight, Color.red);
+                
+            }
+
+
             if(deltaPos.magnitude <= NodeArrivalMargin)
             {
                 distance = deltaPos.magnitude;
@@ -319,7 +377,7 @@ public class PathfinderComponent : NetworkBehaviour
         }
 
         //Draws current path if debug is on
-        if(debug)
+        if(PathfindDebug)
         {
             for(int i = 0; i < this.roomPath.Count - 1; i++)
             {
@@ -440,7 +498,7 @@ public class PathfinderComponent : NetworkBehaviour
         navmeshFace endFace = navmesh.getFaceFromPoint(end);
 
 
-        if(debug)
+        if(PathfindDebug)
         {
             Debug.DrawRay(startFace.Origin + navmeshTransform.position, navmeshTransform.up * 5, Color.green,5);
             Debug.DrawRay(endFace.Origin + navmeshTransform.position, navmeshTransform.up * 5, Color.red,5);
@@ -536,7 +594,7 @@ public class PathfinderComponent : NetworkBehaviour
             AStarFaceNode nextNode = currentNode.Parent;
             //Defines next AStarNode
 
-            if(debug) Debug.DrawRay(navmeshTransform.TransformPoint(currentNode.Face.Origin), Vector3.up, Color.white, 2);
+            if(PathfindDebug) Debug.DrawRay(navmeshTransform.TransformPoint(currentNode.Face.Origin), Vector3.up, Color.white, 2);
 
 
             //If next face does not contain current left vert
