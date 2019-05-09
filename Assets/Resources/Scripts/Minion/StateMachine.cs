@@ -205,12 +205,6 @@ public class StateMachine : NetworkBehaviour
         CanAttack = true;
     }
 
-    //Placeholder for sound
-    public void Step()
-    {
-
-    }
-
     public bool WithinCone(Transform source, Transform target, float coneAngle, float coneLength, float coneIgnoreRadius)
     {
         int mask = ~(1 << LayerMask.NameToLayer("Puppeteer Interact"));
