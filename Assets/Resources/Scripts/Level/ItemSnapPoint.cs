@@ -13,7 +13,7 @@ using UnityEngine;
 * Sandra "Sanders" Andersson
 *
 * CONTRIBUTORS:
-* 
+* Sandra Andersson (Added impl. for medkit)
 */
 
 public class ItemSnapPoint : SnapPointBase
@@ -22,16 +22,19 @@ public class ItemSnapPoint : SnapPointBase
     public bool SpawningWeapons;
 	public bool SpawningAmmo;
 	public bool SpawningPowerUps;
+	public bool SpawningMedKit;
 
 	[Header("percent chance to spawn. (silent clamp)")]
 	public uint ChanceToSpawnWeapon;
 	public uint ChanceToSpawnAmmo;
 	public uint ChanceToSpawnPowerUp;
+	public uint ChanceToSpawnMedKit;
 
 	// the clamped chance of spawn.
 	private float realChanceToSpawnWeapon;
 	private float realChanceToSpawnAmmo;
 	private float realChanceToSpawnPowerUp;
+	private float realChanceToSpawnMedKit;
 
 	public void AltStart()
 	{
@@ -43,8 +46,10 @@ public class ItemSnapPoint : SnapPointBase
 			percent += ChanceToSpawnAmmo;
 		if (SpawningPowerUps)
 			percent += ChanceToSpawnPowerUp;
+        if (SpawningMedKit)
+            percent += ChanceToSpawnMedKit;
 
-		float newPercent = (100.0f / percent);
+        float newPercent = (100.0f / percent);
 
 		if (SpawningWeapons)
 			realChanceToSpawnWeapon = newPercent * ChanceToSpawnWeapon;
@@ -52,7 +57,9 @@ public class ItemSnapPoint : SnapPointBase
 			realChanceToSpawnAmmo = newPercent * ChanceToSpawnAmmo;
 		if (SpawningPowerUps)
 			realChanceToSpawnPowerUp = newPercent * ChanceToSpawnPowerUp;
-	}
+        if (SpawningMedKit)
+            realChanceToSpawnMedKit = newPercent * ChanceToSpawnMedKit;
+    }
 
 	public float GetChanceOfWeapon()
 	{
@@ -66,4 +73,8 @@ public class ItemSnapPoint : SnapPointBase
 	{
 		return realChanceToSpawnPowerUp;
 	}
+    public float GetChanceOfMedKit()
+    {
+        return realChanceToSpawnMedKit;
+    }
 }
