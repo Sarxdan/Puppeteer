@@ -37,7 +37,7 @@ public class ItemSpawner : NetworkBehaviour
 	public List<SnapPointBase> SnapPoints;
 
     // Add weapons to weaponlist
-    void Start()
+    void Awake()
     {
         WeaponList.Add(Shotgun);
         WeaponList.Add(Rifle);
