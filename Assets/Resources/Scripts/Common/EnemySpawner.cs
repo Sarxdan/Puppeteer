@@ -33,8 +33,6 @@ public class EnemySpawner : NetworkBehaviour
 
     public Transform spawnPoint;
 
-    public float ChooseThisChance = .3f;
-
 
     public void Start()
     {
@@ -74,59 +72,19 @@ public class EnemySpawner : NetworkBehaviour
     }
 
     //Returns a random point from a room somewhat close to the spawners room
-    public Vector3 GetNearbyDestination(){
-        
-        AnchorPoint currentDoor = null;
-        DoorReferences doorReferences = transform.GetComponentInParent<DoorReferences>();
-        while(doorReferences != null){
-            //Checks if this room is to be chosen
-            if(Random.Range(0.0f,1.0f) <= ChooseThisChance){
-                break;
-            }
-
-            List<AnchorPoint> availableDoors = new List<AnchorPoint>();
-            if(doorReferences == null) break;
-            foreach(AnchorPoint door in doorReferences.doors){
-                if(door.Connected && door != currentDoor && door.ConnectedTo != null){ //TODO remove nullprodection
-                    availableDoors.Add(door);
-                }
-            }
-            
-            if(availableDoors.Count == 0){
-                break;
-            }
-
-            currentDoor = availableDoors[Random.Range(0,availableDoors.Count-1)].ConnectedTo;
-            doorReferences = currentDoor.GetComponentInParent<DoorReferences>();
-            if(doorReferences == null) break;
-        }
-
-        NavMesh navMesh = null;
-
-        try
-        {
-            navMesh = doorReferences.GetComponent<NavMesh>();
-        }
-        catch(System.NullReferenceException e)
-        {
-            Debug.LogWarning("EnemySpawner tried to send minion to a room which had no navmesh: " + doorReferences.name);
-            return GetNearbyDestination(); //Attempts again
-        }
-
-        return doorReferences.transform.TransformPoint(navMesh.Faces[Random.Range(0,navMesh.Faces.Length-1)].Origin);
-
-    }
+    
 
     [Command]
     public void CmdOnTakeDamage(){
-        foreach(StateMachine enemy in LocalMinions){
-            enemy.SetState(new ReturnToSpawnerState(enemy));
+        foreach(StateMachine minion in LocalMinions){
+            if(minion.TargetEntity == null)
+                minion.SetState(new ReturnToSpawnerState(minion));
         }
     }
 
     public void OnDeath(){
-        foreach(StateMachine enemy in LocalMinions){
-            enemy.Die();
+        foreach(StateMachine minion in LocalMinions){
+            minion.Spawner = null;
         }
         Destroy(gameObject);
     }

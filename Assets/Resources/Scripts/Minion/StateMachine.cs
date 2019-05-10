@@ -86,9 +86,15 @@ public class StateMachine : NetworkBehaviour
     public Vector3 RaycastOffset; //Safety offset so raycast doesn't hit ground instantly
     public bool debug;
 
+    [Range(0,1)]
+    public float ChooseCurrentRoomChance = .3f;
+
+    private int layerMask;
+
     public void Start()
     {
-        AnimController = gameObject.GetComponent<Animator>();
+        layerMask = ~(1 << LayerMask.NameToLayer("Puppeteer Interact"));
+        AnimController = GetComponent<Animator>();
 
         //TODO: remove when prefab gets changed from Acceleration 0
         
@@ -130,7 +136,22 @@ public class StateMachine : NetworkBehaviour
         {
             //TODO make it work with invisible puppet, for now the tag changes from player when it becomes invisible and reverts after
             Puppets.Clear(); //TODO move this to Start(). Currently in update for dev purposes
-            Puppets.AddRange(GameObject.FindGameObjectsWithTag("Player"));
+            GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
+            foreach(GameObject player in players)
+            {
+                try
+                {
+                    if(player.GetComponent<HealthComponent>().Health > 0)
+                    {
+                        Puppets.Add(player);
+                    }
+                }
+                catch(System.Exception e)
+                {
+                    
+                }
+                
+            }
             //CurrentChargeSpeed = AnimController.GetFloat("ChargeSpeed");
             if (CurrentState != null) CurrentState.Run();
         }
@@ -349,6 +370,60 @@ public class StateMachine : NetworkBehaviour
             }
         }
         yield return new WaitForSeconds(0.1f);
+    }
+
+    public Vector3 GetNearbyDestination(){
+        
+        AnchorPoint currentDoor = null;
+        DoorReferences doorReferences = null;
+        
+        if(Spawner != null)
+        {
+            doorReferences = Spawner.GetComponentInParent<DoorReferences>();
+        }
+        else if(Physics.Raycast(transform.position + RaycastOffset,  Vector3.down, out RaycastHit hit, 1, layerMask))
+        {
+            doorReferences = hit.transform.GetComponentInParent<DoorReferences>();
+        }
+
+
+        while(doorReferences != null){
+            //Checks if this room is to be chosen
+            if(Random.Range(0.0f,1.0f) <= ChooseCurrentRoomChance){
+                break;
+            }
+
+            List<AnchorPoint> availableDoors = new List<AnchorPoint>();
+            if(doorReferences == null) break;
+            foreach(AnchorPoint door in doorReferences.doors){
+                if(door.Connected && door != currentDoor && door.ConnectedTo != null){ //TODO remove nullprodection
+                    availableDoors.Add(door);
+                }
+            }
+            
+            if(availableDoors.Count == 0){
+                break;
+            }
+
+            currentDoor = availableDoors[Random.Range(0,availableDoors.Count-1)].ConnectedTo;
+            doorReferences = currentDoor.GetComponentInParent<DoorReferences>();
+            if(doorReferences == null) break;
+        }
+
+        NavMesh navMesh = null;
+
+        try
+        {
+            navMesh = doorReferences.GetComponent<NavMesh>();
+        }
+        catch(System.NullReferenceException e)
+        {
+            Debug.LogWarning("EnemySpawner tried to send minion to a room which had no navmesh: " + doorReferences.name);
+            return GetNearbyDestination(); //Attempts again
+        }
+
+        return doorReferences.transform.TransformPoint(navMesh.Faces[Random.Range(0,navMesh.Faces.Length-1)].Origin);
+
     }
 
 }

@@ -89,6 +89,7 @@ public class HealthComponent : NetworkBehaviour
 
     [Command]
     public void CmdDamage(GameObject targetObject, uint damage){
+        if(!isServer) Debug.LogError("Not server!");
         targetObject.GetComponent<HealthComponent>().Damage(damage);
     }
 
@@ -103,7 +104,7 @@ public class HealthComponent : NetworkBehaviour
     [ClientRpc]
     public void RpcDeath()
     {
-        sound.Death();
+        if(sound != null) sound.Death();
         this.zeroHealthAction();
     }
     
@@ -126,7 +127,7 @@ public class HealthComponent : NetworkBehaviour
         AllowRegen = true;
         PlayerController playerController = gameObject.GetComponent<PlayerController>();
         playerController.UnStunned();
-        AddDeathAction(playerController.Stunned);
+        AddDeathAction(playerController.Downed);
         RpcSendRevive();    
     }
 
@@ -139,7 +140,7 @@ public class HealthComponent : NetworkBehaviour
         AllowRegen = true;
         PlayerController playerController = gameObject.GetComponent<PlayerController>();
         playerController.UnStunned();
-        AddDeathAction(playerController.Stunned);
+        AddDeathAction(playerController.Downed);
     }
 
     //Registers a new zero health delegate

@@ -82,6 +82,7 @@ public class BearInteract : Interactable
         if(interactionController.isServer)
         {
             RpcDisableInteracting(interactor);
+            HudScript.RpcScaleZero();
 
         }
         interacting = false;
@@ -98,7 +99,7 @@ public class BearInteract : Interactable
             GameObject target = gameObject.GetComponent<BearTrap>().Target;
             target.GetComponent<PlayerController>().UnStunned();
             RpcCallUnstuck(target);
-
+            target.GetComponent<HealthComponent>().RemoveDeathAction(GetComponent<BearTrap>().DestroyTrap);
             //If the puppet is releasing itself, do damage
             if (interactor == target)
             {

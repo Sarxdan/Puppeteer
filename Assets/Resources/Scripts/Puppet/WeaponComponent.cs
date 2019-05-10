@@ -29,12 +29,11 @@ public class WeaponComponent : Interactable
 
     public Transform MagazineTransform;
 
-
-
     //Weapon attributes
     public uint Damage;
     public uint NumShots;
-    [Range(0.0f, 1.0f)]
+    public bool RequireRelease;
+    [Range(0.0f, 5.0f)]
     public float FiringSpeed;
     [Range(0.0f, 4.0f)]
     public float ReloadTime;
@@ -53,10 +52,15 @@ public class WeaponComponent : Interactable
     public Transform HeadTransform;
     public Quaternion HoldRotation;
 
+    //For hold animation
+    public int AnimationIndex;
+
     //Time left until weapon can be used again
     private float cooldown;
     private float recoil;
     private float charge;
+
+    private bool isHeld;
 
 	public void Start()
 	{
@@ -67,6 +71,9 @@ public class WeaponComponent : Interactable
 	public void Use()
     {
         
+        if(RequireRelease && isHeld) return;
+        isHeld = true;
+
         charge += Time.deltaTime;
 
         if (cooldown != 0 || charge < ChargeTime)
@@ -114,6 +121,11 @@ public class WeaponComponent : Interactable
         LiquidLeft -= LiquidPerRound;
     }
 
+    public void Release()
+    {
+        isHeld = false;
+    }
+
     //Attemps to reload the weapon to its maximum capacity by the given input amount
     public void Reload(ref int liquidInput)
     {
@@ -134,6 +146,10 @@ public class WeaponComponent : Interactable
     }
 
     void Update()
+    {
+    }
+
+    void FixedUpdate()
     {
         // decrease cooldown constantly
         cooldown = Mathf.Max(0.0f, cooldown -= Time.deltaTime);
@@ -159,7 +175,6 @@ public class WeaponComponent : Interactable
 
             HeadTransform.localEulerAngles = rotation;
             rotation.y = 180.0f;
-            //transform.localEulerAngles = -rotation;
         }
     }
 
