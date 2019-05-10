@@ -158,7 +158,7 @@ GameObject:
   - component: {fileID: 7486441159829495019}
   - component: {fileID: 8831175885927916761}
   - component: {fileID: 4169553516647260126}
-  - component: {fileID: 1531770269187720022}
+  - component: {fileID: -5195485208229273767}
   m_Layer: 8
   m_Name: Corridor_L
   m_TagString: Connectable
@@ -270,8 +270,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   serverOnly: 0
   localPlayerAuthority: 0
-  m_AssetId: 3a240439f74778847b0f0871a6ca28b8
-  m_SceneId: 0
+  m_AssetId: 
+  m_SceneId: 1592104783
 --- !u!114 &1121466380865689298
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -428,7 +428,7 @@ MonoBehaviour:
     cPos: {x: 0.16377287, y: 0.0000000025347298, z: 4.5155582}
     Origin: {x: 0.054590907, y: -0.00000004043423, z: 4.2518163}
   NavmeshOffset: {x: 0, y: 0, z: 0}
---- !u!114 &1531770269187720022
+--- !u!114 &-5195485208229273767
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -443,8 +443,17 @@ MonoBehaviour:
   syncInterval: 0.1
   NumberOfSpawns: 0
   WeaponList: []
-  AmmoItem: {fileID: 0}
-  PowerUpItem: {fileID: 0}
+  Shotgun: {fileID: 408449928367013862, guid: 3551e807289be504ea7bfa9e3abec92f, type: 3}
+  Rifle: {fileID: 6753410223115520912, guid: 4bf7835f7ff0fa04fa8e3a5af959ec23, type: 3}
+  Pistol: {fileID: 5880048625550611438, guid: 704fc477692f6e941a90fc72b817e7f5, type: 3}
+  GatlingGun: {fileID: 408449928367013862, guid: 74e905ea56207924aa40ff45e7c788d0,
+    type: 3}
+  AmmoItem: {fileID: 4016181328903041264, guid: aa96666df15c95745b273663156190a7,
+    type: 3}
+  PowerUpItem: {fileID: 500119573822121173, guid: 65c1c03276d144e4c9b46d26cb47ee2c,
+    type: 3}
+  MedKitItem: {fileID: 3177816432296667593, guid: c67c919da0ca61541934ce6a72711bde,
+    type: 3}
   SnapPoints: []
 --- !u!65 &8758090855138762036
 BoxCollider:
@@ -744,6 +753,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 4796887068756597347}
     m_Modifications:
+    - target: {fileID: 100000, guid: d00296cf8c1ce584ebf2cde53ef702aa, type: 3}
+      propertyPath: m_Name
+      value: ST_DoorFrame_Full_01
+      objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: d00296cf8c1ce584ebf2cde53ef702aa, type: 3}
       propertyPath: m_LocalPosition.x
       value: 3.75
@@ -787,10 +800,6 @@ PrefabInstance:
     - target: {fileID: 400000, guid: d00296cf8c1ce584ebf2cde53ef702aa, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 100000, guid: d00296cf8c1ce584ebf2cde53ef702aa, type: 3}
-      propertyPath: m_Name
-      value: ST_DoorFrame_Full_01
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d00296cf8c1ce584ebf2cde53ef702aa, type: 3}
@@ -882,6 +891,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 4796887068756597347}
     m_Modifications:
+    - target: {fileID: 3271296395229701799, guid: 46271e45fc5cd1c44a5cb1a565b565bc,
+        type: 3}
+      propertyPath: m_Name
+      value: W_S_Full (1)
+      objectReference: {fileID: 0}
     - target: {fileID: 3503818868421266368, guid: 46271e45fc5cd1c44a5cb1a565b565bc,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -936,11 +950,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3271296395229701799, guid: 46271e45fc5cd1c44a5cb1a565b565bc,
-        type: 3}
-      propertyPath: m_Name
-      value: W_S_Full (1)
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 46271e45fc5cd1c44a5cb1a565b565bc, type: 3}
@@ -1176,6 +1185,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 4796887068756597347}
     m_Modifications:
+    - target: {fileID: 100000, guid: d00296cf8c1ce584ebf2cde53ef702aa, type: 3}
+      propertyPath: m_Name
+      value: ST_DoorFrame_Full_01 (3)
+      objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: d00296cf8c1ce584ebf2cde53ef702aa, type: 3}
       propertyPath: m_LocalPosition.x
       value: 4.45
@@ -1220,10 +1233,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 100000, guid: d00296cf8c1ce584ebf2cde53ef702aa, type: 3}
-      propertyPath: m_Name
-      value: ST_DoorFrame_Full_01 (3)
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d00296cf8c1ce584ebf2cde53ef702aa, type: 3}
 --- !u!4 &1719763099273542596 stripped
@@ -1245,6 +1254,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 4796887068756597347}
     m_Modifications:
+    - target: {fileID: 3271296395229701799, guid: 46271e45fc5cd1c44a5cb1a565b565bc,
+        type: 3}
+      propertyPath: m_Name
+      value: W_S_Full (3)
+      objectReference: {fileID: 0}
     - target: {fileID: 3503818868421266368, guid: 46271e45fc5cd1c44a5cb1a565b565bc,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -1299,11 +1313,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3271296395229701799, guid: 46271e45fc5cd1c44a5cb1a565b565bc,
-        type: 3}
-      propertyPath: m_Name
-      value: W_S_Full (3)
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 46271e45fc5cd1c44a5cb1a565b565bc, type: 3}
@@ -1401,6 +1410,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 4796887068756597347}
     m_Modifications:
+    - target: {fileID: 4378636289508508711, guid: 3a3023fd5cff8dd4b8af35acc8f05085,
+        type: 3}
+      propertyPath: m_Name
+      value: WindowWallCurtian
+      objectReference: {fileID: 0}
     - target: {fileID: 7520470007381347633, guid: 3a3023fd5cff8dd4b8af35acc8f05085,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -1456,11 +1470,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 4378636289508508711, guid: 3a3023fd5cff8dd4b8af35acc8f05085,
-        type: 3}
-      propertyPath: m_Name
-      value: WindowWallCurtian
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 3a3023fd5cff8dd4b8af35acc8f05085, type: 3}
 --- !u!4 &5041411784218729053 stripped
@@ -1476,6 +1485,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 4796887068756597347}
     m_Modifications:
+    - target: {fileID: 3271296395229701799, guid: 46271e45fc5cd1c44a5cb1a565b565bc,
+        type: 3}
+      propertyPath: m_Name
+      value: W_S_Full (4)
+      objectReference: {fileID: 0}
     - target: {fileID: 3503818868421266368, guid: 46271e45fc5cd1c44a5cb1a565b565bc,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -1530,11 +1544,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3271296395229701799, guid: 46271e45fc5cd1c44a5cb1a565b565bc,
-        type: 3}
-      propertyPath: m_Name
-      value: W_S_Full (4)
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 46271e45fc5cd1c44a5cb1a565b565bc, type: 3}
@@ -1719,6 +1728,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 4796887068756597347}
     m_Modifications:
+    - target: {fileID: 100000, guid: d00296cf8c1ce584ebf2cde53ef702aa, type: 3}
+      propertyPath: m_Name
+      value: ST_DoorFrame_Full_01 (1)
+      objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: d00296cf8c1ce584ebf2cde53ef702aa, type: 3}
       propertyPath: m_LocalPosition.x
       value: -0.75
@@ -1762,10 +1775,6 @@ PrefabInstance:
     - target: {fileID: 400000, guid: d00296cf8c1ce584ebf2cde53ef702aa, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 100000, guid: d00296cf8c1ce584ebf2cde53ef702aa, type: 3}
-      propertyPath: m_Name
-      value: ST_DoorFrame_Full_01 (1)
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d00296cf8c1ce584ebf2cde53ef702aa, type: 3}
@@ -1868,6 +1877,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 4796887068756597347}
     m_Modifications:
+    - target: {fileID: 100000, guid: d00296cf8c1ce584ebf2cde53ef702aa, type: 3}
+      propertyPath: m_Name
+      value: ST_DoorFrame_Full_01
+      objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: d00296cf8c1ce584ebf2cde53ef702aa, type: 3}
       propertyPath: m_LocalPosition.x
       value: 1.45
@@ -1911,10 +1924,6 @@ PrefabInstance:
     - target: {fileID: 400000, guid: d00296cf8c1ce584ebf2cde53ef702aa, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 100000, guid: d00296cf8c1ce584ebf2cde53ef702aa, type: 3}
-      propertyPath: m_Name
-      value: ST_DoorFrame_Full_01
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d00296cf8c1ce584ebf2cde53ef702aa, type: 3}
@@ -2017,6 +2026,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 4796887068756597347}
     m_Modifications:
+    - target: {fileID: 4378636289508508711, guid: 3a3023fd5cff8dd4b8af35acc8f05085,
+        type: 3}
+      propertyPath: m_Name
+      value: WindowWallCurtian (1)
+      objectReference: {fileID: 0}
     - target: {fileID: 7520470007381347633, guid: 3a3023fd5cff8dd4b8af35acc8f05085,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -2071,11 +2085,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4378636289508508711, guid: 3a3023fd5cff8dd4b8af35acc8f05085,
-        type: 3}
-      propertyPath: m_Name
-      value: WindowWallCurtian (1)
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 3a3023fd5cff8dd4b8af35acc8f05085, type: 3}
@@ -2161,6 +2170,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 4796887068756597347}
     m_Modifications:
+    - target: {fileID: 3271296395229701799, guid: 46271e45fc5cd1c44a5cb1a565b565bc,
+        type: 3}
+      propertyPath: m_Name
+      value: W_S_Full
+      objectReference: {fileID: 0}
     - target: {fileID: 3503818868421266368, guid: 46271e45fc5cd1c44a5cb1a565b565bc,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -2215,11 +2229,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3271296395229701799, guid: 46271e45fc5cd1c44a5cb1a565b565bc,
-        type: 3}
-      propertyPath: m_Name
-      value: W_S_Full
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 46271e45fc5cd1c44a5cb1a565b565bc, type: 3}
@@ -2404,6 +2413,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 4796887068756597347}
     m_Modifications:
+    - target: {fileID: 4500208293623035623, guid: 0493023b900e9564ebdd7d611c03b938,
+        type: 3}
+      propertyPath: m_Name
+      value: W_C_I_Half
+      objectReference: {fileID: 0}
     - target: {fileID: 8003220609661383575, guid: 0493023b900e9564ebdd7d611c03b938,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -2459,11 +2473,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 4500208293623035623, guid: 0493023b900e9564ebdd7d611c03b938,
-        type: 3}
-      propertyPath: m_Name
-      value: W_C_I_Half
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 0493023b900e9564ebdd7d611c03b938, type: 3}
 --- !u!4 &644002800731198015 stripped
@@ -2485,6 +2494,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 4796887068756597347}
     m_Modifications:
+    - target: {fileID: 100000, guid: d00296cf8c1ce584ebf2cde53ef702aa, type: 3}
+      propertyPath: m_Name
+      value: ST_DoorFrame_Full_01 (2)
+      objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: d00296cf8c1ce584ebf2cde53ef702aa, type: 3}
       propertyPath: m_LocalPosition.x
       value: -1.45
@@ -2529,10 +2542,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 100000, guid: d00296cf8c1ce584ebf2cde53ef702aa, type: 3}
-      propertyPath: m_Name
-      value: ST_DoorFrame_Full_01 (2)
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d00296cf8c1ce584ebf2cde53ef702aa, type: 3}
 --- !u!1 &7932970301166535583 stripped
@@ -2554,6 +2563,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 4796887068756597347}
     m_Modifications:
+    - target: {fileID: 3271296395229701799, guid: 46271e45fc5cd1c44a5cb1a565b565bc,
+        type: 3}
+      propertyPath: m_Name
+      value: W_S_Full (2)
+      objectReference: {fileID: 0}
     - target: {fileID: 3503818868421266368, guid: 46271e45fc5cd1c44a5cb1a565b565bc,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -2608,11 +2622,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3271296395229701799, guid: 46271e45fc5cd1c44a5cb1a565b565bc,
-        type: 3}
-      propertyPath: m_Name
-      value: W_S_Full (2)
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 46271e45fc5cd1c44a5cb1a565b565bc, type: 3}

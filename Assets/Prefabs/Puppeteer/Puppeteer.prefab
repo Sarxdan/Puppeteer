@@ -15,9 +15,10 @@ GameObject:
   - component: {fileID: 7011425764817422923}
   - component: {fileID: 5963027110821384781}
   - component: {fileID: 8319625633179747584}
+  - component: {fileID: 2164618449766289586}
   m_Layer: 0
   m_Name: Puppeteer
-  m_TagString: GameController
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -140,7 +141,7 @@ MonoBehaviour:
   - {fileID: 2588813442285734548, guid: 544cab8dfe3776442a06fa2e6d7b8ad7, type: 3}
   - {fileID: 2588813442285734548, guid: da3b8ac20a4819348a645dc0ed703b5a, type: 3}
   - {fileID: 4963745196626812900, guid: 74164b7b500a80d41af59122632b64c3, type: 3}
-  StartRoom: {fileID: 822964954428196605, guid: b091b94e17bd9f34b84b287bc733bc93,
+  StartRoom: {fileID: 822964954428196605, guid: aee12e6cc9c1138479d32960cc4c155a,
     type: 3}
   EndRoom: {fileID: 8128920616035229825, guid: 69da6bfa3fc701547b9474ad7212b9db, type: 3}
   Door: {fileID: 3565548570659699362, guid: 44dec3f5c49221f4d8a32bbe8d3002a3, type: 3}
@@ -181,6 +182,21 @@ MonoBehaviour:
   CurrentCurrency: 400
   TemporaryCurrency: 0
   CurrencyText: {fileID: 3219454129538878312}
+--- !u!114 &2164618449766289586
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 882945469650525590}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 734b48bea0b204338958ee3d885e11f0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncInterval: 0.1
+  compressRotation: 0
+  target: {fileID: 882945471475474463}
 --- !u!1 &882945471475474460
 GameObject:
   m_ObjectHideFlags: 0
