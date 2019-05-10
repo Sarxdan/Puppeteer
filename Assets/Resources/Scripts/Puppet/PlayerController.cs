@@ -89,10 +89,13 @@ public class PlayerController : NetworkBehaviour
         }
     }
 
+    void Awake()
+    {
+        gameObject.GetComponent<HealthComponent>().AddDeathAction(Downed);
+    }
     void Start()
     {
         rigidBody = GetComponent<Rigidbody>();
-        gameObject.GetComponent<HealthComponent>().AddDeathAction(Downed);
         AnimController = GetComponent<Animator>();
         // Saves the original input from the variables
         speedSave = MovementSpeed;
@@ -112,16 +115,15 @@ public class PlayerController : NetworkBehaviour
                 if (Input.GetButton("Fire"))
                 {
                     CurrentWeapon.GetComponent<WeaponComponent>().Use();
-                    AnimController.SetTrigger("Fire");
                 }
-
                 // Reload current weapon
                 if (Input.GetButton("Reload"))
                 {
                     CurrentWeapon.GetComponent<WeaponComponent>().Reload(ref Ammunition);
                 }
-            }
-            else if(Input.GetButtonUp("Fire"))
+            } 
+
+            if(Input.GetButtonUp("Fire") && CurrentWeapon != null)
             {
                 CurrentWeapon.GetComponent<WeaponComponent>().Release();
             }
