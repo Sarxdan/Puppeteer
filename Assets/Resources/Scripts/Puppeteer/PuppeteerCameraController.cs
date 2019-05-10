@@ -13,8 +13,8 @@ using UnityEngine;
 * Anton Jonsson (30/04-2019)
 *
 * CONTRIBUTORS:
-*
- * Sandra "Sanders" Andersson (MouseMovement is opt.)
+* Philip Stenmark
+* Sandra "Sanders" Andersson (MouseMovement is opt.)
 */
 
 public class PuppeteerCameraController : MonoBehaviour
@@ -52,13 +52,13 @@ public class PuppeteerCameraController : MonoBehaviour
     void Start()
     {
         //How far from the start position you are able to go before you can move the camera anymore
-        float lenghtFromCenter = PlayerArea / 2;
+        float lengthFromCenter = PlayerArea / 2;
 
         Vector3 pos = transform.position;
-        RightHorizontalBorder = pos.x + lenghtFromCenter;
-        LeftHorizontalBorder = pos.x - lenghtFromCenter;
-        TopVerticalBorder = pos.z + lenghtFromCenter;
-        BottomVerticalBorder = pos.z - lenghtFromCenter;
+        RightHorizontalBorder = pos.x + lengthFromCenter;
+        LeftHorizontalBorder = pos.x - lengthFromCenter;
+        TopVerticalBorder = pos.z + lengthFromCenter;
+        BottomVerticalBorder = pos.z - lengthFromCenter;
 
         if (PlayerPrefs.GetInt("MouseCameraMovementPuppeteer") == 1)
             MouseMovement = true;
@@ -67,7 +67,6 @@ public class PuppeteerCameraController : MonoBehaviour
 
         // zoom to height on start
         zoomAmount = 12;
-
     }
 
     void Update()
@@ -83,7 +82,9 @@ public class PuppeteerCameraController : MonoBehaviour
                 Vector3 tmp;
                 tmp = Vector3.Lerp(transform.position, transform.position + new Vector3(x, 0, z), Time.deltaTime);
                 tmp.y = Mathf.Lerp(tmp.y, zoomAmount, Time.deltaTime * CameraZoomSpeed * 2.0f);
-                transform.position = tmp;
+
+                // clamp to player area
+                transform.position = Vector3.ClampMagnitude(tmp, PlayerArea);
             }
             else
             {
