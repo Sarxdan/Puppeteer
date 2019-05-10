@@ -86,6 +86,10 @@ public class ReviveComponent : Interactable
         }
         // TODO: perform death action across network
         Destroy(gameObject);
+		var spectateScreen = GameObject.FindObjectOfType<Spectator>().gameObject;
+		spectateScreen.SetActive(true);
+		spectateScreen.GetComponent<Spectator>().StartSpectating();
+
     }
 
     private IEnumerator ReviveRoutine(GameObject reviver)
