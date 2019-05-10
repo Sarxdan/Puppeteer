@@ -47,6 +47,7 @@ public class PuppeteerCameraController : MonoBehaviour
     public bool DisableInput;
 
     public bool SmoothMovement;
+    private float zoomAmount;
 
     void Start()
     {
@@ -64,9 +65,11 @@ public class PuppeteerCameraController : MonoBehaviour
         else
             MouseMovement = false;
 
+        // zoom to height on start
+        zoomAmount = 12;
+
     }
 
-    float zoomAmount;
     void Update()
     {
         if (!DisableInput)
