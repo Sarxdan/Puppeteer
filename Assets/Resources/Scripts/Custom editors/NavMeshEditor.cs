@@ -21,9 +21,11 @@ public class NavMeshEditor : Editor
     
     public override void OnInspectorGUI()
     {
+        script = (NavMesh)target;
+        
         DrawDefaultInspector();
 
-        script = (NavMesh)target;
+        GUILayout.Label("Navmesh face count: " + script.Faces.Length);
         EditorGUI.BeginDisabledGroup(script.Faces != null && script.Faces.Length > 0);
         if(GUILayout.Button("Bake navmesh"))
         {
