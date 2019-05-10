@@ -30,7 +30,7 @@ public class ItemGrabTool : NetworkBehaviour
 	public float LiftHeight = 3.0f;
 	// The lift speed when grabbing an object
 	public float LiftSpeed = 50.0f;
-	//The distance of the groud that the preview trap is
+	//The distance off the groud that the preview trap is
 	private float PreviewLiftHeight = 2.0f;
 
 	public GameObject[] HudItems;
@@ -242,6 +242,7 @@ public class ItemGrabTool : NetworkBehaviour
 			selectedObject = Instantiate(sourceObject);
 			selectedObject.name = "SelectedObject";
 			selectedObject.transform.position = localPlayerMousePos;
+			selectedObject.transform.localEulerAngles = new Vector3(0, 0, 0);
 
 			// handels the change in temporary currency. can be used to show currency left after placement.
 			cost = selectedObject.GetComponent<SnapFunctionality>().Cost;
@@ -342,7 +343,7 @@ public class ItemGrabTool : NetworkBehaviour
 		// Move guideObject to best available position. If there is none, move it to source.
 		if (bestDstPoint != null)
         {
-            RpcUpdateGuide(new TransformStruct(selectedObject.transform.position - (selectedObject.transform.position - bestDstPoint.transform.position), selectedObject.transform.rotation));
+            RpcUpdateGuide(new TransformStruct(selectedObject.transform.position - (selectedObject.transform.position - bestDstPoint.transform.position) + previewLiftVector, selectedObject.transform.rotation));
 			guideObject.transform.position = selectedObject.transform.position - (selectedObject.transform.position - bestDstPoint.transform.position) + previewLiftVector;
 			guideObject.transform.rotation = selectedObject.transform.rotation;
         }
@@ -359,7 +360,7 @@ public class ItemGrabTool : NetworkBehaviour
     {
         if (isLocalPlayer && guideObject != null)
         {
-			guideObject.transform.position = target.Position + previewLiftVector;
+			guideObject.transform.position = target.Position;
             guideObject.transform.rotation = target.Rotation;
         }
     }
