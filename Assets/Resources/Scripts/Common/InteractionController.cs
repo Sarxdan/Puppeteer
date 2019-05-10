@@ -33,6 +33,10 @@ public class InteractionController : NetworkBehaviour
             //Sets current interactable object
             if(hit != curInteractable)
             {
+                if(curInteractable != null)
+                {
+                    CmdStopInteracting(new InteractStruct(gameObject, curInteractable.gameObject));
+                }
                 this.StopInteraction();
 
                 curInteractable = hit;
@@ -42,9 +46,13 @@ public class InteractionController : NetworkBehaviour
                 }
             }
         }
-        //If raycast hits nothing
+        //If raycast hits nothing 
         else
         {
+           if(curInteractable != null)
+            {
+                CmdStopInteracting(new InteractStruct(gameObject, curInteractable.gameObject));
+            }
             this.StopInteraction();
         }
 
@@ -54,8 +62,6 @@ public class InteractionController : NetworkBehaviour
             //Attempt to start interaction
             if(Input.GetButtonDown("Use") && !isInteracting)
             {
-				Debug.Log(curInteractable);
-				//curInteractable.OnInteractBegin(gameObject);
 				CmdBeginInteract(new InteractStruct(gameObject, curInteractable.gameObject));
                 isInteracting = true; // TODO: syncvar if works :)
             }
@@ -63,10 +69,16 @@ public class InteractionController : NetworkBehaviour
             //Cancel interaction
             if (Input.GetButtonUp("Use") && isInteracting)
             {
+                CmdStopInteracting(new InteractStruct(gameObject, curInteractable.gameObject));
                 curInteractable.OnInteractEnd(gameObject);
                 isInteracting = false;
             }
         }
+    }
+    [Command]
+    private void CmdStopInteracting(InteractStruct info)
+    {
+            info.Target.GetComponent<Interactable>().OnInteractEnd(info.Source);
     }
 
     private void StopInteraction()
@@ -87,12 +99,10 @@ public class InteractionController : NetworkBehaviour
         curInteractable = null;
     }
 
+
 	[Command]
 	public void CmdBeginInteract(InteractStruct info)
 	{
-		Debug.Log(info.Target);
-		Debug.Log(info.Source);
-
 		info.Target.GetComponent<Interactable>().OnInteractBegin(info.Source);
 	}
 }
