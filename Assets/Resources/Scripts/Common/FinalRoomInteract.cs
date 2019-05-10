@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Mirror;
 using UnityEngine;
+using MinionStates;
 
 /*
 * AUTHOR:
@@ -43,6 +44,15 @@ public class FinalRoomInteract : Interactable
 	// Only runs on server.
 	IEnumerator FinalCountDown()
 	{
+		EnemySpawner dummySpawner = GameObject.Find("DummySpawner").GetComponent<EnemySpawner>();
+		foreach(StateMachine minion in EnemySpawner.AllMinions)
+		{
+			minion.Spawner = dummySpawner;
+			if(minion.TargetEntity == null)
+			{
+				minion.SetState(new ReturnToSpawnerState(minion));
+			}
+		}
 		while(true)
 		{
 			if (TimeLeft == 0)
