@@ -14,11 +14,13 @@ using Mirror;
 *
 * CONTRIBUTORS:
 * Anton Jonsson
+* Ludvig Björk Förare
 */
 public class DoorComponent : Interactable
 {
 	[SerializeField]
 	[SyncVar(hook = nameof(LockingDoor))]
+
     private bool locked;
 
     public bool Locked
@@ -71,6 +73,10 @@ public class DoorComponent : Interactable
 
 	public bool Open = false;
 
+	public float closeTime;
+	
+	private IEnumerator closeRoutineInstance;
+
     // Save the start angle of the door
     void Start()
     {
@@ -84,6 +90,15 @@ public class DoorComponent : Interactable
 			float dotProduct = Vector3.Dot(transform.forward, interactor.transform.forward);
 			currentAngle = OpenAngle * Mathf.Sign(dotProduct);
 			Open = !Open;
+			if(Open)
+			{
+				closeRoutineInstance = AutoClose();
+				StartCoroutine(closeRoutineInstance);
+			}
+			else
+			{
+				StopCoroutine(closeRoutineInstance);
+			}
 		}
 	}
     public override void OnInteractEnd(GameObject interactor){}
@@ -102,4 +117,10 @@ public class DoorComponent : Interactable
             }
         }
     }
+
+	private IEnumerator AutoClose()
+	{
+		yield return new WaitForSeconds(closeTime);
+		Open = false;
+	}
 }

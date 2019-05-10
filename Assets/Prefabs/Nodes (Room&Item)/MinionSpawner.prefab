@@ -102,9 +102,9 @@ MonoBehaviour:
   MaxEnemyCount: 5
   MinDelay: 5
   MaxDelay: 10
-  SpawnedEnemies: []
+  LocalMinions: []
   spawnPoint: {fileID: 89670621584907357}
-  ChooseThisChance: 0.3
+  ChooseThisChance: 0.8
 --- !u!65 &7560926778480752341
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -151,6 +151,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 966551dd969a4d444a4a6f50efd09aff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncInterval: 0.1
   Health: 50
   MaxHealth: 50
   MaxRegenRatio: 0
@@ -158,8 +159,7 @@ MonoBehaviour:
   RegenSpeed: 0
   RegenDelay: 0
   AllowRegen: 0
-  DamageTakenSound: 
-  DeathSound: 
+  sound: {fileID: 0}
 --- !u!114 &5323150377455828167
 MonoBehaviour:
   m_ObjectHideFlags: 0

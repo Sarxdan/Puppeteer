@@ -51,13 +51,13 @@ public class StateMachine : NetworkBehaviour
 
 
 
-    [Header("Attack settings")]
+    [Header("Normal attack settings")]
     public float AttackCooldown;
     public uint AttackDamage;
     public float AttackRange;
     [HideInInspector]
     public bool CanAttack;
-    //[HideInInspector]
+    [Header("Charge attack settings")]
     public bool ChargeStopped;
     public float ChargeAccelerationSpeed = 0.15f;
     public float CurrentChargeSpeed;
@@ -74,6 +74,11 @@ public class StateMachine : NetworkBehaviour
     public bool AssholeMode;
     private float PreThreat;
     private float PostThreat;
+
+    [Header("Idle settings")]
+
+    public float MinIdleTime;
+    public float MaxIdleTime;
 
     [Header("Misc. settings")]
     public Vector3 RaycastOffset; //Safety offset so raycast doesn't hit ground instantly
