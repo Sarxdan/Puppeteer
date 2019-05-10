@@ -177,7 +177,7 @@ namespace MinionStates
             machine.CurrentStateName = "Wander";
 
             //Fetches random destination close to spawner
-            destination = machine.Spawner.GetNearbyDestination();
+            destination = machine.GetNearbyDestination();
             machine.PathFinder.MoveTo(destination);
         }
 
