@@ -135,6 +135,10 @@ public class WeaponComponent : Interactable
 
     void Update()
     {
+    }
+
+    void FixedUpdate()
+    {
         // decrease cooldown constantly
         cooldown = Mathf.Max(0.0f, cooldown -= Time.deltaTime);
         // decrease weapon charge
@@ -159,7 +163,6 @@ public class WeaponComponent : Interactable
 
             HeadTransform.localEulerAngles = rotation;
             rotation.y = 180.0f;
-            //transform.localEulerAngles = -rotation;
         }
     }
 
