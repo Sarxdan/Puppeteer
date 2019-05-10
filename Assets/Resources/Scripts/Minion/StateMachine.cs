@@ -62,6 +62,7 @@ public class StateMachine : NetworkBehaviour
     public float ChargeAccelerationSpeed = 0.15f;
     public float CurrentChargeSpeed;
     public float StartChargeSpeed = 0.15f;
+    public float MaxChargeSpeed;
     public int ChargeCharge;
 
 
@@ -241,24 +242,31 @@ public class StateMachine : NetworkBehaviour
 
     private IEnumerator chargeRoutine()
     {
-        
+        if (!PathFinder.HasPath)
+        {
+            PathFinder.MoveTo(TargetEntity.transform.position);
+            PathFinder.RotationSpeed = 2;
+            PathFinder.NodeArrivalMargin = 1;
+        }
+
+
+
         if (AnimController.GetBool("IsCharging") == true && AnimController.GetFloat("ChargeSpeed") < 1)
         {
             AnimController.SetFloat("ChargeSpeed", CurrentChargeSpeed + ChargeAccelerationSpeed);
         }
-        Vector3 lastPos = transform.position;
+
+        //Vector3 lastPos = transform.position;
         foreach (GameObject pupp in Puppets)
         {
             HealthComponent health = pupp.GetComponent<HealthComponent>();
             if (WithinCone(transform, pupp.transform, 80f, 2f, 0f))
             {
-                uint chargeDamage = (uint)CurrentChargeSpeed * 10;
-
-                //PathFinder.StuckCheck(transform, lastPos, 0.2, 0.2,);
+                uint chargeDamage = (uint)CurrentChargeSpeed*10;
 
                 health.Damage(chargeDamage);
                 ChargeStopped = true;
-                AnimController.SetFloat("ChargeSpeed", 0);
+
                 yield break;
             }
         }

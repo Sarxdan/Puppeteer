@@ -358,11 +358,11 @@ namespace MinionStates
 
         public override void Enter()
         {
-            machine.AnimController.SetBool("Running", true);
+            //machine.AnimController.SetBool("Running", true);
             machine.CurrentStateName = "ChargeAttack";
             //machine.AnimController.SetBool("Running", true);
             machine.AnimController.SetBool("IsCharging", true);
-            //machine.AnimController.SetFloat("ChargeSpeed", machine.StartChargeSpeed);
+            machine.AnimController.SetFloat("ChargeSpeed", machine.StartChargeSpeed);
             machine.ChargeStopped = false;
         }
 
@@ -384,7 +384,7 @@ namespace MinionStates
 
         public override void Exit()
         {
-            machine.AnimController.SetBool("Running", false);
+            //machine.AnimController.SetBool("Running", false);
             machine.AnimController.SetBool("IsCharging", false);
         }
     }
