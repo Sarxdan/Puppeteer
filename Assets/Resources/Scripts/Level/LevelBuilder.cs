@@ -254,6 +254,14 @@ public class LevelBuilder : NetworkBehaviour
             room.transform.SetParent(parent.transform);
         }
 
+		// Spawn Button and final door.
+		var finalRoomInfo = GameObject.Find("EndRoom(Clone)").GetComponent<FinalButtonPlacer>();
+
+		var spawnableButton = Instantiate(finalRoomInfo.Button, finalRoomInfo.ButtonNode.transform);
+		NetworkServer.Spawn(spawnableButton);
+		var spawnableDoor = Instantiate(finalRoomInfo.Door, finalRoomInfo.DoorNode.transform);
+		NetworkServer.Spawn(spawnableDoor);
+
 		foreach (DoorComponent door in FindObjectsOfType<DoorComponent>())
 		{
 			NetworkServer.Spawn(door.gameObject);

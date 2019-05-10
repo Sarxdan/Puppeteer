@@ -358,9 +358,9 @@ GameObject:
   - component: {fileID: 7399165049425453541}
   - component: {fileID: 7239393779811461024}
   - component: {fileID: 8624535642099884806}
-  - component: {fileID: 2402776159091138563}
   - component: {fileID: 6530032967201461496}
   - component: {fileID: 748977486984502748}
+  - component: {fileID: -3247898855183604164}
   m_Layer: 8
   m_Name: Corridor_+ 1
   m_TagString: Connectable
@@ -483,8 +483,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   serverOnly: 0
   localPlayerAuthority: 0
-  m_AssetId: 114b5151ec2b85f4fb020f4c66f7009c
-  m_SceneId: 0
+  m_AssetId: 
+  m_SceneId: 481165911
 --- !u!114 &7239393779811461024
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -513,24 +513,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   GlowColor: {r: 1, g: 1, b: 1, a: 1}
   LerpFactor: 10
---- !u!114 &2402776159091138563
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4835124841400410395}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8c94458f987ced34fb132c26c2ca9393, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  syncInterval: 0.1
-  NumberOfSpawns: 0
-  WeaponList: []
-  AmmoItem: {fileID: 0}
-  PowerUpItem: {fileID: 0}
-  SnapPoints: []
 --- !u!114 &6530032967201461496
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -691,6 +673,33 @@ MonoBehaviour:
     cPos: {x: -4.4999986, y: -0.00000073843387, z: -0.30786008}
     Origin: {x: -4.3853683, y: -0.00000011500617, z: 0.10261935}
   NavmeshOffset: {x: 0, y: 0, z: 0}
+--- !u!114 &-3247898855183604164
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4835124841400410395}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8c94458f987ced34fb132c26c2ca9393, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncInterval: 0.1
+  NumberOfSpawns: 0
+  WeaponList: []
+  Shotgun: {fileID: 408449928367013862, guid: 3551e807289be504ea7bfa9e3abec92f, type: 3}
+  Rifle: {fileID: 6753410223115520912, guid: 4bf7835f7ff0fa04fa8e3a5af959ec23, type: 3}
+  Pistol: {fileID: 5880048625550611438, guid: 704fc477692f6e941a90fc72b817e7f5, type: 3}
+  GatlingGun: {fileID: 408449928367013862, guid: 74e905ea56207924aa40ff45e7c788d0,
+    type: 3}
+  AmmoItem: {fileID: 4016181328903041264, guid: aa96666df15c95745b273663156190a7,
+    type: 3}
+  PowerUpItem: {fileID: 500119573822121173, guid: 65c1c03276d144e4c9b46d26cb47ee2c,
+    type: 3}
+  MedKitItem: {fileID: 3177816432296667593, guid: c67c919da0ca61541934ce6a72711bde,
+    type: 3}
+  SnapPoints: []
 --- !u!65 &708621162243334802
 BoxCollider:
   m_ObjectHideFlags: 0

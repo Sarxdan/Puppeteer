@@ -166,7 +166,7 @@ GameObject:
   - component: {fileID: 2007278646642349944}
   - component: {fileID: 7320594953357101971}
   - component: {fileID: 1328778586256001285}
-  - component: {fileID: 166766917136226609}
+  - component: {fileID: 5478436869402118963}
   m_Layer: 8
   m_Name: Bedroom
   m_TagString: Connectable
@@ -318,7 +318,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   serverOnly: 0
   localPlayerAuthority: 0
-  m_AssetId: b091b94e17bd9f34b84b287bc733bc93
+  m_AssetId: aee12e6cc9c1138479d32960cc4c155a
   m_SceneId: 0
 --- !u!114 &6970436904032279814
 MonoBehaviour:
@@ -545,7 +545,7 @@ MonoBehaviour:
     cPos: {x: -4.505246, y: 0.000000060026856, z: -3.231559}
     Origin: {x: -4.338481, y: 0.000000020008978, z: -3.0771868}
   NavmeshOffset: {x: 0, y: 0, z: 0}
---- !u!114 &166766917136226609
+--- !u!114 &5478436869402118963
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -558,12 +558,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   syncInterval: 0.1
-  NumberOfSpawns: 2
-  WeaponList:
-  - {fileID: 408449928367013862, guid: 3551e807289be504ea7bfa9e3abec92f, type: 3}
-  AmmoItem: {fileID: 2320042952805819730, guid: 291ff11fbad642e49832fe05588476d8,
+  NumberOfSpawns: 0
+  WeaponList: []
+  Shotgun: {fileID: 408449928367013862, guid: 3551e807289be504ea7bfa9e3abec92f, type: 3}
+  Rifle: {fileID: 6753410223115520912, guid: 4bf7835f7ff0fa04fa8e3a5af959ec23, type: 3}
+  Pistol: {fileID: 5880048625550611438, guid: 704fc477692f6e941a90fc72b817e7f5, type: 3}
+  GatlingGun: {fileID: 408449928367013862, guid: 74e905ea56207924aa40ff45e7c788d0,
     type: 3}
-  PowerUpItem: {fileID: 7027387760174938842, guid: 0b5cffb700ecdf140803497d9c37413d,
+  AmmoItem: {fileID: 4016181328903041264, guid: aa96666df15c95745b273663156190a7,
+    type: 3}
+  PowerUpItem: {fileID: 500119573822121173, guid: 65c1c03276d144e4c9b46d26cb47ee2c,
+    type: 3}
+  MedKitItem: {fileID: 3177816432296667593, guid: c67c919da0ca61541934ce6a72711bde,
     type: 3}
   SnapPoints: []
 --- !u!114 &4649826241168717251
@@ -4602,6 +4608,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 3994439080301482117}
     m_Modifications:
+    - target: {fileID: -927199367670048503, guid: ea0c41cfb6c5a364888e0ee3ff9e3bc2,
+        type: 3}
+      propertyPath: m_Name
+      value: ST_Roofboard_Straight_Full (1)
+      objectReference: {fileID: 0}
     - target: {fileID: -4216859302048453862, guid: ea0c41cfb6c5a364888e0ee3ff9e3bc2,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -4656,11 +4667,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: -927199367670048503, guid: ea0c41cfb6c5a364888e0ee3ff9e3bc2,
-        type: 3}
-      propertyPath: m_Name
-      value: ST_Roofboard_Straight_Full (1)
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ea0c41cfb6c5a364888e0ee3ff9e3bc2, type: 3}
@@ -5804,6 +5810,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 3994439080301482117}
     m_Modifications:
+    - target: {fileID: -927199367670048503, guid: ea0c41cfb6c5a364888e0ee3ff9e3bc2,
+        type: 3}
+      propertyPath: m_Name
+      value: ST_Roofboard_Straight_Full
+      objectReference: {fileID: 0}
     - target: {fileID: -4216859302048453862, guid: ea0c41cfb6c5a364888e0ee3ff9e3bc2,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -5858,11 +5869,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: -927199367670048503, guid: ea0c41cfb6c5a364888e0ee3ff9e3bc2,
-        type: 3}
-      propertyPath: m_Name
-      value: ST_Roofboard_Straight_Full
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ea0c41cfb6c5a364888e0ee3ff9e3bc2, type: 3}
@@ -6404,6 +6410,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 3994439080301482117}
     m_Modifications:
+    - target: {fileID: 3323669291989241466, guid: 17bf059efa95b0f4786592620d24b1a2,
+        type: 3}
+      propertyPath: m_Name
+      value: Earthglobe_light
+      objectReference: {fileID: 0}
     - target: {fileID: 4715354352835548752, guid: 17bf059efa95b0f4786592620d24b1a2,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -6458,11 +6469,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3323669291989241466, guid: 17bf059efa95b0f4786592620d24b1a2,
-        type: 3}
-      propertyPath: m_Name
-      value: Earthglobe_light
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 17bf059efa95b0f4786592620d24b1a2, type: 3}
@@ -7537,6 +7543,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 3994439080301482117}
     m_Modifications:
+    - target: {fileID: 8584550351164828003, guid: 666fe27fb98c80e43a9ab6aa1b089c3e,
+        type: 3}
+      propertyPath: m_Name
+      value: Chandelier
+      objectReference: {fileID: 0}
     - target: {fileID: 4658247230202230848, guid: 666fe27fb98c80e43a9ab6aa1b089c3e,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -7591,11 +7602,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8584550351164828003, guid: 666fe27fb98c80e43a9ab6aa1b089c3e,
-        type: 3}
-      propertyPath: m_Name
-      value: Chandelier
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 666fe27fb98c80e43a9ab6aa1b089c3e, type: 3}
