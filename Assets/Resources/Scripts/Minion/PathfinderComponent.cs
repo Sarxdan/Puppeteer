@@ -63,6 +63,10 @@ public class PathfinderComponent : NetworkBehaviour
     //References
     private Rigidbody rigidBody;
     private Animator animController;
+    [Range(0,1)]
+    public float ForceSmoothingValue;
+
+    public float ClampValues;
 
     void Start()
     {
@@ -207,22 +211,22 @@ public class PathfinderComponent : NetworkBehaviour
         }
 
         if(closestMinionDistance < MinionAvoidDistance){
-            minionAvoidVector = (transform.position - closestMinion.position).normalized/closestMinionDistance;
+            minionAvoidVector = minionAvoidVector * (1-ForceSmoothingValue) + ((transform.position - closestMinion.position).normalized/closestMinionDistance) *ForceSmoothingValue;
         }
         else
         {
-            minionAvoidVector = Vector3.zero;
+            minionAvoidVector = minionAvoidVector * (1-ForceSmoothingValue) + Vector3.zero * ForceSmoothingValue;
         }
 
-        raycastAvoidVector = Vector3.zero;
 
         RaycastHit hit;
+        Vector3 newRaycastAvoidVector = Vector3.zero;
 
         if(Physics.Raycast(transform.position + TransformRaycastOffset, transform.forward, out hit, RaycastAvoidDistance, layerMask) &&
         hit.transform.tag != "Enemy" &&
         hit.transform.tag != "Player")
         {
-            raycastAvoidVector += hit.normal / hit.distance;
+            newRaycastAvoidVector += hit.normal / hit.distance;
         }
 
 
@@ -231,17 +235,17 @@ public class PathfinderComponent : NetworkBehaviour
         hit.transform.tag != "Enemy" &&
         hit.transform.tag != "Player")
         {
-            raycastAvoidVector += hit.normal / hit.distance;
+            newRaycastAvoidVector += hit.normal / hit.distance;
         }
 
         if(Physics.Raycast(transform.position + TransformRaycastOffset, leftRayRotation * transform.forward, out hit, RaycastAvoidDistance, layerMask) &&
         hit.transform.tag != "Enemy" &&
         hit.transform.tag != "Player")
         {
-            raycastAvoidVector += hit.normal / hit.distance;
+            newRaycastAvoidVector += hit.normal / hit.distance;
         }
 
-        raycastAvoidVector *= 0.3f;
+        raycastAvoidVector = raycastAvoidVector * (1-ForceSmoothingValue) + newRaycastAvoidVector * 0.3f * ForceSmoothingValue;
     }
 
     private void doorInteraction()
@@ -349,8 +353,8 @@ public class PathfinderComponent : NetworkBehaviour
             {
                 Debug.DrawRay(transform.position, forceSum, Color.green);
                 Debug.DrawRay(transform.position, deltaPos, Color.yellow);
-                Debug.DrawRay(transform.position, minionAvoidVector * MinionAvoidWeight, Color.black);
-                Debug.DrawRay(transform.position, raycastAvoidVector * RaycastAvoidWeight, Color.red);
+                Debug.DrawRay(transform.position, minionAvoidVector * MinionAvoidWeight, Color.red);
+                Debug.DrawRay(transform.position, raycastAvoidVector * RaycastAvoidWeight, Color.cyan);
                 
             }
 

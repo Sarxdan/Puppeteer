@@ -255,6 +255,7 @@ namespace MinionStates
             machine.CurrentStateName = "Idle";
             machine.PathFinder.Stop();
             machine.AnimController.SetBool("Running", false);
+            this.lastTime = Time.time;
         }
 
         public override void Run()
@@ -270,6 +271,8 @@ namespace MinionStates
             {
                 machine.SetState(new WanderState(machine));
             }
+            
+            this.lastTime = Time.time;
         }
 
         public override void Exit()

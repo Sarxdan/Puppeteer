@@ -129,7 +129,22 @@ public class StateMachine : NetworkBehaviour
         {
             //TODO make it work with invisible puppet, for now the tag changes from player when it becomes invisible and reverts after
             Puppets.Clear(); //TODO move this to Start(). Currently in update for dev purposes
-            Puppets.AddRange(GameObject.FindGameObjectsWithTag("Player"));
+            GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
+            foreach(GameObject player in players)
+            {
+                try
+                {
+                    if(player.GetComponent<HealthComponent>().Health > 0)
+                    {
+                        Puppets.Add(player);
+                    }
+                }
+                catch(System.Exception e)
+                {
+                    
+                }
+                
+            }
             if (CurrentState != null) CurrentState.Run();
         }
     }
