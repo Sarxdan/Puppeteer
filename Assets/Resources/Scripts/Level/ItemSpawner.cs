@@ -14,7 +14,7 @@ using UnityEngine;
 * Sandra "Sanders" Andersson
 *
 * CONTRIBUTORS:
-* 
+* Sandra Andersson (Added medkit and updated prefabs)
 */
 
 public class ItemSpawner : NetworkBehaviour
@@ -22,14 +22,28 @@ public class ItemSpawner : NetworkBehaviour
 	public uint NumberOfSpawns;
 	private List<SnapPointBase> spawners;
 	private GameObject level;
+    public List<GameObject> WeaponList;
 
-	// Refrences to all prefabs that can spawn.
-	public GameObject[] WeaponList;
-	public GameObject AmmoItem;
+    // Refrences to all prefabs that can spawn.
+    public GameObject Shotgun;
+    public GameObject Rifle;
+    public GameObject Pistol;
+    public GameObject GatlingGun;
+    public GameObject AmmoItem;
 	public GameObject PowerUpItem;
+	public GameObject MedKitItem;
 
 	// Saves refrence to SnapPoints.
 	public List<SnapPointBase> SnapPoints;
+
+    // Add weapons to weaponlist
+    void Awake()
+    {
+        WeaponList.Add(Shotgun);
+        WeaponList.Add(Rifle);
+        WeaponList.Add(Pistol);
+        WeaponList.Add(GatlingGun);
+    }
 
 	// Finds snap point and saves for later use.
 	public List<SnapPointBase> FindSnapPoints()
@@ -72,21 +86,26 @@ public class ItemSpawner : NetworkBehaviour
 			var weaponPercent = spawner.GetChanceOfWeapon();
 			var ammoPercent = spawner.GetChanceOfAmmo();
 			var powerPercent = spawner.GetChanceOfPowerUp();
+			var medKitPercent = spawner.GetChanceOfMedKit();
 
 			int chance = Random.Range(0, 100);
-			if (chance < weaponPercent)
+			if (chance <= weaponPercent)
 			{
 				SpawnWeapon(itemSpawnPoint[index].gameObject);
 			}
-			else if (chance > weaponPercent & chance < (weaponPercent + ammoPercent))
+			else if (chance > weaponPercent && chance <= (weaponPercent + ammoPercent))
 			{
 				SpawnAmmo(itemSpawnPoint[index].gameObject);
 			}
-			else if (chance > weaponPercent + ammoPercent)
+			else if (chance > (weaponPercent + ammoPercent) && chance <= (weaponPercent + ammoPercent + powerPercent))
 			{
 				SpawnPowerUp(itemSpawnPoint[index].gameObject);
 			}
-		}
+            else if (chance > (weaponPercent + ammoPercent + powerPercent) && chance <= (weaponPercent + ammoPercent + powerPercent + medKitPercent))
+            {
+                SpawnMedkit(itemSpawnPoint[index].gameObject);
+            }
+        }
 	}
 
 	// Gets a num long list of random but unice int that is not the same 
@@ -120,7 +139,7 @@ public class ItemSpawner : NetworkBehaviour
 	// Randoms a weapon to spawn (Might what to add a rarity to weapons.. then internal values like above would work nice.)
 	public void SpawnWeapon(GameObject spawner)
 	{
-		int WeaponIndex = Random.Range(0, WeaponList.Length);
+		int WeaponIndex = Random.Range(0, WeaponList.Count);
 		SpawnItem(spawner, WeaponList[WeaponIndex]);
 	}
 	// Spawns a Ammo prefab.
@@ -133,8 +152,14 @@ public class ItemSpawner : NetworkBehaviour
 	{
 		SpawnItem(spawner, PowerUpItem);
 	}
-	// Previusly a [Command] now just does the spawning.
-	public void SpawnItem(GameObject spawner, GameObject item)
+    // Spawns a Medkit prefab.
+    public void SpawnMedkit(GameObject spawner)
+    {
+        SpawnItem(spawner, MedKitItem);
+    }
+
+    // Previusly a [Command] now just does the spawning.
+    public void SpawnItem(GameObject spawner, GameObject item)
 	{
 		spawner.GetComponent<ItemSnapPoint>().Used = true;
 		var spawnableObject = Instantiate(item, spawner.transform);
