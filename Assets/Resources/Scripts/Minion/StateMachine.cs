@@ -51,12 +51,18 @@ public class StateMachine : NetworkBehaviour
 
 
 
-    [Header("Attack settings")]
+    [Header("Normal attack settings")]
     public float AttackCooldown;
     public uint AttackDamage;
     public float AttackRange;
     [HideInInspector]
     public bool CanAttack;
+    [Header("Charge attack settings")]
+    public bool ChargeStopped;
+    public float ChargeAccelerationSpeed = 0.15f;
+    public float CurrentChargeSpeed;
+    public float StartChargeSpeed = 0.15f;
+    public int ChargeCharge;
 
 
     [Header("Aggro settings")]
@@ -69,6 +75,11 @@ public class StateMachine : NetworkBehaviour
     private float PreThreat;
     private float PostThreat;
 
+    [Header("Idle settings")]
+
+    public float MinIdleTime;
+    public float MaxIdleTime;
+
     [Header("Misc. settings")]
     public Vector3 RaycastOffset; //Safety offset so raycast doesn't hit ground instantly
     public bool debug;
@@ -76,6 +87,10 @@ public class StateMachine : NetworkBehaviour
     public void Start()
     {
         AnimController = GetComponent<Animator>();
+
+        //TODO: remove when prefab gets changed from Acceleration 0
+        ChargeAccelerationSpeed = 0.15f;
+
 
         GetComponent<HealthComponent>().AddDeathAction(Die);
         //If not server, disable self
@@ -112,6 +127,7 @@ public class StateMachine : NetworkBehaviour
     {
         if (System.Environment.TickCount % tickRate == 0) //Runs current state every 'tickRate' ticks
         {
+            //TODO make it work with invisible puppet, for now the tag changes from player when it becomes invisible and reverts after
             Puppets.Clear(); //TODO move this to Start(). Currently in update for dev purposes
             Puppets.AddRange(GameObject.FindGameObjectsWithTag("Player"));
             if (CurrentState != null) CurrentState.Run();
@@ -221,6 +237,32 @@ public class StateMachine : NetworkBehaviour
             }
         }
         return false;
+    }
+
+    private IEnumerator chargeRoutine()
+    {
+        
+        if (AnimController.GetBool("IsCharging") == true && AnimController.GetFloat("ChargeSpeed") < 1)
+        {
+            AnimController.SetFloat("ChargeSpeed", CurrentChargeSpeed + ChargeAccelerationSpeed);
+        }
+        Vector3 lastPos = transform.position;
+        foreach (GameObject pupp in Puppets)
+        {
+            HealthComponent health = pupp.GetComponent<HealthComponent>();
+            if (WithinCone(transform, pupp.transform, 80f, 2f, 0f))
+            {
+                uint chargeDamage = (uint)CurrentChargeSpeed * 10;
+
+                //PathFinder.StuckCheck(transform, lastPos, 0.2, 0.2,);
+
+                health.Damage(chargeDamage);
+                ChargeStopped = true;
+                AnimController.SetFloat("ChargeSpeed", 0);
+                yield break;
+            }
+        }
+        yield return new WaitForSeconds(0.1f);
     }
 
 
