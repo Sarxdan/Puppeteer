@@ -158,12 +158,12 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
-  - {fileID: 8128920615379324087}
-  - {fileID: 8128920615879134440}
-  - {fileID: 8128920616277628491}
-  - {fileID: 8128920615471523785}
-  - {fileID: 8128920616820159341}
-  - {fileID: 8128920616037058303}
+  - {fileID: 8128920615379321185}
+  - {fileID: 8128920615879131454}
+  - {fileID: 8128920616277629853}
+  - {fileID: 8128920615471524383}
+  - {fileID: 8128920616820162235}
+  - {fileID: 8128920616037059369}
   m_Father: {fileID: 8128920616035229824}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -814,7 +814,7 @@ GameObject:
   - component: {fileID: 8890888753533193696}
   - component: {fileID: 4809779641000437470}
   - component: {fileID: 5659101139571693892}
-  - component: {fileID: 8221287807383362794}
+  - component: {fileID: -5176205802845074967}
   m_Layer: 8
   m_Name: EndRoom
   m_TagString: Untagged
@@ -898,8 +898,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   serverOnly: 0
   localPlayerAuthority: 0
-  m_AssetId: 69da6bfa3fc701547b9474ad7212b9db
-  m_SceneId: 0
+  m_AssetId: 
+  m_SceneId: 1167328020
 --- !u!114 &6711960724879777134
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1345,7 +1345,7 @@ MonoBehaviour:
     cPos: {x: 3.2494724, y: -0.000000033597786, z: -13.455843}
     Origin: {x: 3.073663, y: 0.000000053475095, z: -12.921394}
   NavmeshOffset: {x: 0, y: 0, z: -5.92}
---- !u!114 &8221287807383362794
+--- !u!114 &-5176205802845074967
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1360,8 +1360,17 @@ MonoBehaviour:
   syncInterval: 0.1
   NumberOfSpawns: 0
   WeaponList: []
-  AmmoItem: {fileID: 0}
-  PowerUpItem: {fileID: 0}
+  Shotgun: {fileID: 408449928367013862, guid: 3551e807289be504ea7bfa9e3abec92f, type: 3}
+  Rifle: {fileID: 6753410223115520912, guid: 4bf7835f7ff0fa04fa8e3a5af959ec23, type: 3}
+  Pistol: {fileID: 5880048625550611438, guid: 704fc477692f6e941a90fc72b817e7f5, type: 3}
+  GatlingGun: {fileID: 408449928367013862, guid: 74e905ea56207924aa40ff45e7c788d0,
+    type: 3}
+  AmmoItem: {fileID: 4016181328903041264, guid: aa96666df15c95745b273663156190a7,
+    type: 3}
+  PowerUpItem: {fileID: 500119573822121173, guid: 65c1c03276d144e4c9b46d26cb47ee2c,
+    type: 3}
+  MedKitItem: {fileID: 3177816432296667593, guid: c67c919da0ca61541934ce6a72711bde,
+    type: 3}
   SnapPoints: []
 --- !u!114 &5882834290704191557
 MonoBehaviour:
@@ -9293,7 +9302,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a0eef44bc9866f84c8e6f18cfd36d61e, type: 3}
---- !u!4 &8128920615379324087 stripped
+--- !u!4 &8128920615379321185 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 400000, guid: a0eef44bc9866f84c8e6f18cfd36d61e,
     type: 3}
@@ -9555,7 +9564,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a0eef44bc9866f84c8e6f18cfd36d61e, type: 3}
---- !u!4 &8128920615471523785 stripped
+--- !u!4 &8128920615471524383 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 400000, guid: a0eef44bc9866f84c8e6f18cfd36d61e,
     type: 3}
@@ -11551,7 +11560,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a0eef44bc9866f84c8e6f18cfd36d61e, type: 3}
---- !u!4 &8128920615879134440 stripped
+--- !u!4 &8128920615879131454 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 400000, guid: a0eef44bc9866f84c8e6f18cfd36d61e,
     type: 3}
@@ -12215,7 +12224,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a0eef44bc9866f84c8e6f18cfd36d61e, type: 3}
---- !u!4 &8128920616037058303 stripped
+--- !u!4 &8128920616037059369 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 400000, guid: a0eef44bc9866f84c8e6f18cfd36d61e,
     type: 3}
@@ -13967,7 +13976,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a0eef44bc9866f84c8e6f18cfd36d61e, type: 3}
---- !u!4 &8128920616277628491 stripped
+--- !u!4 &8128920616277629853 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 400000, guid: a0eef44bc9866f84c8e6f18cfd36d61e,
     type: 3}
@@ -17364,7 +17373,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a0eef44bc9866f84c8e6f18cfd36d61e, type: 3}
---- !u!4 &8128920616820159341 stripped
+--- !u!4 &8128920616820162235 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 400000, guid: a0eef44bc9866f84c8e6f18cfd36d61e,
     type: 3}
