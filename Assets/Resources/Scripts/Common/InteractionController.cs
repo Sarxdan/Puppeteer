@@ -37,7 +37,7 @@ public class InteractionController : NetworkBehaviour
                 {
                     CmdStopInteracting(new InteractStruct(gameObject, curInteractable.gameObject));
                 }
-                this.StopInteraction();
+                //this.StopInteraction();
 
                 curInteractable = hit;
                 if(curInteractable != null)
@@ -53,7 +53,7 @@ public class InteractionController : NetworkBehaviour
             {
                 CmdStopInteracting(new InteractStruct(gameObject, curInteractable.gameObject));
             }
-            this.StopInteraction();
+           // this.StopInteraction();
         }
 
         //If the raycast hits something, check for input
@@ -70,7 +70,7 @@ public class InteractionController : NetworkBehaviour
             if (Input.GetButtonUp("Use") && isInteracting)
             {
                 CmdStopInteracting(new InteractStruct(gameObject, curInteractable.gameObject));
-                curInteractable.OnInteractEnd(gameObject);
+               // curInteractable.OnInteractEnd(gameObject);
                 isInteracting = false;
             }
         }
