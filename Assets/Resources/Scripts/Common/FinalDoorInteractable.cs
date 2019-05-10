@@ -28,6 +28,7 @@ public class FinalDoorInteractable : Interactable
 		{
 			Debug.Log("Interacting when door open.");
 			RpcTurnOff(interactor);
+			Destroy(interactor);
 		}
 	}
 
@@ -39,9 +40,11 @@ public class FinalDoorInteractable : Interactable
 	[ClientRpc]
 	public void RpcTurnOff(GameObject interactor)
 	{
-		Destroy(interactor);
-		var playerList = GameObject.FindGameObjectsWithTag("Player");
-		var camera = playerList[0].GetComponentInChildren<Camera>();
-		camera.enabled = true;
+		if (interactor.GetComponent<InteractionController>().isLocalPlayer)
+		{
+			var canvas = GameObject.FindObjectOfType<Spectator>().gameObject;
+			canvas.GetComponent<Spectator>().SpectatorScreen.SetActive(true);
+			canvas.GetComponent<Spectator>().StartSpectating();
+		}
 	}
 }

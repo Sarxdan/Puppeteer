@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 212763664022185749}
   - component: {fileID: 5909226276687725837}
   - component: {fileID: 8382344744343605131}
+  - component: {fileID: 7769854090240192198}
   m_Layer: 0
   m_Name: Shotgun
   m_TagString: Untagged
@@ -31,7 +32,7 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
-  - {fileID: 2654198788152704546}
+  - {fileID: 2654198788152704735}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -64,7 +65,7 @@ MonoBehaviour:
   serverOnly: 0
   localPlayerAuthority: 0
   m_AssetId: 
-  m_SceneId: 1062692678
+  m_SceneId: 1613577158
 --- !u!114 &5909226276687725837
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -109,12 +110,29 @@ CapsuleCollider:
   m_Height: 0.97
   m_Direction: 2
   m_Center: {x: 0, y: 0.09, z: 0.54}
+--- !u!114 &7769854090240192198
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 408449928367013862}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 32774754dd897474a8d5b105194c9824, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  s_Pickup: 
+  s_Shoot: event:/Weapons/Shotgun/Shoot
+  s_OutOfAmmo: 
+  s_Reload: 
+  s_Foley: 
 --- !u!1001 &2238261706484169842
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
-    m_TransformParent: {fileID: 2654198788152701406}
+    m_TransformParent: {fileID: 2654198788152704587}
     m_Modifications:
     - target: {fileID: 100004, guid: 110b6cadd2c30954184a735a2250c7f1, type: 3}
       propertyPath: m_Name
@@ -239,13 +257,13 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 79541ea2886513843ac3ed5d1fa46a85, type: 3}
---- !u!4 &2654198788152704546 stripped
+--- !u!4 &2654198788152704735 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 400006, guid: 79541ea2886513843ac3ed5d1fa46a85,
     type: 3}
   m_PrefabInstance: {fileID: 2654198788152702490}
   m_PrefabAsset: {fileID: 0}
---- !u!4 &2654198788152701406 stripped
+--- !u!4 &2654198788152704587 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 400000, guid: 79541ea2886513843ac3ed5d1fa46a85,
     type: 3}

@@ -59,7 +59,8 @@ public class HealthComponent : NetworkBehaviour
     
     public void Damage(uint damage)
     {
-        if(isServer){
+        if(isServer)
+		{
             if (Health <= 0)
                 return;
 
@@ -79,10 +80,10 @@ public class HealthComponent : NetworkBehaviour
             else if (AllowRegen)
             {
                 StartCoroutine("RegenRoutine");
-
             }
         }
-        else {
+        else
+		{
             Local.CmdDamage(gameObject, damage);
         }
     }

@@ -361,11 +361,8 @@ namespace MinionStates
 
         public override void Enter()
         {
-            machine.AnimController.SetBool("Running", true);
             machine.CurrentStateName = "ChargeAttack";
-            //machine.AnimController.SetBool("Running", true);
             machine.AnimController.SetBool("IsCharging", true);
-            //machine.AnimController.SetFloat("ChargeSpeed", machine.StartChargeSpeed);
             machine.ChargeStopped = false;
         }
 
@@ -374,20 +371,29 @@ namespace MinionStates
             //float dist = Vector3.Distance(machine.TargetEntity.transform.position, machine.transform.position);
             if (machine.ChargeStopped)
             {
+                machine.AnimController.SetFloat("ChargeSpeed", 0);
+                machine.CurrentChargeSpeed = 0;
                 machine.StopCoroutine("chargeRoutine");
                 machine.ChargeStopped = false;
                 machine.SetState(new BigAttackState(machine));
             }
             if (machine.WithinCone(machine.transform, machine.TargetEntity.transform, 30f, 15f, 0f))
             {
-                machine.StartCoroutine("chargeRoutine");
+                if (machine.Corunning)
+                {
+                    return;
+                }
+                else
+                {
+                    machine.StartCoroutine("chargeRoutine");
+                }
             }
-            //machine.PathFinder.MoveTo(machine.TargetEntity.transform.position);
+            machine.PathFinder.MoveTo(machine.TargetEntity.transform.position);
         }
 
         public override void Exit()
         {
-            machine.AnimController.SetBool("Running", false);
+            //machine.AnimController.SetBool("Running", false);
             machine.AnimController.SetBool("IsCharging", false);
         }
     }
