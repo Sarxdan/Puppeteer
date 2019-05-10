@@ -103,6 +103,20 @@ public class PlayerController : NetworkBehaviour
 
         // try to move to spawn position (physics enabled)
         rigidBody.MovePosition(new Vector3(Random.Range(-SpawnRadius, SpawnRadius), 0.0f, Random.Range(-SpawnRadius, SpawnRadius)));
+
+        // configure compass
+        var compass = GetComponentInChildren<Compass>();
+        if (compass)
+        {
+            foreach (var player in GameObject.FindObjectsOfType<PlayerController>())
+            {
+                if (player.transform == transform || player.isLocalPlayer)
+                {
+                    continue;
+                }
+                compass.AddTarget(player.transform);
+            }
+        }
     }
 
     private void Update()

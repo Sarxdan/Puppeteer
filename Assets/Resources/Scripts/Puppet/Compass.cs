@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using Mirror;
 
 /*
  * AUTHOR:
@@ -22,10 +23,7 @@ public class Compass : MonoBehaviour
     // UI offset from top of the screen
     public static readonly float TopOffset = 30.0f;
     // size of displayed icons
-    public static readonly float IconSize = 24.0f;
-
-    // owner of this compass
-    public Transform Owner;
+    public static readonly float IconSize = 32.0f;
 
     // contains all tracked entities
     public List<Transform> Targets;
@@ -39,12 +37,6 @@ public class Compass : MonoBehaviour
 
     void OnGUI()
     {
-        if(Owner == null)
-        {
-            // no compass origin available
-            return;
-        }
-
         for(int i = 0; i < Targets.Count; i++)
         {
             var target = Targets[i];
@@ -52,7 +44,7 @@ public class Compass : MonoBehaviour
             if(target != null)
             {
                 // calculate angle using only x- and z-axes
-                Vector3 inv = Owner.InverseTransformPoint(target.position);
+                Vector3 inv = transform.InverseTransformPoint(target.position);
                 float angle = Mathf.Clamp(Mathf.Atan2(inv.x, inv.z), -1.0f, 1.0f);
 
                 float markerPos = Screen.width * 0.5f - IconSize * 0.5f + angle * Screen.width * ScreenWidthRatio * 0.5f;
