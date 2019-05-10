@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Mirror;
 
 /*
  * AUTHOR:
@@ -25,7 +26,7 @@ public class ReviveComponent : Interactable
     public bool RequireMedkit = true;
 
     // Krig interact progress stuff
-    //private HUDScript hudScript;
+    private HUDScript hudScript;
 
     private HealthComponent healthComponent;
 
@@ -39,14 +40,28 @@ public class ReviveComponent : Interactable
     // an object has started to interact this object
     public override void OnInteractBegin(GameObject interactor)
     {
-        //TODO CHANGE TO GETCOMPONENT
-        //hudScript = interactor.GetComponentInChildren<HUDScript>();
+        var interactionController = interactor.GetComponent<InteractionController>();
+        hudScript = interactor.GetComponent<HUDScript>();
+        if(interactionController.isServer && interactionController.isLocalPlayer)
+        {
+            
+        }
+        else
+        {
+            RpcGetHudScript(interactor);
+        }
         StartCoroutine("ReviveRoutine", interactor);
     }
 
     public override void OnInteractEnd(GameObject interactor)
     {
         StopCoroutine("ReviveRoutine");
+        var interactionController = interactor.GetComponent<InteractionController>();
+        if(!interactionController.isServer && !interactionController.isLocalPlayer)
+        {
+            hudScript.RpcScaleZero();
+        }
+        hudScript.ScaleInteractionProgress(0);
     }
 
     // called when the health of this object reaches zer zo
@@ -89,19 +104,45 @@ public class ReviveComponent : Interactable
                 // someone has revived already
                 yield break;
             }
-            time += Time.fixedDeltaTime;
+            time += 0.1f;
             //hudScript.ScaleInteractionProgress(time/ReviveDelay);
-            yield return new WaitForFixedUpdate();
+            RpcScaleProgress(time/ReviveDelay);
+            yield return new WaitForSeconds(0.1f);
         }
 
         // revive successful
 
         healthComponent.Revive();
-        //hudScript.ScaleInteractionProgress(0);
+        var revivingPlayer = reviver.GetComponent<InteractionController>();
+        if(revivingPlayer.isLocalPlayer && revivingPlayer.isServer)
+        {
+            hudScript.RpcScaleZero();
+
+        }
+        hudScript.RpcScaleZero();
         if(RequireMedkit)
         {
             // consume medkit if required
             reviver.GetComponent<PlayerController>().HasMedkit = false;
         }
     }
+    [ClientRpc]
+    public void RpcGetHudScript(GameObject interactor)
+    {
+        if(interactor.GetComponent<HealthComponent>().isLocalPlayer)
+        {
+            hudScript = interactor.GetComponent<HUDScript>();
+        }
+    }
+
+    [ClientRpc]
+    public void RpcScaleProgress(float scale)
+    {
+        if(hudScript != null)
+        {
+            hudScript.ScaleInteractionProgress(scale);
+        }
+    }
 }
+
+

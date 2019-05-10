@@ -18,6 +18,7 @@ using UnityEngine;
 
 public class FinalDoorInteractable : Interactable
 {
+	// only runs on server.
 	public override void OnInteractBegin(GameObject interactor)
 	{
 		Debug.Log("Interact with Door.");

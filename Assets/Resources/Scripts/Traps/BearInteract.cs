@@ -82,6 +82,7 @@ public class BearInteract : Interactable
         if(interactionController.isServer)
         {
             RpcDisableInteracting(interactor);
+            HudScript.RpcScaleZero();
 
         }
         interacting = false;
