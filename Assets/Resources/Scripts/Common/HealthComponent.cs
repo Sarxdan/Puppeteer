@@ -126,7 +126,7 @@ public class HealthComponent : NetworkBehaviour
         AllowRegen = true;
         PlayerController playerController = gameObject.GetComponent<PlayerController>();
         playerController.UnStunned();
-        AddDeathAction(playerController.Stunned);
+        AddDeathAction(playerController.Downed);
         RpcSendRevive();    
     }
 
@@ -139,7 +139,7 @@ public class HealthComponent : NetworkBehaviour
         AllowRegen = true;
         PlayerController playerController = gameObject.GetComponent<PlayerController>();
         playerController.UnStunned();
-        AddDeathAction(playerController.Stunned);
+        AddDeathAction(playerController.Downed);
     }
 
     //Registers a new zero health delegate
