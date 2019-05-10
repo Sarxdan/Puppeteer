@@ -48,7 +48,8 @@ public class StateMachine : NetworkBehaviour
     [HideInInspector]
     public List<GameObject> Puppets;
 
-
+    //ta bort senare
+    public bool Corunning;
 
 
     [Header("Normal attack settings")]
@@ -59,9 +60,10 @@ public class StateMachine : NetworkBehaviour
     public bool CanAttack;
     [Header("Charge attack settings")]
     public bool ChargeStopped;
-    public float ChargeAccelerationSpeed = 0.15f;
+    public float ChargeAccelerationSpeed;
     public float CurrentChargeSpeed;
-    public float StartChargeSpeed = 0.15f;
+    public float StartChargeSpeed;
+    public float MaxChargeSpeed;
     public int ChargeCharge;
 
 
@@ -84,13 +86,18 @@ public class StateMachine : NetworkBehaviour
     public Vector3 RaycastOffset; //Safety offset so raycast doesn't hit ground instantly
     public bool debug;
 
+    [Range(0,1)]
+    public float ChooseCurrentRoomChance = .3f;
+
+    private int layerMask;
+
     public void Start()
     {
+        layerMask = ~(1 << LayerMask.NameToLayer("Puppeteer Interact"));
         AnimController = GetComponent<Animator>();
 
         //TODO: remove when prefab gets changed from Acceleration 0
-        ChargeAccelerationSpeed = 0.15f;
-
+        
 
         GetComponent<HealthComponent>().AddDeathAction(Die);
         //If not server, disable self
@@ -129,7 +136,23 @@ public class StateMachine : NetworkBehaviour
         {
             //TODO make it work with invisible puppet, for now the tag changes from player when it becomes invisible and reverts after
             Puppets.Clear(); //TODO move this to Start(). Currently in update for dev purposes
-            Puppets.AddRange(GameObject.FindGameObjectsWithTag("Player"));
+            GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
+            foreach(GameObject player in players)
+            {
+                try
+                {
+                    if(player.GetComponent<HealthComponent>().Health > 0)
+                    {
+                        Puppets.Add(player);
+                    }
+                }
+                catch(System.Exception e)
+                {
+                    
+                }
+                
+            }
+            //CurrentChargeSpeed = AnimController.GetFloat("ChargeSpeed");
             if (CurrentState != null) CurrentState.Run();
         }
     }
@@ -241,28 +264,59 @@ public class StateMachine : NetworkBehaviour
 
     private IEnumerator chargeRoutine()
     {
-        
-        if (AnimController.GetBool("IsCharging") == true && AnimController.GetFloat("ChargeSpeed") < 1)
+        while (true)
         {
-            AnimController.SetFloat("ChargeSpeed", CurrentChargeSpeed + ChargeAccelerationSpeed);
-        }
-        Vector3 lastPos = transform.position;
-        foreach (GameObject pupp in Puppets)
-        {
-            HealthComponent health = pupp.GetComponent<HealthComponent>();
-            if (WithinCone(transform, pupp.transform, 80f, 2f, 0f))
+            if (!PathFinder.HasPath)
             {
-                uint chargeDamage = (uint)CurrentChargeSpeed * 10;
+                PathFinder.RotationSpeed = 2f;
+                PathFinder.NodeArrivalMargin = 0.5f;
+            }
 
-                //PathFinder.StuckCheck(transform, lastPos, 0.2, 0.2,);
+            Corunning = true;
 
-                health.Damage(chargeDamage);
+            if (AnimController.GetBool("IsCharging") == true && AnimController.GetFloat("ChargeSpeed") < 1)
+            {
+                CurrentChargeSpeed = CurrentChargeSpeed += ChargeAccelerationSpeed;
+                AnimController.SetFloat("ChargeSpeed", CurrentChargeSpeed);
+            }
+
+            //foreach (GameObject pupp in Puppets)
+            //{
+            //    HealthComponent health = pupp.GetComponent<HealthComponent>();
+            //    if (WithinCone(transform, pupp.transform, 80f, 2f, 0f))
+            //    {
+            //        float chargeDamage = CurrentChargeSpeed * 5;
+            //        uint uChargeDamage = (uint)chargeDamage;
+            //        Debug.Log("Damage dealt: " + chargeDamage + " Damage in uint: " + uChargeDamage);
+            //        health.Damage(uChargeDamage);
+            //        ChargeStopped = true;
+            //        Corunning = false;
+            //        yield break;
+            //    }
+            //    else
+            //    {
+            //        yield return new WaitForSeconds(0.1f);
+            //    }
+            //}
+
+            if (WithinCone(transform, TargetEntity.transform, 80f, 2f, 0f))
+            {
+                HealthComponent health = TargetEntity.GetComponent<HealthComponent>();
+                float chargeDamage = CurrentChargeSpeed * 5;
+                uint uChargeDamage = (uint)chargeDamage;
+
+                if (debug) Debug.Log("Damage dealt: " + chargeDamage + " Damage in uint: " + uChargeDamage);
+
+                health.Damage(uChargeDamage);
                 ChargeStopped = true;
-                AnimController.SetFloat("ChargeSpeed", 0);
+                Corunning = false;
                 yield break;
             }
+            else
+            {
+                yield return new WaitForSeconds(0.1f);
+            }
         }
-        yield return new WaitForSeconds(0.1f);
     }
 
 
@@ -316,6 +370,60 @@ public class StateMachine : NetworkBehaviour
             }
         }
         yield return new WaitForSeconds(0.1f);
+    }
+
+    public Vector3 GetNearbyDestination(){
+        
+        AnchorPoint currentDoor = null;
+        DoorReferences doorReferences = null;
+        
+        if(Spawner != null)
+        {
+            doorReferences = Spawner.GetComponentInParent<DoorReferences>();
+        }
+        else if(Physics.Raycast(transform.position + RaycastOffset,  Vector3.down, out RaycastHit hit, 1, layerMask))
+        {
+            doorReferences = hit.transform.GetComponentInParent<DoorReferences>();
+        }
+
+
+        while(doorReferences != null){
+            //Checks if this room is to be chosen
+            if(Random.Range(0.0f,1.0f) <= ChooseCurrentRoomChance){
+                break;
+            }
+
+            List<AnchorPoint> availableDoors = new List<AnchorPoint>();
+            if(doorReferences == null) break;
+            foreach(AnchorPoint door in doorReferences.doors){
+                if(door.Connected && door != currentDoor && door.ConnectedTo != null){ //TODO remove nullprodection
+                    availableDoors.Add(door);
+                }
+            }
+            
+            if(availableDoors.Count == 0){
+                break;
+            }
+
+            currentDoor = availableDoors[Random.Range(0,availableDoors.Count-1)].ConnectedTo;
+            doorReferences = currentDoor.GetComponentInParent<DoorReferences>();
+            if(doorReferences == null) break;
+        }
+
+        NavMesh navMesh = null;
+
+        try
+        {
+            navMesh = doorReferences.GetComponent<NavMesh>();
+        }
+        catch(System.NullReferenceException e)
+        {
+            Debug.LogWarning("EnemySpawner tried to send minion to a room which had no navmesh: " + doorReferences.name);
+            return GetNearbyDestination(); //Attempts again
+        }
+
+        return doorReferences.transform.TransformPoint(navMesh.Faces[Random.Range(0,navMesh.Faces.Length-1)].Origin);
+
     }
 
 }

@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 5909226276687725837}
   - component: {fileID: 8382344744343605131}
   m_Layer: 0
-  m_Name: Shotgun
+  m_Name: Gatling Gun
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -31,7 +31,7 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
-  - {fileID: 2654198788152701735}
+  - {fileID: 2654198788152704546}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -64,7 +64,7 @@ MonoBehaviour:
   serverOnly: 0
   localPlayerAuthority: 0
   m_AssetId: 
-  m_SceneId: 843327195
+  m_SceneId: 29672347
 --- !u!114 &5909226276687725837
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -85,6 +85,7 @@ MonoBehaviour:
   MagazineTransform: {fileID: 0}
   Damage: 4
   NumShots: 16
+  RequireRelease: 0
   FiringSpeed: 0.901
   ReloadTime: 2.32
   Spread: 0.0906
@@ -93,6 +94,7 @@ MonoBehaviour:
   ChargeTime: 0
   HeadTransform: {fileID: 0}
   HoldRotation: {x: 0.7832786, y: -0.02838598, z: 0.6208417, w: -0.01498185}
+  AnimationIndex: 0
 --- !u!136 &8382344744343605131
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -101,7 +103,7 @@ CapsuleCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 408449928367013862}
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_Enabled: 1
   m_Radius: 0.12
   m_Height: 0.97
@@ -112,7 +114,7 @@ PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
-    m_TransformParent: {fileID: 2654198788152701727}
+    m_TransformParent: {fileID: 2654198788152701406}
     m_Modifications:
     - target: {fileID: 100004, guid: 110b6cadd2c30954184a735a2250c7f1, type: 3}
       propertyPath: m_Name
@@ -237,13 +239,13 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 79541ea2886513843ac3ed5d1fa46a85, type: 3}
---- !u!4 &2654198788152701735 stripped
+--- !u!4 &2654198788152704546 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 400006, guid: 79541ea2886513843ac3ed5d1fa46a85,
     type: 3}
   m_PrefabInstance: {fileID: 2654198788152702490}
   m_PrefabAsset: {fileID: 0}
---- !u!4 &2654198788152701727 stripped
+--- !u!4 &2654198788152701406 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 400000, guid: 79541ea2886513843ac3ed5d1fa46a85,
     type: 3}

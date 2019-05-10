@@ -33,11 +33,13 @@ public class InteractionController : NetworkBehaviour
             //Sets current interactable object
             if(hit != curInteractable)
             {
-                if(curInteractable != null)
+                if(curInteractable != null && isInteracting)
                 {
                     CmdStopInteracting(new InteractStruct(gameObject, curInteractable.gameObject));
+                    isInteracting = false;
+                    curInteractable.OnRaycastExit();
+                    curInteractable = null;
                 }
-                this.StopInteraction();
 
                 curInteractable = hit;
                 if(curInteractable != null)
@@ -49,11 +51,13 @@ public class InteractionController : NetworkBehaviour
         //If raycast hits nothing 
         else
         {
-           if(curInteractable != null)
+           if(curInteractable != null && isInteracting)
             {
                 CmdStopInteracting(new InteractStruct(gameObject, curInteractable.gameObject));
+                isInteracting = false;
+                curInteractable.OnRaycastExit();
+                curInteractable = null;
             }
-            this.StopInteraction();
         }
 
         //If the raycast hits something, check for input
@@ -70,33 +74,23 @@ public class InteractionController : NetworkBehaviour
             if (Input.GetButtonUp("Use") && isInteracting)
             {
                 CmdStopInteracting(new InteractStruct(gameObject, curInteractable.gameObject));
-                curInteractable.OnInteractEnd(gameObject);
+                //curInteractable.OnInteractEnd(gameObject);
                 isInteracting = false;
+                curInteractable.OnRaycastExit();
+                curInteractable = null;
             }
         }
     }
     [Command]
     private void CmdStopInteracting(InteractStruct info)
     {
-            info.Target.GetComponent<Interactable>().OnInteractEnd(info.Source);
+        info.Target.GetComponent<Interactable>().OnInteractEnd(info.Source);
     }
 
     private void StopInteraction()
     {
         //If there isn't any interaction to cancel
-        if (curInteractable == null)
-            return;
-
-        //End interaction
-        if(isInteracting)
-        {
-            curInteractable.OnInteractEnd(gameObject);
-            isInteracting = false;
-        }
-
-        //Reset interactable
-        curInteractable.OnRaycastExit();
-        curInteractable = null;
+       
     }
 
 

@@ -45,6 +45,7 @@ GameObject:
   - component: {fileID: 3029979402196604260}
   - component: {fileID: -4612029242079334992}
   - component: {fileID: 5323150377455828167}
+  - component: {fileID: -5754076874651187656}
   m_Layer: 10
   m_Name: MinionSpawner
   m_TagString: Untagged
@@ -82,7 +83,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   serverOnly: 0
   localPlayerAuthority: 0
-  m_AssetId: 74164b7b500a80d41af59122632b64c3
+  m_AssetId: 
   m_SceneId: 0
 --- !u!114 &4963745196626812901
 MonoBehaviour:
@@ -100,8 +101,8 @@ MonoBehaviour:
   EnemyPrefab: {fileID: 2781805961794641847, guid: ce7345ac27c4c674f85af1382637442e,
     type: 3}
   MaxEnemyCount: 5
-  MinDelay: 5
-  MaxDelay: 10
+  MinDelay: 10
+  MaxDelay: 15
   LocalMinions: []
   spawnPoint: {fileID: 89670621584907357}
   ChooseThisChance: 0.8
@@ -138,7 +139,7 @@ MonoBehaviour:
   BearTrap: 1
   RoofSpike: 0
   FloorSpike: 0
-  Cost: 0
+  Cost: 150
 --- !u!114 &-4612029242079334992
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -174,6 +175,21 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   syncInterval: 0.1
   compressRotation: 1
+--- !u!114 &-5754076874651187656
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4963745196626812900}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e0c456cbfed4d8147aa2581f3d816444, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  s_Idle: 
+  s_Spawn: 
+  s_Destroy: event:/Enemies/Minion/Voice/Death
 --- !u!1 &5661211153600896607
 GameObject:
   m_ObjectHideFlags: 0
