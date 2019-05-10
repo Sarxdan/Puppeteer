@@ -77,7 +77,7 @@ public class CustomNetworkLobbyPlayer : NetworkLobbyPlayer
     public override void OnClientEnterLobby()
     {
         base.OnClientEnterLobby();
-        gameObject.transform.localPosition = new Vector3(0, -(Index * (Screen.height / 6)), 0);
+        gameObject.transform.localPosition = new Vector3(0, -(Index * (Screen.currentResolution.height / 15)), 0);
         gameObject.transform.localScale = new Vector3(1.2f , 1.2f, 1);
 
 

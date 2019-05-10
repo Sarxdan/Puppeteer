@@ -47,7 +47,10 @@ public class BearTrap : TrapComponent
 
             Puppets.Add(other.gameObject);
             //Action for deleting trap when the player dies inside of it
-            other.gameObject.GetComponent<HealthComponent>().AddDeathAction(DestroyTrap);
+            if(isServer)
+            {
+                other.gameObject.GetComponent<HealthComponent>().AddDeathAction(DestroyTrap);
+            }
         }
     }
 
@@ -55,12 +58,18 @@ public class BearTrap : TrapComponent
     //and the trap won't get removed if the player dies
     public override void OnTriggerExit(Collider other)
     {
-        other.gameObject.GetComponent<HealthComponent>().RemoveDeathAction(DestroyTrap);
-        Puppets.Remove(other.gameObject);
-
-        if (Puppets.Count == 0)
+        if (other.gameObject.tag == "Player")
         {
-            Anim.SetBool("HasTarget", false);
+            if(isServer)
+            {
+                other.gameObject.GetComponent<HealthComponent>().RemoveDeathAction(DestroyTrap);
+            }
+            Puppets.Remove(other.gameObject);
+
+            if (Puppets.Count == 0)
+            {
+                Anim.SetBool("HasTarget", false);
+            }
         }
     }
     

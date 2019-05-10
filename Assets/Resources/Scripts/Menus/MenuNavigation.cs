@@ -251,9 +251,6 @@ public class MenuNavigation : MonoBehaviour
 		Vector3 targetlocation = VideoOptionsPanel.transform.position + relativeLocation;
 		float timeDelta = 0.1f;
 
-		// Get target fade value
-		float targetOpacity = 1;
-
 		// Start coroutine
 		StartCoroutine(SmoothMove(VideoOptionsPanel, targetlocation, timeDelta));
 
@@ -265,21 +262,15 @@ public class MenuNavigation : MonoBehaviour
 		Vector3 relativeLocation2 = new Vector3(-(Screen.width / 2), 0, 0);
 		Vector3 targetLocation2 = VideoOptionsPanel.transform.position + relativeLocation2;
 
-		// Get target fade value
-		float targetOpacity2 = 0;
-
 		// Start coroutine
 		StartCoroutine(SmoothMove(VideoOptionsPanel, targetLocation2, timeDelta));
 	}
-
 	IEnumerator OptionsControlsState()
 	{
 		Vector3 relativeLocation = new Vector3((Screen.width / 2),0,0);
 		Vector3 targetLocation = ControlsOptionsPanel.transform.position + relativeLocation;
 
 		float timeDelta = 0.1f;
-
-		float targetOpacity = 1;
 
 		StartCoroutine(SmoothMove(ControlsOptionsPanel, targetLocation, timeDelta));
 
@@ -290,11 +281,8 @@ public class MenuNavigation : MonoBehaviour
 		Vector3 relativeLocation2 = new Vector3(-(Screen.width / 2), 0, 0);
 		Vector3 targetLocation2 = ControlsOptionsPanel.transform.position + relativeLocation2;
 
-		float targetOpacity2 = 0;
-
 		StartCoroutine(SmoothMove(ControlsOptionsPanel, targetLocation2, timeDelta));
 	}
-
     IEnumerator JoinMenuStep1State()
     {
         // Enter
@@ -302,9 +290,6 @@ public class MenuNavigation : MonoBehaviour
         Vector3 relativeLocation = new Vector3((Screen.width / 2) + (Screen.width / 4), 0, 0);
         Vector3 targetlocation = JoinMenuPanel.transform.position + relativeLocation;
         float timeDelta = 0.1f;
-
-        // Get target fade value
-        float targetOpacity = 1;
 
         // Start coroutine
         StartCoroutine(SmoothMove(JoinMenuPanel, targetlocation, timeDelta));
@@ -317,14 +302,10 @@ public class MenuNavigation : MonoBehaviour
         Vector3 relativeLocation2 = new Vector3(-(Screen.width / 2) - (Screen.width / 4), 0, 0);
         Vector3 targetLocation2 = JoinMenuPanel.transform.position + relativeLocation2;
 
-        // Get target fade value
-        float targetOpacity2 = 0;
-
         // Start coroutine
         StartCoroutine(SmoothMove(JoinMenuPanel, targetLocation2, timeDelta));
 
     }
-
     IEnumerator LobbyMenuState()
     {
         // Enter
@@ -332,9 +313,6 @@ public class MenuNavigation : MonoBehaviour
         Vector3 relativeLocation = new Vector3((Screen.width / 2) + (Screen.width / 4), 0, 0);
         Vector3 targetlocation = LobbyMenuPanel.transform.position + relativeLocation;
         float timeDelta = 0.1f;
-
-        // Get target fade value
-        float targetOpacity = 1;
 
         // Start coroutine
         StartCoroutine(SmoothMove(LobbyMenuPanel, targetlocation, timeDelta));
@@ -347,13 +325,9 @@ public class MenuNavigation : MonoBehaviour
         Vector3 relativeLocation2 = new Vector3(-(Screen.width / 2) - (Screen.width / 4), 0, 0);
         Vector3 targetLocation2 = LobbyMenuPanel.transform.position + relativeLocation2;
 
-        // Get target fade value
-        float targetOpacity2 = 0;
-
         // Start coroutine
         StartCoroutine(SmoothMove(LobbyMenuPanel, targetLocation2, timeDelta));
     }
-
     IEnumerator CreditsState()
     {
         // Enter
@@ -361,9 +335,6 @@ public class MenuNavigation : MonoBehaviour
         Vector3 relativeLocation = new Vector3((Screen.width / 2) + (Screen.width / 4), 0, 0);
         Vector3 targetlocation = CreditsPanel.transform.position + relativeLocation;
         float timeDelta = 0.1f;
-
-        // Get target fade value
-        float targetOpacity = 1;
 
         // Start coroutine
         StartCoroutine(SmoothMove(CreditsPanel, targetlocation, timeDelta));
@@ -376,15 +347,9 @@ public class MenuNavigation : MonoBehaviour
         Vector3 relativeLocation2 = new Vector3(-(Screen.width / 2) - (Screen.width / 4), 0, 0);
         Vector3 targetLocation2 = CreditsPanel.transform.position + relativeLocation2;
 
-        // Get target fade value
-        float targetOpacity2 = 0;
-
         // Start coroutine
         StartCoroutine(SmoothMove(CreditsPanel, targetLocation2, timeDelta));
     }
-
-
-
 
     //--------------------Movment--------------------
     IEnumerator SmoothMove(GameObject item, Vector3 target, float delta)
@@ -447,7 +412,6 @@ public class MenuNavigation : MonoBehaviour
 		// Comfirm End
 		//Debug.Log("Movment Complete");
 	}
-
 	IEnumerator FadeSlider(Slider item, float target, float delta)
 	{
 		Image[] images = item.GetComponentsInChildren<Image>();

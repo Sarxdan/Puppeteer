@@ -48,7 +48,8 @@ public class StateMachine : NetworkBehaviour
     [HideInInspector]
     public List<GameObject> Puppets;
 
-
+    //ta bort senare
+    public bool Corunning;
 
 
     [Header("Normal attack settings")]
@@ -59,9 +60,10 @@ public class StateMachine : NetworkBehaviour
     public bool CanAttack;
     [Header("Charge attack settings")]
     public bool ChargeStopped;
-    public float ChargeAccelerationSpeed = 0.15f;
+    public float ChargeAccelerationSpeed;
     public float CurrentChargeSpeed;
-    public float StartChargeSpeed = 0.15f;
+    public float StartChargeSpeed;
+    public float MaxChargeSpeed;
     public int ChargeCharge;
 
 
@@ -95,8 +97,7 @@ public class StateMachine : NetworkBehaviour
         AnimController = GetComponent<Animator>();
 
         //TODO: remove when prefab gets changed from Acceleration 0
-        ChargeAccelerationSpeed = 0.15f;
-
+        
 
         GetComponent<HealthComponent>().AddDeathAction(Die);
         //If not server, disable self
@@ -151,6 +152,7 @@ public class StateMachine : NetworkBehaviour
                 }
                 
             }
+            //CurrentChargeSpeed = AnimController.GetFloat("ChargeSpeed");
             if (CurrentState != null) CurrentState.Run();
         }
     }
@@ -262,28 +264,59 @@ public class StateMachine : NetworkBehaviour
 
     private IEnumerator chargeRoutine()
     {
-        
-        if (AnimController.GetBool("IsCharging") == true && AnimController.GetFloat("ChargeSpeed") < 1)
+        while (true)
         {
-            AnimController.SetFloat("ChargeSpeed", CurrentChargeSpeed + ChargeAccelerationSpeed);
-        }
-        Vector3 lastPos = transform.position;
-        foreach (GameObject pupp in Puppets)
-        {
-            HealthComponent health = pupp.GetComponent<HealthComponent>();
-            if (WithinCone(transform, pupp.transform, 80f, 2f, 0f))
+            if (!PathFinder.HasPath)
             {
-                uint chargeDamage = (uint)CurrentChargeSpeed * 10;
+                PathFinder.RotationSpeed = 2f;
+                PathFinder.NodeArrivalMargin = 0.5f;
+            }
 
-                //PathFinder.StuckCheck(transform, lastPos, 0.2, 0.2,);
+            Corunning = true;
 
-                health.Damage(chargeDamage);
+            if (AnimController.GetBool("IsCharging") == true && AnimController.GetFloat("ChargeSpeed") < 1)
+            {
+                CurrentChargeSpeed = CurrentChargeSpeed += ChargeAccelerationSpeed;
+                AnimController.SetFloat("ChargeSpeed", CurrentChargeSpeed);
+            }
+
+            //foreach (GameObject pupp in Puppets)
+            //{
+            //    HealthComponent health = pupp.GetComponent<HealthComponent>();
+            //    if (WithinCone(transform, pupp.transform, 80f, 2f, 0f))
+            //    {
+            //        float chargeDamage = CurrentChargeSpeed * 5;
+            //        uint uChargeDamage = (uint)chargeDamage;
+            //        Debug.Log("Damage dealt: " + chargeDamage + " Damage in uint: " + uChargeDamage);
+            //        health.Damage(uChargeDamage);
+            //        ChargeStopped = true;
+            //        Corunning = false;
+            //        yield break;
+            //    }
+            //    else
+            //    {
+            //        yield return new WaitForSeconds(0.1f);
+            //    }
+            //}
+
+            if (WithinCone(transform, TargetEntity.transform, 80f, 2f, 0f))
+            {
+                HealthComponent health = TargetEntity.GetComponent<HealthComponent>();
+                float chargeDamage = CurrentChargeSpeed * 5;
+                uint uChargeDamage = (uint)chargeDamage;
+
+                if (debug) Debug.Log("Damage dealt: " + chargeDamage + " Damage in uint: " + uChargeDamage);
+
+                health.Damage(uChargeDamage);
                 ChargeStopped = true;
-                AnimController.SetFloat("ChargeSpeed", 0);
+                Corunning = false;
                 yield break;
             }
+            else
+            {
+                yield return new WaitForSeconds(0.1f);
+            }
         }
-        yield return new WaitForSeconds(0.1f);
     }
 
 

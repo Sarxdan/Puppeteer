@@ -17,7 +17,7 @@ using UnityEngine;
 public class WeaponComponent : Interactable
 {
 	// Sound Test
-	private SoundTest soundEmitter;
+    private WeaponSounds sounds;
 
     public float NoiseRadius;
 
@@ -64,7 +64,7 @@ public class WeaponComponent : Interactable
 
 	public void Start()
 	{
-		soundEmitter = GetComponent<SoundTest>();
+		sounds = GetComponent<WeaponSounds>();
 	}
 
 	//Attemps to fire the weapon
@@ -82,18 +82,14 @@ public class WeaponComponent : Interactable
         }
 		if (LiquidLeft < LiquidPerRound)
 		{
-			// Sound Test
-			if (soundEmitter != null)
-				soundEmitter.PlaySoundEmptyClip();
 			return;
 		}
 
         GetComponentInParent<PlayerController>().AnimController.SetBool("Fire", true);
+        sounds.Shoot();
+
         for(int i = 0; i < NumShots; i++)
         {
-			// Sound Test
-			if (soundEmitter != null)
-				soundEmitter.PlaySoundGunShot();
 
             // calculate spread
             Vector3 offset = Random.insideUnitSphere * Spread;
@@ -132,11 +128,7 @@ public class WeaponComponent : Interactable
         // reload not possible if recently fired, currently reloading or weapon too charged
         if (cooldown != 0 || (ChargeTime != 0 && charge > ChargeTime))
             return;
-
-		// Sound Test
-		if (soundEmitter != null)
-			soundEmitter.PlaySoundReload();
-
+        
         int amount = Mathf.Min(Capacity - LiquidLeft, liquidInput);
         liquidInput -= amount;
         LiquidLeft += amount;
