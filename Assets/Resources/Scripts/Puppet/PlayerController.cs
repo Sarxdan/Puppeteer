@@ -72,9 +72,11 @@ public class PlayerController : NetworkBehaviour
     public int Ammunition;
     public bool CanShoot = true;
 
+    //References
     public Transform HandTransform;
 
     private Rigidbody rigidBody;
+    
 
     private IEnumerator StaminaRegenRoutine()
     {
@@ -87,10 +89,13 @@ public class PlayerController : NetworkBehaviour
         }
     }
 
+    void Awake()
+    {
+        gameObject.GetComponent<HealthComponent>().AddDeathAction(Downed);
+    }
     void Start()
     {
         rigidBody = GetComponent<Rigidbody>();
-        gameObject.GetComponent<HealthComponent>().AddDeathAction(Stunned);
         AnimController = GetComponent<Animator>();
         // Saves the original input from the variables
         speedSave = MovementSpeed;
@@ -110,14 +115,17 @@ public class PlayerController : NetworkBehaviour
                 if (Input.GetButton("Fire"))
                 {
                     CurrentWeapon.GetComponent<WeaponComponent>().Use();
-                    AnimController.SetTrigger("Fire");
                 }
-
                 // Reload current weapon
                 if (Input.GetButton("Reload"))
                 {
                     CurrentWeapon.GetComponent<WeaponComponent>().Reload(ref Ammunition);
                 }
+            } 
+
+            if(Input.GetButtonUp("Fire") && CurrentWeapon != null)
+            {
+                CurrentWeapon.GetComponent<WeaponComponent>().Release();
             }
 
             if (Input.GetButtonDown("UsePowerup"))
@@ -255,10 +263,15 @@ public class PlayerController : NetworkBehaviour
 
         rigidBody.constraints = RigidbodyConstraints.FreezeAll;
         CanShoot = false;
-        if (gameObject.GetComponent<HealthComponent>().Health <= 0)
-        {
-            gameObject.GetComponent<InteractionController>().enabled = false;
-        }
+    }
+
+    public void Downed()
+    {
+        rigidBody.constraints = RigidbodyConstraints.FreezeAll;
+        CanShoot = false;
+        gameObject.GetComponent<InteractionController>().enabled = false;
+        AnimController.SetBool("Downed", true);
+        AnimController.SetLayerWeight(1,0);
     }
 
     // Unstunns the enemy and enables shooting and interacting
@@ -267,6 +280,8 @@ public class PlayerController : NetworkBehaviour
         rigidBody.constraints = RigidbodyConstraints.None | RigidbodyConstraints.FreezeRotation;
         CanShoot = true;
         gameObject.GetComponent<InteractionController>().enabled = true;
+        AnimController.SetBool("Downed", false);
+        AnimController.SetLayerWeight(1,1);
     }
 
     [ClientRpc]
