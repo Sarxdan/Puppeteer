@@ -87,7 +87,7 @@ public class AnchorPoint : NetworkBehaviour
 
 			if (thisDoor == null)
 			{
-				GameObject door = Instantiate(GameObject.FindObjectOfType<LevelBuilder>().Door, ConnectedTo.transform);
+				GameObject door = Instantiate(GameObject.FindObjectOfType<LevelBuilder>().Door, transform);
 				NetworkServer.Spawn(door);
 				thisDoor = door.GetComponent<DoorComponent>();
 				door.transform.localEulerAngles = new Vector3(0, 0, 0);

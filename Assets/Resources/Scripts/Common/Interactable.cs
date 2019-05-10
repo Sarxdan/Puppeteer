@@ -69,7 +69,7 @@ public abstract class Interactable : NetworkBehaviour
         user.CurrentWeapon = newWeapon.gameObject;
         newWeapon.HeadTransform = user.HeadTransform;
         newWeapon.transform.SetParent(user.HandTransform);
-        user.SetWeaponAnimation(1);
+        user.SetWeaponAnimation(newWeapon.AnimationIndex);
 
         newWeapon.transform.localPosition = Vector3.zero;
         newWeapon.transform.localRotation = newWeapon.HoldRotation;
