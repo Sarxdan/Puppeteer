@@ -45,7 +45,7 @@ public abstract class TrapComponent : NetworkBehaviour
     }
     public void DestroyTrap()
     {
-        if (gameObject != null)
+        if (gameObject != null && isServer)
         {
             Destroy(gameObject);
         }
