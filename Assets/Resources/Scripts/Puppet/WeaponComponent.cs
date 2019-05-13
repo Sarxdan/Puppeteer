@@ -27,7 +27,10 @@ public class WeaponComponent : Interactable
     public int LiquidLeft;
     public int LiquidPerRound;
 
-    public Transform MagazineTransform;
+	public GameObject MagazinePrefab;
+    public Transform MagazineAttach;
+	private GameObject currentMagazine;
+	private FluidSimulation liquidScript;
 
     //Weapon attributes
     public uint Damage;
@@ -115,6 +118,7 @@ public class WeaponComponent : Interactable
         recoil += RecoilAmount;
         cooldown += FiringSpeed;
         LiquidLeft -= LiquidPerRound;
+		UpdateAmmoContainer();
     }
 
     public void Release()
@@ -132,6 +136,7 @@ public class WeaponComponent : Interactable
         int amount = Mathf.Min(Capacity - LiquidLeft, liquidInput);
         liquidInput -= amount;
         LiquidLeft += amount;
+		UpdateAmmoContainer();
 
         // disallow firing while reloading
         cooldown += ReloadTime;
@@ -175,6 +180,17 @@ public class WeaponComponent : Interactable
         // temporary crosshair 
         GUI.Box(new Rect(Screen.width * 0.5f, Screen.height * 0.5f, 10, 10), "");
     }
+
+	public void UpdateAmmoContainer()
+	{
+		if (currentMagazine == null)
+		{
+			currentMagazine = Instantiate(MagazinePrefab, MagazineAttach);
+			liquidScript = currentMagazine.GetComponent<FluidSimulation>();
+			liquidScript.MaxLiquidAmount = Capacity;
+		}
+		liquidScript.CurrentLiquidAmount = LiquidLeft;
+	}
 
     public override void OnInteractBegin(GameObject interactor)
     {
