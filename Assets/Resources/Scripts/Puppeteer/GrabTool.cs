@@ -345,7 +345,7 @@ public class GrabTool : NetworkBehaviour
         for(int i = 0; i < overlapColliders.Length; i++)
         {
             var collider = overlapColliders[i];
-            if (collider == null || collider.transform.IsChildOf(selectedObject.transform) || collider.transform.IsChildOf(guideObject.transform))
+            if (collider == null || collider.transform.IsChildOf(selectedObject.transform))
             {
                 continue;
             }
