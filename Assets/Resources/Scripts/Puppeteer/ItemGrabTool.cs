@@ -371,7 +371,7 @@ public class ItemGrabTool : NetworkBehaviour
         var rooms = level.GetRooms();
 		foreach (var room in rooms)
 		{
-			if (room.GetComponent<ItemSpawner>())
+			if (room.GetComponent<ItemSpawner>() && !room.GetComponent<RoomInteractable>().RoomContainsPlayer())
 			{
 				snapPoints.AddRange(room.GetComponent<ItemSpawner>().FindSnapPoints());
 			}
