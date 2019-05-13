@@ -95,6 +95,7 @@ public class StateMachine : NetworkBehaviour
     {
         layerMask = ~(1 << LayerMask.NameToLayer("Puppeteer Interact"));
         AnimController = GetComponent<Animator>();
+        PathFinder = GetComponent<PathfinderComponent>();
 
         //TODO: remove when prefab gets changed from Acceleration 0
         
@@ -108,15 +109,20 @@ public class StateMachine : NetworkBehaviour
             return;
         }
 
-        PathFinder = GetComponent<PathfinderComponent>();
-        //If regular Minion or Tank
-        if (MinionType == EnemyType.Minion)
-        {
-            SetState(new WanderState(this));
+        if(FinalRoomInteract.isEndGame){
+            SetState(new ReturnToSpawnerState(this));
         }
         else
         {
-            SetState(new IdleState(this));
+            //If regular Minion or Tank
+            if (MinionType == EnemyType.Minion)
+            {
+                SetState(new WanderState(this));
+            }
+            else
+            {
+                SetState(new IdleState(this));
+            }
         }
 
         CanAttack = true;
@@ -207,6 +213,7 @@ public class StateMachine : NetworkBehaviour
     //Runs when death animation is complete, despawns object
     public void Despawn()
     {
+        if(isServer);
         EnemySpawner.AllMinions.Remove(this);
         if(Spawner !=null) Spawner.LocalMinions.Remove(this);
         Destroy(this.gameObject);
@@ -298,9 +305,7 @@ public class StateMachine : NetworkBehaviour
             //        yield return new WaitForSeconds(0.1f);
             //    }
             //}
-            if (GameObject.FindGameObjectWithTag("Player")) {
-                Debug.Log("player found");
-            }
+            //GameObject.FindGameObjectsWithTag("Player");
 
             if (WithinCone(transform, TargetEntity.transform, 80f, 2f, 0f))
             {
@@ -319,6 +324,7 @@ public class StateMachine : NetworkBehaviour
             {
                 yield return new WaitForSeconds(0.1f);
             }
+
         }
     }
 
@@ -436,6 +442,8 @@ public class StateMachine : NetworkBehaviour
 //-------------------------------------------------------------
 public abstract class State
 {
+    
+    protected int layerMask = ~(1 << LayerMask.NameToLayer("Puppeteer Interact"));
     public abstract void Enter();
 
     public abstract void Run();
