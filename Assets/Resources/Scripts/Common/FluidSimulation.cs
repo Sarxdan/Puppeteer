@@ -44,8 +44,16 @@ public class FluidSimulation : MonoBehaviour
 	private float rotateAcceleration = 0;
 	private float rotateSpeed = 0;
 
+	public float MovementSplosh = 0.5f;
+
+	private Vector3 lastPosition;
+	private float lastYRotation;
+
 	void Start()
 	{
+		lastPosition = transform.position;
+		lastYRotation = transform.eulerAngles.y;
+
 		// Save the original scale values
 		topScale = FluidTop.transform.localScale;
 		bottomScale = FluidBottom.transform.localScale;
@@ -66,8 +74,10 @@ public class FluidSimulation : MonoBehaviour
 
 	private void UpdateRotationAndTilt()
 	{
-		// Project the up vector of the fluid onto x/z plane by removing y-coord:
-		Vector2 leanVector = new Vector2(gameObject.transform.up.x, gameObject.transform.up.z);
+		Vector3 deltaPos = lastPosition - transform.position;
+		lastPosition = transform.position;
+		// Project the up vector + the movement vector of the fluid onto x/z plane by removing y-coord:
+		Vector2 leanVector = new Vector2(gameObject.transform.up.x, gameObject.transform.up.z) + new Vector2(deltaPos.x, deltaPos.z) * MovementSplosh;
 		// Calculate angle of vector relative to positive z.
 		float angle = Vector2.SignedAngle(leanVector, new Vector2(0, 1));
 		float targetAngle = angle - transform.eulerAngles.y;
@@ -114,13 +124,14 @@ public class FluidSimulation : MonoBehaviour
 		// When the length of the lean vector is 1, the fluid is tilted 90 degrees.
 		float fluidTiltAngle = Mathf.Asin(leanVector.magnitude);
 		currentTopScale = Mathf.Tan(fluidTiltAngle) * topScale.y / (Mathf.Deg2Rad * fluidTiltAmount);
+
 		if (currentTopScale > MaxTiltScale)
 		{
 			currentTopScale = MaxTiltScale;
 		}
-		else if (currentTopScale < 0.00001f)
+		else if (currentTopScale < 0.0001f || float.IsNaN(currentTopScale))
 		{
-			currentTopScale = 0.00001f;
+			currentTopScale = 0.0001f;
 		}
 	}
 
@@ -136,7 +147,14 @@ public class FluidSimulation : MonoBehaviour
 		// Update positions of Liquid parts using offsets.
 		FluidTop.transform.localPosition = new Vector3(0, amountOffset * bottomHeight, 0);
 		// Update Scale of Liquid parts using offsets
-		FluidTop.transform.localScale = new Vector3(topScale.x, currentTopScale, topScale.z);
+		if (amountOffset != 0)
+		{
+			FluidTop.transform.localScale = new Vector3(topScale.x, currentTopScale, topScale.z);
+		}
+		else
+		{
+			FluidTop.transform.localScale = new Vector3(topScale.x, 0.0001f, topScale.z);
+		}
 		FluidBottom.transform.localScale = new Vector3(bottomScale.x, currentBottomScale + amountOffset * bottomScale.y - bottomScale.y, bottomScale.z);
 	}
 }
