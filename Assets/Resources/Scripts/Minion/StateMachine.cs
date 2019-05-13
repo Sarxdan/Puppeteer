@@ -63,8 +63,8 @@ public class StateMachine : NetworkBehaviour
     public float ChargeAccelerationSpeed;
     public float CurrentChargeSpeed;
     public float StartChargeSpeed;
-    public float MaxChargeSpeed;
     public int ChargeCharge;
+    //[HideInInspector]
     public Collider[] HitColliders;
 
 
@@ -302,9 +302,17 @@ public class StateMachine : NetworkBehaviour
                         if (debug) Debug.Log("Damage dealt: " + chargeDamage + " Damage in uint: " + uChargeDamage + " Target hit = " + coll);
                         health.Damage(uChargeDamage);
                     }
+                    else
+                    {
+                        
+                    }
+                    
                 }
+                HitColliders = null;
                 ChargeStopped = true;
                 Corunning = false;
+
+                
                 yield break;
             }
             else

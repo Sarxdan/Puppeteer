@@ -278,6 +278,7 @@ namespace MinionStates
             if(currentWaitTime > waitTime && machine.MinionType == EnemyType.Minion)
             {
                 machine.SetState(new WanderState(machine));
+
             }
             
             this.lastTime = Time.time;
