@@ -139,6 +139,7 @@ public class WeaponComponent : Interactable
 
     void Update()
     {
+        transform.localRotation = HoldRotation;
     }
 
     void FixedUpdate()

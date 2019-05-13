@@ -68,8 +68,16 @@ public abstract class Interactable : NetworkBehaviour
         //Attaches new weapon to player
         user.CurrentWeapon = newWeapon.gameObject;
         newWeapon.HeadTransform = user.HeadTransform;
-        newWeapon.transform.SetParent(user.HandTransform);
         user.SetWeaponAnimation(newWeapon.AnimationIndex);
+
+        if(userObject.GetComponent<PlayerController>().isLocalPlayer)
+        {
+            newWeapon.transform.SetParent(user.FPVHandTransform);
+        }
+        else
+        {
+            newWeapon.transform.SetParent(user.HandTransform);
+        }
 
         newWeapon.transform.localPosition = Vector3.zero;
         newWeapon.transform.localRotation = newWeapon.HoldRotation;
