@@ -65,6 +65,7 @@ public class StateMachine : NetworkBehaviour
     public float StartChargeSpeed;
     public float MaxChargeSpeed;
     public int ChargeCharge;
+    public Collider[] HitColliders;
 
 
     [Header("Aggro settings")]
@@ -287,35 +288,21 @@ public class StateMachine : NetworkBehaviour
                 AnimController.SetFloat("ChargeSpeed", CurrentChargeSpeed);
             }
 
-            //foreach (GameObject pupp in Puppets)
-            //{
-            //    HealthComponent health = pupp.GetComponent<HealthComponent>();
-            //    if (WithinCone(transform, pupp.transform, 80f, 2f, 0f))
-            //    {
-            //        float chargeDamage = CurrentChargeSpeed * 5;
-            //        uint uChargeDamage = (uint)chargeDamage;
-            //        Debug.Log("Damage dealt: " + chargeDamage + " Damage in uint: " + uChargeDamage);
-            //        health.Damage(uChargeDamage);
-            //        ChargeStopped = true;
-            //        Corunning = false;
-            //        yield break;
-            //    }
-            //    else
-            //    {
-            //        yield return new WaitForSeconds(0.1f);
-            //    }
-            //}
-            //GameObject.FindGameObjectsWithTag("Player");
-
             if (WithinCone(transform, TargetEntity.transform, 80f, 2f, 0f))
             {
-                HealthComponent health = TargetEntity.GetComponent<HealthComponent>();
-                float chargeDamage = CurrentChargeSpeed * 5;
-                uint uChargeDamage = (uint)chargeDamage;
+                HitColliders = Physics.OverlapSphere(gameObject.transform.position, 2f);
 
-                if (debug) Debug.Log("Damage dealt: " + chargeDamage + " Damage in uint: " + uChargeDamage);
-
-                health.Damage(uChargeDamage);
+                foreach(Collider coll in HitColliders)
+                {
+                    if (coll.tag == "Player")
+                    {
+                        HealthComponent health = TargetEntity.GetComponent<HealthComponent>();
+                        float chargeDamage = CurrentChargeSpeed * 5;
+                        uint uChargeDamage = (uint)chargeDamage;
+                        if (debug) Debug.Log("Damage dealt: " + chargeDamage + " Damage in uint: " + uChargeDamage + " Target hit = " + coll);
+                        health.Damage(uChargeDamage);
+                    }
+                }
                 ChargeStopped = true;
                 Corunning = false;
                 yield break;
@@ -324,7 +311,6 @@ public class StateMachine : NetworkBehaviour
             {
                 yield return new WaitForSeconds(0.1f);
             }
-
         }
     }
 
