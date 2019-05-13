@@ -12,7 +12,7 @@ public class MatchTimer : NetworkBehaviour
     [SerializeField]
     private int numberOfPuppetsAlive;
     [SerializeField]
-    private bool puppetEscaped;
+    private int NumberOfPuppetsThatEscaped;
     private EndOfMatchCanvas script;
     private bool gameEnded;
     private NetworkManager manager;
@@ -21,7 +21,7 @@ public class MatchTimer : NetworkBehaviour
     void Start()
     {
         numberOfPuppetsAlive = GameObject.Find("NetworkManager").GetComponent<CustomNetworkManager>().lobbySlots.Count - 1;
-        puppetEscaped = false;
+        NumberOfPuppetsThatEscaped = 0;
         script = Canvas.GetComponent<EndOfMatchCanvas>();
         gameEnded = false;
         manager = GameObject.Find("NetworkManager").GetComponent<NetworkManager>();
@@ -41,7 +41,7 @@ public class MatchTimer : NetworkBehaviour
             RpcPuppeteerWins(numberOfPuppetsAlive, (int)TimeRemaining);
             TimeRemaining = 0;
         }
-        else if (puppetEscaped && !gameEnded)
+        else if (NumberOfPuppetsThatEscaped >= numberOfPuppetsAlive && !gameEnded)
         {
             //End the game. Puppets wins
             gameEnded = true;
@@ -57,7 +57,7 @@ public class MatchTimer : NetworkBehaviour
 
     public void PuppetEscaped()
     {
-        puppetEscaped = true;
+        NumberOfPuppetsThatEscaped += 1;
     }
 
     public void PuppetDied()
