@@ -37,7 +37,7 @@ public class ReviveComponent : Interactable
         healthComponent.AddDeathAction(OnZeroHealth);
     }
 
-    // an object has started to interact this object
+    // An object has started to interact this object
     public override void OnInteractBegin(GameObject interactor)
     {
         var interactionController = interactor.GetComponent<InteractionController>();
