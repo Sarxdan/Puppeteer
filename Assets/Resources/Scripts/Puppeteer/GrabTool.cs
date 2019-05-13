@@ -84,6 +84,10 @@ public class GrabTool : NetworkBehaviour
                     lastHit = interactable;
                 }
             }
+            else
+            {
+                lastHit = null;
+            }
 
             if (lastHit != null && Input.GetButtonDown("Fire") && lastHit.CanBePickedUp)
             {
