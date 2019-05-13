@@ -146,15 +146,16 @@ public class GrabTool : NetworkBehaviour
         {
             if(this.CanConnect(bestSrcPoint, bestDstPoint))
             {
-                guideObject.transform.position = selectedObject.transform.position - (bestSrcPoint.transform.position - bestDstPoint.transform.position);
-                guideObject.transform.rotation = selectedObject.transform.rotation;
-
                 RoomTreeNode currentNode = sourceObject.GetComponent<RoomTreeNode>();
                 RoomTreeNode targetNode = bestDstPoint.GetComponentInParent<RoomTreeNode>();
                 currentNode.DisconnectFromTree();
                 currentNode.SetParent(targetNode);
                 currentNode.CutBranch();
                 level.GetStartNode().ReconnectToTree();
+            }
+            else
+            {
+                guideObject.transform.SetPositionAndRotation(sourceObject.transform.position, sourceObject.transform.rotation);
             }
 
             if(guideObject.transform.hasChanged)
@@ -352,82 +353,34 @@ public class GrabTool : NetworkBehaviour
             return false;
         }
 
-        // Only to check collision (not real movement)
+        guideObject.transform.position = selectedObject.transform.position - (bestSrcPoint.transform.position - bestDstPoint.transform.position);
         guideObject.transform.rotation = selectedObject.transform.rotation;
-        guideObject.transform.position = selectedObject.transform.position - (src.transform.position - dst.transform.position);
 
-        /*
-		RoomCollider[] placedRoomColliders = level.GetLevel().GetComponentsInChildren<RoomCollider>();
-
-
-		// Check if room overlaps when moved.
-		foreach (RoomCollider placedRoomCollider in placedRoomColliders)
-		{
-			if (placedRoomCollider.transform.IsChildOf(sourceObject.transform))
-			{
-				continue;
-			}
-			foreach (RoomCollider guideCollider in guideObject.GetComponentsInChildren<RoomCollider>())
-			{
-				if (guideCollider.GetPosition() == placedRoomCollider.GetPosition())
-				{
-					guideObject.transform.SetPositionAndRotation(sourceObject.transform.position, sourceObject.transform.rotation);
-					return false;
-				}
-			}
-		}
-        */
-
-        /*
-		foreach (AnchorPoint guideDoor in guideObject.GetComponentsInChildren<AnchorPoint>())
-		{
-			guideDoor.Connected = false;
-			guideDoor.ConnectedTo = null;
-
-			foreach (AnchorPoint placedDoor in GameObject.Find("Level").GetComponentsInChildren<AnchorPoint>())
-			{
-				if (guideDoor == placedDoor)
-				{
-					continue;
-				}
-				if (guideDoor.GetPosition() == placedDoor.GetPosition())
-				{
-					guideDoor.NoSpawnConnectDoor(placedDoor);
-					guideDoor.GetComponentInParent<RoomTreeNode>().InTree = true;
-					break;
-				}
-			}
-		}
-        */
-
-        // Check if it is possible to create a new valid tree when the room is moved. This should be done last.
         currentNode = sourceObject.GetComponent<RoomTreeNode>();
-		RoomTreeNode parentNode = currentNode.GetParent();
+        RoomTreeNode parentNode = currentNode.GetParent();
 
-		currentNode.DisconnectFromTree();
-		
-		if (!dst.GetComponentInParent<RoomTreeNode>().InTree)
-		{
-			DisconnectGuideDoors();
-			return false;
-		}
+        currentNode.DisconnectFromTree();
 
-		currentNode.SetParent(dst.GetComponentInParent<RoomTreeNode>());
+        if (!bestDstPoint.GetComponentInParent<RoomTreeNode>().InTree)
+        {
+            DisconnectGuideDoors();
+            return false;
+        }
 
-		if (sourceObject.GetComponent<RoomTreeNode>().CutBranch())
-		{
-			level.GetStartNode().ReconnectToTree();
-			DisconnectGuideDoors();
-		}
-		else
-		{
-			currentNode.SetParent(parentNode);
-			level.GetStartNode().ReconnectToTree();
-			DisconnectGuideDoors();
-			return false;
-		}
+        currentNode.SetParent(bestDstPoint.GetComponentInParent<RoomTreeNode>());
 
-		// All criterias are met
+        if (!sourceObject.GetComponent<RoomTreeNode>().CutBranch())
+        {
+            currentNode.SetParent(parentNode);
+            level.GetStartNode().ReconnectToTree();
+            DisconnectGuideDoors();
+            return false;
+        }
+
+        level.GetStartNode().ReconnectToTree();
+        DisconnectGuideDoors();
+
+        // made it!
 		return true;
 	}
 
