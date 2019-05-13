@@ -55,6 +55,7 @@ public class Spectator : NetworkBehaviour
 			Cameras.Add(player.GetComponentInChildren<Camera>());
 		}
 		Cameras[Index].enabled = true;
+		NameText.text = Cameras[Index].GetComponentInParent<PlayerController>().NickName;
 		canvas.worldCamera = Cameras[Index];
 	}
 	void Next()
@@ -69,6 +70,7 @@ public class Spectator : NetworkBehaviour
 			Index = 0;
 		}
 		Cameras[Index].enabled = true;
+		NameText.text = Cameras[Index].GetComponentInParent<PlayerController>().NickName;
 		canvas.worldCamera = Cameras[Index];
 	}
 	void Prev()
@@ -83,12 +85,14 @@ public class Spectator : NetworkBehaviour
 			Index = Cameras.Count-1;
 		}
 		Cameras[Index].enabled = true;
+		NameText.text = Cameras[Index].GetComponentInParent<PlayerController>().NickName;
 		canvas.worldCamera = Cameras[Index];
 	}
 	void ChoseValidCamera()
 	{
 		Index = 0;
 		Cameras[Index].enabled = true;
+		NameText.text = Cameras[Index].GetComponentInParent<PlayerController>().NickName;
 	}
 
 

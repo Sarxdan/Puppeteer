@@ -29,6 +29,8 @@ public class CustomNetworkLobbyPlayer : NetworkLobbyPlayer
     [SyncVar (hook = nameof(UpdateNicknameText))]
     public string Nickname;
 
+	public bool LocalPlayer;
+
     [Header("UI")]
     public Button ReadyButton;
     public Text ReadyText;
@@ -59,11 +61,12 @@ public class CustomNetworkLobbyPlayer : NetworkLobbyPlayer
 
         NetworkLobbyManager lobby = NetworkManager.singleton as NetworkLobbyManager;
 
-        if (lobby != null && SceneManager.GetActiveScene().name == lobby.LobbyScene)
-        {
-            gameObject.transform.SetParent(GameObject.Find("Players").transform);
-            playerCount++;
-        }
+		if (lobby != null && SceneManager.GetActiveScene().name == lobby.LobbyScene)
+		{
+			gameObject.transform.SetParent(GameObject.Find("Players").transform);
+			playerCount++;
+		}
+
     }
 
     public override void OnStartServer()
@@ -89,8 +92,8 @@ public class CustomNetworkLobbyPlayer : NetworkLobbyPlayer
             GameObject.Find("ReadyButton").GetComponent<Button>().onClick.AddListener(delegate { ToggleReadyState(); });
             GameObject.Find("SetNicknameButton").GetComponent<Button>().onClick.AddListener(delegate { ChangeNickname(); });
         }
-
-    }
+		LocalPlayer = isLocalPlayer;
+	}
     #region Commands
 
     [Command]
