@@ -278,6 +278,7 @@ namespace MinionStates
             if(currentWaitTime > waitTime && machine.MinionType == EnemyType.Minion)
             {
                 machine.SetState(new WanderState(machine));
+
             }
             
             this.lastTime = Time.time;
@@ -352,7 +353,7 @@ namespace MinionStates
 
         public override void Exit()
         {
-            machine.ChargeCharge = machine.ChargeCharge -= 100;
+            machine.ChargeCharge = 0;
             machine.AnimController.SetBool("Running", false);
         }
     }
@@ -400,6 +401,10 @@ namespace MinionStates
         public override void Exit()
         {
             //machine.AnimController.SetBool("Running", false);
+            //Sets pathfinder components to the default for regular minions
+            //TODO: fix so it works for tank
+            machine.PathFinder.RotationSpeed = 20;
+            machine.PathFinder.NodeArrivalMargin = 0.5f;
             machine.AnimController.SetBool("IsCharging", false);
         }
     }

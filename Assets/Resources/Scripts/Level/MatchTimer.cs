@@ -7,13 +7,12 @@ public class MatchTimer : NetworkBehaviour
 {
     public float TimeRemaining;
     public float PostGameTime;
-    public Camera EndOfTheGameCamera;
     public GameObject Canvas;
 
     [SerializeField]
     private int numberOfPuppetsAlive;
     [SerializeField]
-    private bool puppetEscaped;
+    private int NumberOfPuppetsThatEscaped;
     private EndOfMatchCanvas script;
     private bool gameEnded;
     private NetworkManager manager;
@@ -21,8 +20,8 @@ public class MatchTimer : NetworkBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        numberOfPuppetsAlive = 1; //GameObject.Find("NetworkManager").GetComponent<CustomNetworkManager>().lobbySlots.Count - 1;
-        puppetEscaped = false;
+        numberOfPuppetsAlive = GameObject.Find("NetworkManager").GetComponent<CustomNetworkManager>().lobbySlots.Count - 1;
+        NumberOfPuppetsThatEscaped = 0;
         script = Canvas.GetComponent<EndOfMatchCanvas>();
         gameEnded = false;
         manager = GameObject.Find("NetworkManager").GetComponent<NetworkManager>();
@@ -35,18 +34,18 @@ public class MatchTimer : NetworkBehaviour
 
         TimeRemaining -= Time.deltaTime;
 
-        if (TimeRemaining <= 0 && !gameEnded || numberOfPuppetsAlive <= 0 && !gameEnded)
-        {
-            //End the game. Puppeteer wins
-            gameEnded = true;
-            RpcPuppeteerWins(numberOfPuppetsAlive, (int)TimeRemaining);
-            TimeRemaining = 0;
-        }
-        else if (puppetEscaped && !gameEnded)
+        if (NumberOfPuppetsThatEscaped >= numberOfPuppetsAlive && !gameEnded || TimeRemaining <= 0 && NumberOfPuppetsThatEscaped >= 1)
         {
             //End the game. Puppets wins
             gameEnded = true;
             RpcPuppetsWins(numberOfPuppetsAlive, (int)TimeRemaining);
+            TimeRemaining = 0;
+        }
+        else if (TimeRemaining <= 0 && !gameEnded || numberOfPuppetsAlive <= 0 && !gameEnded)
+        {
+            //End the game. Puppeteer wins
+            gameEnded = true;
+            RpcPuppeteerWins(numberOfPuppetsAlive, (int)TimeRemaining);
             TimeRemaining = 0;
         }
 
@@ -58,7 +57,7 @@ public class MatchTimer : NetworkBehaviour
 
     public void PuppetEscaped()
     {
-        puppetEscaped = true;
+        NumberOfPuppetsThatEscaped += 1;
     }
 
     public void PuppetDied()
@@ -81,7 +80,6 @@ public class MatchTimer : NetworkBehaviour
         script.SetPuppetsAliveInfoText(puppetsRemaining.ToString());
 
         //Enable the "End of game camera"
-        EndOfTheGameCamera.enabled = true;
         script.gameObject.SetActive(true);
     }
 
@@ -100,7 +98,6 @@ public class MatchTimer : NetworkBehaviour
         script.SetPuppetsAliveInfoText(puppetsRemaining.ToString());
 
         //Enable the "End of game camera"
-        EndOfTheGameCamera.enabled = true;
         script.gameObject.SetActive(true);
     }
 }

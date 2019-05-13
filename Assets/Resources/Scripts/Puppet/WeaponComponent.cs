@@ -27,7 +27,10 @@ public class WeaponComponent : Interactable
     public int LiquidLeft;
     public int LiquidPerRound;
 
-    public Transform MagazineTransform;
+	public GameObject MagazinePrefab;
+    public Transform MagazineAttach;
+	private GameObject currentMagazine;
+	private FluidSimulation liquidScript;
 
     //Weapon attributes
     public uint Damage;
@@ -54,6 +57,8 @@ public class WeaponComponent : Interactable
 
     //For hold animation
     public int AnimationIndex;
+
+	public GameObject[] HitDecals;
 
     //Time left until weapon can be used again
     private float cooldown;
@@ -104,6 +109,10 @@ public class WeaponComponent : Interactable
                     uint damage = (uint)(this.Damage * Mathf.Pow(DamageDropoff, hitInfo.distance / 10.0f));
                     health.Damage(damage);
                 }
+                // create hit decal
+                // HitDecals[Random.Range(...)] ?
+				Instantiate(HitDecals[0], hitInfo.point + hitInfo.normal * 0.001f, Quaternion.FromToRotation(Vector3.forward, hitInfo.normal), hitInfo.transform);
+
                 Debug.DrawRay(hitInfo.point, hitInfo.normal, Color.black, 1.0f);
                 Debug.DrawRay(transform.position, -transform.forward * 100.0f, Color.red, 0.2f);
 
@@ -115,6 +124,7 @@ public class WeaponComponent : Interactable
         recoil += RecoilAmount;
         cooldown += FiringSpeed;
         LiquidLeft -= LiquidPerRound;
+		UpdateAmmoContainer();
     }
 
     public void Release()
@@ -132,6 +142,7 @@ public class WeaponComponent : Interactable
         int amount = Mathf.Min(Capacity - LiquidLeft, liquidInput);
         liquidInput -= amount;
         LiquidLeft += amount;
+		UpdateAmmoContainer();
 
         // disallow firing while reloading
         cooldown += ReloadTime;
@@ -176,6 +187,17 @@ public class WeaponComponent : Interactable
         // temporary crosshair 
         GUI.Box(new Rect(Screen.width * 0.5f, Screen.height * 0.5f, 10, 10), "");
     }
+
+	public void UpdateAmmoContainer()
+	{
+		if (currentMagazine == null)
+		{
+			currentMagazine = Instantiate(MagazinePrefab, MagazineAttach);
+			liquidScript = currentMagazine.GetComponent<FluidSimulation>();
+			liquidScript.MaxLiquidAmount = Capacity;
+		}
+		liquidScript.CurrentLiquidAmount = LiquidLeft;
+	}
 
     public override void OnInteractBegin(GameObject interactor)
     {

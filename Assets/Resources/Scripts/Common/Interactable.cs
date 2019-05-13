@@ -82,5 +82,9 @@ public abstract class Interactable : NetworkBehaviour
         newWeapon.transform.localPosition = Vector3.zero;
         newWeapon.transform.localRotation = newWeapon.HoldRotation;
 
+		if (user.isLocalPlayer)
+		{
+			newWeapon.UpdateAmmoContainer();
+		}
     }
 }

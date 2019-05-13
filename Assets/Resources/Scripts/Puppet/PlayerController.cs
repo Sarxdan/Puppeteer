@@ -28,6 +28,8 @@ using UnityEngine;
 public class PlayerController : NetworkBehaviour
 {
     public static float SpawnRadius = 3.0f;
+	[SyncVar]
+	public string NickName;
 
     // Movement
     public float MovementSpeed;
@@ -105,6 +107,18 @@ public class PlayerController : NetworkBehaviour
         // try to move to spawn position (physics enabled)
         rigidBody.MovePosition(new Vector3(Random.Range(-SpawnRadius, SpawnRadius), 0.0f, Random.Range(-SpawnRadius, SpawnRadius)));
 
+        
+        if(isLocalPlayer)
+        {
+            CurrentWeapon.transform.SetParent(FPVHandTransform);
+            CurrentWeapon.transform.localPosition = Vector3.zero;
+            transform.Find("Mesh").gameObject.SetActive(false);
+        }
+        else
+        {
+            FPVArms.SetActive(false);
+        }
+
         // configure compass
         var compass = GetComponentInChildren<Compass>();
         if (compass)
@@ -118,18 +132,21 @@ public class PlayerController : NetworkBehaviour
                 compass.AddTarget(player.transform);
             }
         }
-
-        if(isLocalPlayer)
-        {
-            CurrentWeapon.transform.SetParent(FPVHandTransform);
-            CurrentWeapon.transform.localPosition = Vector3.zero;
-            transform.Find("Mesh").gameObject.SetActive(false);
-        }
-        else
-        {
-            FPVArms.SetActive(false);
-        }
+		var CNLP = FindObjectsOfType<CustomNetworkLobbyPlayer>();
+		foreach (var LP in CNLP)
+		{
+			if (LP.LocalPlayer)
+			{
+				CmdSetName(LP.Nickname);
+			}
+		}
     }
+
+	[Command]
+	void CmdSetName(string nickName)
+	{
+		NickName = nickName;
+	}
 
     private void Update()
     {

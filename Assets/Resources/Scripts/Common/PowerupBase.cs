@@ -28,7 +28,7 @@ public abstract class PowerupBase : NetworkBehaviour
     {
         get
         {
-            return Charged ? 1.0f : (1.0f - timeLeft / Duration);
+            return Charged ? 1.0f : (timeLeft == 0.0f ? 0.0f : (1.0f - timeLeft / Duration));
         }
     }
 
