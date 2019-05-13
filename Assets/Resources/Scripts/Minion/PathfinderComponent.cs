@@ -395,7 +395,7 @@ public class PathfinderComponent : NetworkBehaviour
                 Debug.DrawLine(this.worldPath[i].EntrancePos, this.worldPath[i+1].EntrancePos, Color.cyan, Time.deltaTime);
             }
 
-            if(this.worldPath.Count > 0 ) Debug.DrawLine(transform.position, this.worldPath[0].EntrancePos, Color.cyan, Time.deltaTime);
+            if(this.worldPath.Count > 0 ) Debug.DrawLine(transform.position, this.worldPath[worldPath.Count-1].EntrancePos, Color.cyan, Time.deltaTime);
         }
         
 

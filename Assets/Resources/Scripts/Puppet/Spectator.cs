@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine.UI;
 using UnityEngine;
+using Mirror;
 
-public class Spectator : MonoBehaviour
+public class Spectator : NetworkBehaviour
 {
 	public bool Spectating = false;
 	public Text NameText;
@@ -11,10 +12,12 @@ public class Spectator : MonoBehaviour
 	public List<Camera> Cameras;
 	public int Index = 0;
 	public GameObject SpectatorScreen;
+	Canvas canvas; 
 
     // Start is called before the first frame update
     void Start()
     {
+		canvas = GetComponent<Canvas>();
 		NextButton.onClick.AddListener(Next);
 		PrevButton.onClick.AddListener(Prev);
     }
@@ -32,7 +35,7 @@ public class Spectator : MonoBehaviour
 					ChoseValidCamera();
 				}
 			}
-			if (Input.GetButtonDown("Fire"))
+			if (Input.GetKeyDown(KeyCode.E))
 			{
 				Next();
 			}
@@ -52,6 +55,7 @@ public class Spectator : MonoBehaviour
 			Cameras.Add(player.GetComponentInChildren<Camera>());
 		}
 		Cameras[Index].enabled = true;
+		canvas.worldCamera = Cameras[Index];
 	}
 	void Next()
 	{
@@ -65,6 +69,7 @@ public class Spectator : MonoBehaviour
 			Index = 0;
 		}
 		Cameras[Index].enabled = true;
+		canvas.worldCamera = Cameras[Index];
 	}
 	void Prev()
 	{
@@ -78,11 +83,13 @@ public class Spectator : MonoBehaviour
 			Index = Cameras.Count-1;
 		}
 		Cameras[Index].enabled = true;
+		canvas.worldCamera = Cameras[Index];
 	}
 	void ChoseValidCamera()
 	{
 		Index = 0;
 		Cameras[Index].enabled = true;
 	}
+
 
 }

@@ -20,8 +20,7 @@ namespace MinionStates
     {
 
         private StateMachine machine;
-        private int mask = ~(1 << LayerMask.NameToLayer("Puppeteer Interact")); //Layer mask to ignore puppeteer interact colliders
-
+        
         //Timekeeping (TODO move somewhere more accessible)
         private float playerLostTime = 0;
         private float lastSeenTime = 0;
@@ -52,7 +51,7 @@ namespace MinionStates
             if (machine.debug) Debug.DrawRay(machine.transform.position, Vector3.forward * machine.AttackRange, Color.green, 0.2f);
 
             //Tests if player is in front
-            if (Physics.Raycast(machine.transform.position + new Vector3(0,.5f,0), machine.transform.forward, out RaycastHit target, machine.AttackRange, mask))
+            if (Physics.Raycast(machine.transform.position + new Vector3(0,.5f,0), machine.transform.forward, out RaycastHit target, machine.AttackRange, layerMask))
             {
                 if (target.transform == machine.TargetEntity.transform)
                 {
@@ -83,7 +82,7 @@ namespace MinionStates
 
             //Tests if player is concealed
             RaycastHit hit;
-            if (!Physics.Raycast(machine.transform.position + new Vector3(0,.5f,0), machine.TargetEntity.transform.position - machine.transform.position + new Vector3(0,.5f,0), out hit, machine.ConeAggroRange, mask) || hit.transform.tag != ("Player"))
+            if (!Physics.Raycast(machine.transform.position + new Vector3(0,.5f,0), machine.TargetEntity.transform.position - machine.transform.position + new Vector3(0,.5f,0), out hit, machine.ConeAggroRange, layerMask) || hit.transform.tag != ("Player"))
             {
                 //Counts seconds since player was lost, goes idle if past threshold 
                 playerLostTime += (Time.time - lastSeenTime);
@@ -111,6 +110,7 @@ namespace MinionStates
     public class ReturnToSpawnerState : State
     {
         private StateMachine machine;
+        private NavMesh navmesh;
 
         public ReturnToSpawnerState(StateMachine machine)
         {
@@ -124,7 +124,7 @@ namespace MinionStates
             machine.AnimController.SetBool("Running", true);
 
             //Fetches navmesh from spawner room and walks to a (semi)random point on it
-            NavMesh navmesh = machine.Spawner.transform.GetComponentInParent<NavMesh>();
+            navmesh = machine.Spawner.transform.GetComponentInParent<NavMesh>();
             Vector3 destination;
             if(navmesh!=null)
             {
@@ -148,7 +148,15 @@ namespace MinionStates
             //If no path, go idle
             if(!machine.PathFinder.HasPath)
             {
-                machine.SetState(new IdleState(machine));
+                if(Physics.Raycast(machine.transform.position + machine.RaycastOffset, Vector3.down, out RaycastHit hit, 1, layerMask) 
+                && hit.transform.GetComponentInParent<NavMesh>() == navmesh)
+                {
+                    machine.SetState(new IdleState(machine));
+                }
+                else
+                {
+                    machine.SetState(new ReturnToSpawnerState(machine));
+                }
             }
         }
 
@@ -287,8 +295,7 @@ namespace MinionStates
     public class BigAttackState : State
     {
         private StateMachine machine;
-        private int mask = ~(1 << LayerMask.NameToLayer("Puppeteer Interact")); //Layer mask to ignore puppeteer interact colliders
-
+        
         public BigAttackState(StateMachine machine)
         {
             this.machine = machine;

@@ -95,6 +95,7 @@ public class StateMachine : NetworkBehaviour
     {
         layerMask = ~(1 << LayerMask.NameToLayer("Puppeteer Interact"));
         AnimController = GetComponent<Animator>();
+        PathFinder = GetComponent<PathfinderComponent>();
 
         //TODO: remove when prefab gets changed from Acceleration 0
         
@@ -108,15 +109,20 @@ public class StateMachine : NetworkBehaviour
             return;
         }
 
-        PathFinder = GetComponent<PathfinderComponent>();
-        //If regular Minion or Tank
-        if (MinionType == EnemyType.Minion)
-        {
-            SetState(new WanderState(this));
+        if(FinalRoomInteract.isEndGame){
+            SetState(new ReturnToSpawnerState(this));
         }
         else
         {
-            SetState(new IdleState(this));
+            //If regular Minion or Tank
+            if (MinionType == EnemyType.Minion)
+            {
+                SetState(new WanderState(this));
+            }
+            else
+            {
+                SetState(new IdleState(this));
+            }
         }
 
         CanAttack = true;
@@ -207,6 +213,7 @@ public class StateMachine : NetworkBehaviour
     //Runs when death animation is complete, despawns object
     public void Despawn()
     {
+        if(isServer);
         EnemySpawner.AllMinions.Remove(this);
         if(Spawner !=null) Spawner.LocalMinions.Remove(this);
         Destroy(this.gameObject);
@@ -262,6 +269,7 @@ public class StateMachine : NetworkBehaviour
         return false;
     }
 
+<<<<<<< HEAD
     private IEnumerator chargeRoutine()
     {
         while (true)
@@ -322,6 +330,69 @@ public class StateMachine : NetworkBehaviour
     }
 
 
+=======
+    private IEnumerator chargeRoutine()
+    {
+        while (true)
+        {
+            if (!PathFinder.HasPath)
+            {
+                PathFinder.RotationSpeed = 2f;
+                PathFinder.NodeArrivalMargin = 0.5f;
+            }
+
+            Corunning = true;
+
+            if (AnimController.GetBool("IsCharging") == true && AnimController.GetFloat("ChargeSpeed") < 1)
+            {
+                CurrentChargeSpeed = CurrentChargeSpeed += ChargeAccelerationSpeed;
+                AnimController.SetFloat("ChargeSpeed", CurrentChargeSpeed);
+            }
+
+            //foreach (GameObject pupp in Puppets)
+            //{
+            //    HealthComponent health = pupp.GetComponent<HealthComponent>();
+            //    if (WithinCone(transform, pupp.transform, 80f, 2f, 0f))
+            //    {
+            //        float chargeDamage = CurrentChargeSpeed * 5;
+            //        uint uChargeDamage = (uint)chargeDamage;
+            //        Debug.Log("Damage dealt: " + chargeDamage + " Damage in uint: " + uChargeDamage);
+            //        health.Damage(uChargeDamage);
+            //        ChargeStopped = true;
+            //        Corunning = false;
+            //        yield break;
+            //    }
+            //    else
+            //    {
+            //        yield return new WaitForSeconds(0.1f);
+            //    }
+            //}
+            if (GameObject.FindGameObjectWithTag("Player")) {
+                Debug.Log("player found");
+            }
+
+            if (WithinCone(transform, TargetEntity.transform, 80f, 2f, 0f))
+            {
+                HealthComponent health = TargetEntity.GetComponent<HealthComponent>();
+                float chargeDamage = CurrentChargeSpeed * 5;
+                uint uChargeDamage = (uint)chargeDamage;
+
+                if (debug) Debug.Log("Damage dealt: " + chargeDamage + " Damage in uint: " + uChargeDamage);
+
+                health.Damage(uChargeDamage);
+                ChargeStopped = true;
+                Corunning = false;
+                yield break;
+            }
+            else
+            {
+                yield return new WaitForSeconds(0.1f);
+            }
+        }
+    }
+
+
+>>>>>>> 4be76b131756255637f44144e16d03ffb3c8d65f
     //Isn't used at the time this file is reviewed
 
     private IEnumerator attackPriority()
@@ -435,6 +506,8 @@ public class StateMachine : NetworkBehaviour
 //-------------------------------------------------------------
 public abstract class State
 {
+    
+    protected int layerMask = ~(1 << LayerMask.NameToLayer("Puppeteer Interact"));
     public abstract void Enter();
 
     public abstract void Run();

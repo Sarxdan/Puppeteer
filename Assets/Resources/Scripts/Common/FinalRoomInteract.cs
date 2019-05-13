@@ -29,6 +29,8 @@ public class FinalRoomInteract : Interactable
 	[SyncVar]
 	public bool Opened = false;
 
+	public static bool isEndGame;
+
 	// Only runs on server. (by default)
 	public override void OnInteractBegin(GameObject interactor)
 	{
@@ -44,6 +46,7 @@ public class FinalRoomInteract : Interactable
 	// Only runs on server.
 	IEnumerator FinalCountDown()
 	{
+		isEndGame = true;
 		EnemySpawner dummySpawner = GameObject.Find("DummySpawner").GetComponent<EnemySpawner>();
 		foreach(StateMachine minion in EnemySpawner.AllMinions)
 		{
