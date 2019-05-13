@@ -22,15 +22,11 @@ public class MedKitComponent : Interactable
     {
         PlayerController playerController = interactor.GetComponent<PlayerController>();
 
-        if (playerController.isServer && playerController.isLocalPlayer)
-        {
+
             if (!playerController.HasMedkit)
                 playerController.HasMedkit = true;
-        }
-        else
-        {
+
             playerController.RpcAddMedkit();
-        }
         
         Destroy(gameObject);
     }

@@ -57,11 +57,14 @@ public class ReviveComponent : Interactable
     {
         StopCoroutine("ReviveRoutine");
         var interactionController = interactor.GetComponent<InteractionController>();
-        if(!interactionController.isServer && !interactionController.isLocalPlayer)
+        if(interactionController.isServer && interactionController.isLocalPlayer)
+        {
+            hudScript.ScaleInteractionProgress(0);
+        }
+        else
         {
             hudScript.RpcScaleZero();
         }
-        hudScript.ScaleInteractionProgress(0);
     }
 
     // called when the health of this object reaches zer zo
@@ -136,6 +139,7 @@ public class ReviveComponent : Interactable
         {
             // consume medkit if required
             reviver.GetComponent<PlayerController>().HasMedkit = false;
+            RpcRemoveMedkit(reviver);
         }
     }
     [ClientRpc]
@@ -154,6 +158,12 @@ public class ReviveComponent : Interactable
         {
             hudScript.ScaleInteractionProgress(scale);
         }
+    }
+
+    [ClientRpc]
+    public void RpcRemoveMedkit(GameObject interactor)
+    {
+        interactor.GetComponent<PlayerController>().HasMedkit = false;
     }
 }
 
