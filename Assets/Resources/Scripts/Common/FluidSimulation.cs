@@ -147,7 +147,14 @@ public class FluidSimulation : MonoBehaviour
 		// Update positions of Liquid parts using offsets.
 		FluidTop.transform.localPosition = new Vector3(0, amountOffset * bottomHeight, 0);
 		// Update Scale of Liquid parts using offsets
-		FluidTop.transform.localScale = new Vector3(topScale.x, currentTopScale, topScale.z);
+		if (amountOffset != 0)
+		{
+			FluidTop.transform.localScale = new Vector3(topScale.x, currentTopScale, topScale.z);
+		}
+		else
+		{
+			FluidTop.transform.localScale = new Vector3(topScale.x, 0.0001f, topScale.z);
+		}
 		FluidBottom.transform.localScale = new Vector3(bottomScale.x, currentBottomScale + amountOffset * bottomScale.y - bottomScale.y, bottomScale.z);
 	}
 }
