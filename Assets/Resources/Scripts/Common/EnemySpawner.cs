@@ -23,6 +23,7 @@ public class EnemySpawner : NetworkBehaviour
 {
     public GameObject EnemyPrefab;
     public int MaxEnemyCount;
+
     public int MinDelay = 5;
     public int MaxDelay = 10;
     public List<StateMachine> LocalMinions = new List<StateMachine>();
@@ -33,14 +34,20 @@ public class EnemySpawner : NetworkBehaviour
 
     public Transform spawnPoint;
 
+    private EnemySpawner finalRoomDummy;
+
 
     public void Start()
-    {
+    {   
+        finalRoomDummy = GameObject.Find("DummySpawner").GetComponent<EnemySpawner>();
+        if(finalRoomDummy == gameObject) return;
+        
         if(MinionContainerObject == null){
             MinionContainerObject = GameObject.Find("MinionContainer").transform;
         }
         snapFunctionality = GetComponent<SnapFunctionality>();
         StartCoroutine("Spawn");
+
         HealthComponent hpComponent = GetComponent<HealthComponent>();
         hpComponent.AddDeathAction(OnDeath);
         hpComponent.AddOnDamageAction(CmdOnTakeDamage);
@@ -59,9 +66,10 @@ public class EnemySpawner : NetworkBehaviour
                     //If not then create a GameObject from attached prefab at the spawners position and make them children of the "folder" created earlier
                     GameObject npcEnemy = Instantiate(EnemyPrefab, spawnPoint.position, transform.rotation, MinionContainerObject) as GameObject;
                     StateMachine machine = npcEnemy.GetComponent<StateMachine>();
-                    machine.Spawner = this;
+                    
+                    machine.Spawner = FinalRoomInteract.isEndGame ? finalRoomDummy : this;
+                    
                     NetworkServer.Spawn(npcEnemy);
-
                     //Adds 
                     AllMinions.Add(machine);
                     LocalMinions.Add(machine);
