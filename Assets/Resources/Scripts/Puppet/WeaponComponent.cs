@@ -109,8 +109,10 @@ public class WeaponComponent : Interactable
                     uint damage = (uint)(this.Damage * Mathf.Pow(DamageDropoff, hitInfo.distance / 10.0f));
                     health.Damage(damage);
                 }
-				var decal = Instantiate(HitDecals[0], hitInfo.point, Quaternion.FromToRotation(Vector3.forward, hitInfo.normal));
-				decal.transform.position += decal.transform.forward * 0.001f;
+                // create hit decal
+                // HitDecals[Random.Range(...)] ?
+				Instantiate(HitDecals[0], hitInfo.point + hitInfo.normal * 0.001f, Quaternion.FromToRotation(Vector3.forward, hitInfo.normal), hitInfo.transform);
+
                 Debug.DrawRay(hitInfo.point, hitInfo.normal, Color.black, 1.0f);
                 Debug.DrawRay(transform.position, -transform.forward * 100.0f, Color.red, 0.2f);
 

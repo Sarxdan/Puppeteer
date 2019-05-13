@@ -155,7 +155,7 @@ public class GrabTool : NetworkBehaviour
             }
             else
             {
-                guideObject.transform.SetPositionAndRotation(sourceObject.transform.position, sourceObject.transform.rotation);
+                //guideObject.transform.SetPositionAndRotation(sourceObject.transform.position, sourceObject.transform.rotation);
             }
 
             if(guideObject.transform.hasChanged)
