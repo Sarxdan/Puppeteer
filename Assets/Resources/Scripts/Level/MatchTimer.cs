@@ -34,18 +34,18 @@ public class MatchTimer : NetworkBehaviour
 
         TimeRemaining -= Time.deltaTime;
 
-        if (TimeRemaining <= 0 && !gameEnded || numberOfPuppetsAlive <= 0 && !gameEnded)
-        {
-            //End the game. Puppeteer wins
-            gameEnded = true;
-            RpcPuppeteerWins(numberOfPuppetsAlive, (int)TimeRemaining);
-            TimeRemaining = 0;
-        }
-        else if (NumberOfPuppetsThatEscaped >= numberOfPuppetsAlive && !gameEnded)
+        if (NumberOfPuppetsThatEscaped >= numberOfPuppetsAlive && !gameEnded || TimeRemaining <= 0 && NumberOfPuppetsThatEscaped >= 1)
         {
             //End the game. Puppets wins
             gameEnded = true;
             RpcPuppetsWins(numberOfPuppetsAlive, (int)TimeRemaining);
+            TimeRemaining = 0;
+        }
+        else if (TimeRemaining <= 0 && !gameEnded || numberOfPuppetsAlive <= 0 && !gameEnded)
+        {
+            //End the game. Puppeteer wins
+            gameEnded = true;
+            RpcPuppeteerWins(numberOfPuppetsAlive, (int)TimeRemaining);
             TimeRemaining = 0;
         }
 
