@@ -58,6 +58,8 @@ public class WeaponComponent : Interactable
     //For hold animation
     public int AnimationIndex;
 
+	public GameObject[] HitDecals;
+
     //Time left until weapon can be used again
     private float cooldown;
     private float recoil;
@@ -107,6 +109,8 @@ public class WeaponComponent : Interactable
                     uint damage = (uint)(this.Damage * Mathf.Pow(DamageDropoff, hitInfo.distance / 10.0f));
                     health.Damage(damage);
                 }
+				var decal = Instantiate(HitDecals[0], hitInfo.point, Quaternion.FromToRotation(Vector3.forward, hitInfo.normal));
+				decal.transform.position += decal.transform.forward * 0.001f;
                 Debug.DrawRay(hitInfo.point, hitInfo.normal, Color.black, 1.0f);
                 Debug.DrawRay(transform.position, -transform.forward * 100.0f, Color.red, 0.2f);
 
