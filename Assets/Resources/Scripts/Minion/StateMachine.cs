@@ -298,9 +298,7 @@ public class StateMachine : NetworkBehaviour
             //        yield return new WaitForSeconds(0.1f);
             //    }
             //}
-            if (GameObject.FindGameObjectWithTag("Player")) {
-                Debug.Log("player found");
-            }
+            //GameObject.FindGameObjectsWithTag("Player");
 
             if (WithinCone(transform, TargetEntity.transform, 80f, 2f, 0f))
             {
@@ -319,6 +317,7 @@ public class StateMachine : NetworkBehaviour
             {
                 yield return new WaitForSeconds(0.1f);
             }
+
         }
     }
 
