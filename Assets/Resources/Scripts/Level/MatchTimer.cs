@@ -7,7 +7,6 @@ public class MatchTimer : NetworkBehaviour
 {
     public float TimeRemaining;
     public float PostGameTime;
-    public Camera EndOfTheGameCamera;
     public GameObject Canvas;
 
     [SerializeField]
@@ -21,7 +20,7 @@ public class MatchTimer : NetworkBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        numberOfPuppetsAlive = 1; //GameObject.Find("NetworkManager").GetComponent<CustomNetworkManager>().lobbySlots.Count - 1;
+        numberOfPuppetsAlive = GameObject.Find("NetworkManager").GetComponent<CustomNetworkManager>().lobbySlots.Count - 1;
         puppetEscaped = false;
         script = Canvas.GetComponent<EndOfMatchCanvas>();
         gameEnded = false;
@@ -81,7 +80,6 @@ public class MatchTimer : NetworkBehaviour
         script.SetPuppetsAliveInfoText(puppetsRemaining.ToString());
 
         //Enable the "End of game camera"
-        EndOfTheGameCamera.enabled = true;
         script.gameObject.SetActive(true);
     }
 
@@ -100,7 +98,6 @@ public class MatchTimer : NetworkBehaviour
         script.SetPuppetsAliveInfoText(puppetsRemaining.ToString());
 
         //Enable the "End of game camera"
-        EndOfTheGameCamera.enabled = true;
         script.gameObject.SetActive(true);
     }
 }
