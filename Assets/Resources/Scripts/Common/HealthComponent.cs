@@ -96,7 +96,8 @@ public class HealthComponent : NetworkBehaviour
 
     //Sends damage update to clients
     [ClientRpc]
-    public void RpcDamage(){
+    public void RpcDamage()
+	{
         this.takeDamageAction();
         sound.Damage(); 
     }
