@@ -104,6 +104,10 @@ public class RoomTreeNode : MonoBehaviour
 		return ret;
 	}
 
+    /*
+     * NO LONGER USED!
+     * 
+     * 
 	// Recursively apply a fading red glow to a branch.
 	public void GlowBranch(Color color)
 	{
@@ -114,6 +118,7 @@ public class RoomTreeNode : MonoBehaviour
 			child.GlowBranch(new Color(color.r - glowDropoff, color.g, color.b));
 		}
 	}
+    */
 
 	// Goes thorugh all connected doors and checks if they are connected to a branch that has not been cut off. If they are, set them as parent.
 	public bool ConnectToOtherRoom()
