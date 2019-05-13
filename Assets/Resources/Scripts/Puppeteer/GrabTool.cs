@@ -57,8 +57,8 @@ public class GrabTool : NetworkBehaviour
 	public RoomTreeNode currentNode;
 
     public readonly int MaxNumCollisions = 16;
+    public readonly float UpdateInterval = 0.2f;
     private Collider[] overlapColliders;
-    private float updateInterval = 0.3f;
 
 	void Start()
     {
@@ -67,7 +67,7 @@ public class GrabTool : NetworkBehaviour
         if(isServer)
         {
             overlapColliders = new Collider[MaxNumCollisions];
-            InvokeRepeating("ServerUpdate", 0.5f * updateInterval, updateInterval);
+            InvokeRepeating("ServerUpdate", 0.0f, UpdateInterval);
         }
     }
 
