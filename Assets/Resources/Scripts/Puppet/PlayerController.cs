@@ -28,6 +28,8 @@ using UnityEngine;
 public class PlayerController : NetworkBehaviour
 {
     public static float SpawnRadius = 3.0f;
+	[SyncVar]
+	public string NickName;
 
     // Movement
     public float MovementSpeed;
@@ -117,7 +119,21 @@ public class PlayerController : NetworkBehaviour
                 compass.AddTarget(player.transform);
             }
         }
+		var CNLP = FindObjectsOfType<CustomNetworkLobbyPlayer>();
+		foreach (var LP in CNLP)
+		{
+			if (LP.LocalPlayer)
+			{
+				CmdSetName(LP.Nickname);
+			}
+		}
     }
+
+	[Command]
+	void CmdSetName(string nickName)
+	{
+		NickName = nickName;
+	}
 
     private void Update()
     {

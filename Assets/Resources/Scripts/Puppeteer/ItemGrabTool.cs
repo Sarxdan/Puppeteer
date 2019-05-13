@@ -216,15 +216,15 @@ public class ItemGrabTool : NetworkBehaviour
 		Vector3 mousePos = Input.mousePosition;
 		mousePos.z = Camera.main.WorldToScreenPoint(new Vector3(0, LiftHeight, 0)).z;
 		selectedObject.transform.position = Camera.main.ScreenToWorldPoint(mousePos);
-
 		selectedObject.name = "SelectedObject";
-
+		selectedObject.GetComponent<BoxCollider>().enabled = false;
 		// Handles the change in temporary currency. Can be used to show currency left after placement.
 		cost = selectedObject.GetComponent<SnapFunctionality>().Cost;
 		currency.TemporaryCurrency = currency.CurrentCurrency - cost;
 		// Instansiate the guide object on the ground
 		guideObject = Instantiate(sourceObject);
 		guideObject.name = "GuideObject";
+		guideObject.GetComponent<BoxCollider>().enabled = false;
 
 		grabOffset = selectedObject.transform.position - MouseToWorldPosition();
 
@@ -243,6 +243,7 @@ public class ItemGrabTool : NetworkBehaviour
 			selectedObject.name = "SelectedObject";
 			selectedObject.transform.position = localPlayerMousePos;
 			selectedObject.transform.localEulerAngles = new Vector3(0, 0, 0);
+			selectedObject.GetComponent<BoxCollider>().enabled = false;
 
 			// handels the change in temporary currency. can be used to show currency left after placement.
 			cost = selectedObject.GetComponent<SnapFunctionality>().Cost;
@@ -250,6 +251,7 @@ public class ItemGrabTool : NetworkBehaviour
 
 			guideObject = Instantiate(sourceObject);
 			guideObject.name = "GuideObject";
+			guideObject.GetComponent<BoxCollider>().enabled = false;
 		}
 
         if (!isLocalPlayer)
@@ -301,6 +303,7 @@ public class ItemGrabTool : NetworkBehaviour
 			guideObject.transform.SetParent(bestDstPoint.transform.parent);
 			guideObject.transform.position -=previewLiftVector;
 			guideObject.GetComponent<SnapFunctionality>().Placed = true;
+			guideObject.GetComponent<BoxCollider>().enabled = true;
 			// Set the layer on the item and all of its children in order to make it visible and interactable
 			NetworkServer.Spawn(guideObject);
 			RpcUpdateLayer(guideObject);
@@ -371,7 +374,7 @@ public class ItemGrabTool : NetworkBehaviour
         var rooms = level.GetRooms();
 		foreach (var room in rooms)
 		{
-			if (room.GetComponent<ItemSpawner>())
+			if (room.GetComponent<ItemSpawner>() && !room.GetComponent<RoomInteractable>().RoomContainsPlayer())
 			{
 				snapPoints.AddRange(room.GetComponent<ItemSpawner>().FindSnapPoints());
 			}
