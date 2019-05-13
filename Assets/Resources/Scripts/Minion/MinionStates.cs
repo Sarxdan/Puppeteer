@@ -352,7 +352,7 @@ namespace MinionStates
 
         public override void Exit()
         {
-            machine.ChargeCharge = 0;
+            machine.ChargeCharge = machine.ChargeCharge -= 100;
             machine.AnimController.SetBool("Running", false);
         }
     }
@@ -375,7 +375,6 @@ namespace MinionStates
 
         public override void Run()
         {
-            //float dist = Vector3.Distance(machine.TargetEntity.transform.position, machine.transform.position);
             if (machine.ChargeStopped)
             {
                 machine.AnimController.SetFloat("ChargeSpeed", 0);
