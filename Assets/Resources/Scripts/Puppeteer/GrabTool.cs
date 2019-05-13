@@ -314,13 +314,23 @@ public class GrabTool : NetworkBehaviour
 
 	private bool CanConnect(in AnchorPoint src, in AnchorPoint dst)
 	{
-        // Only connect modules with correct door angles.
-        if (Mathf.RoundToInt((src.transform.forward + dst.transform.forward).magnitude) != 0)
-			return false;
+        // cannot connect to source object
+        if (dst.transform.parent.IsChildOf(sourceObject.transform))
+        {
+            return false;
+        }
 
-		// Check if source room contains player
-		if (sourceObject.GetComponent<RoomInteractable>().RoomContainsPlayer())
+        // only connect modules with correct door angles.
+        if (Mathf.RoundToInt((src.transform.forward + dst.transform.forward).magnitude) != 0)
+        {
 			return false;
+        }
+
+		// check if source room contains player
+		if (sourceObject.GetComponent<RoomInteractable>().RoomContainsPlayer())
+        {
+			return false;
+        }
         
 		// Only to check collision (not real movement)
 		guideObject.transform.rotation = selectedObject.transform.rotation;
