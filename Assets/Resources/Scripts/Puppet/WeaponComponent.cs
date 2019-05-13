@@ -90,7 +90,10 @@ public class WeaponComponent : Interactable
 			return;
 		}
 
-        GetComponentInParent<PlayerController>().AnimController.SetBool("Fire", true);
+        PlayerController pc = GetComponentInParent<PlayerController>();
+        pc.AnimController.SetBool("Fire", true);
+        pc.FPVAnimController.SetTrigger("Fire");
+        
         sounds.Shoot();
 
         for(int i = 0; i < NumShots; i++)
