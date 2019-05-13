@@ -44,142 +44,121 @@ public class GrabTool : NetworkBehaviour
 	private AnchorPoint bestSrcPoint;
 	private AnchorPoint bestDstPoint;
 
-	private RoomInteractable lastHit;
 	private Vector3 grabOffset = new Vector3();
 
 	// Mouse position of current Puppeteer. Used when server is not puppeteer.
 	private Vector3 localPlayerMousePos;
+
+    private RoomInteractable lastHit;
 
 	// Original parent node used for updating tree when dropping without snapping to something.
 	private RoomTreeNode firstParentNode;
 	// Current selected node in tree. Used by RoomTreeNode to allow the selected object to be used in new tree.
 	public RoomTreeNode currentNode;
 
+    public readonly int MaxNumCollisions = 16;
+    private Collider[] overlapColliders;
+    private float updateInterval = 0.3f;
 
 	void Start()
     {
-		//level = GameObject.Find("Level").GetComponent<LevelBuilder>();
 		level = GetComponent<LevelBuilder>();
+
+        if(isServer)
+        {
+            overlapColliders = new Collider[MaxNumCollisions];
+            InvokeRepeating("ServerUpdate", 0.5f * updateInterval, updateInterval);
+        }
     }
 
     void Update()
     {
-		// Update local players rooms and send data to server. Purely visual.
-		if (isLocalPlayer)
-		{
-			ClientUpdate();
-		}
+        if(selectedObject == null)
+        {
+            RaycastHit hit;
+            if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit, RaycastDistance, 1 << 8))
+            {
+                RoomInteractable interactable = hit.transform.GetComponent<RoomInteractable>();
+                if (interactable != lastHit)
+                {
+                    lastHit = interactable;
+                }
+            }
 
-		// Main update and checks always run on server
-		if (isServer)
-		{
-			if (selectedObject != null)
-			{
-				ServerUpdate();
-			}
-		}
+            if (lastHit != null && Input.GetButtonDown("Fire") && lastHit.CanBePickedUp)
+            {
+                this.Pickup(lastHit.gameObject);
+            }
+        }
+        else
+        {
+            // send current mouse position to server
+            CmdUpdateMousePos(this.MouseToWorldPosition());
+
+            Vector3 newPosition = MouseToWorldPosition() + grabOffset;
+            selectedObject.transform.position = Vector3.Lerp(selectedObject.transform.position, new Vector3(newPosition.x, LiftHeight, newPosition.z), LiftSpeed * Time.deltaTime);
+
+            if (Input.GetButtonDown("Rotate"))
+            {
+                selectedObject.transform.Rotate(Vector3.up * 90.0f);
+                CmdRotate(selectedObject.transform.rotation);
+            }
+
+            if (Input.GetButtonUp("Fire"))
+            {
+                Drop();
+            }
+        }
     }
-
-	// Decide what the server should do with inputs.
-	private void ClientUpdate()
-	{
-		if (selectedObject == null)
-		{
-			// Raycast only on Puppeteer Interact layer.
-			RaycastHit hit;
-			int layerMask = 1 << LayerMask.NameToLayer("Puppeteer Interact");
-			if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit, RaycastDistance, layerMask, QueryTriggerInteraction.Collide))
-			{
-				GameObject hitObject = hit.transform.gameObject;
-
-				// Start and stop glow
-				RoomInteractable interactable = hitObject.GetComponent<RoomInteractable>();
-				if (interactable != null)
-				{
-					if (interactable != lastHit)
-					{
-						if (lastHit != null)
-						{
-							lastHit.OnRaycastExit();
-						}
-						lastHit = interactable;
-						if (lastHit.CanBePickedUp)
-						{
-							lastHit.OnRaycastEnter();
-						}
-					}
-					// If pickup button is pressed, call pickup method.
-					if (Input.GetButtonDown("Fire"))
-					{
-						if (interactable.CanBePickedUp)
-						{
-							Pickup(hitObject);
-						}
-					}
-				}
-				else
-				{
-					// If raycast doesn't hit a valid object
-					if (lastHit != null)
-						lastHit.OnRaycastExit();
-					lastHit = null;
-				}
-			}
-			else
-			{
-				// If raycast doesn't hit any objects
-				if (lastHit != null)
-				{
-					lastHit.OnRaycastExit();
-					lastHit = null;
-				}
-			}
-		}
-		else
-		{
-			// Send current mouseposition to server
-			CmdUpdateMousePos(MouseToWorldPosition());
-
-			if (Input.GetButtonUp("Fire"))
-			{
-				Drop();
-			}
-			else
-			{
-				if (Input.GetButtonDown("Rotate"))
-				{
-					// Rotate room around its own up-axis
-
-					selectedObject.transform.RotateAround(selectedObject.transform.position, selectedObject.transform.up, 90);
-					CmdRotate(selectedObject.transform.rotation);
-				}
-				if (!isServer)
-				{
-					ClientUpdatePositions();
-				}
-
-			}
-		}
-	}
-
-	// Rotate room on server
-	[Command]
-	public void CmdRotate(Quaternion rot)
-	{
-		selectedObject.transform.rotation = rot;
-	}
-	
-	// Update mouse position on server
-	[Command]
-	public void CmdUpdateMousePos(Vector3 pos)
-	{
-		localPlayerMousePos = pos;
-	}
 
 	private void ServerUpdate()
 	{
-		ServerUpdatePositions();
-	}
+        if (selectedObject == null)
+            return;
+
+        var doorsInSelectedRoom = selectedObject.GetComponentsInChildren<AnchorPoint>();
+        float bestDist = Mathf.Infinity;
+        bestDstPoint = null;
+
+        // Decide which door is best to snap to.
+        foreach (var door in doorsInSelectedRoom)
+        {
+            if (door.transform.parent.IsChildOf(sourceObject.transform))
+                continue;
+
+            if (door.transform.parent.IsChildOf(guideObject.transform))
+                continue;
+
+            var nearestDoor = FindNearest(door, ref bestDist);
+            if (nearestDoor != null)
+            {
+                bestSrcPoint = door;
+                bestDstPoint = nearestDoor;
+            }
+        }
+
+        // Move guideObject to best availible position. If there is none, move it to source.
+        if (bestDstPoint != null)
+        {
+            if(this.CanConnect(bestSrcPoint, bestDstPoint))
+            {
+                guideObject.transform.position = selectedObject.transform.position - (bestSrcPoint.transform.position - bestDstPoint.transform.position);
+                guideObject.transform.rotation = selectedObject.transform.rotation;
+
+                RoomTreeNode currentNode = sourceObject.GetComponent<RoomTreeNode>();
+                RoomTreeNode targetNode = bestDstPoint.GetComponentInParent<RoomTreeNode>();
+                currentNode.DisconnectFromTree();
+                currentNode.SetParent(targetNode);
+                currentNode.CutBranch();
+                level.GetStartNode().ReconnectToTree();
+            }
+
+            if(guideObject.transform.hasChanged)
+            {
+                RpcUpdateGuide(new TransformStruct(guideObject.transform.position, guideObject.transform.rotation));
+            }
+        }
+    }
 
 	// Method used for picking up an object.
 	private void Pickup(GameObject pickupObject)
@@ -189,15 +168,28 @@ public class GrabTool : NetworkBehaviour
 		guideObject = Instantiate(sourceObject);
 		guideObject.name = "guideObject";
 
-
 		grabOffset = sourceObject.transform.position - MouseToWorldPosition();
 
-		CmdUpdateMousePos(MouseToWorldPosition());
+		CmdUpdateMousePos(this.MouseToWorldPosition());
 		CmdPickup(pickupObject);
 	}
 
-	// Method for picking up objects on server and making them invisible if server is not Puppeteer.
-	[Command]
+    // Rotate room on server
+    [Command]
+    public void CmdRotate(Quaternion rot)
+    {
+        selectedObject.transform.rotation = rot;
+    }
+
+    // Update mouse position on server
+    [Command]
+    public void CmdUpdateMousePos(Vector3 pos)
+    {
+        localPlayerMousePos = pos;
+    }
+
+    // Method for picking up objects on server and making them invisible if server is not Puppeteer.
+    [Command]
 	public void CmdPickup(GameObject pickupObject)
 	{
 		if (!isLocalPlayer)
@@ -239,8 +231,8 @@ public class GrabTool : NetworkBehaviour
 		if (!isServer)
 		{
 			Destroy(selectedObject);
-			selectedObject = null;
 			Destroy(guideObject);
+			selectedObject = null;
 			guideObject = null;
 		}
 	}
@@ -256,79 +248,23 @@ public class GrabTool : NetworkBehaviour
 		}
 		else
 		{
-			// Kill minions in room
-			sourceObject.GetComponent<RoomInteractable>().KillEnemiesInRoom();
+            if(sourceObject != null)
+            {
+			    // Kill minions in room
+			    sourceObject.GetComponent<RoomInteractable>().KillEnemiesInRoom();
 
-			// Move sourceobject to guideobject. Guideobject is already in the best availible position.
-			sourceObject.transform.position = guideObject.transform.position;
-			sourceObject.transform.rotation = guideObject.transform.rotation;
+			    // Move sourceobject to guideobject. Guideobject is already in the best availible position.
+			    sourceObject.transform.SetPositionAndRotation(guideObject.transform.position, guideObject.transform.rotation);
 			
-			// Connect all doors in the new position.
-			level.ConnectDoorsInRoomIfPossible(sourceObject);
+			    // Connect all doors in the new position.
+			    level.ConnectDoorsInRoomIfPossible(sourceObject);
+            }
 		}
 
 		Destroy(selectedObject);
-		selectedObject = null;
 		Destroy(guideObject);
+		selectedObject = null;
 		guideObject = null;
-	}
-
-	// Move local selected object for client.
-	private void ClientUpdatePositions()
-	{
-		Vector3 newPosition = MouseToWorldPosition() + grabOffset;
-		selectedObject.transform.position = Vector3.Lerp(selectedObject.transform.position, new Vector3(newPosition.x, LiftHeight, newPosition.z), LiftSpeed * Time.deltaTime);
-	}
-
-	// Moves all objects to their positions.
-	private void ServerUpdatePositions()
-	{
-		// Move source object to mouse.
-		Vector3 newPosition = localPlayerMousePos + grabOffset;
-		selectedObject.transform.position = Vector3.Lerp(selectedObject.transform.position, new Vector3(newPosition.x, LiftHeight, newPosition.z), LiftSpeed * Time.deltaTime);
-
-		var doorsInSelectedRoom = selectedObject.GetComponentsInChildren<AnchorPoint>();
-		float bestDist = Mathf.Infinity;
-
-		bestDstPoint = null;
-
-		// Decide which door is best to snap to.
-		foreach (var ownDoor in doorsInSelectedRoom)
-		{
-			var nearestDoor = FindNearestOpenDoor(ownDoor, ref bestDist);
-			if (nearestDoor != null)
-			{
-				bestSrcPoint = ownDoor;
-				bestDstPoint = nearestDoor;
-				
-				Debug.DrawLine(bestDstPoint.transform.position, bestSrcPoint.transform.position, Color.yellow);		
-			}
-		}
-
-		// Reset glow before possibly starting new glow on rooms.
-		firstParentNode.ResetGlow();
-
-		// Move guideObject to best availible position. If there is none, move it to source.
-		if (bestDstPoint != null)
-		{
-			RpcUpdateGuide(new TransformStruct(selectedObject.transform.position - (bestSrcPoint.transform.position - bestDstPoint.transform.position), selectedObject.transform.rotation.normalized));
-			guideObject.transform.position = selectedObject.transform.position - (bestSrcPoint.transform.position - bestDstPoint.transform.position);
-			guideObject.transform.rotation = selectedObject.transform.rotation;
-
-			RoomTreeNode currentNode = sourceObject.GetComponent<RoomTreeNode>();
-			RoomTreeNode targetNode = bestDstPoint.GetComponentInParent<RoomTreeNode>();
-			currentNode.DisconnectFromTree();
-			currentNode.SetParent(targetNode);
-			currentNode.CutBranch();
-			level.GetStartNode().ReconnectToTree();
-		}
-		else
-		{
-			sourceObject.GetComponent<RoomTreeNode>().GlowBranch(Color.red);
-			RpcUpdateGuide(new TransformStruct(sourceObject.transform.position, sourceObject.transform.rotation.normalized));
-			guideObject.transform.position = sourceObject.transform.position;
-			guideObject.transform.rotation = sourceObject.transform.rotation;
-		}
 	}
 
 	// Method to send data from server to client about position of guideRoom.
@@ -342,72 +278,77 @@ public class GrabTool : NetworkBehaviour
 		}
 	}
 
-	// Checks all other doors in the level and picks the best one.
-	private AnchorPoint FindNearestOpenDoor(in AnchorPoint doorIn, ref float bestDist)
-	{
-		var doors = new List<AnchorPoint>();
-		var rooms = level.GetRooms();
-		foreach (var room in rooms)
-		{
-			doors.AddRange(room.GetComponentsInChildren<AnchorPoint>());
-		}
-		AnchorPoint result = null;
-		foreach (var door in doors)
-		{
-			// Skip the door if not all requirements are met.
-			if (door.transform.parent == doorIn.transform.parent)
-				continue;
-			if (door.transform.parent.IsChildOf(sourceObject.transform))
-				continue;
-			if (door.transform.parent.IsChildOf(guideObject.transform))
-				continue;
-			if (!CanConnect(doorIn, door))
-				continue;
+    public AnchorPoint FindNearest(in AnchorPoint target, ref float bestDist)
+    {
+        var list = new List<AnchorPoint>();
+        var rooms = level.GetRooms();
+        foreach(var room in rooms)
+        {
+            list.AddRange(room.GetComponentsInChildren<AnchorPoint>());
+        }
 
-			float curDist = (doorIn.transform.position - door.transform.position).sqrMagnitude;
-			if (curDist < bestDist)
-			{
-				result = door;
-				bestDist = curDist;
-			}
-		}
-		return result;
-	}
+        AnchorPoint result = null;
+        foreach(var item in list)
+        {
+            if (target.transform.parent == item.transform.parent)
+                continue;
+
+            float curDist = Vector3.Distance(item.transform.position, target.transform.position);
+            if (curDist > SnapDistance)
+            {
+                // ignore if too far apart
+                continue;
+            }
+            else if(curDist < bestDist)
+            {
+                result = item;
+                bestDist = curDist;
+            }
+        }
+        return result;
+    }
 
 	private bool CanConnect(in AnchorPoint src, in AnchorPoint dst)
 	{
-		// Ignore invalid doors.
-		if (src == null || dst == null)
-		{
+        // Only connect modules with correct door angles.
+        if (Mathf.RoundToInt((src.transform.forward + dst.transform.forward).magnitude) != 0)
 			return false;
-		}
-		// Ignore already connected doors.
-		if (dst.Connected && !dst.ConnectedTo.transform.IsChildOf(sourceObject.transform))
-		{
-			return false;
-		}
-		// Only connect modules with correct door angles.
-		if (Mathf.RoundToInt((src.transform.forward + dst.transform.forward).magnitude) != 0)
-		{
-			return false;
-		}
-		// Check if doors are too far apart
-		float dist = (dst.transform.position - src.transform.position).magnitude;
-		if (dist > SnapDistance)
-		{
-			return false;
-		}
+
 		// Check if source room contains player
 		if (sourceObject.GetComponent<RoomInteractable>().RoomContainsPlayer())
-		{
 			return false;
-		}
-
+        
 		// Only to check collision (not real movement)
 		guideObject.transform.rotation = selectedObject.transform.rotation;
 		guideObject.transform.position = selectedObject.transform.position - (src.transform.position - dst.transform.position);
 
+        for(int i = 0; i < overlapColliders.Length; i++)
+        {
+            overlapColliders[i] = null;
+        }
+
+        int numCollisions = Physics.OverlapSphereNonAlloc(guideObject.transform.position, 8.0f, overlapColliders, 1 << 8);
+        if(numCollisions >= MaxNumCollisions)
+        {
+            Debug.LogWarning("Too many collisions! Some collisions may be ignored.");
+        }
+
+        int actual = 0;
+
+        for(int i = 0; i < overlapColliders.Length; i++)
+        {
+            Collider collider = overlapColliders[i];
+            if(collider == null || collider.transform.IsChildOf(sourceObject.transform))
+            {
+                continue;
+            }
+
+            actual++;
+        }
+
+        /*
 		RoomCollider[] placedRoomColliders = level.GetLevel().GetComponentsInChildren<RoomCollider>();
+
 
 		// Check if room overlaps when moved.
 		foreach (RoomCollider placedRoomCollider in placedRoomColliders)
@@ -425,7 +366,9 @@ public class GrabTool : NetworkBehaviour
 				}
 			}
 		}
+        */
 
+        /*
 		foreach (AnchorPoint guideDoor in guideObject.GetComponentsInChildren<AnchorPoint>())
 		{
 			guideDoor.Connected = false;
@@ -445,6 +388,7 @@ public class GrabTool : NetworkBehaviour
 				}
 			}
 		}
+        */
 
 		// Check if it is possible to create a new valid tree when the room is moved. This should be done last.
 		currentNode = sourceObject.GetComponent<RoomTreeNode>();
@@ -491,20 +435,4 @@ public class GrabTool : NetworkBehaviour
 			guideDoor.NoSpawnDisconnectDoor();
 		}
 	}
-
-	[ClientRpc]
-	public void RpcGlowRoom(GameObject room)
-	{
-		if (isLocalPlayer)
-		{
-			Glowable glow = room.GetComponent<Glowable>();
-			if (glow != null)
-			{
-				glow.GlowColor = Color.red;
-				room.GetComponent<RoomInteractable>().OnRaycastEnter();
-			}
-		}
-	}
 }
-
-

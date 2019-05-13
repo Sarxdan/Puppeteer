@@ -32,11 +32,11 @@ public class Spectator : MonoBehaviour
 					ChoseValidCamera();
 				}
 			}
-			if (Input.GetButton("Fire"))
+			if (Input.GetButtonDown("Fire"))
 			{
 				Next();
 			}
-			else if (Input.GetKey(KeyCode.Q))
+			else if (Input.GetKeyDown(KeyCode.Q))
 			{
 				Prev();
 			}

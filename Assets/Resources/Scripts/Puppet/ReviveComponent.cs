@@ -14,8 +14,8 @@ using Mirror;
  * CODE REVIEWED BY:
  * Benjamin Vesterlund
  * 
- * 
  */
+
 public class ReviveComponent : Interactable
 {
     // delay until revive is complete
@@ -84,13 +84,21 @@ public class ReviveComponent : Interactable
 
             yield return new WaitForSeconds(1);
         }
-        // TODO: perform death action across network
+		// TODO: perform death action across network
+		RpcStartSpectating(gameObject);
         Destroy(gameObject);
-		var spectateScreen = GameObject.FindObjectOfType<Spectator>().gameObject;
-		spectateScreen.SetActive(true);
-		spectateScreen.GetComponent<Spectator>().StartSpectating();
-
     }
+
+	[ClientRpc]
+	void RpcStartSpectating(GameObject thing)
+	{
+		if (thing.GetComponent<InteractionController>().isLocalPlayer)
+		{
+			var canvas = GameObject.FindObjectOfType<Spectator>().gameObject;
+			canvas.GetComponent<Spectator>().SpectatorScreen.SetActive(true);
+			canvas.GetComponent<Spectator>().StartSpectating();
+		}
+	}
 
     private IEnumerator ReviveRoutine(GameObject reviver)
     {
