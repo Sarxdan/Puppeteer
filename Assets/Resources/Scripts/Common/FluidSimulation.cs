@@ -44,8 +44,16 @@ public class FluidSimulation : MonoBehaviour
 	private float rotateAcceleration = 0;
 	private float rotateSpeed = 0;
 
+	public float MovementSplosh = 0.5f;
+
+	private Vector3 lastPosition;
+	private float lastYRotation;
+
 	void Start()
 	{
+		lastPosition = transform.position;
+		lastYRotation = transform.eulerAngles.y;
+
 		// Save the original scale values
 		topScale = FluidTop.transform.localScale;
 		bottomScale = FluidBottom.transform.localScale;
@@ -66,8 +74,10 @@ public class FluidSimulation : MonoBehaviour
 
 	private void UpdateRotationAndTilt()
 	{
-		// Project the up vector of the fluid onto x/z plane by removing y-coord:
-		Vector2 leanVector = new Vector2(gameObject.transform.up.x, gameObject.transform.up.z);
+		Vector3 deltaPos = transform.position - lastPosition;
+		lastPosition = transform.position;
+		// Project the up vector + the movement vector of the fluid onto x/z plane by removing y-coord:
+		Vector2 leanVector = new Vector2(gameObject.transform.up.x, gameObject.transform.up.z) + new Vector2(deltaPos.x, deltaPos.z) * MovementSplosh;
 		// Calculate angle of vector relative to positive z.
 		float angle = Vector2.SignedAngle(leanVector, new Vector2(0, 1));
 		float targetAngle = angle - transform.eulerAngles.y;
