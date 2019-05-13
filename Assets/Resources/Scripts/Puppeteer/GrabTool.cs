@@ -57,8 +57,8 @@ public class GrabTool : NetworkBehaviour
 	public RoomTreeNode currentNode;
 
     public readonly int MaxNumCollisions = 16;
+    public readonly float UpdateInterval = 0.2f;
     private Collider[] overlapColliders;
-    private float updateInterval = 0.3f;
 
 	void Start()
     {
@@ -67,7 +67,7 @@ public class GrabTool : NetworkBehaviour
         if(isServer)
         {
             overlapColliders = new Collider[MaxNumCollisions];
-            InvokeRepeating("ServerUpdate", 0.5f * updateInterval, updateInterval);
+            InvokeRepeating("ServerUpdate", 0.0f, UpdateInterval);
         }
     }
 
@@ -83,6 +83,10 @@ public class GrabTool : NetworkBehaviour
                 {
                     lastHit = interactable;
                 }
+            }
+            else
+            {
+                lastHit = null;
             }
 
             if (lastHit != null && Input.GetButtonDown("Fire") && lastHit.CanBePickedUp)
@@ -310,13 +314,23 @@ public class GrabTool : NetworkBehaviour
 
 	private bool CanConnect(in AnchorPoint src, in AnchorPoint dst)
 	{
-        // Only connect modules with correct door angles.
-        if (Mathf.RoundToInt((src.transform.forward + dst.transform.forward).magnitude) != 0)
-			return false;
+        // cannot connect to source object
+        if (dst.transform.parent.IsChildOf(sourceObject.transform))
+        {
+            return false;
+        }
 
-		// Check if source room contains player
-		if (sourceObject.GetComponent<RoomInteractable>().RoomContainsPlayer())
+        // only connect modules with correct door angles.
+        if (Mathf.RoundToInt((src.transform.forward + dst.transform.forward).magnitude) != 0)
+        {
 			return false;
+        }
+
+		// check if source room contains player
+		if (sourceObject.GetComponent<RoomInteractable>().RoomContainsPlayer())
+        {
+			return false;
+        }
         
 		// Only to check collision (not real movement)
 		guideObject.transform.rotation = selectedObject.transform.rotation;
