@@ -74,7 +74,7 @@ public class FluidSimulation : MonoBehaviour
 
 	private void UpdateRotationAndTilt()
 	{
-		Vector3 deltaPos = transform.position - lastPosition;
+		Vector3 deltaPos = lastPosition - transform.position;
 		lastPosition = transform.position;
 		// Project the up vector + the movement vector of the fluid onto x/z plane by removing y-coord:
 		Vector2 leanVector = new Vector2(gameObject.transform.up.x, gameObject.transform.up.z) + new Vector2(deltaPos.x, deltaPos.z) * MovementSplosh;
@@ -124,13 +124,14 @@ public class FluidSimulation : MonoBehaviour
 		// When the length of the lean vector is 1, the fluid is tilted 90 degrees.
 		float fluidTiltAngle = Mathf.Asin(leanVector.magnitude);
 		currentTopScale = Mathf.Tan(fluidTiltAngle) * topScale.y / (Mathf.Deg2Rad * fluidTiltAmount);
+
 		if (currentTopScale > MaxTiltScale)
 		{
 			currentTopScale = MaxTiltScale;
 		}
-		else if (currentTopScale < 0.00001f)
+		else if (currentTopScale < 0.0001f || float.IsNaN(currentTopScale))
 		{
-			currentTopScale = 0.00001f;
+			currentTopScale = 0.0001f;
 		}
 	}
 
