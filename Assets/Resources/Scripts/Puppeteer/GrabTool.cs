@@ -57,7 +57,7 @@ public class GrabTool : NetworkBehaviour
 	public RoomTreeNode currentNode;
 
     public readonly int MaxNumCollisions = 16;
-    public readonly float UpdateInterval = 0.2f;
+    public readonly float UpdateInterval = 0.18f;
     private Collider[] overlapColliders;
 
 	void Start()
@@ -146,15 +146,16 @@ public class GrabTool : NetworkBehaviour
         {
             if(this.CanConnect(bestSrcPoint, bestDstPoint))
             {
-                guideObject.transform.position = selectedObject.transform.position - (bestSrcPoint.transform.position - bestDstPoint.transform.position);
-                guideObject.transform.rotation = selectedObject.transform.rotation;
-
                 RoomTreeNode currentNode = sourceObject.GetComponent<RoomTreeNode>();
                 RoomTreeNode targetNode = bestDstPoint.GetComponentInParent<RoomTreeNode>();
                 currentNode.DisconnectFromTree();
                 currentNode.SetParent(targetNode);
                 currentNode.CutBranch();
                 level.GetStartNode().ReconnectToTree();
+            }
+            else
+            {
+                guideObject.transform.SetPositionAndRotation(sourceObject.transform.position, sourceObject.transform.rotation);
             }
 
             if(guideObject.transform.hasChanged)
@@ -252,17 +253,14 @@ public class GrabTool : NetworkBehaviour
 		}
 		else
 		{
-            if(sourceObject != null)
-            {
-			    // Kill minions in room
-			    sourceObject.GetComponent<RoomInteractable>().KillEnemiesInRoom();
+			// Kill minions in room
+			sourceObject.GetComponent<RoomInteractable>().KillEnemiesInRoom();
 
-			    // Move sourceobject to guideobject. Guideobject is already in the best availible position.
-			    sourceObject.transform.SetPositionAndRotation(guideObject.transform.position, guideObject.transform.rotation);
+			// Move sourceobject to guideobject. Guideobject is already in the best availible position.
+			sourceObject.transform.SetPositionAndRotation(guideObject.transform.position, guideObject.transform.rotation);
 			
-			    // Connect all doors in the new position.
-			    level.ConnectDoorsInRoomIfPossible(sourceObject);
-            }
+			// Connect all doors in the new position.
+			level.ConnectDoorsInRoomIfPossible(sourceObject);
 		}
 
 		Destroy(selectedObject);
@@ -295,7 +293,9 @@ public class GrabTool : NetworkBehaviour
         foreach(var item in list)
         {
             if (target.transform.parent == item.transform.parent)
+            {
                 continue;
+            }
 
             float curDist = Vector3.Distance(item.transform.position, target.transform.position);
             if (curDist > SnapDistance)
@@ -312,7 +312,7 @@ public class GrabTool : NetworkBehaviour
         return result;
     }
 
-	private bool CanConnect(in AnchorPoint src, in AnchorPoint dst)
+    private bool CanConnect(in AnchorPoint src, in AnchorPoint dst)
 	{
         // cannot connect to source object
         if (dst.transform.parent.IsChildOf(sourceObject.transform))
@@ -332,106 +332,55 @@ public class GrabTool : NetworkBehaviour
 			return false;
         }
         
-		// Only to check collision (not real movement)
-		guideObject.transform.rotation = selectedObject.transform.rotation;
-		guideObject.transform.position = selectedObject.transform.position - (src.transform.position - dst.transform.position);
-
         for(int i = 0; i < overlapColliders.Length; i++)
         {
             overlapColliders[i] = null;
         }
 
-        int numCollisions = Physics.OverlapSphereNonAlloc(guideObject.transform.position, 8.0f, overlapColliders, 1 << 8);
+        int numCollisions = Physics.OverlapBoxNonAlloc(selectedObject.transform.position, selectedObject.transform.localScale * 0.5f, overlapColliders, selectedObject.transform.rotation, 1 << 8);
         if(numCollisions >= MaxNumCollisions)
         {
             Debug.LogWarning("Too many collisions! Some collisions may be ignored.");
         }
 
-        int actual = 0;
-
         for(int i = 0; i < overlapColliders.Length; i++)
         {
-            Collider collider = overlapColliders[i];
-            if(collider == null || collider.transform.IsChildOf(sourceObject.transform))
+            var collider = overlapColliders[i];
+            if (collider == null || collider.transform.IsChildOf(selectedObject.transform))
             {
                 continue;
             }
-
-            actual++;
+            return false;
         }
 
-        /*
-		RoomCollider[] placedRoomColliders = level.GetLevel().GetComponentsInChildren<RoomCollider>();
+        guideObject.transform.position = selectedObject.transform.position - (bestSrcPoint.transform.position - bestDstPoint.transform.position);
+        guideObject.transform.rotation = selectedObject.transform.rotation;
 
+        currentNode = sourceObject.GetComponent<RoomTreeNode>();
+        RoomTreeNode parentNode = currentNode.GetParent();
 
-		// Check if room overlaps when moved.
-		foreach (RoomCollider placedRoomCollider in placedRoomColliders)
-		{
-			if (placedRoomCollider.transform.IsChildOf(sourceObject.transform))
-			{
-				continue;
-			}
-			foreach (RoomCollider guideCollider in guideObject.GetComponentsInChildren<RoomCollider>())
-			{
-				if (guideCollider.GetPosition() == placedRoomCollider.GetPosition())
-				{
-					guideObject.transform.SetPositionAndRotation(sourceObject.transform.position, sourceObject.transform.rotation);
-					return false;
-				}
-			}
-		}
-        */
+        currentNode.DisconnectFromTree();
 
-        /*
-		foreach (AnchorPoint guideDoor in guideObject.GetComponentsInChildren<AnchorPoint>())
-		{
-			guideDoor.Connected = false;
-			guideDoor.ConnectedTo = null;
+        if (!bestDstPoint.GetComponentInParent<RoomTreeNode>().InTree)
+        {
+            DisconnectGuideDoors();
+            return false;
+        }
 
-			foreach (AnchorPoint placedDoor in GameObject.Find("Level").GetComponentsInChildren<AnchorPoint>())
-			{
-				if (guideDoor == placedDoor)
-				{
-					continue;
-				}
-				if (guideDoor.GetPosition() == placedDoor.GetPosition())
-				{
-					guideDoor.NoSpawnConnectDoor(placedDoor);
-					guideDoor.GetComponentInParent<RoomTreeNode>().InTree = true;
-					break;
-				}
-			}
-		}
-        */
+        currentNode.SetParent(bestDstPoint.GetComponentInParent<RoomTreeNode>());
 
-		// Check if it is possible to create a new valid tree when the room is moved. This should be done last.
-		currentNode = sourceObject.GetComponent<RoomTreeNode>();
-		RoomTreeNode parentNode = currentNode.GetParent();
+        if (!sourceObject.GetComponent<RoomTreeNode>().CutBranch())
+        {
+            currentNode.SetParent(parentNode);
+            level.GetStartNode().ReconnectToTree();
+            DisconnectGuideDoors();
+            return false;
+        }
 
-		currentNode.DisconnectFromTree();
-		
-		if (!dst.GetComponentInParent<RoomTreeNode>().InTree)
-		{
-			DisconnectGuideDoors();
-			return false;
-		}
+        level.GetStartNode().ReconnectToTree();
+        DisconnectGuideDoors();
 
-		currentNode.SetParent(dst.GetComponentInParent<RoomTreeNode>());
-
-		if (sourceObject.GetComponent<RoomTreeNode>().CutBranch())
-		{
-			level.GetStartNode().ReconnectToTree();
-			DisconnectGuideDoors();
-		}
-		else
-		{
-			currentNode.SetParent(parentNode);
-			level.GetStartNode().ReconnectToTree();
-			DisconnectGuideDoors();
-			return false;
-		}
-
-		// All criterias are met
+        // made it!
 		return true;
 	}
 
