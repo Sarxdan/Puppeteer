@@ -778,8 +778,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   serverOnly: 0
   localPlayerAuthority: 0
-  m_AssetId: 
-  m_SceneId: 523273526
+  m_AssetId: ce7345ac27c4c674f85af1382637442e
+  m_SceneId: 0
 --- !u!114 &2220566078404847079
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -815,7 +815,7 @@ MonoBehaviour:
   MaxRecursionDepth: 20
   HasPath: 1
   TransformRaycastOffset: {x: 0, y: 0.2, z: 0}
-  NodeArrivalMargin: 0.5
+  NodeArrivalMargin: 0.4
   PathfindDebug: 1
   RaycastAvoidDistance: 0.5
   RaycastAvoidAngle: 60
@@ -824,7 +824,7 @@ MonoBehaviour:
   MinionAvoidWeight: 0.2
   ObstacleAvoidDebug: 1
   MinVelocityThreshold: 0.2
-  StuckTimeThreshold: 0.2
+  StuckTimeThreshold: 0.5
   UnstuckRadius: 1
   DoorInteractRange: 0.5
   ForceSmoothingValue: 0.15
@@ -850,6 +850,7 @@ MonoBehaviour:
   AnimController: {fileID: 0}
   PathFinder: {fileID: 0}
   Puppets: []
+  Corunning: 0
   AttackCooldown: 1
   AttackDamage: 1
   AttackRange: 1
@@ -858,8 +859,8 @@ MonoBehaviour:
   ChargeAccelerationSpeed: 0.05
   CurrentChargeSpeed: 0
   StartChargeSpeed: 0
-  MaxChargeSpeed: 0
   ChargeCharge: 0
+  HitColliders: []
   AggroDropTime: 5
   InstantAggroRange: 3
   ConeAggroRange: 8
