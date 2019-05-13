@@ -35,7 +35,7 @@ public class Spectator : NetworkBehaviour
 					ChoseValidCamera();
 				}
 			}
-			if (Input.GetButtonDown("Fire"))
+			if (Input.GetKeyDown(KeyCode.E))
 			{
 				Next();
 			}
