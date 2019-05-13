@@ -252,17 +252,14 @@ public class GrabTool : NetworkBehaviour
 		}
 		else
 		{
-            if(sourceObject != null)
-            {
-			    // Kill minions in room
-			    sourceObject.GetComponent<RoomInteractable>().KillEnemiesInRoom();
+			// Kill minions in room
+			sourceObject.GetComponent<RoomInteractable>().KillEnemiesInRoom();
 
-			    // Move sourceobject to guideobject. Guideobject is already in the best availible position.
-			    sourceObject.transform.SetPositionAndRotation(guideObject.transform.position, guideObject.transform.rotation);
+			// Move sourceobject to guideobject. Guideobject is already in the best availible position.
+			sourceObject.transform.SetPositionAndRotation(guideObject.transform.position, guideObject.transform.rotation);
 			
-			    // Connect all doors in the new position.
-			    level.ConnectDoorsInRoomIfPossible(sourceObject);
-            }
+			// Connect all doors in the new position.
+			level.ConnectDoorsInRoomIfPossible(sourceObject);
 		}
 
 		Destroy(selectedObject);
