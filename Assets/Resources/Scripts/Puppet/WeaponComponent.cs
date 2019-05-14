@@ -151,10 +151,6 @@ public class WeaponComponent : Interactable
         cooldown += ReloadTime;
     }
 
-    void Update()
-    {
-        transform.localRotation = HoldRotation;
-    }
 
     void FixedUpdate()
     {
