@@ -85,7 +85,10 @@ public class WeaponComponent : Interactable
         {
 			return;
         }
-		if (LiquidLeft < LiquidPerRound)
+
+        sounds.Shoot(LiquidLeft / LiquidPerRound);    //Send amount of "bullets" left in mag to sound man.
+
+        if (LiquidLeft < LiquidPerRound)
 		{
 			return;
 		}
@@ -94,8 +97,6 @@ public class WeaponComponent : Interactable
         pc.AnimController.SetBool("Fire", true);
         pc.FPVAnimController.SetTrigger("Fire");
         
-        sounds.Shoot(LiquidLeft/LiquidPerRound);    //Send amount of "bullets" left in mag to sound man.
-
         for(int i = 0; i < NumShots; i++)
         {
 
@@ -150,10 +151,6 @@ public class WeaponComponent : Interactable
         cooldown += ReloadTime;
     }
 
-    void Update()
-    {
-        transform.localRotation = HoldRotation;
-    }
 
     void FixedUpdate()
     {

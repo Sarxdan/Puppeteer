@@ -149,12 +149,9 @@ public class GrabTool : NetworkBehaviour
             }
             else
             {
+                // update over network
+                RpcUpdateGuide(new TransformStruct(sourceObject.transform.position, sourceObject.transform.rotation.normalized));
                 guideObject.transform.SetPositionAndRotation(sourceObject.transform.position, sourceObject.transform.rotation);
-            }
-
-            if(guideObject.transform.hasChanged)
-            {
-                RpcUpdateGuide(new TransformStruct(guideObject.transform.position, guideObject.transform.rotation));
             }
         }
     }
@@ -241,22 +238,25 @@ public class GrabTool : NetworkBehaviour
 	[Command]
 	public void CmdDrop()
 	{
-		// Reset tree if position doesn't change.
-		if (sourceObject.transform.position == guideObject.transform.position && sourceObject.transform.rotation == guideObject.transform.rotation)
-		{
-			sourceObject.GetComponent<RoomTreeNode>().SetParent(firstParentNode);
-		}
-		else
-		{
-			// Kill minions in room
-			sourceObject.GetComponent<RoomInteractable>().KillEnemiesInRoom();
+        if(sourceObject != null)
+        {
+		    // Reset tree if position doesn't change.
+		    if (sourceObject.transform.position == guideObject.transform.position && sourceObject.transform.rotation == guideObject.transform.rotation)
+		    {
+			    sourceObject.GetComponent<RoomTreeNode>().SetParent(firstParentNode);
+		    }
+		    else
+		    {
+			    // Kill minions in room
+			    sourceObject.GetComponent<RoomInteractable>().KillEnemiesInRoom();
 
-			// Move sourceobject to guideobject. Guideobject is already in the best availible position.
-			sourceObject.transform.SetPositionAndRotation(guideObject.transform.position, guideObject.transform.rotation);
+			    // Move sourceobject to guideobject. Guideobject is already in the best availible position.
+			    sourceObject.transform.SetPositionAndRotation(guideObject.transform.position, guideObject.transform.rotation);
 			
-			// Connect all doors in the new position.
-			level.ConnectDoorsInRoomIfPossible(sourceObject);
-		}
+			    // Connect all doors in the new position.
+			    level.ConnectDoorsInRoomIfPossible(sourceObject);
+		    }
+        }
 
 		Destroy(selectedObject);
 		Destroy(guideObject);
@@ -322,30 +322,36 @@ public class GrabTool : NetworkBehaviour
 			return false;
         }
         
-        for(int i = 0; i < overlapColliders.Length; i++)
+        var bcs = selectedObject.GetComponents<BoxCollider>();
+        foreach(var bc in bcs)
         {
-            overlapColliders[i] = null;
-        }
-
-        int numCollisions = Physics.OverlapBoxNonAlloc(selectedObject.transform.position, selectedObject.transform.localScale * 0.5f, overlapColliders, selectedObject.transform.rotation, 1 << 8);
-        if(numCollisions >= MaxNumCollisions)
-        {
-            Debug.LogWarning("Too many collisions! Some collisions may be ignored.");
-        }
-
-        for(int i = 0; i < overlapColliders.Length; i++)
-        {
-            var collider = overlapColliders[i];
-            if (collider == null || collider.transform.IsChildOf(selectedObject.transform))
+            for(int i = 0; i < overlapColliders.Length; i++)
             {
-                continue;
+                overlapColliders[i] = null;
             }
-            return false;
+
+            int numCollisions = Physics.OverlapBoxNonAlloc(bc.transform.position, bc.size * 0.5f, overlapColliders, bc.transform.rotation, 1 << 8);
+            if(numCollisions >= MaxNumCollisions)
+            {
+                Debug.LogWarning("Too many collisions! Some collisions may be ignored.");
+            }
+
+            for(int i = 0; i < overlapColliders.Length; i++)
+            {
+                var collider = overlapColliders[i];
+                if (collider == null || collider.transform.IsChildOf(selectedObject.transform))
+                {
+                    continue;
+                }
+                return false;
+            }
         }
+
+        // send over network
+        RpcUpdateGuide(new TransformStruct(selectedObject.transform.position - (bestSrcPoint.transform.position - bestDstPoint.transform.position), selectedObject.transform.rotation.normalized));
 
         guideObject.transform.position = selectedObject.transform.position - (bestSrcPoint.transform.position - bestDstPoint.transform.position);
         guideObject.transform.rotation = selectedObject.transform.rotation;
-
         currentNode = sourceObject.GetComponent<RoomTreeNode>();
         RoomTreeNode parentNode = currentNode.GetParent();
 
@@ -371,10 +377,10 @@ public class GrabTool : NetworkBehaviour
         DisconnectGuideDoors();
 
         // made it!
-		return true;
+        return true;
 	}
 
-	private Vector3 MouseToWorldPosition()
+    private Vector3 MouseToWorldPosition()
 	{
 		Vector3 mousePos = Input.mousePosition;
 		mousePos.z = Camera.main.WorldToScreenPoint(selectedObject.transform.position).z;
