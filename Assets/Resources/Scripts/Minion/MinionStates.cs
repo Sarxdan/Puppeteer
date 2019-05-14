@@ -306,26 +306,25 @@ namespace MinionStates
             float dist = Vector3.Distance(machine.transform.position, machine.TargetEntity.transform.position);
 
             machine.ChargeCharge++;
+
             //If no target, go idle
             if (machine.TargetEntity == null) machine.SetState(new IdleState(machine));
 
             //Debug ray for attack range
             if (machine.debug) Debug.DrawRay(machine.transform.position, Vector3.forward * machine.AttackRange, Color.green, 0.2f);
 
+            //Look if the target is within the charge range
             if (dist <= 30f && dist >= 10f && machine.ChargeCharge > 100)
             {
                 machine.SetState(new ChargeAttackState(machine));
             }
 
-            //if (machine.WithinCone(machine.transform, machine.TargetEntity.transform, 30f, 30f, 0f) && machine.ChargeCharge > 100)
-            //{
-
-            //}
-
+            //Tank has a wide cone for regular attack but it only hits one player
             if (machine.WithinCone(machine.transform, machine.TargetEntity.transform, 90f, 2f, 0f))
             {
                 if (machine.CanAttack)
                 {
+                    //TODO: fix for the tank animations and model
                     machine.StartCoroutine("attackTimer");
                     //Insert animations & attack types
                     //Placeholders from regular minion code:
@@ -364,10 +363,13 @@ namespace MinionStates
             machine.CurrentStateName = "ChargeAttack";
             machine.AnimController.SetBool("IsCharging", true);
             machine.ChargeStopped = false;
+            machine.PathFinder.RotationSpeed = 2f;
+            machine.PathFinder.NodeArrivalMargin = 0.5f;
         }
 
         public override void Run()
         {
+            //If the charge stops go through all relevant variables and set them to default
             if (machine.ChargeStopped)
             {
                 machine.AnimController.SetFloat("ChargeSpeed", 0);
@@ -392,8 +394,6 @@ namespace MinionStates
 
         public override void Exit()
         {
-            //machine.AnimController.SetBool("Running", false);
-            //Sets pathfinder components to the default for regular minions
             //TODO: fix so it works for tank
             machine.PathFinder.RotationSpeed = 20;
             machine.PathFinder.NodeArrivalMargin = 0.5f;

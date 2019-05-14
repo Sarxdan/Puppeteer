@@ -274,12 +274,6 @@ public class StateMachine : NetworkBehaviour
     {
         while (true)
         {
-            if (!PathFinder.HasPath)
-            {
-                PathFinder.RotationSpeed = 2f;
-                PathFinder.NodeArrivalMargin = 0.5f;
-            }
-
             Corunning = true;
 
             if (AnimController.GetBool("IsCharging") == true && AnimController.GetFloat("ChargeSpeed") < 1)
