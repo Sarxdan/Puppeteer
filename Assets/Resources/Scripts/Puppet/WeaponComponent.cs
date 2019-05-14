@@ -94,7 +94,7 @@ public class WeaponComponent : Interactable
         pc.AnimController.SetBool("Fire", true);
         pc.FPVAnimController.SetTrigger("Fire");
         
-        sounds.Shoot();
+        sounds.Shoot(LiquidLeft/LiquidPerRound);    //Send amount of "bullets" left in mag to sound man.
 
         for(int i = 0; i < NumShots; i++)
         {
