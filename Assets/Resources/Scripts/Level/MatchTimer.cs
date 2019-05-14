@@ -89,7 +89,7 @@ public class MatchTimer : NetworkBehaviour
             //Check if a team have won
 
             //If a puppet have escaped and all other are dead, the puppets win
-            if (NumberOfPuppetsThatEscaped >= numberOfPuppetsAlive && NumberOfPuppetsThatEscaped != 0 && !gameEnded)
+            if (numberOfPuppetsAlive <= 0 && NumberOfPuppetsThatEscaped != 0 && !gameEnded)
             {
                 //End the game. Puppets wins
                 gameEnded = true;
@@ -180,8 +180,8 @@ public class MatchTimer : NetworkBehaviour
 		endOfMatchScript.SetTimeLeftInfoText(minutes.ToString("00") + ":" + seconds.ToString("00"));
 		endOfMatchScript.SetPuppetsAliveInfoText(puppetsRemaining.ToString());
 
-		//Enable the "End of game camera"
-		endOfMatchScript.gameObject.SetActive(true);
+        //Enable the "End of game Canvas"
+        endOfMatchScript.gameObject.SetActive(true);
 	}
 
     //Puppets win. Show endscreen for all clients. 
@@ -199,7 +199,7 @@ public class MatchTimer : NetworkBehaviour
 		endOfMatchScript.SetTimeLeftInfoText(minutes.ToString("00") + ":" + seconds.ToString("00"));
 		endOfMatchScript.SetPuppetsAliveInfoText(puppetsRemaining.ToString());
 
-		//Enable the "End of game camera"
+		//Enable the "End of game Canvas"
 		endOfMatchScript.gameObject.SetActive(true);
 	}
 }

@@ -20,12 +20,11 @@ using Mirror;
 
 public class GrabTool : NetworkBehaviour
 {
-    public PuppeteerRoomSounds sounds;
-
+    private PuppeteerRoomSounds sounds;
 	private LevelBuilder level;
 
     // The maximum distance for snapping modules
-    public int SnapDistance = 12;
+    public int SnapDistance = 25;
     // The lift height when grabbing an object
     public float LiftHeight = 3.0f;
     // The lift speed when grabbing an object
@@ -43,6 +42,7 @@ public class GrabTool : NetworkBehaviour
     // Mouse position of current Puppeteer. Used when server is not puppeteer.
     private Vector3 localPlayerMousePos;
 
+    // tracks the last hit object
     private RoomInteractable lastHit;
 
     // Original parent node used for updating tree when dropping without snapping to something.
@@ -50,7 +50,7 @@ public class GrabTool : NetworkBehaviour
     // Current selected node in tree. Used by RoomTreeNode to allow the selected object to be used in new tree.
     public RoomTreeNode currentNode;
 
-    public readonly int MaxNumCollisions = 16;
+    public readonly int MaxNumCollisions = 8;
     public readonly float UpdateInterval = 0.1f;
     private Collider[] overlapColliders;
 
@@ -109,11 +109,8 @@ public class GrabTool : NetworkBehaviour
                 CmdRotate(selectedObject.transform.rotation);
             }
 
-            if(!isServer)
-            {
-                Vector3 newPosition = MouseToWorldPosition() + grabOffset;
-                selectedObject.transform.position = Vector3.Lerp(selectedObject.transform.position, new Vector3(newPosition.x, LiftHeight, newPosition.z), LiftSpeed * Time.deltaTime);
-            }
+            Vector3 newPosition = MouseToWorldPosition() + grabOffset;
+            selectedObject.transform.position = Vector3.Lerp(selectedObject.transform.position, new Vector3(newPosition.x, LiftHeight, newPosition.z), LiftSpeed * Time.deltaTime);
         }
     }
 
@@ -173,8 +170,7 @@ public class GrabTool : NetworkBehaviour
 		sourceObject = pickupObject;
 		selectedObject = Instantiate(sourceObject);
 		guideObject = Instantiate(sourceObject);
-		guideObject.name = "guideObject";
-        guideObject.layer = LayerMask.NameToLayer("UI");
+        guideObject.name = "guideObject";
 
         grabOffset = sourceObject.transform.position - MouseToWorldPosition();
 
@@ -206,30 +202,12 @@ public class GrabTool : NetworkBehaviour
 			selectedObject = Instantiate(sourceObject);
 			guideObject = Instantiate(sourceObject);
 			guideObject.name = "guideObject";
-			// Disable colliders on server when server is not puppeteer.
-			foreach (BoxCollider collider in guideObject.GetComponentsInChildren<BoxCollider>())
-			{
-				collider.enabled = false;
-			}
 		}
 		
 		grabOffset = sourceObject.transform.position - localPlayerMousePos;
 
 		// Save the parent node of the picked up room to be able to reset if the position doesn't change.
 		firstParentNode = sourceObject.GetComponent<RoomTreeNode>().GetParent();
-
-		if (!isLocalPlayer)
-		{
-			foreach (MeshRenderer renderer in selectedObject.GetComponentsInChildren<MeshRenderer>())
-			{
-				renderer.enabled = false;
-			}
-
-			foreach (MeshRenderer renderer in guideObject.GetComponentsInChildren<MeshRenderer>())
-			{
-				renderer.enabled = false;
-			}
-		}
 	}
 
 	// Method to drop rooms to snapped position.
@@ -335,6 +313,7 @@ public class GrabTool : NetworkBehaviour
             return false;
         }
 
+        // this is where the fun begins
         var bcs = selectedObject.GetComponents<BoxCollider>();
         foreach (var bc in bcs)
         {
