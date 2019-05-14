@@ -78,6 +78,7 @@ public class MatchTimer : NetworkBehaviour
 
 			yield return new WaitForSeconds(1);
 
+            MatchLength--;
 			Seconds--;
 			if (Seconds < 0)
 			{

@@ -20,22 +20,16 @@ using Mirror;
 
 public class GrabTool : NetworkBehaviour
 {
-    private LevelBuilder level;
+    public PuppeteerRoomSounds sounds;
+
+	private LevelBuilder level;
 
     // The maximum distance for snapping modules
-    public int SnapDistance = 10;
-    // Maximum raycast ray length
-    public float RaycastDistance = 500;
+    public int SnapDistance = 12;
     // The lift height when grabbing an object
     public float LiftHeight = 3.0f;
     // The lift speed when grabbing an object
     public float LiftSpeed = 50.0f;
-
-    // enables camera movement using mouse scroll
-    public bool EnableMovement = true;
-
-    [Range(0, 1)]
-    public float GlowDropoff = 0.14f;
 
     private GameObject sourceObject;
     private GameObject selectedObject;
@@ -44,7 +38,7 @@ public class GrabTool : NetworkBehaviour
     private AnchorPoint bestSrcPoint;
     private AnchorPoint bestDstPoint;
 
-    private Vector3 grabOffset = new Vector3();
+    private Vector3 grabOffset;
 
     // Mouse position of current Puppeteer. Used when server is not puppeteer.
     private Vector3 localPlayerMousePos;
@@ -62,7 +56,8 @@ public class GrabTool : NetworkBehaviour
 
     void Start()
     {
-        level = GetComponent<LevelBuilder>();
+        sounds = GetComponent<PuppeteerRoomSounds>();
+		level = GetComponent<LevelBuilder>();
 
         if (isServer)
         {
@@ -79,7 +74,7 @@ public class GrabTool : NetworkBehaviour
         if (selectedObject == null)
         {
             RaycastHit hit;
-            if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit, RaycastDistance, 1 << 8))
+            if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit, 1 << 8))
             {
                 RoomInteractable interactable = hit.transform.GetComponent<RoomInteractable>();
                 if (interactable != lastHit)
@@ -163,13 +158,16 @@ public class GrabTool : NetworkBehaviour
         }
     }
 
-    // Method used for picking up an object.
-    private void Pickup(GameObject pickupObject)
-    {
-        sourceObject = pickupObject;
-        selectedObject = Instantiate(sourceObject);
-        guideObject = Instantiate(sourceObject);
-        guideObject.name = "guideObject";
+	// Method used for picking up an object.
+	private void Pickup(GameObject pickupObject)
+	{
+        sounds.Pickup();
+
+		sourceObject = pickupObject;
+		selectedObject = Instantiate(sourceObject);
+		guideObject = Instantiate(sourceObject);
+		guideObject.name = "guideObject";
+        guideObject.layer = LayerMask.NameToLayer("UI");
 
         grabOffset = sourceObject.transform.position - MouseToWorldPosition();
 
@@ -193,58 +191,60 @@ public class GrabTool : NetworkBehaviour
 
     // Method for picking up objects on server and making them invisible if server is not Puppeteer.
     [Command]
-    public void CmdPickup(GameObject pickupObject)
-    {
-        if (!isLocalPlayer)
-        {
-            sourceObject = pickupObject;
-            selectedObject = Instantiate(sourceObject);
-            guideObject = Instantiate(sourceObject);
-            guideObject.name = "guideObject";
-            // Disable colliders on server when server is not puppeteer.
-            foreach (BoxCollider collider in guideObject.GetComponentsInChildren<BoxCollider>())
-            {
-                collider.enabled = false;
-            }
-        }
+	public void CmdPickup(GameObject pickupObject)
+	{
+		if (!isLocalPlayer)
+		{
+			sourceObject = pickupObject;
+			selectedObject = Instantiate(sourceObject);
+			guideObject = Instantiate(sourceObject);
+			guideObject.name = "guideObject";
+			// Disable colliders on server when server is not puppeteer.
+			foreach (BoxCollider collider in guideObject.GetComponentsInChildren<BoxCollider>())
+			{
+				collider.enabled = false;
+			}
+		}
+		
+		grabOffset = sourceObject.transform.position - localPlayerMousePos;
 
-        grabOffset = sourceObject.transform.position - localPlayerMousePos;
+		// Save the parent node of the picked up room to be able to reset if the position doesn't change.
+		firstParentNode = sourceObject.GetComponent<RoomTreeNode>().GetParent();
 
-        // Save the parent node of the picked up room to be able to reset if the position doesn't change.
-        firstParentNode = sourceObject.GetComponent<RoomTreeNode>().GetParent();
+		if (!isLocalPlayer)
+		{
+			foreach (MeshRenderer renderer in selectedObject.GetComponentsInChildren<MeshRenderer>())
+			{
+				renderer.enabled = false;
+			}
 
-        if (!isLocalPlayer)
-        {
-            foreach (MeshRenderer renderer in selectedObject.GetComponentsInChildren<MeshRenderer>())
-            {
-                renderer.enabled = false;
-            }
+			foreach (MeshRenderer renderer in guideObject.GetComponentsInChildren<MeshRenderer>())
+			{
+				renderer.enabled = false;
+			}
+		}
+	}
 
-            foreach (MeshRenderer renderer in guideObject.GetComponentsInChildren<MeshRenderer>())
-            {
-                renderer.enabled = false;
-            }
-        }
-    }
+	// Method to drop rooms to snapped position.
+	private void Drop()
+	{
+        // sounds.Drop();
 
-    // Method to drop rooms to snapped position.
-    private void Drop()
-    {
-        CmdDrop();
-        if (!isServer)
-        {
-            Destroy(selectedObject);
-            Destroy(guideObject);
-            selectedObject = null;
-            guideObject = null;
-        }
-    }
+		CmdDrop();
+		if (!isServer)
+		{
+			Destroy(selectedObject);
+			Destroy(guideObject);
+			selectedObject = null;
+			guideObject = null;
+		}
+	}
 
-    // Method to update position of source object on server when drop happens.
-    [Command]
-    public void CmdDrop()
-    {
-        if (sourceObject != null)
+	// Method to update position of source object on server when drop happens.
+	[Command]
+	public void CmdDrop()
+	{
+        if(sourceObject != null)
         {
             // Reset tree if position doesn't change.
             if (sourceObject.transform.position == guideObject.transform.position && sourceObject.transform.rotation == guideObject.transform.rotation)
