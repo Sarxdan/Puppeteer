@@ -81,7 +81,7 @@ public class WeaponComponent : Interactable
         if(RequireRelease && isHeld) return;
         isHeld = true;
 
-        charge += Time.deltaTime;
+        charge = Mathf.Min(charge + Time.deltaTime, ChargeTime);
 
         if (cooldown != 0 || charge < ChargeTime)
         {
