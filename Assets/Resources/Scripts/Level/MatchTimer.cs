@@ -4,9 +4,22 @@ using UnityEngine.UI;
 using UnityEngine;
 using Mirror;
 
+/*
+* AUTHOR:
+* Filip Renman
+*
+* DESCRIPTION:
+* Ends the game if the timer runs out or if the puppets/puppeteer wins.
+*
+* CODE REVIEWED BY:
+* Anton Jonnson 14/05-2019
+* CONTRIBUTORS:
+* 
+*/
+
 public class MatchTimer : NetworkBehaviour
 {
-	public int TimeRemaining;
+	public int MatchLength;
 	public Text TimeRemainingTextBox;
 	public int PostGameTime;
 	public GameObject Canvas;
@@ -15,62 +28,37 @@ public class MatchTimer : NetworkBehaviour
 	private int numberOfPuppetsAlive;
 	[SerializeField]
 	private int NumberOfPuppetsThatEscaped;
-	private EndOfMatchCanvas script;
+	private EndOfMatchCanvas endOfMatchScript;
 	private bool gameEnded;
 	private NetworkManager manager;
 
     private int Minutes = 0;
     private int Seconds = 0;
+
     // Start is called before the first frame update
     void Start()
 	{
+        if (!isServer)
+            return;
+
 		numberOfPuppetsAlive = GameObject.Find("NetworkManager").GetComponent<CustomNetworkManager>().lobbySlots.Count - 1;
 		NumberOfPuppetsThatEscaped = 0;
-		script = Canvas.GetComponent<EndOfMatchCanvas>();
+		endOfMatchScript = Canvas.GetComponent<EndOfMatchCanvas>();
 		gameEnded = false;
 		manager = GameObject.Find("NetworkManager").GetComponent<NetworkManager>();
 		StartCoroutine("Timer");
 	}
 
-	void FixedUpdate()
-	{
-		//if (!isServer)
-		//	return;
-
-		//if (NumberOfPuppetsThatEscaped >= numberOfPuppetsAlive && !gameEnded || TimeRemaining <= 0 && NumberOfPuppetsThatEscaped >= 1)
-		//{
-		//	//End the game. Puppets wins
-		//	gameEnded = true;
-		//	RpcPuppetsWins(numberOfPuppetsAlive, TimeRemaining);
-		//	TimeRemaining = 0;
-		//	StopCoroutine("Timer");
-		//	StartCoroutine("EndTimer");
-		//}
-		//else if (TimeRemaining <= 0 && !gameEnded || numberOfPuppetsAlive <= 0 && !gameEnded)
-		//{
-		//	//End the game. Puppeteer wins
-		//	gameEnded = true;
-		//	RpcPuppeteerWins(numberOfPuppetsAlive, TimeRemaining);
-		//	TimeRemaining = 0;
-		//	StopCoroutine("Timer");
-		//	StartCoroutine("EndTimer");
-		//}
-
-		if (gameEnded && PostGameTime < 0 && isServer)
-		{
-			StopCoroutine("EndTimer");
-			manager.StopHost();
-		}
-	}
-
 	public IEnumerator Timer()
 	{
-		for (int i = TimeRemaining; i > 0; i -= 60)
+        //Convert match time to minutes and seconds
+		for (int i = MatchLength; i > 0; i -= 60)
 			if (i > 60)
 				Minutes++;
 			else
 				Seconds = i;
 
+        //Loop while time is remaining
 		while (Minutes > 0 || Seconds > 0)
 		{
 			string minutesString, secondsString;
@@ -84,20 +72,72 @@ public class MatchTimer : NetworkBehaviour
 				secondsString = Seconds.ToString("00");
 
 			string TimePrint = minutesString + ":" + secondsString;
+
+            //Update UI clock
 			RpcUpdateTime(TimePrint);
 
 			yield return new WaitForSeconds(1);
 
-			TimeRemaining--;
+            MatchLength--;
 			Seconds--;
 			if (Seconds < 0)
 			{
 				Minutes--;
 				Seconds = 59;
 			}
-		}
-	}
 
+            //Check if a team have won
+
+            //If a puppet have escaped and all other are dead, the puppets win
+            if (NumberOfPuppetsThatEscaped >= numberOfPuppetsAlive && NumberOfPuppetsThatEscaped != 0 && !gameEnded)
+            {
+                //End the game. Puppets wins
+                gameEnded = true;
+                RpcPuppetsWins(numberOfPuppetsAlive, Minutes, Seconds);
+                MatchLength = 0;
+                StartCoroutine("EndTimer");
+                StopCoroutine("Timer");
+            }
+
+            //If no puppets are alive, the puppeteer wins
+            else if (numberOfPuppetsAlive <= 0 && !gameEnded)
+            {
+                //End the game. Puppeteer wins
+                gameEnded = true;
+                RpcPuppeteerWins(numberOfPuppetsAlive, Minutes, Seconds);
+                MatchLength = 0;
+                StartCoroutine("EndTimer");
+                StopCoroutine("Timer");
+            }
+
+            numberOfPuppetsAlive = GameObject.FindGameObjectsWithTag("Player").Length;
+        }
+
+        //If the time runs out and one puppet have escaped. The puppets win
+        if (NumberOfPuppetsThatEscaped >= 1)
+        {
+            //End the game. Puppets wins
+            gameEnded = true;
+            RpcPuppetsWins(numberOfPuppetsAlive, Minutes, Seconds);
+            MatchLength = 0;
+            StartCoroutine("EndTimer");
+            StopCoroutine("Timer");
+        }
+
+        //If the time runs out. The puppeteer wins
+        else
+        {
+            //End the game. Puppeteer wins
+            gameEnded = true;
+            RpcPuppeteerWins(numberOfPuppetsAlive, Minutes, Seconds);
+            MatchLength = 0;
+            StartCoroutine("EndTimer");
+            StopCoroutine("Timer");
+        }
+
+    }
+
+    //Show the endscreen and then go back to main menu after a while
     public IEnumerator EndTimer()
 	{
 		while (PostGameTime >= 0)
@@ -125,6 +165,7 @@ public class MatchTimer : NetworkBehaviour
 		TimeRemainingTextBox.text = timePrint;
 	}
 
+    //Puppeteer win. Show endscreen for all clients
 	[ClientRpc]
 	public void RpcPuppeteerWins(int puppetsRemaining, int minutes, int seconds)
 	{
@@ -135,15 +176,16 @@ public class MatchTimer : NetworkBehaviour
 		}
 
 		//Set postgame info
-		script.SetWinnerText("The Puppeteer wins!");
-		script.SetTimeLeftInfoText(minutes.ToString("00") + ":" + seconds.ToString("00"));
-		script.SetPuppetsAliveInfoText(puppetsRemaining.ToString());
+		endOfMatchScript.SetWinnerText("The Puppeteer wins!");
+		endOfMatchScript.SetTimeLeftInfoText(minutes.ToString("00") + ":" + seconds.ToString("00"));
+		endOfMatchScript.SetPuppetsAliveInfoText(puppetsRemaining.ToString());
 
 		//Enable the "End of game camera"
-		script.gameObject.SetActive(true);
+		endOfMatchScript.gameObject.SetActive(true);
 	}
 
-	[ClientRpc]
+    //Puppets win. Show endscreen for all clients. 
+    [ClientRpc]
 	public void RpcPuppetsWins(int puppetsRemaining, int minutes, int seconds)
 	{
 		//Disable all the cameras in the scene
@@ -153,11 +195,11 @@ public class MatchTimer : NetworkBehaviour
 		}
 
 		//Set postgame info
-		script.SetWinnerText("The Puppets wins!");
-		script.SetTimeLeftInfoText(minutes.ToString("00") + ":" + seconds.ToString("00"));
-		script.SetPuppetsAliveInfoText(puppetsRemaining.ToString());
+		endOfMatchScript.SetWinnerText("The Puppets wins!");
+		endOfMatchScript.SetTimeLeftInfoText(minutes.ToString("00") + ":" + seconds.ToString("00"));
+		endOfMatchScript.SetPuppetsAliveInfoText(puppetsRemaining.ToString());
 
 		//Enable the "End of game camera"
-		script.gameObject.SetActive(true);
+		endOfMatchScript.gameObject.SetActive(true);
 	}
 }

@@ -38,6 +38,18 @@ public class FinalDoorInteractable : Interactable
 		Debug.Log("End");
 	}
 
+	public override void OnRaycastEnter(GameObject interactor)
+	{
+		var button = GameObject.Find("FinalButton(Clone)");
+		var buttonScript = button.GetComponent<FinalRoomInteract>();
+		if(buttonScript.Opened)
+			ShowTooltip(interactor);
+	}
+	public override void OnRaycastExit(GameObject interactor)
+	{
+		HideToolTip(interactor);
+	}
+
 	[ClientRpc]
 	public void RpcTurnOff(GameObject interactor)
 	{

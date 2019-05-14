@@ -39,7 +39,6 @@ public class CustomNetworkManager : NetworkLobbyManager
         GameObject.Find("DisconnectButton").GetComponent<Button>().onClick.AddListener(StopHost);
 
         PlayersContainer = GameObject.Find("Players");
-        SceneManager.activeSceneChanged += BindButtons;
     }
 
     //Update is called once per frame
@@ -47,6 +46,17 @@ public class CustomNetworkManager : NetworkLobbyManager
     {
         if (SceneManager.GetActiveScene().name == "InGame")
             return;
+
+        if (StartButton == null)
+        {
+            StartButton = GameObject.Find("StartCharacterSelectButton").GetComponent<Button>();
+            StartButton.onClick.AddListener(HideCanvas);
+            StartButton.gameObject.SetActive(false);
+
+            GameObject.Find("DisconnectButton").GetComponent<Button>().onClick.AddListener(StopHost);
+
+            PlayersContainer = GameObject.Find("Players");
+        }
 
         if (!allPlayersReady)
             StartButton.interactable = false;
@@ -151,19 +161,5 @@ public class CustomNetworkManager : NetworkLobbyManager
         }
             GameObject playerPrefab = (GameObject)Instantiate(PlayableCharacters[prefabIndex], PlayableCharacters[prefabIndex].transform.position, Quaternion.identity);
             return playerPrefab;
-    }
-
-    void BindButtons(Scene oldScene, Scene newScene)
-    {
-        if (newScene.name == "Main Menu")
-        {
-            StartButton = GameObject.Find("StartCharacterSelectButton").GetComponent<Button>();
-            StartButton.onClick.AddListener(HideCanvas);
-            StartButton.gameObject.SetActive(false);
-
-            GameObject.Find("DisconnectButton").GetComponent<Button>().onClick.AddListener(StopHost);
-
-            PlayersContainer = GameObject.Find("Players");
-        }
     }
 }

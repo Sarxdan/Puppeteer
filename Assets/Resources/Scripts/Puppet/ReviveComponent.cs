@@ -67,6 +67,18 @@ public class ReviveComponent : Interactable
         }
     }
 
+    public override void OnRaycastEnter(GameObject interactor)
+    {
+        bool medKit = interactor.GetComponent<PlayerController>().HasMedkit;
+        bool downed = GetComponent<HealthComponent>().Downed;
+        if(medKit && downed)
+            ShowTooltip(interactor);
+    }
+
+    public override void OnRaycastExit(GameObject interactor)
+    {
+        HideToolTip(interactor);
+    }
     // called when the health of this object reaches zer zo
     private void OnZeroHealth()
     {
