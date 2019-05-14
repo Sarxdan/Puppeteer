@@ -7,7 +7,7 @@ using Mirror;
 
 /*
 * AUTHOR:
-* Filip Renman, Kristoffer Lundgren
+* Filip Renman
 *
 * DESCRIPTION:
 * Main menu specific script used to setup menu for networking
@@ -51,9 +51,5 @@ public class Main_Menu : MonoBehaviour
 			manager.networkAddress = "localhost";
         manager.StartClient();
     }
-
-    void Test()
-    {
-        SceneManager.LoadScene(LobbyScene.ToString());
-    }
+    
 }
