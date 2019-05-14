@@ -60,6 +60,8 @@ public class StateMachine : NetworkBehaviour
     public float AttackCooldown;
     public uint AttackDamage;
     public float AttackRange;
+
+    public float AttackEscapeDistance;
     [HideInInspector]
     public bool CanAttack;
     [Header("Charge attack settings")]
@@ -106,6 +108,9 @@ public class StateMachine : NetworkBehaviour
         //TODO: remove when prefab gets changed from Acceleration 0
         
 
+        CanAttack = true;
+        PostThreat = Mathf.NegativeInfinity;
+
         GetComponent<HealthComponent>().AddDeathAction(Die);
         //If not server, disable self
         if(!isServer)
@@ -130,9 +135,6 @@ public class StateMachine : NetworkBehaviour
                 SetState(new IdleState(this));
             }
         }
-
-        CanAttack = true;
-        PostThreat = Mathf.NegativeInfinity;
     }
 
     public void SetState(State newState)
@@ -166,6 +168,14 @@ public class StateMachine : NetworkBehaviour
             }
             //CurrentChargeSpeed = AnimController.GetFloat("ChargeSpeed");
             if (CurrentState != null) CurrentState.Run();
+        }
+    }
+
+    public void LateUpdate()
+    {
+        if(!CanAttack && TargetEntity != null && !PathFinder.HasPath)
+        {
+            transform.LookAt(TargetEntity.transform.position);
         }
     }
 
@@ -228,7 +238,8 @@ public class StateMachine : NetworkBehaviour
     //Runs during attack animation, deals damage to player
     public void Attack()
     {
-        if(!isServer) return;
+        if(!isServer || Vector3.Distance(transform.position, TargetEntity.transform.position) > AttackEscapeDistance) return;
+        
         HealthComponent health = TargetEntity.GetComponent<HealthComponent>();
         if(health == null)
         {
@@ -257,6 +268,7 @@ public class StateMachine : NetworkBehaviour
         CanAttack = true;
     }
 
+
     public bool WithinCone(Transform source, Transform target, float coneAngle, float coneLength, float coneIgnoreRadius)
     {
         int mask = ~(1 << LayerMask.NameToLayer("Puppeteer Interact"));
@@ -277,7 +289,7 @@ public class StateMachine : NetworkBehaviour
 
     private IEnumerator chargeRoutine()
     {
-        while (true)
+        while (Corunning)
         {
             Corunning = true;
 
@@ -288,7 +300,7 @@ public class StateMachine : NetworkBehaviour
                 AnimController.SetFloat("ChargeSpeed", CurrentChargeSpeed);
             }
 
-            //Hit cone, triggered when the target is within the prameters
+            //Hit cone, triggered when the target is within the parameters
             if (WithinCone(transform, TargetEntity.transform, 80f, 2f, 0f))
             {
                 //Checks for players in range and deals damage to them aswell

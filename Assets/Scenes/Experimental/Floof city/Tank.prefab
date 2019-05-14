@@ -756,13 +756,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   syncInterval: 0.1
-  Health: 100
-  MaxHealth: 100
+  Health: 200
+  MaxHealth: 200
   MaxRegenRatio: 0
   MaxReviveRatio: 0
   RegenSpeed: 0
   RegenDelay: 0
   AllowRegen: 0
+  Downed: 0
   sound: {fileID: 0}
 --- !u!114 &55003624039892553
 MonoBehaviour:
@@ -779,7 +780,7 @@ MonoBehaviour:
   serverOnly: 0
   localPlayerAuthority: 0
   m_AssetId: 
-  m_SceneId: 849539363
+  m_SceneId: 1272667324
 --- !u!114 &2220566078404847079
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -817,7 +818,7 @@ MonoBehaviour:
   TransformRaycastOffset: {x: 0, y: 0.2, z: 0}
   NodeArrivalMargin: 0.5
   PathfindDebug: 1
-  RaycastAvoidDistance: 0.5
+  RaycastAvoidDistance: 0.7
   RaycastAvoidAngle: 60
   RaycastAvoidWeight: 0.5
   MinionAvoidDistance: 2
@@ -827,7 +828,7 @@ MonoBehaviour:
   StuckTimeThreshold: 0.5
   UnstuckRadius: 1
   DoorInteractRange: 0.5
-  ForceSmoothingValue: 0.15
+  ForceSmoothingValue: 0.1
   ClampValues: 0
 --- !u!114 &4637723171867558907
 MonoBehaviour:
@@ -851,9 +852,10 @@ MonoBehaviour:
   PathFinder: {fileID: 0}
   Puppets: []
   Corunning: 0
-  AttackCooldown: 5
+  AttackCooldown: 3
   AttackDamage: 3
-  AttackRange: 1
+  AttackRange: 1.5
+  AttackEscapeDistance: 4
   CanAttack: 0
   ChargeStopped: 0
   ChargeAccelerationSpeed: 0.035
@@ -863,7 +865,7 @@ MonoBehaviour:
   HitColliders: []
   AggroDropTime: 5
   InstantAggroRange: 4
-  ConeAggroRange: 10
+  ConeAggroRange: 20
   FOVConeAngle: 30
   AtkPrioRunning: 0
   AssholeMode: 0

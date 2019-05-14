@@ -349,7 +349,9 @@ public class PlayerController : NetworkBehaviour
         CanShoot = false;
         gameObject.GetComponent<InteractionController>().enabled = false;
         AnimController.SetBool("Downed", true);
+        FPVAnimController.SetBool("Downed", true);
         AnimController.SetLayerWeight(1,0);
+        FPVAnimController.SetLayerWeight(1,0);
     }
 
     // Unstunns the enemy and enables shooting and interacting

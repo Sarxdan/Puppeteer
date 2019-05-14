@@ -70,7 +70,7 @@ public class PathfinderComponent : NetworkBehaviour
 
     void Start()
     {
-            layerMask = ~(1 << LayerMask.NameToLayer("Puppeteer Interact"));
+        layerMask = ~(1 << LayerMask.NameToLayer("Puppeteer Interact"));
         if(!isServer)
         {
             this.enabled = false;
