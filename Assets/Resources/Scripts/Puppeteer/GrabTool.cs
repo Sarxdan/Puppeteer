@@ -380,20 +380,6 @@ public class GrabTool : NetworkBehaviour
         return true;
 	}
 
-    private void OnDrawGizmos()
-    {
-        if(selectedObject != null)
-        {
-            var colliders = selectedObject.GetComponents<BoxCollider>();
-            foreach(var collider in colliders)
-            {
-                Gizmos.color = Color.yellow;
-                Gizmos.matrix = Matrix4x4.TRS(collider.transform.position, collider.transform.rotation, collider.transform.lossyScale);
-                Gizmos.DrawCube(collider.center, collider.size);
-            }
-        }
-    }
-
     private Vector3 MouseToWorldPosition()
 	{
 		Vector3 mousePos = Input.mousePosition;
