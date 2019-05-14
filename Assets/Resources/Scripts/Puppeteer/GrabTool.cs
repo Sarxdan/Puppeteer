@@ -97,9 +97,6 @@ public class GrabTool : NetworkBehaviour
             // send current mouse position to server
             CmdUpdateMousePos(this.MouseToWorldPosition());
 
-            Vector3 newPosition = localPlayerMousePos + grabOffset;
-            selectedObject.transform.position = Vector3.Lerp(selectedObject.transform.position, new Vector3(newPosition.x, LiftHeight, newPosition.z), LiftSpeed * Time.deltaTime);
-
             if (Input.GetButtonUp("Fire"))
             {
                 Drop();
@@ -110,6 +107,12 @@ public class GrabTool : NetworkBehaviour
                 sounds.Rotate();
                 selectedObject.transform.Rotate(Vector3.up * 90.0f);
                 CmdRotate(selectedObject.transform.rotation);
+            }
+
+            if(!isServer)
+            {
+                Vector3 newPosition = MouseToWorldPosition() + grabOffset;
+                selectedObject.transform.position = Vector3.Lerp(selectedObject.transform.position, new Vector3(newPosition.x, LiftHeight, newPosition.z), LiftSpeed * Time.deltaTime);
             }
         }
     }
@@ -143,6 +146,9 @@ public class GrabTool : NetworkBehaviour
         {
             if (this.CanConnect(bestSrcPoint, bestDstPoint))
             {
+                // send over network
+                RpcUpdateGuide(new TransformStruct(selectedObject.transform.position - (bestSrcPoint.transform.position - bestDstPoint.transform.position), selectedObject.transform.rotation.normalized));
+
                 RoomTreeNode currentNode = sourceObject.GetComponent<RoomTreeNode>();
                 RoomTreeNode targetNode = bestDstPoint.GetComponentInParent<RoomTreeNode>();
                 currentNode.DisconnectFromTree();
@@ -356,9 +362,6 @@ public class GrabTool : NetworkBehaviour
                 return false;
             }
         }
-
-        // send over network
-        RpcUpdateGuide(new TransformStruct(selectedObject.transform.position - (bestSrcPoint.transform.position - bestDstPoint.transform.position), selectedObject.transform.rotation.normalized));
 
         guideObject.transform.position = selectedObject.transform.position - (bestSrcPoint.transform.position - bestDstPoint.transform.position);
         guideObject.transform.rotation = selectedObject.transform.rotation;
