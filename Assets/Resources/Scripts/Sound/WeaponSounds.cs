@@ -30,7 +30,7 @@ public class WeaponSounds : MonoBehaviour
         FMODUnity.RuntimeManager.PlayOneShot(s_Pickup, transform.position);
     }
 
-    public void Shoot()
+    public void Shoot(float ammoLeft)
     {
         FMODUnity.RuntimeManager.PlayOneShot(s_Shoot, transform.position);
     }

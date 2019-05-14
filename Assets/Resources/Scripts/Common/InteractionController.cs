@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using Mirror;
 
 /*
@@ -23,6 +24,9 @@ public class InteractionController : NetworkBehaviour
     private Interactable curInteractable;       //Gameobject that the raycast collides with
     private bool isInteracting = false;     //Is the player interacting with something?
 
+    // The image which is displayed when a player looking at something that can be interacted with
+    public RawImage InteractionTooltip;
+
     void Update()
     {
         RaycastHit hitInfo;
@@ -36,6 +40,9 @@ public class InteractionController : NetworkBehaviour
                 if(curInteractable != null && isInteracting)
                 {
                     CmdStopInteracting(new InteractStruct(gameObject, curInteractable.gameObject));
+                    if(InteractionTooltip.enabled)
+                        InteractionTooltip.enabled = false;
+
                     isInteracting = false;
                     curInteractable.OnRaycastExit();
                     curInteractable = null;
@@ -45,6 +52,9 @@ public class InteractionController : NetworkBehaviour
                 if(curInteractable != null)
                 {
                     curInteractable.OnRaycastEnter();
+                    if(!InteractionTooltip.enabled)
+                        InteractionTooltip.enabled = true;
+
                 }
             }
         }
@@ -54,6 +64,8 @@ public class InteractionController : NetworkBehaviour
            if(curInteractable != null && isInteracting)
             {
                 CmdStopInteracting(new InteractStruct(gameObject, curInteractable.gameObject));
+                if(InteractionTooltip.enabled)
+                    InteractionTooltip.enabled = false;
                 isInteracting = false;
                 curInteractable.OnRaycastExit();
                 curInteractable = null;
@@ -74,7 +86,8 @@ public class InteractionController : NetworkBehaviour
             if (Input.GetButtonUp("Use") && isInteracting)
             {
                 CmdStopInteracting(new InteractStruct(gameObject, curInteractable.gameObject));
-                //curInteractable.OnInteractEnd(gameObject);
+                if(InteractionTooltip.enabled)
+                    InteractionTooltip.enabled = false;
                 isInteracting = false;
                 curInteractable.OnRaycastExit();
                 curInteractable = null;
