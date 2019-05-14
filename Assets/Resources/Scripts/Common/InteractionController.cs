@@ -57,6 +57,12 @@ public class InteractionController : NetworkBehaviour
 
                 }
             }
+            else if(hit == null)
+            {
+                if(InteractionTooltip.enabled)
+                    InteractionTooltip.enabled = false;
+            }
+
         }
         //If raycast hits nothing 
         else
