@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Mirror;
 using UnityEngine;
+using UnityEngine.UI;
 
 /*
 * AUTHOR:
@@ -23,20 +24,21 @@ public class ItemGrabTool : NetworkBehaviour
     private LevelBuilder level;
 
 	// The maximum distance for snapping modules
-	public int SnapDistance = 10;
+	private int SnapDistance = 10;
 	// Maximum raycast ray length
-	public float RaycastDistance = 500;
+	private float RaycastDistance = 500;
 	// The lift height when grabbing an object
-	public float LiftHeight = 3.0f;
+	private float LiftHeight = 3.0f;
 	// The lift speed when grabbing an object
-	public float LiftSpeed = 50.0f;
+	private float LiftSpeed = 50.0f;
 	//The distance off the groud that the preview trap is
 	private float PreviewLiftHeight = 2.0f;
 
 	public GameObject[] HudItems;
 
-	// enables camera movement using mouse scroll
-	public bool EnableMovement = true;
+	public Button ButtonBearTrap, ButtonSpikeTrap, ButtonChandelier, ButtonFakeItem, ButtonMinionSpawner, ButtonSpawnTank;
+	public GameObject BearTrap, SpikeTrap, Chandelier, FakeItem, MinionSpawner, SpawnTank;
+
 	// The object which the player clicks on
 	private GameObject sourceObject;
 	// The object which floats around following the mouse
@@ -63,17 +65,12 @@ public class ItemGrabTool : NetworkBehaviour
 		currency = GetComponent<Currency>();
 		previewLiftVector = new Vector3(0,PreviewLiftHeight,0);
 		SpawnPuppeteerSpawnables();
-
-		//if (isServer && HudItems.Length == 0)
-		//{
-		//	SnapFunctionality[] snapItems = FindObjectsOfType<SnapFunctionality>();
-		//	HudItems = new GameObject[snapItems.Length];
-		//	for (int i = 0; i < snapItems.Length; i++)
-		//	{
-		//		HudItems[i] = snapItems[i].gameObject;
-		//	}
-		//}
     }
+
+	public void BearTrapClick()
+	{
+		Pickup(BearTrap);
+	}
 
     // Update is called once per frame
     void Update()
@@ -92,73 +89,7 @@ public class ItemGrabTool : NetworkBehaviour
     {
         if (selectedObject == null)
         {
-			// Raycast only on Puppeteer Item Interact layer.
-			RaycastHit hit;
-            int layermask = 1 << LayerMask.NameToLayer("PuppeteerItemInteract");
-            if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition),out hit, RaycastDistance, layermask, QueryTriggerInteraction.Collide))
-            {
-                GameObject hitObject = hit.transform.gameObject;
-
-				// Start and stop glow
-				var trapComponent = hitObject.GetComponent<SnapFunctionality>();
-                if (trapComponent != null)
-                {
-                    if (trapComponent != lastHit)
-                    {
-                        if (lastHit != null)
-                        {
-                            var glow = lastHit.GetComponent<Glowable>();
-                            if (glow)
-                            {
-                                glow.Toggle(false);
-                            }
-                        }
-                        lastHit = trapComponent;
-                        if(!lastHit.Placed)
-                        {
-                            var glow = lastHit.GetComponent<Glowable>();
-                            if (glow)
-                            {
-                                glow.Toggle(true);
-                            }
-                        }
-                    }
-					// If pickup button is pressed, call pickup method.
-					if (Input.GetButtonDown("Fire"))
-					{
-						if (!trapComponent.Placed)
-						{
-							Pickup(hitObject);
-						}
-					}
-                }
-                else
-                {
-					// If raycast doesn't hit a valid object, stop previus glow.
-					if (lastHit != null)
-                    {
-                        var glow = lastHit.GetComponent<Glowable>();
-                        if (glow)
-                        {
-                            glow.Toggle(false);
-                        }
-                        lastHit = null;
-                    }
-                }
-            }
-            else
-			{
-				// If raycast doesn't hit any objects, stop previus glow.
-                if (lastHit != null)
-                {
-                    var glow = lastHit.GetComponent<Glowable>();
-                    if (glow)
-                    {
-                        glow.Toggle(false);
-                    }
-                    lastHit = null;
-                }
-			}
+			return;
         }
         else
 		{
@@ -169,20 +100,17 @@ public class ItemGrabTool : NetworkBehaviour
 			{
 				Drop();
 			}
-			else
+
+			if (Input.GetButtonDown("Rotate"))
 			{
-				if (Input.GetButtonDown("Rotate"))
-				{
-					// Rotate room around its own up-axis
+				// Rotate room around its own up-axis
 
-					selectedObject.transform.RotateAround(selectedObject.transform.position, selectedObject.transform.up, 90);
-					CmdRotate(selectedObject.transform.rotation);
-				}
-				if (!isServer)
-				{
-					ClientUpdatePositions();
-				}
-
+				selectedObject.transform.RotateAround(selectedObject.transform.position, selectedObject.transform.up, 90);
+				CmdRotate(selectedObject.transform.rotation);
+			}
+			if (!isServer)
+			{
+				ClientUpdatePositions();
 			}
         }
     }
@@ -205,11 +133,13 @@ public class ItemGrabTool : NetworkBehaviour
     {
         ServerUpdatePositions();
     }
+
 	// Method used for picking up an object.
 	private void Pickup(GameObject pickupTrap)
     {
+		sourceObject = Instantiate(pickupTrap);
+		sourceObject.transform.position = new Vector3(0, -100, 0);
 		// Instansiate the floating object
-		sourceObject = pickupTrap;
 		selectedObject = Instantiate(sourceObject);
 
 		selectedObject.transform.rotation = new Quaternion();
@@ -221,8 +151,9 @@ public class ItemGrabTool : NetworkBehaviour
 		// Handles the change in temporary currency. Can be used to show currency left after placement.
 		cost = selectedObject.GetComponent<SnapFunctionality>().Cost;
 		currency.TemporaryCurrency = currency.CurrentCurrency - cost;
+
 		// Instansiate the guide object on the ground
-		guideObject = Instantiate(sourceObject);
+		guideObject = Instantiate(selectedObject);
 		guideObject.name = "GuideObject";
 		guideObject.GetComponent<BoxCollider>().enabled = false;
 
@@ -230,15 +161,16 @@ public class ItemGrabTool : NetworkBehaviour
 
         CmdUpdateMousePos(MouseToWorldPosition() + grabOffset);
 		
-        CmdPickup(Array.IndexOf(HudItems, pickupTrap));
+        CmdPickup(pickupTrap);
     }
 
     [Command]
-    public void CmdPickup(int hudIndex)
+    public void CmdPickup(GameObject pickupTrap)
     {
 		if (!isLocalPlayer)
 		{
-			sourceObject = HudItems[hudIndex];
+			sourceObject = Instantiate(pickupTrap);
+			sourceObject.transform.position = new Vector3(0, -100, 0);
 			selectedObject = Instantiate(sourceObject);
 			selectedObject.name = "SelectedObject";
 			selectedObject.transform.position = localPlayerMousePos;
@@ -267,7 +199,7 @@ public class ItemGrabTool : NetworkBehaviour
         }
     }
 
-    private void Drop()
+    public void Drop()
     {
         CmdDrop();
 		if (!isServer)
@@ -374,7 +306,7 @@ public class ItemGrabTool : NetworkBehaviour
         var rooms = level.GetRooms();
 		foreach (var room in rooms)
 		{
-			if (room.GetComponent<ItemSpawner>() && !room.GetComponent<RoomInteractable>().RoomContainsPlayer())
+			if (room.GetComponent<ItemSpawner>() /*&& !room.GetComponent<RoomInteractable>().RoomContainsPlayer()*/)
 			{
 				snapPoints.AddRange(room.GetComponent<ItemSpawner>().FindSnapPoints());
 			}
