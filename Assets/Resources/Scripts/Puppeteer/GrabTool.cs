@@ -20,12 +20,11 @@ using Mirror;
 
 public class GrabTool : NetworkBehaviour
 {
-    public PuppeteerRoomSounds sounds;
-
+    private PuppeteerRoomSounds sounds;
 	private LevelBuilder level;
 
     // The maximum distance for snapping modules
-    public int SnapDistance = 12;
+    public int SnapDistance = 25;
     // The lift height when grabbing an object
     public float LiftHeight = 3.0f;
     // The lift speed when grabbing an object
