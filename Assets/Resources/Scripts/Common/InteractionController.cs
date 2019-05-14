@@ -26,6 +26,7 @@ public class InteractionController : NetworkBehaviour
 
     // The image which is displayed when a player looking at something that can be interacted with
     public RawImage InteractionTooltip;
+    public PlayerController PlayerController;
 
     void Update()
     {
