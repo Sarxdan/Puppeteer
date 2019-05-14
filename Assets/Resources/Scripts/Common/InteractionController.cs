@@ -44,14 +44,14 @@ public class InteractionController : NetworkBehaviour
                     InteractionTooltip.enabled = false;
 
                     isInteracting = false;
-                    curInteractable.OnRaycastExit();
+                    curInteractable.OnRaycastExit(gameObject);
                     curInteractable = null;
                 }
 
                 curInteractable = hit;
                 if(curInteractable != null)
                 {
-                    curInteractable.OnRaycastEnter();
+                    curInteractable.OnRaycastEnter(gameObject);
                     InteractionTooltip.enabled = true;
 
                 }

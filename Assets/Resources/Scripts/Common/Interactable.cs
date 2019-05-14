@@ -24,24 +24,26 @@ public abstract class Interactable : NetworkBehaviour
     //Called once when an interaction has ended
     public abstract void OnInteractEnd(GameObject interactor);
 
-    public void OnRaycastEnter()
+    public void OnRaycastEnter(GameObject interactor)
     {
         // enable outline effect
-        var glow = GetComponent<Glowable>();
-        if (glow)
-        {
-            glow.Toggle(true);
-        }
+       
     }
 
-    public void OnRaycastExit()
+    public void OnRaycastExit(GameObject interactor)
     {
         // disable outline effect
-        var glow = GetComponent<Glowable>();
-        if(glow)
-        {
-            glow.Toggle(false);
-        }
+    }
+
+    public void ShowTooltip(GameObject interactor)
+    {
+         var button = interactor.GetComponent<InteractionController>().InteractionTooltip.enabled = true;
+    }
+    
+
+    public void HideToolTip(GameObject interactor)
+    {
+         var button = interactor.GetComponent<InteractionController>().InteractionTooltip.enabled = true;
     }
 
     [ClientRpc]
