@@ -330,7 +330,7 @@ public class GrabTool : NetworkBehaviour
                 overlapColliders[i] = null;
             }
 
-            int numCollisions = Physics.OverlapBoxNonAlloc(bc.transform.position + bc.center, bc.size * 0.48f, overlapColliders, bc.transform.rotation, 1 << 8);
+            int numCollisions = Physics.OverlapBoxNonAlloc(bc.transform.position, bc.size * 0.5f, overlapColliders, bc.transform.rotation, 1 << 8);
             if(numCollisions >= MaxNumCollisions)
             {
                 Debug.LogWarning("Too many collisions! Some collisions may be ignored.");
