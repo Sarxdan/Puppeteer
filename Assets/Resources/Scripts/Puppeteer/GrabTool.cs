@@ -109,11 +109,8 @@ public class GrabTool : NetworkBehaviour
                 CmdRotate(selectedObject.transform.rotation);
             }
 
-            if(!isServer)
-            {
-                Vector3 newPosition = MouseToWorldPosition() + grabOffset;
-                selectedObject.transform.position = Vector3.Lerp(selectedObject.transform.position, new Vector3(newPosition.x, LiftHeight, newPosition.z), LiftSpeed * Time.deltaTime);
-            }
+            Vector3 newPosition = MouseToWorldPosition() + grabOffset;
+            selectedObject.transform.position = Vector3.Lerp(selectedObject.transform.position, new Vector3(newPosition.x, LiftHeight, newPosition.z), LiftSpeed * Time.deltaTime);
         }
     }
 
