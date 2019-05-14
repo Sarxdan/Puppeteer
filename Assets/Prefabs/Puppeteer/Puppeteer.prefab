@@ -16,6 +16,7 @@ GameObject:
   - component: {fileID: 5963027110821384781}
   - component: {fileID: 8319625633179747584}
   - component: {fileID: 2164618449766289586}
+  - component: {fileID: 6560965921680926819}
   m_Layer: 0
   m_Name: Puppeteer
   m_TagString: GameController
@@ -73,8 +74,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   serverOnly: 0
   localPlayerAuthority: 1
-  m_AssetId: 
-  m_SceneId: 973124531
+  m_AssetId: a355b3cf20abdf34d86a9cdb43b0bbaf
+  m_SceneId: 0
 --- !u!114 &2594469943257660708
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -222,6 +223,21 @@ MonoBehaviour:
   syncInterval: 0.1
   compressRotation: 0
   target: {fileID: 882945471475474463}
+--- !u!114 &6560965921680926819
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 882945469650525590}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 20ecb45605f74544da173807c05c2c83, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  s_Pickup: event:/Items/Medkit pickup
+  s_Place: event:/Traps/Spiketrap
+  s_Rotate: event:/UI/Click
 --- !u!1 &882945471475474460
 GameObject:
   m_ObjectHideFlags: 0

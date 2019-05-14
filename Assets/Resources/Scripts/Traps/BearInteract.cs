@@ -123,6 +123,7 @@ public class BearInteract : Interactable
             interacting = true;
         }
     }
+    
 
     [ClientRpc]
     public void RpcDisableInteracting(GameObject interactor)
