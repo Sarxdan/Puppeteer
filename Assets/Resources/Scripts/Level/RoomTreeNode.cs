@@ -176,7 +176,7 @@ public class RoomTreeNode : MonoBehaviour
 			if (glow != null)
 			{
 				glow.GlowColor = Color.white;
-				child.GetComponent<RoomInteractable>().OnRaycastExit();
+				//child.GetComponent<RoomInteractable>().OnRaycastExit();
 			}
 		}
 	}
