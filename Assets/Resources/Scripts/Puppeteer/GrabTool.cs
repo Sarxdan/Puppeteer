@@ -42,6 +42,7 @@ public class GrabTool : NetworkBehaviour
     // Mouse position of current Puppeteer. Used when server is not puppeteer.
     private Vector3 localPlayerMousePos;
 
+    // tracks the last hit object
     private RoomInteractable lastHit;
 
     // Original parent node used for updating tree when dropping without snapping to something.
@@ -49,7 +50,7 @@ public class GrabTool : NetworkBehaviour
     // Current selected node in tree. Used by RoomTreeNode to allow the selected object to be used in new tree.
     public RoomTreeNode currentNode;
 
-    public readonly int MaxNumCollisions = 16;
+    public readonly int MaxNumCollisions = 8;
     public readonly float UpdateInterval = 0.1f;
     private Collider[] overlapColliders;
 
@@ -312,7 +313,6 @@ public class GrabTool : NetworkBehaviour
             return false;
         }
 
-        // this is where the fun begins
         var bcs = selectedObject.GetComponents<BoxCollider>();
         foreach (var bc in bcs)
         {
