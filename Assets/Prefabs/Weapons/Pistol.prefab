@@ -64,7 +64,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   serverOnly: 0
   localPlayerAuthority: 0
-  m_AssetId: 704fc477692f6e941a90fc72b817e7f5
+  m_AssetId: 
   m_SceneId: 0
 --- !u!114 &5880048625550611437
 MonoBehaviour:
@@ -129,7 +129,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   s_Pickup: 
   s_Shoot: event:/Weapons/Pistol/Shoot
-  s_OutOfAmmo: 
+  s_OutOfAmmo: event:/Weapons/Pistol/Shoot
   s_Reload: 
   s_Foley: 
 --- !u!1001 &5880048625724098189
@@ -139,11 +139,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 5880048625550611442}
     m_Modifications:
-    - target: {fileID: -927199367670048503, guid: da3ed3cf060725442a5971c432a20d93,
-        type: 3}
-      propertyPath: m_Name
-      value: ST_Pistol_01
-      objectReference: {fileID: 0}
     - target: {fileID: -4216859302048453862, guid: da3ed3cf060725442a5971c432a20d93,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -198,6 +193,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -927199367670048503, guid: da3ed3cf060725442a5971c432a20d93,
+        type: 3}
+      propertyPath: m_Name
+      value: ST_Pistol_01
       objectReference: {fileID: 0}
     - target: {fileID: -6211026861649760941, guid: da3ed3cf060725442a5971c432a20d93,
         type: 3}
