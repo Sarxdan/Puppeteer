@@ -51,7 +51,7 @@ public class GrabTool : NetworkBehaviour
     public RoomTreeNode currentNode;
 
     public readonly int MaxNumCollisions = 16;
-    public readonly float UpdateInterval = 0.18f;
+    public readonly float UpdateInterval = 0.1f;
     private Collider[] overlapColliders;
 
     void Start()
