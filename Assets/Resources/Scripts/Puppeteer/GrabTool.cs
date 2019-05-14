@@ -23,7 +23,7 @@ public class GrabTool : NetworkBehaviour
     private LevelBuilder level;
 
     // The maximum distance for snapping modules
-    public int SnapDistance = 10;
+    public int SnapDistance = 12;
     // The lift height when grabbing an object
     public float LiftHeight = 3.0f;
     // The lift speed when grabbing an object
