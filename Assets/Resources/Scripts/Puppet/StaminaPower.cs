@@ -26,7 +26,7 @@ public class StaminaPower : PowerupBase
     public override void OnComplete()
     {
         var player = GetComponent<PlayerController>();
-        player.CurrentStamina = 0.0f;
+        player.CurrentStamina = player.MaxStamina;
         player.MovementSpeedMod = 1.0f;
     }
 }
