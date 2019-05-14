@@ -19,7 +19,7 @@ using Mirror;
 public class Compass : MonoBehaviour
 {
     // compass width to screen ratio
-    public static readonly float ScreenWidthRatio = 0.6f;
+    public static readonly float ScreenWidthRatio = 0.7f;
     // UI offset from top of the screen
     public static readonly float TopOffset = 30.0f;
     // size of displayed icons
@@ -28,11 +28,11 @@ public class Compass : MonoBehaviour
     // contains all tracked entities
     public List<Transform> Targets;
 
-    private static GUIStyle whiteBar;
+    private Texture2D barTex;
 
     void Awake()
     {
-        whiteBar = new GUIStyle { normal = new GUIStyleState { background = Texture2D.whiteTexture } };
+        barTex = Resources.Load<Texture2D>("Textures/Compass_Line");
     }
 
     void OnGUI()
@@ -57,7 +57,7 @@ public class Compass : MonoBehaviour
             }
         }
 
-        GUI.Box(new Rect(Screen.width * 0.5f - Screen.width * ScreenWidthRatio * 0.5f, TopOffset + IconSize, Screen.width * ScreenWidthRatio, 2.0f), GUIContent.none, whiteBar);
+        GUI.DrawTexture(new Rect(Screen.width * 0.5f - Screen.width * ScreenWidthRatio * 0.5f, TopOffset + IconSize, Screen.width * ScreenWidthRatio, 2.0f), barTex, ScaleMode.StretchToFill, true);
     }
 
     // registers a new tracked target in the compass

@@ -78,6 +78,7 @@ public class StateMachine : NetworkBehaviour
     public float ConeAggroRange;
     public float FOVConeAngle;
     public bool AtkPrioRunning;
+    [HideInInspector] //Unused attack prioritization
     public bool AssholeMode;
     private float PreThreat;
     private float PostThreat;
