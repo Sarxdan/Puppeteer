@@ -32,12 +32,6 @@ public class Compass : MonoBehaviour
 
     void Awake()
     {
-        if(GameObject.FindGameObjectWithTag("GameController").GetComponent<NetworkIdentity>().isLocalPlayer)
-        {
-            this.enabled = false;
-            return;
-        }
-
         barTex = Resources.Load<Texture2D>("Textures/Compass_Line");
     }
 
