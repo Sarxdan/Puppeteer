@@ -51,26 +51,18 @@ namespace MinionStates
             if (machine.debug) Debug.DrawRay(machine.transform.position, Vector3.forward * machine.AttackRange, Color.green, 0.2f);
 
             //Tests if player is in front
-            if (Physics.Raycast(machine.transform.position + new Vector3(0,.5f,0), machine.transform.forward, out RaycastHit target, machine.AttackRange, layerMask))
+            if (Vector3.Distance(machine.transform.position, machine.TargetEntity.transform.position) < machine.AttackRange)
             {
-                if (target.transform == machine.TargetEntity.transform)
+                //If canAttack, perform attack. Otherwise stop moving (so minions don't push around the player)
+                if(machine.CanAttack)
                 {
-                    //If canAttack, perform attack. Otherwise stop moving (so minions don't push around the player)
-                    if(machine.CanAttack)
-                    {
-                        machine.StartCoroutine("attackTimer");
-                        machine.AnimController.SetInteger("RandomAnimationIndex", Random.Range(0,6));
-                        machine.AnimController.SetTrigger("Attack");
-                    }
-                    else
-                    {
-                        machine.PathFinder.Stop();
-                    }
+                    machine.StartCoroutine("attackTimer");
+                    machine.AnimController.SetInteger("RandomAnimationIndex", Random.Range(0,6));
+                    machine.AnimController.SetTrigger("Attack");
                 }
                 else
                 {
-                    //Moves towards player
-                    machine.PathFinder.MoveTo(machine.TargetEntity.transform.position);
+                    machine.PathFinder.Stop();
                 }
             }
             else
@@ -278,6 +270,7 @@ namespace MinionStates
             if(currentWaitTime > waitTime && machine.MinionType == EnemyType.Minion)
             {
                 machine.SetState(new WanderState(machine));
+
             }
             
             this.lastTime = Time.time;
@@ -352,7 +345,7 @@ namespace MinionStates
 
         public override void Exit()
         {
-            machine.ChargeCharge = machine.ChargeCharge -= 100;
+            machine.ChargeCharge = 0;
             machine.AnimController.SetBool("Running", false);
         }
     }
@@ -400,6 +393,10 @@ namespace MinionStates
         public override void Exit()
         {
             //machine.AnimController.SetBool("Running", false);
+            //Sets pathfinder components to the default for regular minions
+            //TODO: fix so it works for tank
+            machine.PathFinder.RotationSpeed = 20;
+            machine.PathFinder.NodeArrivalMargin = 0.5f;
             machine.AnimController.SetBool("IsCharging", false);
         }
     }
