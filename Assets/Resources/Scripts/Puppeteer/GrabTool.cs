@@ -20,6 +20,8 @@ using Mirror;
 
 public class GrabTool : NetworkBehaviour
 {
+    public PuppeteerRoomSounds sounds;
+
 	private LevelBuilder level;
 
 	// The maximum distance for snapping modules
@@ -62,6 +64,7 @@ public class GrabTool : NetworkBehaviour
 
 	void Start()
     {
+        sounds = GetComponent<PuppeteerRoomSounds>();
 		level = GetComponent<LevelBuilder>();
 
         if(isServer)
@@ -104,6 +107,7 @@ public class GrabTool : NetworkBehaviour
 
             if (Input.GetButtonDown("Rotate"))
             {
+                sounds.Rotate();
                 selectedObject.transform.Rotate(Vector3.up * 90.0f);
                 CmdRotate(selectedObject.transform.rotation);
             }
@@ -159,6 +163,8 @@ public class GrabTool : NetworkBehaviour
 	// Method used for picking up an object.
 	private void Pickup(GameObject pickupObject)
 	{
+        sounds.Pickup();
+
 		sourceObject = pickupObject;
 		selectedObject = Instantiate(sourceObject);
 		guideObject = Instantiate(sourceObject);
@@ -224,6 +230,8 @@ public class GrabTool : NetworkBehaviour
 	// Method to drop rooms to snapped position.
 	private void Drop()
 	{
+        
+
 		CmdDrop();
 		if (!isServer)
 		{
