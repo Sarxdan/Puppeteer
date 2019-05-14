@@ -166,6 +166,7 @@ public class GrabTool : NetworkBehaviour
 		selectedObject = Instantiate(sourceObject);
 		guideObject = Instantiate(sourceObject);
 		guideObject.name = "guideObject";
+        guideObject.layer = LayerMask.NameToLayer("UI");
 
 		grabOffset = sourceObject.transform.position - MouseToWorldPosition();
 
