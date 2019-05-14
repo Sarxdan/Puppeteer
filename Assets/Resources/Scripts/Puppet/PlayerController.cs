@@ -32,6 +32,7 @@ public class PlayerController : NetworkBehaviour
 	public string NickName;
 
     // Movement
+    [Header("Movement")]
     public float MovementSpeed;
     public float AccelerationRate;
     public float SprintSpeed;
@@ -57,11 +58,15 @@ public class PlayerController : NetworkBehaviour
     private bool isDown;
     private bool reachedZero;
 
-    // Jumping
+    [Header("Jumping")]
     public float JumpForce;
     public float JumpRayLength;
 
+    private bool hasLeftGround;
+    private bool isGrounded = true;
+
     // Looking
+    [Header("Mouse")]
     public Transform HeadTransform;
     public float LookVerticalMin, LookVerticalMax;
     public float MouseSensitivity;
@@ -70,12 +75,15 @@ public class PlayerController : NetworkBehaviour
     public bool HasMedkit;
 
     // Weapons
+    [Header("Weapon")]
     public GameObject CurrentWeapon;
     public int Ammunition;
     public bool CanShoot = true;
 
     //References
-    public Transform HandTransform, FPVHandTransform;
+    [Header("References")]
+    public Transform HandTransform;
+    public Transform FPVHandTransform;
     public GameObject FPVArms;
     private Rigidbody rigidBody;
     
@@ -113,7 +121,7 @@ public class PlayerController : NetworkBehaviour
             CurrentWeapon.transform.SetParent(FPVHandTransform);
             CurrentWeapon.transform.localPosition = Vector3.zero;
             CurrentWeapon.transform.localRotation = CurrentWeapon.GetComponent<WeaponComponent>().HoldRotation;
-            transform.Find("Mesh").gameObject.SetActive(false);
+            //transform.Find("Mesh").gameObject.SetActive(false);
         }
         else
         {
@@ -210,11 +218,36 @@ public class PlayerController : NetworkBehaviour
         }
 
         // Jumping
-        if (Input.GetButtonDown("Jump") && Physics.Raycast(transform.position, -transform.up, JumpRayLength))
+        if (Input.GetButtonDown("Jump") && isGrounded)
         {
-            rigidBody.velocity = transform.up * JumpForce;
+            if(Physics.Raycast(transform.position, -transform.up, JumpRayLength))
+            {
+                isGrounded = false;
+                rigidBody.velocity = transform.up * JumpForce;
+                AnimController.SetBool("Jump", true);
+                FPVAnimController.SetBool("Jump", true);
+            }
         }
-
+        else if(!isGrounded)
+        {
+            if(Physics.Raycast(transform.position, -transform.up, JumpRayLength))
+            {
+                if(hasLeftGround)
+                {
+                    isGrounded = true;
+                    hasLeftGround = false;
+                    AnimController.SetBool("Jump", false);
+                    FPVAnimController.SetBool("Jump", false);
+                }
+            }
+            else if(!hasLeftGround)
+            {
+                hasLeftGround = true;
+            }
+        }
+        float weight = AnimController.GetFloat("JumpWeight");
+        AnimController.SetLayerWeight(2, AnimController.GetFloat("JumpWeight") / AnimController.GetLayerWeight(2) + .01f);
+        FPVAnimController.SetLayerWeight(2, FPVAnimController.GetFloat("JumpWeight") / FPVAnimController.GetLayerWeight(2)+ .01f);
     }
 
 
