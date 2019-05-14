@@ -127,12 +127,6 @@ public class GrabTool : NetworkBehaviour
         // Decide which door is best to snap to.
         foreach (var door in doorsInSelectedRoom)
         {
-            if (door.transform.parent.IsChildOf(sourceObject.transform))
-                continue;
-
-            if (door.transform.parent.IsChildOf(guideObject.transform))
-                continue;
-
             var nearestDoor = FindNearest(door, ref bestDist);
             if (nearestDoor != null)
             {
@@ -155,7 +149,7 @@ public class GrabTool : NetworkBehaviour
             }
             else
             {
-                //guideObject.transform.SetPositionAndRotation(sourceObject.transform.position, sourceObject.transform.rotation);
+                guideObject.transform.SetPositionAndRotation(sourceObject.transform.position, sourceObject.transform.rotation);
             }
 
             if(guideObject.transform.hasChanged)
@@ -292,11 +286,6 @@ public class GrabTool : NetworkBehaviour
         AnchorPoint result = null;
         foreach(var item in list)
         {
-            if (target.transform.parent == item.transform.parent)
-            {
-                continue;
-            }
-
             float curDist = Vector3.Distance(item.transform.position, target.transform.position);
             if (curDist > SnapDistance)
             {
