@@ -313,6 +313,7 @@ public class GrabTool : NetworkBehaviour
             return false;
         }
 
+        // this is where the fun begins
         var bcs = selectedObject.GetComponents<BoxCollider>();
         foreach (var bc in bcs)
         {
