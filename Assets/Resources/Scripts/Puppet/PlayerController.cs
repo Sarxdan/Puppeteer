@@ -48,7 +48,7 @@ public class PlayerController : NetworkBehaviour
 
     // Animation
     [HideInInspector]
-    public Animator AnimController;
+    public Animator AnimController, FPVAnimController;
 
     // Movement private variables
     private float currentMovementSpeed;
@@ -75,8 +75,8 @@ public class PlayerController : NetworkBehaviour
     public bool CanShoot = true;
 
     //References
-    public Transform HandTransform;
-
+    public Transform HandTransform, FPVHandTransform;
+    public GameObject FPVArms;
     private Rigidbody rigidBody;
     
 
@@ -99,12 +99,25 @@ public class PlayerController : NetworkBehaviour
     {
         rigidBody = GetComponent<Rigidbody>();
         AnimController = GetComponent<Animator>();
+        FPVAnimController = FPVArms.GetComponent<Animator>();
         // Saves the original input from the variables
         speedSave = MovementSpeed;
         accSave = AccelerationRate;
 
         // try to move to spawn position (physics enabled)
         rigidBody.MovePosition(new Vector3(Random.Range(-SpawnRadius, SpawnRadius), 0.0f, Random.Range(-SpawnRadius, SpawnRadius)));
+
+        
+        if(isLocalPlayer)
+        {
+            CurrentWeapon.transform.SetParent(FPVHandTransform);
+            CurrentWeapon.transform.localPosition = Vector3.zero;
+            transform.Find("Mesh").gameObject.SetActive(false);
+        }
+        else
+        {
+            FPVArms.SetActive(false);
+        }
 
         // configure compass
         var compass = GetComponentInChildren<Compass>();
@@ -280,6 +293,7 @@ public class PlayerController : NetworkBehaviour
     public void SetWeaponAnimation(int animationIndex)
     {
         AnimController.SetInteger("Weapon", animationIndex);
+        FPVAnimController.SetInteger("Weapon", animationIndex);
     }
 
     public void StopFire()

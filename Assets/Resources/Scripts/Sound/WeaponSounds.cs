@@ -21,6 +21,7 @@ public class WeaponSounds : MonoBehaviour
     // Sound Events
     [FMODUnity.EventRef] public string s_Pickup;
     [FMODUnity.EventRef] public string s_Shoot;
+    FMOD.Studio.EventInstance shoot;
     [FMODUnity.EventRef] public string s_OutOfAmmo;
     [FMODUnity.EventRef] public string s_Reload;
     [FMODUnity.EventRef] public string s_Foley;
@@ -30,9 +31,13 @@ public class WeaponSounds : MonoBehaviour
         FMODUnity.RuntimeManager.PlayOneShot(s_Pickup, transform.position);
     }
 
-    public void Shoot()
+    public void Shoot(float ammoLeft)
     {
-        FMODUnity.RuntimeManager.PlayOneShot(s_Shoot, transform.position);
+        shoot = FMODUnity.RuntimeManager.CreateInstance(s_Shoot);
+        shoot.setParameterByName("Ammo", ammoLeft);
+        shoot.set3DAttributes(FMODUnity.RuntimeUtils.To3DAttributes(gameObject));
+        shoot.start();
+        shoot.release();
     }
 
     public void OutOfAmmo()

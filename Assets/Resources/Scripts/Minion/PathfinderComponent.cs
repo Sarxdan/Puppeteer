@@ -346,6 +346,7 @@ public class PathfinderComponent : NetworkBehaviour
             Vector3 deltaPos = navmeshTransform.TransformPoint(roomPath[0]) - transform.position + transform.up * LegHeight;
             float distance = 0;
             Vector3 forceSum = deltaPos.normalized + minionAvoidVector * MinionAvoidWeight + raycastAvoidVector * RaycastAvoidWeight;
+            forceSum.y = 0;
             Quaternion goalRot = Quaternion.LookRotation(forceSum, transform.up);
             transform.rotation = Quaternion.RotateTowards(transform.rotation, goalRot, RotationSpeed);
             

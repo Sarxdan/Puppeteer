@@ -39,4 +39,16 @@ public class GameStartRequierments : MonoBehaviour
         else
             StartGameButton.interactable = false;
     }
+
+    private void OnEnable()
+    {
+        StartGameButton = gameObject.GetComponent<Button>();
+        StartGameButton.interactable = false;
+        StartGameButton.onClick.AddListener(changeScene);
+    }
+
+    private void changeScene()
+    {
+        NetworkManager.ServerChangeScene("InGame");
+    }
 }
