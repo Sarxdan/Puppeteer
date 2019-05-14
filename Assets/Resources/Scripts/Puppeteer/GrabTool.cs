@@ -230,7 +230,7 @@ public class GrabTool : NetworkBehaviour
 	// Method to drop rooms to snapped position.
 	private void Drop()
 	{
-        
+        // sounds.Drop();
 
 		CmdDrop();
 		if (!isServer)
