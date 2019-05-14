@@ -53,12 +53,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   syncInterval: 0.1
-  SnapDistance: 10
-  RaycastDistance: 500
+  sounds: {fileID: 0}
+  SnapDistance: 12
   LiftHeight: 3
   LiftSpeed: 50
-  EnableMovement: 1
-  GlowDropoff: 0.14
   currentNode: {fileID: 0}
 --- !u!114 &351344373693174191
 MonoBehaviour:
@@ -74,7 +72,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   serverOnly: 0
   localPlayerAuthority: 1
-  m_AssetId: a355b3cf20abdf34d86a9cdb43b0bbaf
+  m_AssetId: 
   m_SceneId: 0
 --- !u!114 &2594469943257660708
 MonoBehaviour:
@@ -246,9 +244,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 20ecb45605f74544da173807c05c2c83, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  s_Pickup: event:/Items/Medkit pickup
-  s_Place: event:/Traps/Spiketrap
-  s_Rotate: event:/UI/Click
+  s_Pickup: event:/Puppeteer/Rooms/Pickup
+  s_Place: event:/Puppeteer/Rooms/Place
+  s_Rotate: event:/Puppeteer/Rooms/Rotate
 --- !u!1 &882945471475474460
 GameObject:
   m_ObjectHideFlags: 0
@@ -623,16 +621,6 @@ PrefabInstance:
       propertyPath: m_LocalPosition.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 1612533399332234273, guid: de5b860bcf5de96408015734d5c66ad3,
-        type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: 164.1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1612533399332234273, guid: de5b860bcf5de96408015734d5c66ad3,
-        type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: 154.6
-      objectReference: {fileID: 0}
     - target: {fileID: 5798789272156186005, guid: de5b860bcf5de96408015734d5c66ad3,
         type: 3}
       propertyPath: m_AnchoredPosition.x
@@ -657,6 +645,16 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalPosition.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1612533399332234273, guid: de5b860bcf5de96408015734d5c66ad3,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 164.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1612533399332234273, guid: de5b860bcf5de96408015734d5c66ad3,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 154.6
       objectReference: {fileID: 0}
     - target: {fileID: 2597862650890418692, guid: de5b860bcf5de96408015734d5c66ad3,
         type: 3}

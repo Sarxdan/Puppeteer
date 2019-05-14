@@ -37,6 +37,8 @@ public class HealthComponent : NetworkBehaviour
     public uint RegenDelay;     //Time before regen starts
     public bool AllowRegen;     //Can I regen?
 
+    public bool Downed;
+
     private OnZeroHealth zeroHealthAction;
     private OnTakeDamage takeDamageAction;
 
@@ -108,6 +110,8 @@ public class HealthComponent : NetworkBehaviour
     {
         if(sound != null) sound.Death();
         this.zeroHealthAction();
+        if(isLocalPlayer)
+            Downed = true;
     }
     
     //Starts regenerate HP after delay, up to the max amount of regen
@@ -143,6 +147,7 @@ public class HealthComponent : NetworkBehaviour
         PlayerController playerController = gameObject.GetComponent<PlayerController>();
         playerController.UnStunned();
         AddDeathAction(playerController.Downed);
+        Downed = false;
     }
 
     //Registers a new zero health delegate
