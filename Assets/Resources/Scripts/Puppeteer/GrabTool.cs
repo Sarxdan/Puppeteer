@@ -51,7 +51,7 @@ public class GrabTool : NetworkBehaviour
     public RoomTreeNode currentNode;
 
     public readonly int MaxNumCollisions = 16;
-    public readonly float UpdateInterval = 0.18f;
+    public readonly float UpdateInterval = 0.1f;
     private Collider[] overlapColliders;
 
     void Start()
@@ -107,6 +107,7 @@ public class GrabTool : NetworkBehaviour
 
             if (Input.GetButtonDown("Rotate"))
             {
+                sounds.Rotate();
                 selectedObject.transform.Rotate(Vector3.up * 90.0f);
                 CmdRotate(selectedObject.transform.rotation);
             }
@@ -228,7 +229,7 @@ public class GrabTool : NetworkBehaviour
 	// Method to drop rooms to snapped position.
 	private void Drop()
 	{
-        // sounds.Drop();
+        sounds.Place();
 
 		CmdDrop();
 		if (!isServer)
