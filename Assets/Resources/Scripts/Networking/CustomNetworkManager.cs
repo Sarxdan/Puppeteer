@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using Mirror;
+using UnityEngine.SceneManagement;
 
 /*
 * AUTHOR:
@@ -28,9 +29,24 @@ public class CustomNetworkManager : NetworkLobbyManager
 
     private int AmountOfPlayersLastUpdate = -1;
 
+
+    void Start()
+    {
+        StartButton = GameObject.Find("StartCharacterSelectButton").GetComponent<Button>();
+        StartButton.onClick.AddListener(HideCanvas);
+        StartButton.gameObject.SetActive(false);
+
+        GameObject.Find("DisconnectButton").GetComponent<Button>().onClick.AddListener(StopHost);
+
+        PlayersContainer = GameObject.Find("Players");
+        SceneManager.activeSceneChanged += BindButtons;
+    }
+
     //Update is called once per frame
     public void Update()
     {
+        if (SceneManager.GetActiveScene().name == "InGame")
+            return;
 
         if (!allPlayersReady)
             StartButton.interactable = false;
@@ -47,6 +63,7 @@ public class CustomNetworkManager : NetworkLobbyManager
     public override void OnLobbyStartHost()
     {
         StartButton.gameObject.SetActive(true);
+        StartButton.enabled = true;
         StartButton.interactable = false;
         base.OnLobbyStartHost();
     }
@@ -82,6 +99,7 @@ public class CustomNetworkManager : NetworkLobbyManager
                 item.HideCanvas();
             }
         }
+
     }
 
     //Runs when a player changes ready status (Ready/Not Ready)
@@ -133,5 +151,19 @@ public class CustomNetworkManager : NetworkLobbyManager
         }
             GameObject playerPrefab = (GameObject)Instantiate(PlayableCharacters[prefabIndex], PlayableCharacters[prefabIndex].transform.position, Quaternion.identity);
             return playerPrefab;
+    }
+
+    void BindButtons(Scene oldScene, Scene newScene)
+    {
+        if (newScene.name == "Main Menu")
+        {
+            StartButton = GameObject.Find("StartCharacterSelectButton").GetComponent<Button>();
+            StartButton.onClick.AddListener(HideCanvas);
+            StartButton.gameObject.SetActive(false);
+
+            GameObject.Find("DisconnectButton").GetComponent<Button>().onClick.AddListener(StopHost);
+
+            PlayersContainer = GameObject.Find("Players");
+        }
     }
 }
