@@ -107,6 +107,7 @@ public class GrabTool : NetworkBehaviour
 
             if (Input.GetButtonDown("Rotate"))
             {
+                sounds.Rotate();
                 selectedObject.transform.Rotate(Vector3.up * 90.0f);
                 CmdRotate(selectedObject.transform.rotation);
             }
