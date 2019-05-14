@@ -208,6 +208,8 @@ public class WeaponComponent : Interactable
        
         RpcPickupWeapon(gameObject, interactor);
 
+        sounds.Pickup(); // Send pickup trigger to sound
+
     }
 
     public override void OnInteractEnd(GameObject interactor)
