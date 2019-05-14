@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Mirror;
+
 /*
  * AUTHOR:
  * Sandra Andersson
@@ -85,7 +87,10 @@ public class WeaponComponent : Interactable
         {
 			return;
         }
-		if (LiquidLeft < LiquidPerRound)
+
+        sounds.Shoot(LiquidLeft / LiquidPerRound);    //Send amount of "bullets" left in mag to sound man.
+
+        if (LiquidLeft < LiquidPerRound)
 		{
 			return;
 		}
@@ -94,8 +99,6 @@ public class WeaponComponent : Interactable
         pc.AnimController.SetBool("Fire", true);
         pc.FPVAnimController.SetTrigger("Fire");
         
-        sounds.Shoot(LiquidLeft/LiquidPerRound);    //Send amount of "bullets" left in mag to sound man.
-
         for(int i = 0; i < NumShots; i++)
         {
 
@@ -150,10 +153,6 @@ public class WeaponComponent : Interactable
         cooldown += ReloadTime;
     }
 
-    void Update()
-    {
-        transform.localRotation = HoldRotation;
-    }
 
     void FixedUpdate()
     {
@@ -214,6 +213,51 @@ public class WeaponComponent : Interactable
     public override void OnInteractEnd(GameObject interactor)
     {
         // empty
+    }
+
+    [ClientRpc]
+    public void RpcPickupWeapon(GameObject weaponObject, GameObject userObject)
+    {
+
+        WeaponComponent newWeapon = weaponObject.GetComponent<WeaponComponent>();
+        PlayerController user = userObject.GetComponent<PlayerController>();
+
+
+        //Disables new weapons collider
+        newWeapon.GetComponent<CapsuleCollider>().enabled = false;
+
+        GameObject CurrentWeaponObject = user.CurrentWeapon;
+        //If carrying a weapon, detach it and place it on new weapons location
+        if (CurrentWeaponObject != null && CurrentWeaponObject.transform != transform)
+        {
+            WeaponComponent CurrentWeapon = CurrentWeaponObject.GetComponent<WeaponComponent>();
+            CurrentWeapon.HeadTransform = null;
+            CurrentWeapon.transform.SetPositionAndRotation(transform.position, transform.rotation);
+            CurrentWeapon.transform.SetParent(null);
+            CurrentWeapon.GetComponent<Collider>().enabled = true;
+        }
+
+        //Attaches new weapon to player
+        user.CurrentWeapon = newWeapon.gameObject;
+        newWeapon.HeadTransform = user.HeadTransform;
+        user.SetWeaponAnimation(newWeapon.AnimationIndex);
+
+        if (userObject.GetComponent<PlayerController>().isLocalPlayer)
+        {
+            newWeapon.transform.SetParent(user.FPVHandTransform);
+        }
+        else
+        {
+            newWeapon.transform.SetParent(user.HandTransform);
+        }
+
+        newWeapon.transform.localPosition = Vector3.zero;
+        newWeapon.transform.localRotation = newWeapon.HoldRotation;
+
+        if (user.isLocalPlayer)
+        {
+            newWeapon.UpdateAmmoContainer();
+        }
     }
 
 }

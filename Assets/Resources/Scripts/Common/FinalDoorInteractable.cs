@@ -26,7 +26,8 @@ public class FinalDoorInteractable : Interactable
 		var buttonScript = button.GetComponent<FinalRoomInteract>();
 		if (buttonScript.Opened)
 		{
-			Debug.Log("Interacting when door open.");
+            GameObject.Find("GameTimer").GetComponent<MatchTimer>().PuppetEscaped();
+            Debug.Log("Interacting when door open.");
 			RpcTurnOff(interactor);
 			Destroy(interactor);
 		}
