@@ -40,7 +40,7 @@ public class HUDScript : NetworkBehaviour
     private PlayerController playerController;
     // The base class of the powerup that the player has
     private PowerupBase powerUp;
-
+    // The image that shows the progress of the current interaction
     public Image InteractionProgress;
 
     // Current health of the player
