@@ -9,8 +9,12 @@ using UnityEngine;
  * 
  * DESCRIPTION:
  * A class containing minion states. Used by StateMachine
+ * 
+ * Charge attack state and corutine (in StateMachine) for the tanks special moves,
+ * made by Carl Appelkvist
  *
  * CODE REVIEWED BY:
+ * Ludvig Björk Förare (Charge attack 190514)
  * 
  */
 
@@ -282,8 +286,7 @@ namespace MinionStates
         }
     }
     //---------------------------------------------------------------------------------
-    //BIG BOY STATES
-    //WORK IN PROGRESS
+    //TANK STATES
     //---------------------------------------------------------------------------------
     public class BigAttackState : State
     {
@@ -394,7 +397,7 @@ namespace MinionStates
 
         public override void Exit()
         {
-            //TODO: fix so it works for tank
+            //TODO: fix so it works for tank model and size
             machine.PathFinder.RotationSpeed = 20;
             machine.PathFinder.NodeArrivalMargin = 0.5f;
             machine.AnimController.SetBool("IsCharging", false);

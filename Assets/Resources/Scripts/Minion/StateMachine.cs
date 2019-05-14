@@ -14,8 +14,12 @@ using Mirror;
  * DESCRIPTION:
  * A finite state machine used to drive minion AI.
  * Requires separate class for states 
+ * 
+ * Charge attack state (in MinionStates) and corutine for the tanks special moves,
+ * made by Carl Appelkvist
  *
  * CODE REVIEWED BY:
+ * Ludvig Björk Förare (Charge attack 190514)
  * 
  */
 
@@ -64,7 +68,7 @@ public class StateMachine : NetworkBehaviour
     public float CurrentChargeSpeed;
     public float StartChargeSpeed;
     public int ChargeCharge;
-    //[HideInInspector]
+    [HideInInspector]
     public Collider[] HitColliders;
 
 
@@ -276,32 +280,32 @@ public class StateMachine : NetworkBehaviour
         {
             Corunning = true;
 
+            //Accelerate if charging up to a speed limit
             if (AnimController.GetBool("IsCharging") == true && AnimController.GetFloat("ChargeSpeed") < 1)
             {
                 CurrentChargeSpeed = CurrentChargeSpeed += ChargeAccelerationSpeed;
                 AnimController.SetFloat("ChargeSpeed", CurrentChargeSpeed);
             }
 
+            //Hit cone, triggered when the target is within the prameters
             if (WithinCone(transform, TargetEntity.transform, 80f, 2f, 0f))
             {
+                //Checks for players in range and deals damage to them aswell
                 HitColliders = Physics.OverlapSphere(gameObject.transform.position, 2f);
 
                 foreach(Collider coll in HitColliders)
                 {
                     if (coll.tag == "Player")
                     {
+                        //Deals damage to the players in range based on charge speed
                         HealthComponent health = TargetEntity.GetComponent<HealthComponent>();
                         float chargeDamage = CurrentChargeSpeed * 5;
                         uint uChargeDamage = (uint)chargeDamage;
                         if (debug) Debug.Log("Damage dealt: " + chargeDamage + " Damage in uint: " + uChargeDamage + " Target hit = " + coll);
                         health.Damage(uChargeDamage);
                     }
-                    else
-                    {
-                        
-                    }
-                    
                 }
+                //Set variables back to default on routine exit
                 HitColliders = null;
                 ChargeStopped = true;
                 Corunning = false;
