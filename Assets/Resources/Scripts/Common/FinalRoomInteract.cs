@@ -33,21 +33,38 @@ public class FinalRoomInteract : Interactable
 	private float openAngle;
 	[SyncVar]
 	public bool Opened = false;
+    [SyncVar]
+    public bool ButtonPressed = false;
 
 	public static bool isEndGame;
 
 	// Only runs on server. (by default)
 	public override void OnInteractBegin(GameObject interactor)
 	{
-		DoorToOpen = GameObject.Find("ST_Final_DoorFrame_03");
-		ProgressTransform = GameObject.Find("ProgressBar").GetComponent<RectTransform>();
-		GameObject.Find("ProgressBar").GetComponent<Image>().enabled = true;
-		StartCoroutine("FinalCountDown");
+        if (!ButtonPressed)
+        {
+		    DoorToOpen = GameObject.Find("ST_Final_DoorFrame_03");
+		    ProgressTransform = GameObject.Find("ProgressBar").GetComponent<RectTransform>();
+		    GameObject.Find("ProgressBar").GetComponent<Image>().enabled = true;
+		    StartCoroutine("FinalCountDown");
+            ButtonPressed = true;
+        }
 	}
 
 	public override void OnInteractEnd(GameObject interactor)
 	{
 
+	}
+
+	public override void OnRaycastEnter(GameObject interactor)
+	{
+		if(!ButtonPressed)
+			ShowTooltip(interactor);
+	}
+
+	public override void OnRaycastExit(GameObject interactor)
+	{
+		HideToolTip(interactor);
 	}
 
 	// Only runs on server.

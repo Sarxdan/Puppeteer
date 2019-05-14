@@ -26,7 +26,8 @@ public class FinalDoorInteractable : Interactable
 		var buttonScript = button.GetComponent<FinalRoomInteract>();
 		if (buttonScript.Opened)
 		{
-			Debug.Log("Interacting when door open.");
+            GameObject.Find("GameTimer").GetComponent<MatchTimer>().PuppetEscaped();
+            Debug.Log("Interacting when door open.");
 			RpcTurnOff(interactor);
 			Destroy(interactor);
 		}
@@ -35,6 +36,18 @@ public class FinalDoorInteractable : Interactable
 	public override void OnInteractEnd(GameObject interactor)
 	{
 		Debug.Log("End");
+	}
+
+	public override void OnRaycastEnter(GameObject interactor)
+	{
+		var button = GameObject.Find("FinalButton(Clone)");
+		var buttonScript = button.GetComponent<FinalRoomInteract>();
+		if(buttonScript.Opened)
+			ShowTooltip(interactor);
+	}
+	public override void OnRaycastExit(GameObject interactor)
+	{
+		HideToolTip(interactor);
 	}
 
 	[ClientRpc]

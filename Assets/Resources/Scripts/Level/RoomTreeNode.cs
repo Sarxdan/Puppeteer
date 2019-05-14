@@ -21,18 +21,10 @@ public class RoomTreeNode : MonoBehaviour
 
 	private RoomTreeNode parent;
 	private List<RoomTreeNode> children = new List<RoomTreeNode>();
+    public bool InTree { get; set; } = false;
 
-	private bool inTree = false;
-	private float glowDropoff;
-
-	// Start used to collect glow dropoff amount from grabtool
-	void Start()
-	{
-		glowDropoff = FindObjectOfType<GrabTool>().GlowDropoff;
-	}
-
-	// Update used to draw tree on level.
-	void Update()
+    // Update used to draw tree on level.
+    void Update()
     {
 		if (parent != null)
 		{
@@ -43,12 +35,12 @@ public class RoomTreeNode : MonoBehaviour
 	// Method to reduce the number of children connected to this node by as much as possible
 	public void ReduceChildren()
 	{
-		inTree = false;
+		InTree = false;
 
 		foreach (RoomTreeNode child in children)
 		{
 			child.ConnectToOtherRoom();
-			child.inTree = false;
+			child.InTree = false;
 		}
 	}
 
@@ -67,7 +59,7 @@ public class RoomTreeNode : MonoBehaviour
 			if (child.FindNewParent())
 			{
 				SetParent(child);
-				inTree = true;
+				InTree = true;
 				return true;
 			}
 		}
@@ -86,7 +78,7 @@ public class RoomTreeNode : MonoBehaviour
 			ret = true;
 			foreach (RoomTreeNode child in children.ToArray())
 			{
-				if (child.inTree)
+				if (child.InTree)
 				{
 					continue;
 				}
@@ -104,22 +96,6 @@ public class RoomTreeNode : MonoBehaviour
 		return ret;
 	}
 
-    /*
-     * NO LONGER USED!
-     * 
-     * 
-	// Recursively apply a fading red glow to a branch.
-	public void GlowBranch(Color color)
-	{
-		FindObjectOfType<GrabTool>().RpcGlowRoom(gameObject);
-
-		foreach (RoomTreeNode child in children.ToArray())
-		{
-			child.GlowBranch(new Color(color.r - glowDropoff, color.g, color.b));
-		}
-	}
-    */
-
 	// Goes thorugh all connected doors and checks if they are connected to a branch that has not been cut off. If they are, set them as parent.
 	public bool ConnectToOtherRoom()
 	{
@@ -128,7 +104,7 @@ public class RoomTreeNode : MonoBehaviour
 			if (door.Connected)
 			{
 				RoomTreeNode newNode = door.ConnectedTo.GetComponentInParent<RoomTreeNode>();
-				if (newNode.inTree)
+				if (newNode.InTree)
 				{
 					if (newNode.gameObject.name == "guideObject")
 					{
@@ -138,7 +114,7 @@ public class RoomTreeNode : MonoBehaviour
 					{
 						SetParent(newNode);
 					}
-					inTree = true;
+					InTree = true;
 					return true;
 				}
 			}
@@ -153,31 +129,16 @@ public class RoomTreeNode : MonoBehaviour
 		{
 			child.DisconnectFromTree();
 		}
-		inTree = false;
+		InTree = false;
 	}
 
 	// Recursively sets the inTree bool to true for all children.
 	public void ReconnectToTree()
 	{
-		inTree = true;
+		InTree = true;
 		foreach (RoomTreeNode child in children)
 		{
 			child.ReconnectToTree();
-		}
-	}
-
-	// Recursively resets glow values for all children
-	public void ResetGlow()
-	{
-		foreach (RoomTreeNode child in children)
-		{
-			child.ResetGlow();
-			Glowable glow = child.GetComponent<Glowable>();
-			if (glow != null)
-			{
-				glow.GlowColor = Color.white;
-				child.GetComponent<RoomInteractable>().OnRaycastExit();
-			}
 		}
 	}
 
@@ -205,11 +166,5 @@ public class RoomTreeNode : MonoBehaviour
 	public RoomTreeNode GetParent()
 	{
 		return parent;
-	}
-
-	public bool InTree
-	{
-		get { return inTree; }
-		set { inTree = value; }
 	}
 }
