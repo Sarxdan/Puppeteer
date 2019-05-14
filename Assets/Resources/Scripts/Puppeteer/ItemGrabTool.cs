@@ -71,6 +71,14 @@ public class ItemGrabTool : NetworkBehaviour
 	{
 		Pickup(BearTrap);
 	}
+	public void SpikeTrapClick()
+	{
+		Pickup(SpikeTrap);
+	}
+	public void ChandelierTrapClick()
+	{
+		Pickup(Chandelier);
+	}
 
     // Update is called once per frame
     void Update()
