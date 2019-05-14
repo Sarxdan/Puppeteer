@@ -26,6 +26,7 @@ public class InteractionController : NetworkBehaviour
 
     // The image which is displayed when a player looking at something that can be interacted with
     public RawImage InteractionTooltip;
+    public PlayerController PlayerController;
 
     void Update()
     {
@@ -43,14 +44,14 @@ public class InteractionController : NetworkBehaviour
                     InteractionTooltip.enabled = false;
 
                     isInteracting = false;
-                    curInteractable.OnRaycastExit();
+                    curInteractable.OnRaycastExit(gameObject);
                     curInteractable = null;
                 }
 
                 curInteractable = hit;
                 if(curInteractable != null)
                 {
-                    curInteractable.OnRaycastEnter();
+                    curInteractable.OnRaycastEnter(gameObject);
                     InteractionTooltip.enabled = true;
 
                 }
@@ -72,7 +73,7 @@ public class InteractionController : NetworkBehaviour
                 if(InteractionTooltip.enabled)
                     InteractionTooltip.enabled = false;
                 isInteracting = false;
-                curInteractable.OnRaycastExit();
+                curInteractable.OnRaycastExit(gameObject);
                 curInteractable = null;
             }
             else
@@ -98,7 +99,7 @@ public class InteractionController : NetworkBehaviour
                 CmdStopInteracting(new InteractStruct(gameObject, curInteractable.gameObject));
                 InteractionTooltip.enabled = false;
                 isInteracting = false;
-                curInteractable.OnRaycastExit();
+                curInteractable.OnRaycastExit(gameObject);
                 curInteractable = null;
             }
         }

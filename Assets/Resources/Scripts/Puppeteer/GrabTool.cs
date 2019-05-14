@@ -23,19 +23,11 @@ public class GrabTool : NetworkBehaviour
     private LevelBuilder level;
 
     // The maximum distance for snapping modules
-    public int SnapDistance = 10;
-    // Maximum raycast ray length
-    public float RaycastDistance = 500;
+    public int SnapDistance = 12;
     // The lift height when grabbing an object
     public float LiftHeight = 3.0f;
     // The lift speed when grabbing an object
     public float LiftSpeed = 50.0f;
-
-    // enables camera movement using mouse scroll
-    public bool EnableMovement = true;
-
-    [Range(0, 1)]
-    public float GlowDropoff = 0.14f;
 
     private GameObject sourceObject;
     private GameObject selectedObject;
@@ -44,7 +36,7 @@ public class GrabTool : NetworkBehaviour
     private AnchorPoint bestSrcPoint;
     private AnchorPoint bestDstPoint;
 
-    private Vector3 grabOffset = new Vector3();
+    private Vector3 grabOffset;
 
     // Mouse position of current Puppeteer. Used when server is not puppeteer.
     private Vector3 localPlayerMousePos;
@@ -79,7 +71,7 @@ public class GrabTool : NetworkBehaviour
         if (selectedObject == null)
         {
             RaycastHit hit;
-            if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit, RaycastDistance, 1 << 8))
+            if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit, 1 << 8))
             {
                 RoomInteractable interactable = hit.transform.GetComponent<RoomInteractable>();
                 if (interactable != lastHit)

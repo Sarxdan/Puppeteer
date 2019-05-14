@@ -19,8 +19,10 @@ public class MatchTimer : NetworkBehaviour
 	private bool gameEnded;
 	private NetworkManager manager;
 
-	// Start is called before the first frame update
-	void Start()
+    private int Minutes = 0;
+    private int Seconds = 0;
+    // Start is called before the first frame update
+    void Start()
 	{
 		numberOfPuppetsAlive = GameObject.Find("NetworkManager").GetComponent<CustomNetworkManager>().lobbySlots.Count - 1;
 		NumberOfPuppetsThatEscaped = 0;
@@ -32,27 +34,27 @@ public class MatchTimer : NetworkBehaviour
 
 	void FixedUpdate()
 	{
-		if (!isServer)
-			return;
+		//if (!isServer)
+		//	return;
 
-		if (NumberOfPuppetsThatEscaped >= numberOfPuppetsAlive && !gameEnded || TimeRemaining <= 0 && NumberOfPuppetsThatEscaped >= 1)
-		{
-			//End the game. Puppets wins
-			gameEnded = true;
-			RpcPuppetsWins(numberOfPuppetsAlive, TimeRemaining);
-			TimeRemaining = 0;
-			StopCoroutine("Timer");
-			StartCoroutine("EndTimer");
-		}
-		else if (TimeRemaining <= 0 && !gameEnded || numberOfPuppetsAlive <= 0 && !gameEnded)
-		{
-			//End the game. Puppeteer wins
-			gameEnded = true;
-			RpcPuppeteerWins(numberOfPuppetsAlive, TimeRemaining);
-			TimeRemaining = 0;
-			StopCoroutine("Timer");
-			StartCoroutine("EndTimer");
-		}
+		//if (NumberOfPuppetsThatEscaped >= numberOfPuppetsAlive && !gameEnded || TimeRemaining <= 0 && NumberOfPuppetsThatEscaped >= 1)
+		//{
+		//	//End the game. Puppets wins
+		//	gameEnded = true;
+		//	RpcPuppetsWins(numberOfPuppetsAlive, TimeRemaining);
+		//	TimeRemaining = 0;
+		//	StopCoroutine("Timer");
+		//	StartCoroutine("EndTimer");
+		//}
+		//else if (TimeRemaining <= 0 && !gameEnded || numberOfPuppetsAlive <= 0 && !gameEnded)
+		//{
+		//	//End the game. Puppeteer wins
+		//	gameEnded = true;
+		//	RpcPuppeteerWins(numberOfPuppetsAlive, TimeRemaining);
+		//	TimeRemaining = 0;
+		//	StopCoroutine("Timer");
+		//	StartCoroutine("EndTimer");
+		//}
 
 		if (gameEnded && PostGameTime < 0 && isServer)
 		{
@@ -63,7 +65,6 @@ public class MatchTimer : NetworkBehaviour
 
 	public IEnumerator Timer()
 	{
-		int Minutes = 0, Seconds = 0;
 		for (int i = TimeRemaining; i > 0; i -= 60)
 			if (i > 60)
 				Minutes++;
@@ -76,17 +77,18 @@ public class MatchTimer : NetworkBehaviour
 			if (Minutes > 10)
 				minutesString = Minutes.ToString();
 			else
-				minutesString = "0" + Minutes.ToString();
+				minutesString = Minutes.ToString("00");
 			if (Seconds > 10)
 				secondsString = Seconds.ToString();
 			else
-				secondsString = "0" + Seconds.ToString();
+				secondsString = Seconds.ToString("00");
 
 			string TimePrint = minutesString + ":" + secondsString;
 			RpcUpdateTime(TimePrint);
 
 			yield return new WaitForSeconds(1);
 
+			TimeRemaining--;
 			Seconds--;
 			if (Seconds < 0)
 			{
@@ -96,13 +98,15 @@ public class MatchTimer : NetworkBehaviour
 		}
 	}
 
-	public IEnumerator EndTimer()
+    public IEnumerator EndTimer()
 	{
-		while (true)
+		while (PostGameTime >= 0)
 		{
 			PostGameTime--;
 			yield return new WaitForSeconds(1);
 		}
+        if (isServer)
+            manager.StopHost();
 	}
 
 	public void PuppetEscaped()
@@ -122,7 +126,7 @@ public class MatchTimer : NetworkBehaviour
 	}
 
 	[ClientRpc]
-	public void RpcPuppeteerWins(int puppetsRemaining, int timeLeft)
+	public void RpcPuppeteerWins(int puppetsRemaining, int minutes, int seconds)
 	{
 		//Disable all the cameras in the scene
 		foreach (var camera in GetComponents<Camera>())
@@ -132,7 +136,7 @@ public class MatchTimer : NetworkBehaviour
 
 		//Set postgame info
 		script.SetWinnerText("The Puppeteer wins!");
-		script.SetTimeLeftInfoText((timeLeft / 60).ToString() + ":" + (timeLeft % 60).ToString());
+		script.SetTimeLeftInfoText(minutes.ToString("00") + ":" + seconds.ToString("00"));
 		script.SetPuppetsAliveInfoText(puppetsRemaining.ToString());
 
 		//Enable the "End of game camera"
@@ -140,7 +144,7 @@ public class MatchTimer : NetworkBehaviour
 	}
 
 	[ClientRpc]
-	public void RpcPuppetsWins(int puppetsRemaining, int timeLeft)
+	public void RpcPuppetsWins(int puppetsRemaining, int minutes, int seconds)
 	{
 		//Disable all the cameras in the scene
 		foreach (var camera in GetComponents<Camera>())
@@ -150,7 +154,7 @@ public class MatchTimer : NetworkBehaviour
 
 		//Set postgame info
 		script.SetWinnerText("The Puppets wins!");
-		script.SetTimeLeftInfoText((timeLeft / 60).ToString() + ":" + (timeLeft % 60).ToString());
+		script.SetTimeLeftInfoText(minutes.ToString("00") + ":" + seconds.ToString("00"));
 		script.SetPuppetsAliveInfoText(puppetsRemaining.ToString());
 
 		//Enable the "End of game camera"
