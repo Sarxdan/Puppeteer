@@ -105,8 +105,7 @@ public class DoorComponent : Interactable
 
 	public override void OnRaycastEnter(GameObject interactor)
 	{
-		if(!locked)
-			ShowTooltip(interactor);
+		ShowTooltip(interactor);
 	}
 
 	public override void OnRaycastExit(GameObject interactor)

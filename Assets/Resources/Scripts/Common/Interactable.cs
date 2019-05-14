@@ -37,7 +37,7 @@ public abstract class Interactable : NetworkBehaviour
 
     public void HideToolTip(GameObject interactor)
     {
-         var button = interactor.GetComponent<InteractionController>().InteractionTooltip.enabled = true;
+         var button = interactor.GetComponent<InteractionController>().InteractionTooltip.enabled = false;
     }
 
     

@@ -69,7 +69,10 @@ public class ReviveComponent : Interactable
 
     public override void OnRaycastEnter(GameObject interactor)
     {
-        ShowTooltip(interactor);
+        bool medKit = interactor.GetComponent<PlayerController>().HasMedkit;
+        bool downed = GetComponent<HealthComponent>().Downed;
+        if(medKit && downed)
+            ShowTooltip(interactor);
     }
 
     public override void OnRaycastExit(GameObject interactor)
