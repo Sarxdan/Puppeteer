@@ -56,6 +56,17 @@ public class FinalRoomInteract : Interactable
 
 	}
 
+	public override void OnRaycastEnter(GameObject interactor)
+	{
+		if(!ButtonPressed)
+			ShowTooltip(interactor);
+	}
+
+	public override void OnRaycastExit(GameObject interactor)
+	{
+		HideToolTip(interactor);
+	}
+
 	// Only runs on server.
 	IEnumerator FinalCountDown()
 	{

@@ -214,6 +214,14 @@ public class WeaponComponent : Interactable
     {
         // empty
     }
+    public override void OnRaycastEnter(GameObject interactor)
+    {
+        ShowTooltip(interactor);
+    }
+    public override void OnRaycastExit(GameObject interactor)
+    {
+        HideToolTip(interactor);
+    }
 
     [ClientRpc]
     public void RpcPickupWeapon(GameObject weaponObject, GameObject userObject)

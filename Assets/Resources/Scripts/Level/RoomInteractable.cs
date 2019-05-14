@@ -29,6 +29,10 @@ public class RoomInteractable : Interactable
 
 	}
 
+	public override void OnRaycastEnter(GameObject interactor){}
+
+	public override void OnRaycastExit(GameObject interactor){}
+
 	// Returns true if there is a player in the room
 	public bool RoomContainsPlayer()
 	{

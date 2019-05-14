@@ -24,16 +24,10 @@ public abstract class Interactable : NetworkBehaviour
     //Called once when an interaction has ended
     public abstract void OnInteractEnd(GameObject interactor);
 
-    public void OnRaycastEnter(GameObject interactor)
-    {
-        // enable outline effect
-       
-    }
+    public abstract void OnRaycastEnter(GameObject interactor);
 
-    public void OnRaycastExit(GameObject interactor)
-    {
-        // disable outline effect
-    }
+    public abstract void OnRaycastExit(GameObject interactor);
+ 
 
     public void ShowTooltip(GameObject interactor)
     {

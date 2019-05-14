@@ -102,6 +102,17 @@ public class DoorComponent : Interactable
 		}
 	}
     public override void OnInteractEnd(GameObject interactor){}
+
+	public override void OnRaycastEnter(GameObject interactor)
+	{
+		if(!locked)
+			ShowTooltip(interactor);
+	}
+
+	public override void OnRaycastExit(GameObject interactor)
+	{
+		ShowTooltip(interactor);
+	}
     // Closes and opens the door
     void FixedUpdate()
     {	

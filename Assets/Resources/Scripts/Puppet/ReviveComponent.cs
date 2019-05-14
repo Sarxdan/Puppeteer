@@ -67,6 +67,15 @@ public class ReviveComponent : Interactable
         }
     }
 
+    public override void OnRaycastEnter(GameObject interactor)
+    {
+        ShowTooltip(interactor);
+    }
+
+    public override void OnRaycastExit(GameObject interactor)
+    {
+        HideToolTip(interactor);
+    }
     // called when the health of this object reaches zer zo
     private void OnZeroHealth()
     {
