@@ -46,6 +46,16 @@ public class BearInteract : Interactable
         }
     }
 
+    public override void OnRaycastEnter(GameObject interactor)
+    {
+        if(Activated)
+            ShowTooltip(interactor);
+    }
+    public override void OnRaycastExit(GameObject interactor)
+    {
+        HideToolTip(interactor);
+    }
+
     //Start release timer and open animation on server
     public override void OnInteractBegin(GameObject interactor)
     {
@@ -123,6 +133,7 @@ public class BearInteract : Interactable
             interacting = true;
         }
     }
+    
 
     [ClientRpc]
     public void RpcDisableInteracting(GameObject interactor)

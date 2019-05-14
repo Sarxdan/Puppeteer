@@ -112,6 +112,7 @@ public class PlayerController : NetworkBehaviour
         {
             CurrentWeapon.transform.SetParent(FPVHandTransform);
             CurrentWeapon.transform.localPosition = Vector3.zero;
+            CurrentWeapon.transform.localRotation = CurrentWeapon.GetComponent<WeaponComponent>().HoldRotation;
             transform.Find("Mesh").gameObject.SetActive(false);
         }
         else

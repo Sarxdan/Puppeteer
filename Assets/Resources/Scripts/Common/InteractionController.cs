@@ -26,6 +26,7 @@ public class InteractionController : NetworkBehaviour
 
     // The image which is displayed when a player looking at something that can be interacted with
     public RawImage InteractionTooltip;
+    public PlayerController PlayerController;
 
     void Update()
     {
@@ -40,23 +41,23 @@ public class InteractionController : NetworkBehaviour
                 if(curInteractable != null && isInteracting)
                 {
                     CmdStopInteracting(new InteractStruct(gameObject, curInteractable.gameObject));
-                    if(InteractionTooltip.enabled)
-                        InteractionTooltip.enabled = false;
-
                     isInteracting = false;
-                    curInteractable.OnRaycastExit();
+                    curInteractable.OnRaycastExit(gameObject);
                     curInteractable = null;
                 }
 
+                if(hit == null && curInteractable != null)
+                    curInteractable.OnRaycastExit(gameObject);
                 curInteractable = hit;
                 if(curInteractable != null)
                 {
-                    curInteractable.OnRaycastEnter();
-                    if(!InteractionTooltip.enabled)
-                        InteractionTooltip.enabled = true;
-
+                    curInteractable.OnRaycastEnter(gameObject);
                 }
+
             }
+            
+
+
         }
         //If raycast hits nothing 
         else
@@ -64,10 +65,13 @@ public class InteractionController : NetworkBehaviour
            if(curInteractable != null && isInteracting)
             {
                 CmdStopInteracting(new InteractStruct(gameObject, curInteractable.gameObject));
-                if(InteractionTooltip.enabled)
-                    InteractionTooltip.enabled = false;
                 isInteracting = false;
-                curInteractable.OnRaycastExit();
+                curInteractable.OnRaycastExit(gameObject);
+                curInteractable = null;
+            }
+            else if(curInteractable != null)
+            {
+                curInteractable.OnRaycastExit(gameObject);
                 curInteractable = null;
             }
         }
@@ -86,10 +90,9 @@ public class InteractionController : NetworkBehaviour
             if (Input.GetButtonUp("Use") && isInteracting)
             {
                 CmdStopInteracting(new InteractStruct(gameObject, curInteractable.gameObject));
-                if(InteractionTooltip.enabled)
-                    InteractionTooltip.enabled = false;
+                //InteractionTooltip.enabled = false;
                 isInteracting = false;
-                curInteractable.OnRaycastExit();
+                curInteractable.OnRaycastExit(gameObject);
                 curInteractable = null;
             }
         }

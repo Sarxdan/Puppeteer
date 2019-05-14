@@ -35,4 +35,14 @@ public class MedKitComponent : Interactable
     {   
         // Empty
     }
+
+    public override void OnRaycastEnter(GameObject interactor)
+    {
+        ShowTooltip(interactor);
+    }
+
+    public override void OnRaycastExit(GameObject interactor)
+    {
+        ShowTooltip(interactor);
+    }
 }

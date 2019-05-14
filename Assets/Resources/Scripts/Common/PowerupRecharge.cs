@@ -43,4 +43,15 @@ public class PowerupRecharge : Interactable
     {
         // empty
     }
+
+    public override void OnRaycastEnter(GameObject interactor)
+    {
+        if(!interactor.GetComponent<PowerupBase>().Charged)
+            ShowTooltip(interactor);
+    }
+
+    public override void OnRaycastExit(GameObject interactor)
+    {
+        HideToolTip(interactor);
+    }
 }
