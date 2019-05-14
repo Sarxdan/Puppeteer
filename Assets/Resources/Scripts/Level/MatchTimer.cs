@@ -56,11 +56,11 @@ public class MatchTimer : NetworkBehaviour
 		//	StartCoroutine("EndTimer");
 		//}
 
-		//if (gameEnded && PostGameTime < 0 && isServer)
-		//{
-		//	StopCoroutine("EndTimer");
-		//	manager.StopHost();
-		//}
+		if (gameEnded && PostGameTime < 0 && isServer)
+		{
+			StopCoroutine("EndTimer");
+			manager.StopHost();
+		}
 	}
 
 	public IEnumerator Timer()
@@ -88,56 +88,15 @@ public class MatchTimer : NetworkBehaviour
 
 			yield return new WaitForSeconds(1);
 
+			TimeRemaining--;
 			Seconds--;
 			if (Seconds < 0)
 			{
 				Minutes--;
 				Seconds = 59;
 			}
-
-            //Check if a team have won
-            if (NumberOfPuppetsThatEscaped >= numberOfPuppetsAlive && !gameEnded)
-            {
-                //End the game. Puppets wins
-                gameEnded = true;
-                RpcPuppetsWins(numberOfPuppetsAlive, Minutes, Seconds);
-                TimeRemaining = 0;
-                StartCoroutine("EndTimer");
-                StopCoroutine("Timer");
-            }
-
-            else if (numberOfPuppetsAlive <= 0 && !gameEnded)
-            {
-                //End the game. Puppeteer wins
-                gameEnded = true;
-                RpcPuppeteerWins(numberOfPuppetsAlive, Minutes, Seconds);
-                TimeRemaining = 0;
-                StartCoroutine("EndTimer");
-                StopCoroutine("Timer");
-            }
-        }
-
-        if (NumberOfPuppetsThatEscaped >= 1)
-        {
-            //End the game. Puppets wins
-            gameEnded = true;
-            RpcPuppetsWins(numberOfPuppetsAlive, Minutes, Seconds);
-            TimeRemaining = 0;
-            StartCoroutine("EndTimer");
-            StopCoroutine("Timer");
-        }
-
-        else
-        {
-            //End the game. Puppeteer wins
-            gameEnded = true;
-            RpcPuppeteerWins(numberOfPuppetsAlive, Minutes, Seconds);
-            TimeRemaining = 0;
-            StartCoroutine("EndTimer");
-            StopCoroutine("Timer");
-        }
-
-    }
+		}
+	}
 
     public IEnumerator EndTimer()
 	{
