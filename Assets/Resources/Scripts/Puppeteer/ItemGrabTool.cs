@@ -37,7 +37,7 @@ public class ItemGrabTool : NetworkBehaviour
 	public GameObject[] HudItems;
 
 	public Button ButtonBearTrap, ButtonSpikeTrap, ButtonChandelier, ButtonFakeItem, ButtonMinionSpawner, ButtonSpawnTank;
-	public GameObject BearTrap, SpikeTrap, Chandelier, FakeItem, MinionSpawner, SpawnTank;
+	public GameObject BearTrap, SpikeTrap, Chandelier, FakeItem, MinionSpawner, Tank;
 
 	// The object which the player clicks on
 	private GameObject sourceObject;
@@ -78,6 +78,18 @@ public class ItemGrabTool : NetworkBehaviour
 	public void ChandelierTrapClick()
 	{
 		Pickup(Chandelier);
+	}
+	public void FakeItemClick()
+	{
+		Pickup(FakeItem);
+	}
+	public void MinionSpawnerClick()
+	{
+		Pickup(MinionSpawner);
+	}
+	public void TankClick()
+	{
+		Pickup(Tank);
 	}
 
     // Update is called once per frame
