@@ -128,7 +128,7 @@ public class StateMachine : NetworkBehaviour
             //If regular Minion or Tank
             if (MinionType == EnemyType.Minion)
             {
-                SetState(new WanderState(this));
+                SetState(new IdleState(this, 1));
             }
             else
             {
@@ -399,6 +399,7 @@ public class StateMachine : NetworkBehaviour
         }
         else
         {
+            Debug.LogWarning("Minion error: couldn't find nearby destination, going idle");
             return Vector3.positiveInfinity;
         }
 

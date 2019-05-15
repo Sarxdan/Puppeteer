@@ -113,7 +113,10 @@ public class PathfinderComponent : NetworkBehaviour
         this.worldPath = new List<AStarRoomNode>();
         this.roomPath = new List<Vector3>();
         this.HasPath = false;
+        if(this.animController == null)
+            this.animController = GetComponent<Animator>();
         this.animController.SetBool("Moving", false);
+        
     }
 
     public void MoveTo(Vector3 endPos)

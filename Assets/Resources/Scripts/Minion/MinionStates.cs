@@ -266,6 +266,12 @@ namespace MinionStates
             this.waitTime = Random.Range(machine.MinIdleTime, machine.MaxIdleTime);
         }
 
+        public IdleState(StateMachine machine, float waitTime)
+        {
+            this.machine = machine;
+            this.waitTime = waitTime;
+        }
+
         public override void Enter()
         {
             //Setup
