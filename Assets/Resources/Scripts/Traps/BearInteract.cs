@@ -43,7 +43,6 @@ public class BearInteract : Interactable
         if(interacting)
         {
             var currentTime = anim.GetCurrentAnimatorStateInfo(0).normalizedTime;
-            Debug.Log("Current time " + currentTime * totalTime);
             HudScript.ScaleInteractionProgress((currentTime*totalTime)/totalTime);
         }
     }
