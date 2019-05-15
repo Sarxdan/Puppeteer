@@ -35,7 +35,6 @@ public class StateMachine : NetworkBehaviour
 
     [Header("General settings")]
     public uint tickRate = 10;
-    public bool hideBool;
     //States
     public string CurrentStateName;
     public State CurrentState;
@@ -73,8 +72,8 @@ public class StateMachine : NetworkBehaviour
     public int ChargeCharge;
     [HideInInspector]
     public Collider[] HitColliders;
-    [HideInInspector]
-    public Collider[] HitPillars;
+    //[HideInInspector]
+    //public Collider[] HitPillars;
 
 
     [Header("Aggro settings")]
@@ -312,10 +311,6 @@ public class StateMachine : NetworkBehaviour
             //    }
             //}
 
-
-
-
-
             //Hit cone, triggered when the target is within the parameters
             if (WithinCone(transform, TargetEntity.transform, 80f, 2f, 0f))
             {
@@ -337,14 +332,12 @@ public class StateMachine : NetworkBehaviour
                     //    coll.gameObject.SetActive(false);
                     //}
                 }
-
                 //Set variables back to default on routine exit
-                HitPillars = null;
+                //HitPillars = null;
                 HitColliders = null;
                 ChargeStopped = true;
                 Corunning = false;
 
-                
                 yield break;
             }
             else

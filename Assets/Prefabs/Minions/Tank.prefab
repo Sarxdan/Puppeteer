@@ -671,6 +671,7 @@ GameObject:
   - component: {fileID: 4637723171867558907}
   - component: {fileID: 3012254230700539824}
   - component: {fileID: -2051150632329404280}
+  - component: {fileID: 1988923744153708277}
   m_Layer: 0
   m_Name: Tank
   m_TagString: Enemy
@@ -780,7 +781,7 @@ MonoBehaviour:
   serverOnly: 0
   localPlayerAuthority: 0
   m_AssetId: 
-  m_SceneId: 0
+  m_SceneId: 1598307556
 --- !u!114 &2220566078404847079
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -864,6 +865,7 @@ MonoBehaviour:
   StartChargeSpeed: 0
   ChargeCharge: 0
   HitColliders: []
+  HitPillars: []
   AggroDropTime: 5
   InstantAggroRange: 4
   ConeAggroRange: 20
@@ -909,6 +911,27 @@ MonoBehaviour:
   s_Thud: 
   s_Spawn: 
   s_Idle: 
+--- !u!114 &1988923744153708277
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2781805961794641847}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f76f0f9cc9045224294202f5f447ccc7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Placed: 0
+  Floor: 1
+  Roof: 0
+  Wall: 0
+  FakeItem: 0
+  BearTrap: 1
+  RoofSpike: 0
+  FloorSpike: 0
+  Cost: 0
 --- !u!1 &2781805961794641849
 GameObject:
   m_ObjectHideFlags: 0

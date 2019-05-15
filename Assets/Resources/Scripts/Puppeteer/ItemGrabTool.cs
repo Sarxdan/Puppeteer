@@ -142,7 +142,7 @@ public class ItemGrabTool : NetworkBehaviour
 
 		selectedObject.transform.position = Camera.main.ScreenToWorldPoint(mousePos);
 		selectedObject.name = "SelectedObject";
-		selectedObject.GetComponent<BoxCollider>().enabled = false;
+        selectedObject.GetComponent<Collider>().enabled = false;
 
 		// Handles the change in temporary currency. Can be used to show currency left after placement.
 		cost = selectedObject.GetComponent<SnapFunctionality>().Cost;
@@ -151,9 +151,9 @@ public class ItemGrabTool : NetworkBehaviour
 		// Instansiate the guide object on the ground
 		guideObject = Instantiate(sourceObject);
 		guideObject.name = "GuideObject";
-		guideObject.GetComponent<BoxCollider>().enabled = false;
+        guideObject.GetComponent<Collider>().enabled = false;
 
-		grabOffset = selectedObject.transform.position - MouseToWorldPosition();
+        grabOffset = selectedObject.transform.position - MouseToWorldPosition();
 
 		CmdPickUp(pickupTrap.name);
     }
@@ -190,10 +190,10 @@ public class ItemGrabTool : NetworkBehaviour
 		{
 			guideObject = Instantiate(MinionSpawner);
 		}
-		else if (pickupTrapName == "Tank")
-		{
-
-		}
+		else if (pickupTrapName == "TankSpawner")
+        {
+            guideObject = Instantiate(Tank);
+        }
 
 	}
 
@@ -240,7 +240,7 @@ public class ItemGrabTool : NetworkBehaviour
 			guideObject.transform.SetParent(bestDstPoint.transform.parent);
 			guideObject.transform.position -= previewLiftVector;
 			guideObject.GetComponent<SnapFunctionality>().Placed = true;
-			guideObject.GetComponent<BoxCollider>().enabled = true;
+			guideObject.GetComponent<Collider>().enabled = true;
 
 			SnapPointBase point = bestDstPoint.GetComponent<SnapPointBase>();
 			point.Used = true;
@@ -268,7 +268,7 @@ public class ItemGrabTool : NetworkBehaviour
 			guideObject.transform.position = placingTransform.Position;
 			guideObject.transform.rotation = placingTransform.Rotation;
 			guideObject.GetComponent<SnapFunctionality>().Placed = true;
-			guideObject.GetComponent<BoxCollider>().enabled = true;
+			guideObject.GetComponent<Collider>().enabled = true;
 			RpcUpdateLayer(guideObject);
 		}
     }
