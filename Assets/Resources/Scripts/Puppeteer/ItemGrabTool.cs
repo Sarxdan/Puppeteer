@@ -223,7 +223,6 @@ public class ItemGrabTool : NetworkBehaviour
         {
             guideObject = Instantiate(Tank);
         }
-			guideObject = Instantiate(Tank);
 	}
 
 	private void  ClientUpdatePositions()
