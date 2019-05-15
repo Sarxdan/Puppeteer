@@ -62,10 +62,7 @@ public class FinalRoomInteract : Interactable
 			ShowTooltip(interactor);
 	}
 
-	public override void OnRaycastExit(GameObject interactor)
-	{
-		HideToolTip(interactor);
-	}
+
 
 	// Only runs on server.
 	IEnumerator FinalCountDown()

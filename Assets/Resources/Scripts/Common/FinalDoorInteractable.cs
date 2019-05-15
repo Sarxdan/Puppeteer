@@ -45,10 +45,7 @@ public class FinalDoorInteractable : Interactable
 		if(buttonScript.Opened)
 			ShowTooltip(interactor);
 	}
-	public override void OnRaycastExit(GameObject interactor)
-	{
-		HideToolTip(interactor);
-	}
+
 
 	[ClientRpc]
 	public void RpcTurnOff(GameObject interactor)

@@ -26,7 +26,6 @@ public abstract class Interactable : NetworkBehaviour
 
     public abstract void OnRaycastEnter(GameObject interactor);
 
-    public abstract void OnRaycastExit(GameObject interactor);
  
 
     public void ShowTooltip(GameObject interactor)

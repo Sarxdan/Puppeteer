@@ -220,10 +220,7 @@ public class WeaponComponent : Interactable
     {
         ShowTooltip(interactor);
     }
-    public override void OnRaycastExit(GameObject interactor)
-    {
-        HideToolTip(interactor);
-    }
+
 
     [ClientRpc]
     public void RpcPickupWeapon(GameObject weaponObject, GameObject userObject)
