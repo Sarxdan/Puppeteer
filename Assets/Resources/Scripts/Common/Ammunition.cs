@@ -59,7 +59,7 @@ public class Ammunition : Interactable
 
     public override void OnRaycastExit(GameObject interactor)
     {
-        ShowTooltip(interactor);
+        HideToolTip(interactor);
     }
 
 }
