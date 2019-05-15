@@ -17,40 +17,92 @@ public class SnifferPower : PowerupBase
 {
 	// Int used to describe how much of the currently selected color should be blended into the doors colors
 	public int ColorAmount = 1;
-	public Color OpenColor = Color.green;
 	public Color LockedColor = Color.red;
+	public Color OpenColor = Color.green;
+
+	// Time between checks to see if the doors should change color during the powerups active time
+	public float refreshTime = 0.5f;
+	private bool activated = false;
+
+	// Arrays to store doors affected by powerup and whether they were last locked or not in order to notice if they change mid powerup
+	private DoorComponent[] doorArray;
+	private bool[] lockedBoolArray;
 
 	public override void OnActivate()
 	{
-		// Go through each door and update the color of each shader in the door
-		foreach (var door in FindObjectsOfType<DoorComponent>())
+		if (doorArray == null)
 		{
-			foreach (var renderer in door.GetComponentsInChildren<Renderer>())
+			doorArray = FindObjectsOfType<DoorComponent>();
+			lockedBoolArray = new bool[doorArray.Length];
+		}
+
+		// Go through each door and update the color of each shader in the door
+		for (int i = 0; i < doorArray.Length; i++)
+		{
+			foreach (var renderer in doorArray[i].GetComponentsInChildren<Renderer>())
 			{
+				lockedBoolArray[i] = doorArray[i].Locked;
+
 				// Choose color depending on if the door is locked or not
-				if (!door.Locked)
+				if (doorArray[i].Locked)
 				{
-					renderer.material.SetColor("Color_D2F3C594", OpenColor);
+					renderer.material.SetColor("Color_D2F3C594", LockedColor);
 				}
 				else
 				{
-					renderer.material.SetColor("Color_D2F3C594", LockedColor);
+					renderer.material.SetColor("Color_D2F3C594", OpenColor);
 				}
 				// For all renderers in door, start blending the colors to the chosen amount
 				renderer.material.SetInt("Vector1_67A4DF5D", ColorAmount);
 			}
 		}
+		activated = true;
+		StartCoroutine("UpdateDoorColors");
 	}
 
 	public override void OnComplete()
 	{
-		// Set the blending amount to 0 for all renderers to stop adding color.
+		activated = false;
+
+		// Set the blending amount to 0 for all renderers to stop adding color
 		foreach (var door in FindObjectsOfType<DoorComponent>())
 		{
 			foreach (var renderer in door.GetComponentsInChildren<Renderer>())
 			{
 				renderer.material.SetInt("Vector1_67A4DF5D", 0);
 			}
+		}
+	}
+	
+	// Check the doors to see if they have changed their locked state at regular intervals
+	public IEnumerator UpdateDoorColors()
+	{
+		// Wait when this is first called since the doors were just updated
+		yield return new WaitForSeconds(refreshTime);
+
+		while (activated)
+		{
+			for (int i = 0; i < doorArray.Length; i++)
+			{
+				if (doorArray[i].Locked != lockedBoolArray[i])
+				{
+					// This door has changed its locked value so we update color
+					foreach (var renderer in doorArray[i].GetComponentsInChildren<Renderer>())
+					{
+						if (doorArray[i].Locked)
+						{
+							renderer.material.SetColor("Color_D2F3C594", LockedColor);
+						}
+						else
+						{
+							renderer.material.SetColor("Color_D2F3C594", OpenColor);
+						}
+					}
+					lockedBoolArray[i] = doorArray[i].Locked;
+				}
+			}
+
+			yield return new WaitForSeconds(refreshTime);
 		}
 	}
 }
