@@ -117,7 +117,7 @@ public class WeaponComponent : Interactable
                     health.Damage(damage);
                 }
 				// create hit decal
-				decalHandler.AddDecal(Instantiate(HitDecals[Random.Range(0, HitDecals.Length)], hitInfo.point + hitInfo.normal * 0.001f, Quaternion.FromToRotation(Vector3.forward, hitInfo.normal), hitInfo.transform));
+				decalHandler.AddDecal(Instantiate(HitDecals[Random.Range(0, HitDecals.Length)], hitInfo.point, Quaternion.FromToRotation(Vector3.forward, hitInfo.normal), hitInfo.transform));
 
                 Debug.DrawRay(hitInfo.point, hitInfo.normal, Color.black, 1.0f);
                 Debug.DrawRay(transform.position, -transform.forward * 100.0f, Color.red, 0.2f);
@@ -203,7 +203,6 @@ public class WeaponComponent : Interactable
 
     public override void OnInteractBegin(GameObject interactor)
     {
-        Debug.Log(this);
 
         this.HeadTransform = interactor.GetComponentInChildren<Camera>().transform;
        
