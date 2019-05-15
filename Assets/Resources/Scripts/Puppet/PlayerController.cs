@@ -135,7 +135,7 @@ public class PlayerController : NetworkBehaviour
 		}
 
         // setup compass late to prevent race condition
-        Invoke("SetupCompass", 5.0f);
+        Invoke("SetupCompass", 2.0f);
     }
 
     private void SetupCompass()
