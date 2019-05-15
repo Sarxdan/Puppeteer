@@ -183,10 +183,10 @@ public class StateMachine : NetworkBehaviour
     public void CheckProximity()
     {
         int mask = ~(1 << LayerMask.NameToLayer("Puppeteer Interact"));
+        //Finds closest puppet
         foreach (GameObject puppet in Puppets)
         {   
-            //Finds closest alive puppet
-            if (puppet != null && puppet.GetComponent<HealthComponent>().Health > 0)
+            if (puppet != null)
             {
                 //If within cone range and not obscured
                 if (WithinCone(transform, puppet.transform, FOVConeAngle, ConeAggroRange, InstantAggroRange))
