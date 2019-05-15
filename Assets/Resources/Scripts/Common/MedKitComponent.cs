@@ -43,6 +43,6 @@ public class MedKitComponent : Interactable
 
     public override void OnRaycastExit(GameObject interactor)
     {
-        ShowTooltip(interactor);
+        HideToolTip(interactor);
     }
 }
