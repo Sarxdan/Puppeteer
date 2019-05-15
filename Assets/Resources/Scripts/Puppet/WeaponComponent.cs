@@ -248,6 +248,7 @@ public class WeaponComponent : Interactable
         user.CurrentWeapon = newWeapon.gameObject;
         newWeapon.HeadTransform = user.HeadTransform;
         user.CurrentWeaponComponent = newWeapon;
+        user.CurrentLiquidPerRound = newWeapon.LiquidPerRound;
         user.SetWeaponAnimation(newWeapon.AnimationIndex);
 
         if (userObject.GetComponent<PlayerController>().isLocalPlayer)

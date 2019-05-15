@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Mirror;
 using UnityEngine;
+using UnityEngine.UI;
 /*
  * AUTHOR:
  * Ludvig Björk Förare
@@ -88,7 +89,10 @@ public class PlayerController : NetworkBehaviour
     public GameObject FPVArms;
     private Rigidbody rigidBody;
     
-  
+    // Krig
+    private int currentLiquid;
+    public GameObject reloadContainer;
+    public int CurrentLiquidPerRound;
 
 
     private IEnumerator StaminaRegenRoutine()
@@ -108,6 +112,7 @@ public class PlayerController : NetworkBehaviour
     }
     void Start()
     {
+       // CurrentWeaponComponent = CurrentWeapon.GetComponent<WeaponComponent>();
         rigidBody = GetComponent<Rigidbody>();
         AnimController = GetComponent<Animator>();
         FPVAnimController = FPVArms.GetComponent<Animator>();
@@ -264,6 +269,18 @@ public class PlayerController : NetworkBehaviour
             else if(!hasLeftGround)
             {
                 hasLeftGround = true;
+            }
+        }
+
+        if(CurrentWeaponComponent != null)
+        {
+            if(CurrentWeaponComponent.LiquidLeft < CurrentLiquidPerRound)
+            {
+                reloadContainer.SetActive(true);
+            }
+            else
+            {
+                reloadContainer.SetActive(false);
             }
         }
     }
