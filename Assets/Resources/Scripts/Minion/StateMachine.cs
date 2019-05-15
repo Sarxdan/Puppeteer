@@ -72,6 +72,8 @@ public class StateMachine : NetworkBehaviour
     public int ChargeCharge;
     [HideInInspector]
     public Collider[] HitColliders;
+    //[HideInInspector]
+    //public Collider[] HitPillars;
 
 
     [Header("Aggro settings")]
@@ -79,14 +81,14 @@ public class StateMachine : NetworkBehaviour
     public float InstantAggroRange;
     public float ConeAggroRange;
     public float FOVConeAngle;
+    [HideInInspector]
     public bool AtkPrioRunning;
-    [HideInInspector] //Unused attack prioritization
+    [HideInInspector]
     public bool AssholeMode;
     private float PreThreat;
     private float PostThreat;
 
     [Header("Idle settings")]
-
     public float MinIdleTime;
     public float MaxIdleTime;
 
@@ -298,6 +300,16 @@ public class StateMachine : NetworkBehaviour
                 CurrentChargeSpeed = CurrentChargeSpeed += ChargeAccelerationSpeed;
                 AnimController.SetFloat("ChargeSpeed", CurrentChargeSpeed);
             }
+            
+            //HitPillars = Physics.OverlapSphere(gameObject.transform.position, 1f);
+
+            //foreach (Collider pillar in HitPillars)
+            //{
+            //    if (pillar.name == "ST_Pillar_Full_01")
+            //    {
+            //        pillar.gameObject.SetActive(false);
+            //    }
+            //}
 
             //Hit cone, triggered when the target is within the parameters
             if (WithinCone(transform, TargetEntity.transform, 80f, 2f, 0f))
@@ -315,13 +327,17 @@ public class StateMachine : NetworkBehaviour
                         if (debug) Debug.Log("Damage dealt: " + chargeDamage + " Damage in uint: " + uChargeDamage + " Target hit = " + coll);
                         TargetEntity.Damage(uChargeDamage);
                     }
+                    //else if (coll.name == "ST_Pillar_Full_01")
+                    //{
+                    //    coll.gameObject.SetActive(false);
+                    //}
                 }
                 //Set variables back to default on routine exit
+                //HitPillars = null;
                 HitColliders = null;
                 ChargeStopped = true;
                 Corunning = false;
 
-                
                 yield break;
             }
             else

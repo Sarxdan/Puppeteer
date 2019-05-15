@@ -270,22 +270,20 @@ public class LevelBuilder : NetworkBehaviour
 		}
     }
 
-	// Returns a List of rooms.
-	public List<GameObject> GetRooms()
-	{
-		if (rooms == null)
-		{
-			rooms = new List<GameObject>();
-			foreach (var roomInteractable in FindObjectsOfType<RoomInteractable>())
-			{
-				rooms.Add(roomInteractable.gameObject);
-			}
-		}
-		return rooms;
-	}
+    // Returns a List of rooms.
+    public List<GameObject> GetRooms()
+    {
+        List<GameObject> result = new List<GameObject>();
+        for (int i = 0; i < parent.transform.childCount; i++)
+        {
+            result.Add(parent.transform.GetChild(i).gameObject);
+        }
+        return result;
+    }
 
-	// Connect doors if able
-	public void ConnectDoorsInRoomIfPossible(GameObject room)
+
+    // Connect doors if able
+    public void ConnectDoorsInRoomIfPossible(GameObject room)
 	{
 		foreach (var ownDoor in room.GetComponentsInChildren<AnchorPoint>())
 		{
