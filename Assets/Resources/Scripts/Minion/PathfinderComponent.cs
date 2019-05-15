@@ -109,8 +109,8 @@ public class PathfinderComponent : NetworkBehaviour
 
     public void Stop()
     {
-        this.worldPath.Clear();
-        this.roomPath.Clear();
+        this.worldPath = new List<AStarRoomNode>();
+        this.roomPath = new List<Vector3>();
         this.HasPath = false;
         this.animController.SetBool("Moving", false);
     }

@@ -242,9 +242,6 @@ public class PlayerController : NetworkBehaviour
                 hasLeftGround = true;
             }
         }
-        float weight = AnimController.GetFloat("JumpWeight");
-        AnimController.SetLayerWeight(2, AnimController.GetFloat("JumpWeight") / AnimController.GetLayerWeight(2) + .01f);
-        FPVAnimController.SetLayerWeight(2, FPVAnimController.GetFloat("JumpWeight") / FPVAnimController.GetLayerWeight(2)+ .01f);
     }
 
 
