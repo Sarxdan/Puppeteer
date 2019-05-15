@@ -22,13 +22,13 @@ public class MedKitComponent : Interactable
     {
         PlayerController playerController = interactor.GetComponent<PlayerController>();
 
-
-            if (!playerController.HasMedkit)
-                playerController.HasMedkit = true;
-
+        if (!playerController.HasMedkit)
+        {
+            playerController.HasMedkit = true;
             playerController.RpcAddMedkit();
+            Destroy(gameObject);
+        }
         
-        Destroy(gameObject);
     }
     //Overrides from Interactable component, adds the medkit to the players inventory.
     public override void OnInteractEnd(GameObject interactor)
@@ -41,8 +41,4 @@ public class MedKitComponent : Interactable
         ShowTooltip(interactor);
     }
 
-    public override void OnRaycastExit(GameObject interactor)
-    {
-        ShowTooltip(interactor);
-    }
 }

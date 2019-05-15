@@ -79,6 +79,7 @@ public class PlayerController : NetworkBehaviour
     public GameObject CurrentWeapon;
     public int Ammunition;
     public bool CanShoot = true;
+    public WeaponComponent CurrentWeaponComponent;
 
     //References
     [Header("References")]
@@ -87,6 +88,8 @@ public class PlayerController : NetworkBehaviour
     public GameObject FPVArms;
     private Rigidbody rigidBody;
     
+  
+
 
     private IEnumerator StaminaRegenRoutine()
     {
@@ -118,29 +121,13 @@ public class PlayerController : NetworkBehaviour
         
         if(isLocalPlayer)
         {
-            CurrentWeapon.transform.SetParent(FPVHandTransform);
-            CurrentWeapon.transform.localPosition = Vector3.zero;
-            CurrentWeapon.transform.localRotation = CurrentWeapon.GetComponent<WeaponComponent>().HoldRotation;
-            //transform.Find("Mesh").gameObject.SetActive(false);
+            transform.Find("Mesh").gameObject.SetActive(false);
         }
         else
         {
             FPVArms.SetActive(false);
         }
 
-        // configure compass
-        var compass = GetComponentInChildren<Compass>();
-        if (compass)
-        {
-            foreach (var player in GameObject.FindObjectsOfType<PlayerController>())
-            {
-                if (player.transform == transform || player.isLocalPlayer)
-                {
-                    continue;
-                }
-                compass.AddTarget(player.transform);
-            }
-        }
 		var CNLP = FindObjectsOfType<CustomNetworkLobbyPlayer>();
 		foreach (var LP in CNLP)
 		{
@@ -149,6 +136,24 @@ public class PlayerController : NetworkBehaviour
 				CmdSetName(LP.Nickname);
 			}
 		}
+
+        // setup compass late to prevent race condition
+        Invoke("SetupCompass", 2.0f);
+    }
+
+    private void SetupCompass()
+    {
+        var compass = GetComponent<Compass>();
+        Debug.Assert(compass != null, "Compass was not found in player prefab");
+
+        foreach (var player in GameObject.FindObjectsOfType<PlayerController>())
+        {
+            if (player.transform == transform || player.isLocalPlayer)
+            {
+                continue;
+            }
+            compass.AddTarget(player.transform);
+        }
     }
 
 	[Command]
@@ -245,9 +250,6 @@ public class PlayerController : NetworkBehaviour
                 hasLeftGround = true;
             }
         }
-        float weight = AnimController.GetFloat("JumpWeight");
-        AnimController.SetLayerWeight(2, AnimController.GetFloat("JumpWeight") / AnimController.GetLayerWeight(2) + .01f);
-        FPVAnimController.SetLayerWeight(2, FPVAnimController.GetFloat("JumpWeight") / FPVAnimController.GetLayerWeight(2)+ .01f);
     }
 
 

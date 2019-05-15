@@ -30,9 +30,14 @@ public class Compass : MonoBehaviour
 
     private Texture2D barTex;
 
-    void Awake()
+    void Start()
     {
         barTex = Resources.Load<Texture2D>("Textures/Compass_Line");
+
+        if(GameObject.FindGameObjectWithTag("GameController").GetComponent<NetworkIdentity>().isLocalPlayer)
+        {
+            this.enabled = false;
+        }
     }
 
     void OnGUI()
@@ -67,7 +72,7 @@ public class Compass : MonoBehaviour
 
         if(!Targets.Contains(target))
         {
-            Targets.Add(target.transform);
+            Targets.Add(target);
         }
     }
 

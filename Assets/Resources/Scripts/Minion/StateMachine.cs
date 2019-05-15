@@ -45,7 +45,7 @@ public class StateMachine : NetworkBehaviour
     [HideInInspector]
     public EnemySpawner Spawner;
     [HideInInspector]
-    public GameObject TargetEntity;
+    public HealthComponent TargetEntity;
     [HideInInspector]
     public Animator AnimController;
     [HideInInspector]
@@ -131,7 +131,7 @@ public class StateMachine : NetworkBehaviour
             //If regular Minion or Tank
             if (MinionType == EnemyType.Minion)
             {
-                SetState(new WanderState(this));
+                SetState(new IdleState(this, 1));
             }
             else
             {
@@ -158,7 +158,7 @@ public class StateMachine : NetworkBehaviour
             {
                 try
                 {
-                    if(player.GetComponent<HealthComponent>().Health > 0)
+                    if(!player.GetComponent<HealthComponent>().Downed)
                     {
                         Puppets.Add(player);
                     }
@@ -186,15 +186,15 @@ public class StateMachine : NetworkBehaviour
     public void CheckProximity()
     {
         int mask = ~(1 << LayerMask.NameToLayer("Puppeteer Interact"));
+        //Finds closest puppet
         foreach (GameObject puppet in Puppets)
         {   
-            //Finds closest alive puppet
-            if (puppet != null && puppet.GetComponent<HealthComponent>().Health > 0)
+            if (puppet != null)
             {
                 //If within cone range and not obscured
                 if (WithinCone(transform, puppet.transform, FOVConeAngle, ConeAggroRange, InstantAggroRange))
                 {     //Attack player
-                    TargetEntity = puppet.gameObject;
+                    TargetEntity = puppet.GetComponent<HealthComponent>();
                     if (MinionType == EnemyType.Minion)
                     {
                         SetState(new AttackState(this));
@@ -241,10 +241,9 @@ public class StateMachine : NetworkBehaviour
     //Runs during attack animation, deals damage to player
     public void Attack()
     {
-        if(!isServer || Vector3.Distance(transform.position, TargetEntity.transform.position) > AttackEscapeDistance) return;
+        if(!isServer) return;
         
-        HealthComponent health = TargetEntity.GetComponent<HealthComponent>();
-        if(health == null)
+        if(TargetEntity == null)
         {
             TargetEntity = null;
             if (MinionType == EnemyType.Minion)
@@ -257,9 +256,9 @@ public class StateMachine : NetworkBehaviour
             }
             return;
         }
-        if (health.Health > 0)
+        if (!TargetEntity.Downed && Vector3.Distance(transform.position, TargetEntity.transform.position) < AttackEscapeDistance)
         {
-            health.Damage(AttackDamage);
+            TargetEntity.Damage(AttackDamage);
         }
     }
 
@@ -328,11 +327,10 @@ public class StateMachine : NetworkBehaviour
                     if (coll.tag == "Player")
                     {
                         //Deals damage to the players in range based on charge speed
-                        HealthComponent health = TargetEntity.GetComponent<HealthComponent>();
                         float chargeDamage = CurrentChargeSpeed * 5;
                         uint uChargeDamage = (uint)chargeDamage;
                         if (debug) Debug.Log("Damage dealt: " + chargeDamage + " Damage in uint: " + uChargeDamage + " Target hit = " + coll);
-                        health.Damage(uChargeDamage);
+                        TargetEntity.Damage(uChargeDamage);
                     }
                     //else if (coll.name == "ST_Pillar_Full_01")
                     //{
@@ -422,6 +420,11 @@ public class StateMachine : NetworkBehaviour
         {
             doorReferences = hit.transform.GetComponentInParent<DoorReferences>();
         }
+        else
+        {
+            Debug.LogWarning("Minion error: couldn't find nearby destination, going idle");
+            return Vector3.positiveInfinity;
+        }
 
 
         while(doorReferences != null){
@@ -455,7 +458,7 @@ public class StateMachine : NetworkBehaviour
         }
         catch(System.NullReferenceException e)
         {
-            Debug.LogWarning("EnemySpawner tried to send minion to a room which had no navmesh: " + doorReferences.name);
+            Debug.LogWarning("EnemySpawner tried to send minion to a room which had no navmesh: " + currentDoor.GetComponentInParent<NavMesh>().transform.name);
             return GetNearbyDestination(); //Attempts again
         }
 
