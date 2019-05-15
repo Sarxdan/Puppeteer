@@ -18,11 +18,11 @@ public class NavigationPower : PowerupBase
 {
     public override void OnActivate()
     {
-        GameObject.FindObjectOfType<Compass>().AddTarget(GameObject.FindGameObjectWithTag("Finish").transform);
+        transform.GetComponent<Compass>().AddTarget(GameObject.FindGameObjectWithTag("Finish").transform);
     }
 
     public override void OnComplete()
     {
-        GameObject.FindObjectOfType<Compass>().RemoveTarget(GameObject.FindGameObjectWithTag("Finish").transform);
+        transform.GetComponent<Compass>().RemoveTarget(GameObject.FindGameObjectWithTag("Finish").transform);
     }
 }
