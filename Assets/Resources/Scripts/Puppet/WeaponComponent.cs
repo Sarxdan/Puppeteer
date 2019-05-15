@@ -98,6 +98,7 @@ public class WeaponComponent : Interactable
         PlayerController pc = GetComponentInParent<PlayerController>();
         pc.AnimController.SetBool("Fire", true);
         pc.FPVAnimController.SetTrigger("Fire");
+		DecalHandler decalHandler = pc.GetComponent<DecalHandler>();
         
         for(int i = 0; i < NumShots; i++)
         {
@@ -115,8 +116,8 @@ public class WeaponComponent : Interactable
                     uint damage = (uint)(this.Damage * Mathf.Pow(DamageDropoff, hitInfo.distance / 10.0f));
                     health.Damage(damage);
                 }
-                // create hit decal
-				Instantiate(HitDecals[Random.Range(0, HitDecals.Length)], hitInfo.point + hitInfo.normal * 0.001f, Quaternion.FromToRotation(Vector3.forward, hitInfo.normal), hitInfo.transform);
+				// create hit decal
+				decalHandler.AddDecal(Instantiate(HitDecals[Random.Range(0, HitDecals.Length)], hitInfo.point + hitInfo.normal * 0.001f, Quaternion.FromToRotation(Vector3.forward, hitInfo.normal), hitInfo.transform));
 
                 Debug.DrawRay(hitInfo.point, hitInfo.normal, Color.black, 1.0f);
                 Debug.DrawRay(transform.position, -transform.forward * 100.0f, Color.red, 0.2f);
