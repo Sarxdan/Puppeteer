@@ -59,7 +59,7 @@ public class MatchTimer : NetworkBehaviour
 			else
 				Seconds = i;
 
-        //Loop while time is remaining
+		//Loop while time is remaining
 		while (Minutes > 0 || Seconds > 0)
 		{
 			string minutesString, secondsString;
@@ -74,12 +74,12 @@ public class MatchTimer : NetworkBehaviour
 
 			string TimePrint = minutesString + ":" + secondsString;
 
-            //Update UI clock
+			//Update UI clock
 			RpcUpdateTime(TimePrint);
 
 			yield return new WaitForSeconds(1);
 
-            MatchLength--;
+			MatchLength--;
 			Seconds--;
 			if (Seconds < 0)
 			{
@@ -87,55 +87,55 @@ public class MatchTimer : NetworkBehaviour
 				Seconds = 59;
 			}
 
-            //Check if a team have won
+			//    //Check if a team have won
 
-            //If a puppet have escaped and all other are dead, the puppets win
-            if (numberOfPuppetsAlive <= 0 && NumberOfPuppetsThatEscaped != 0 && !gameEnded)
-            {
-                //End the game. Puppets wins
-                gameEnded = true;
-                RpcPuppetsWins(NumberOfPuppetsThatEscaped, Minutes, Seconds);
-                MatchLength = 0;
-                StartCoroutine("EndTimer");
-                StopCoroutine("Timer");
-            }
+			//    //If a puppet have escaped and all other are dead, the puppets win
+			//    if (numberOfPuppetsAlive <= 0 && NumberOfPuppetsThatEscaped != 0 && !gameEnded)
+			//    {
+			//        //End the game. Puppets wins
+			//        gameEnded = true;
+			//        RpcPuppetsWins(NumberOfPuppetsThatEscaped, Minutes, Seconds);
+			//        MatchLength = 0;
+			//        StartCoroutine("EndTimer");
+			//        StopCoroutine("Timer");
+			//    }
 
-            //If no puppets are alive, the puppeteer wins
-            else if (numberOfPuppetsAlive <= 0 && !gameEnded)
-            {
-                //End the game. Puppeteer wins
-                gameEnded = true;
-                RpcPuppeteerWins(numberOfPuppetsAlive, Minutes, Seconds);
-                MatchLength = 0;
-                StartCoroutine("EndTimer");
-                StopCoroutine("Timer");
-            }
+			//    //If no puppets are alive, the puppeteer wins
+			//    else if (numberOfPuppetsAlive <= 0 && !gameEnded)
+			//    {
+			//        //End the game. Puppeteer wins
+			//        gameEnded = true;
+			//        RpcPuppeteerWins(numberOfPuppetsAlive, Minutes, Seconds);
+			//        MatchLength = 0;
+			//        StartCoroutine("EndTimer");
+			//        StopCoroutine("Timer");
+			//    }
 
-            numberOfPuppetsAlive = GameObject.FindGameObjectsWithTag("Player").Length;
-        }
+			//    numberOfPuppetsAlive = GameObject.FindGameObjectsWithTag("Player").Length;
+			//}
 
-        //If the time runs out and one puppet have escaped. The puppets win
-        if (NumberOfPuppetsThatEscaped >= 1)
-        {
-            //End the game. Puppets wins
-            gameEnded = true;
-            RpcPuppetsWins(NumberOfPuppetsThatEscaped, Minutes, Seconds);
-            MatchLength = 0;
-            StartCoroutine("EndTimer");
-            StopCoroutine("Timer");
-        }
+			////If the time runs out and one puppet have escaped. The puppets win
+			//if (NumberOfPuppetsThatEscaped >= 1)
+			//{
+			//    //End the game. Puppets wins
+			//    gameEnded = true;
+			//    RpcPuppetsWins(NumberOfPuppetsThatEscaped, Minutes, Seconds);
+			//    MatchLength = 0;
+			//    StartCoroutine("EndTimer");
+			//    StopCoroutine("Timer");
+			//}
 
-        //If the time runs out. The puppeteer wins
-        else
-        {
-            //End the game. Puppeteer wins
-            gameEnded = true;
-            RpcPuppeteerWins(numberOfPuppetsAlive, Minutes, Seconds);
-            MatchLength = 0;
-            StartCoroutine("EndTimer");
-            StopCoroutine("Timer");
-        }
-
+			////If the time runs out. The puppeteer wins
+			//else
+			//{
+			//    //End the game. Puppeteer wins
+			//    gameEnded = true;
+			//    RpcPuppeteerWins(numberOfPuppetsAlive, Minutes, Seconds);
+			//    MatchLength = 0;
+			//    StartCoroutine("EndTimer");
+			//    StopCoroutine("Timer");
+			//}
+		}
     }
 
     //Show the endscreen and then go back to main menu after a while

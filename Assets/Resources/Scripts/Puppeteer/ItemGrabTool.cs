@@ -37,7 +37,7 @@ public class ItemGrabTool : NetworkBehaviour
 	public GameObject[] HudItems;
 
 	public Button ButtonBearTrap, ButtonSpikeTrap, ButtonChandelier, ButtonFakeItem, ButtonMinionSpawner, ButtonSpawnTank;
-	public GameObject BearTrap, SpikeTrap, Chandelier, FakeItem, MinionSpawner, Tank;
+	public GameObject BearTrap, SpikeTrapFloor, SpikeTrapRoof, Chandelier, FakeItem, MinionSpawner, Tank;
 
 	// The object which the player clicks on
 	private GameObject sourceObject;
@@ -45,6 +45,8 @@ public class ItemGrabTool : NetworkBehaviour
 	private GameObject selectedObject;
 	// The object which snaps to points in the map
 	private GameObject guideObject;
+	// The transform on the server.
+	private TransformStruct placingTransform;
 	// The vector that is added to the preview objects vector to move it up before it is placed
 	private Vector3 previewLiftVector;
 	private SnapPointBase bestDstPoint;
@@ -66,6 +68,16 @@ public class ItemGrabTool : NetworkBehaviour
 		previewLiftVector = new Vector3(0,PreviewLiftHeight,0);
 		SetPrices();
     }
+	// TODO:
+	void SetPrices()
+	{
+		ButtonBearTrap.GetComponentInChildren<Text>().text = BearTrap.GetComponent<SnapFunctionality>().Cost.ToString();
+		ButtonSpikeTrap.GetComponentInChildren<Text>().text = SpikeTrapFloor.GetComponent<SnapFunctionality>().Cost.ToString();
+		ButtonChandelier.GetComponentInChildren<Text>().text = Chandelier.GetComponent<SnapFunctionality>().Cost.ToString();
+		ButtonFakeItem.GetComponentInChildren<Text>().text = FakeItem.GetComponent<SnapFunctionality>().Cost.ToString();
+		ButtonMinionSpawner.GetComponentInChildren<Text>().text = MinionSpawner.GetComponent<SnapFunctionality>().Cost.ToString();
+		ButtonSpawnTank.GetComponentInChildren<Text>().text = Tank.GetComponent<SnapFunctionality>().Cost.ToString();
+	}
 
 	public void BearTrapClick()
 	{
@@ -73,7 +85,7 @@ public class ItemGrabTool : NetworkBehaviour
 	}
 	public void SpikeTrapClick()
 	{
-		Pickup(SpikeTrap);
+		Pickup(SpikeTrapFloor);
 	}
 	public void ChandelierTrapClick()
 	{
@@ -92,35 +104,19 @@ public class ItemGrabTool : NetworkBehaviour
 		Pickup(Tank);
 	}
 
-	void SetPrices()
-	{
-		ButtonBearTrap.GetComponentInChildren<Text>();
-	}
 
     // Update is called once per frame
     void Update()
 	{
-		// Update local players rooms and send data to server. Purely visual.
-		if (isLocalPlayer)
-            ClientUpdate();
-
-		// Main update and checks always run on server
-		if (isServer)
-            if (selectedObject != null)
-                ServerUpdate();
+		ClientUpdate();
     }
 
     private void ClientUpdate()
     {
         if (selectedObject == null)
-        {
 			return;
-        }
         else
 		{
-			// Send current mouseposition to server
-			CmdUpdateMousePos(MouseToWorldPosition());
-
 			if (Input.GetButtonUp("Fire"))
 			{
 				Drop();
@@ -128,148 +124,170 @@ public class ItemGrabTool : NetworkBehaviour
 
 			if (Input.GetButtonDown("Rotate"))
 			{
-				// Rotate room around its own up-axis
-
 				selectedObject.transform.RotateAround(selectedObject.transform.position, selectedObject.transform.up, 90);
-				CmdRotate(selectedObject.transform.rotation);
 			}
 
-			if (!isServer)
-			{
-				ClientUpdatePositions();
-			}
+			ClientUpdatePositions();
         }
-    }
-
-	// Rotate trap on server
-	[Command]
-    public void CmdRotate(Quaternion rot)
-    {
-        selectedObject.transform.rotation = rot;
-    }
-
-	// Update mouse position on server
-	[Command]
-    public void CmdUpdateMousePos(Vector3 pos)
-    {
-        localPlayerMousePos = pos;
-    }
-
-    private void ServerUpdate()
-    {
-        ServerUpdatePositions();
     }
 
 	// Method used for picking up an object.
 	private void Pickup(GameObject pickupTrap)
     {
+		// Sets the SourceObject.
 		sourceObject = Instantiate(pickupTrap);
+		sourceObject.name = "sourceObject";
 		sourceObject.transform.position = new Vector3(0, -100, 0);
+
 		// Instansiate the floating object
 		selectedObject = Instantiate(sourceObject);
 
-		selectedObject.transform.rotation = new Quaternion();
 		Vector3 mousePos = Input.mousePosition;
 		mousePos.z = Camera.main.WorldToScreenPoint(new Vector3(0, LiftHeight, 0)).z;
+
 		selectedObject.transform.position = Camera.main.ScreenToWorldPoint(mousePos);
 		selectedObject.name = "SelectedObject";
 		selectedObject.GetComponent<BoxCollider>().enabled = false;
+
 		// Handles the change in temporary currency. Can be used to show currency left after placement.
 		cost = selectedObject.GetComponent<SnapFunctionality>().Cost;
 		currency.TemporaryCurrency = currency.CurrentCurrency - cost;
 
 		// Instansiate the guide object on the ground
-		guideObject = Instantiate(selectedObject);
+		guideObject = Instantiate(sourceObject);
 		guideObject.name = "GuideObject";
 		guideObject.GetComponent<BoxCollider>().enabled = false;
 
 		grabOffset = selectedObject.transform.position - MouseToWorldPosition();
 
-        CmdUpdateMousePos(MouseToWorldPosition() + grabOffset);
-		
-        CmdPickup(pickupTrap);
+		CmdPickUp(pickupTrap.name);
     }
 
-    [Command]
-    public void CmdPickup(GameObject pickupTrap)
-    {
-		if (!isLocalPlayer)
-		{
-			sourceObject = Instantiate(pickupTrap);
-			sourceObject.transform.position = new Vector3(0, -100, 0);
-			selectedObject = Instantiate(sourceObject);
-			selectedObject.name = "SelectedObject";
-			selectedObject.transform.position = localPlayerMousePos;
-			selectedObject.transform.localEulerAngles = new Vector3(0, 0, 0);
-			selectedObject.GetComponent<BoxCollider>().enabled = false;
-
-			// handels the change in temporary currency. can be used to show currency left after placement.
-			cost = selectedObject.GetComponent<SnapFunctionality>().Cost;
-			currency.TemporaryCurrency = currency.CurrentCurrency - cost;
-
-			guideObject = Instantiate(sourceObject);
-			guideObject.name = "GuideObject";
-			guideObject.GetComponent<BoxCollider>().enabled = false;
-		}
-
-        if (!isLocalPlayer)
-        {
-            foreach (MeshRenderer renderer in selectedObject.GetComponentsInChildren<MeshRenderer>())
-            {
-                renderer.enabled = false;
-            }
-			foreach (MeshRenderer renderer in guideObject.GetComponentsInChildren<MeshRenderer>())
-			{
-				renderer.enabled = false;
-			}
-        }
-    }
-
-    public void Drop()
-    {
-        CmdDrop();
-		if (!isServer)
-		{
-			Destroy(selectedObject);
-			selectedObject = null;
-			Destroy(guideObject);
-			guideObject = null;
-		}
-    }
-
-	// Method to update position of source object on server when drop happens.
 	[Command]
-    public void CmdDrop()
-    {
-		// Reset everything if trap is droped without a target place.
-		if ((sourceObject.transform.position.x == guideObject.transform.position.x && sourceObject.transform.position.z == guideObject.transform.position.z && sourceObject.transform.rotation == guideObject.transform.rotation) || bestDstPoint == null)
+	public void CmdPickUp(String pickupTrapName)
+	{
+		if (guideObject != null)
 		{
-			Destroy(selectedObject);
-			selectedObject = null;
 			Destroy(guideObject);
 			guideObject = null;
+		}
+
+		if (pickupTrapName == "Bear Trap")
+		{
+			guideObject = Instantiate(BearTrap);
+		}
+		else if (pickupTrapName == "Chandelier")
+		{
+			guideObject = Instantiate(Chandelier);
+		}
+		else if (pickupTrapName == "Spike Floor")
+		{
+			guideObject = Instantiate(SpikeTrapFloor);
+		}
+		else if (pickupTrapName == "Spike Roof")
+		{
+			guideObject = Instantiate(SpikeTrapRoof);
+		}
+		else if (pickupTrapName == "Fake Item")
+		{
+
+		}
+		else if (pickupTrapName == "MinionSpawner")
+		{
+			guideObject = Instantiate(MinionSpawner);
+		}
+		else if (pickupTrapName == "Tank")
+		{
+
+		}
+
+	}
+
+	private void  ClientUpdatePositions()
+    {
+		Vector3 newPosition = MouseToWorldPosition() + grabOffset;
+		selectedObject.transform.position = Vector3.Lerp(selectedObject.transform.position, new Vector3(newPosition.x, LiftHeight, newPosition.z), LiftSpeed * Time.deltaTime);
+
+		float bestDist = Mathf.Infinity;
+		bestDstPoint = null;
+
+		var nearestPoint = FindNearestFreePoint(selectedObject.GetComponent<SnapFunctionality>(), ref bestDist);
+		if (nearestPoint != null)
+		{
+			bestDstPoint = nearestPoint;
+			Debug.DrawLine(bestDstPoint.transform.position, selectedObject.transform.position, Color.yellow);
+
+			guideObject.transform.position = selectedObject.transform.position - (selectedObject.transform.position - bestDstPoint.transform.position) + previewLiftVector;
+			guideObject.transform.rotation = selectedObject.transform.rotation;
 		}
 		else
 		{
+			guideObject.transform.position = sourceObject.transform.position;
+			guideObject.transform.rotation = sourceObject.transform.rotation;
+		}
+	}
+
+	public void Drop()
+    {
+		if ((sourceObject.transform.position == guideObject.transform.position && sourceObject.transform.rotation == guideObject.transform.rotation) || bestDstPoint == null)
+		{
 			Destroy(selectedObject);
 			selectedObject = null;
-
-			// removes currency from the puppeteer when placed.
+			Destroy(guideObject);
+			guideObject = null;
+			Destroy(sourceObject);
+			sourceObject = null;
+		}
+		else
+		{
 			currency.CurrentCurrency = currency.CurrentCurrency - cost;
 
 			guideObject.name = "Placed Trap";
 			guideObject.transform.SetParent(bestDstPoint.transform.parent);
-			guideObject.transform.position -=previewLiftVector;
+			guideObject.transform.position -= previewLiftVector;
 			guideObject.GetComponent<SnapFunctionality>().Placed = true;
 			guideObject.GetComponent<BoxCollider>().enabled = true;
-			// Set the layer on the item and all of its children in order to make it visible and interactable
-			NetworkServer.Spawn(guideObject);
-			RpcUpdateLayer(guideObject);
+
 			SnapPointBase point = bestDstPoint.GetComponent<SnapPointBase>();
 			point.Used = true;
-			guideObject = null;
+
+			CmdSendTransform(new TransformStruct(guideObject.transform.position,guideObject.transform.rotation));
+			CmdDrop();
+
+			Destroy(selectedObject);
+			selectedObject = null;
+			Destroy(sourceObject);
+			sourceObject = null;
+			if (!isServer)
+			{
+				Destroy(guideObject);
+				guideObject = null;
+			}
 		}
     }
+
+	[Command]
+    public void CmdDrop()
+    {
+		if (isServer)
+		{
+			NetworkServer.Spawn(guideObject);
+			guideObject.transform.position = placingTransform.Position;
+			guideObject.transform.rotation = placingTransform.Rotation;
+			guideObject.GetComponent<SnapFunctionality>().Placed = true;
+			guideObject.GetComponent<BoxCollider>().enabled = true;
+			RpcUpdateLayer(guideObject);
+		}
+    }
+
+	[Command]
+	public void CmdSendTransform(TransformStruct transformStruct)
+	{
+		if (isServer)
+		{
+			placingTransform = transformStruct;
+		}
+	}
 
 	[ClientRpc]
 	public void RpcUpdateLayer(GameObject target)
@@ -277,54 +295,19 @@ public class ItemGrabTool : NetworkBehaviour
 		SetLayerOnAll(target, 0);
 	}
 
-	// Move local selected object for client.
-	private void  ClientUpdatePositions()
-    {
-        Vector3  newPosition = MouseToWorldPosition() + grabOffset;
-        selectedObject.transform.position = Vector3.Lerp(selectedObject.transform.position, new Vector3(newPosition.x, LiftHeight,newPosition.z), LiftSpeed * Time.deltaTime);
-    }
-
-	// Moves all objects to their positions.
-	private void ServerUpdatePositions()
-    {
-		// Move source object to mouse.
-		Vector3 newPosition = localPlayerMousePos;
-        selectedObject.transform.position = Vector3.Lerp(selectedObject.transform.position, new Vector3(newPosition.x, LiftHeight, newPosition.z), LiftSpeed * Time.deltaTime);
-
-        float bestDist = Mathf.Infinity;
-        bestDstPoint = null;
-		// Decide which snap point is best to snap to.
-		var nearestPoint = FindNearestFreePoint(selectedObject.GetComponent<SnapFunctionality>(), ref bestDist);
-        if (nearestPoint != null)
-        {
-            bestDstPoint = nearestPoint;
-
-            Debug.DrawLine(bestDstPoint.transform.position, selectedObject.transform.position, Color.yellow);
-        }
-		// Move guideObject to best available position. If there is none, move it to source.
-		if (bestDstPoint != null)
-        {
-            RpcUpdateGuide(new TransformStruct(selectedObject.transform.position - (selectedObject.transform.position - bestDstPoint.transform.position) + previewLiftVector, selectedObject.transform.rotation));
-			guideObject.transform.position = selectedObject.transform.position - (selectedObject.transform.position - bestDstPoint.transform.position) + previewLiftVector;
-			guideObject.transform.rotation = selectedObject.transform.rotation;
-        }
-        else
-        {
-        	RpcUpdateGuide(new TransformStruct(new Vector3(0, -1000, 0), sourceObject.transform.rotation));
-			guideObject.transform.position = new Vector3(0, -1000, 0);
-			guideObject.transform.rotation = sourceObject.transform.rotation;
-        }
-    }
-	// Method to send data from server to client about position of guideObject.
 	[ClientRpc]
-    public void RpcUpdateGuide(TransformStruct target)
-    {
-        if (isLocalPlayer && guideObject != null)
-        {
-			guideObject.transform.position = target.Position;
-            guideObject.transform.rotation = target.Rotation;
-        }
-    }
+	public void RpcSetParents()
+	{
+		if (isLocalPlayer)
+		{
+			Transform cameraTransform = GetComponentInChildren<Camera>().transform;
+			foreach (SnapFunctionality snappable in FindObjectsOfType<SnapFunctionality>())
+			{
+				snappable.transform.SetParent(cameraTransform);
+			}
+		}
+	}
+
 	// Checks all other snap points in the level and picks the best one.
 	private SnapPointBase FindNearestFreePoint(in SnapFunctionality heldTrap, ref float bestDist)
     {
@@ -332,7 +315,7 @@ public class ItemGrabTool : NetworkBehaviour
         var rooms = level.GetRooms();
 		foreach (var room in rooms)
 		{
-			if (room.GetComponent<ItemSpawner>() /*&& !room.GetComponent<RoomInteractable>().RoomContainsPlayer()*/)
+			if (room.GetComponent<ItemSpawner>() && !room.GetComponent<RoomInteractable>().RoomContainsPlayer())
 			{
 				snapPoints.AddRange(room.GetComponent<ItemSpawner>().FindSnapPoints());
 			}
@@ -352,6 +335,7 @@ public class ItemGrabTool : NetworkBehaviour
         return result;
 
     } 
+
 	// Checks if the currently held item can be placed on a specific point
     bool CanBePlaced(SnapFunctionality heldTrap, SnapPointBase snapPoint)
     {
@@ -387,6 +371,7 @@ public class ItemGrabTool : NetworkBehaviour
 		mousePos.z = Camera.main.WorldToScreenPoint(selectedObject.transform.position).z;
 		return Camera.main.ScreenToWorldPoint(mousePos);
 	}
+
 	// Sets the layer of a game object and all of its children
 	private void SetLayerOnAll(GameObject obj, int layer)
 	{
@@ -396,16 +381,4 @@ public class ItemGrabTool : NetworkBehaviour
 		}
 	}
 
-	[ClientRpc]
-	public void RpcSetParents()
-	{
-		if (isLocalPlayer)
-		{
-			Transform cameraTransform = GetComponentInChildren<Camera>().transform;
-			foreach (SnapFunctionality snappable in FindObjectsOfType<SnapFunctionality>())
-			{
-				snappable.transform.SetParent(cameraTransform);
-			}
-		}
-	}
 }

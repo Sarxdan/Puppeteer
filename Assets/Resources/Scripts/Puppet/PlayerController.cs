@@ -79,6 +79,7 @@ public class PlayerController : NetworkBehaviour
     public GameObject CurrentWeapon;
     public int Ammunition;
     public bool CanShoot = true;
+    public WeaponComponent CurrentWeaponComponent;
 
     //References
     [Header("References")]
@@ -87,6 +88,8 @@ public class PlayerController : NetworkBehaviour
     public GameObject FPVArms;
     private Rigidbody rigidBody;
     
+  
+
 
     private IEnumerator StaminaRegenRoutine()
     {
