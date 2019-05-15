@@ -94,7 +94,7 @@ public class MatchTimer : NetworkBehaviour
             {
                 //End the game. Puppets wins
                 gameEnded = true;
-                RpcPuppetsWins(numberOfPuppetsAlive, Minutes, Seconds);
+                RpcPuppetsWins(NumberOfPuppetsThatEscaped, Minutes, Seconds);
                 MatchLength = 0;
                 StartCoroutine("EndTimer");
                 StopCoroutine("Timer");
@@ -119,7 +119,7 @@ public class MatchTimer : NetworkBehaviour
         {
             //End the game. Puppets wins
             gameEnded = true;
-            RpcPuppetsWins(numberOfPuppetsAlive, Minutes, Seconds);
+            RpcPuppetsWins(NumberOfPuppetsThatEscaped, Minutes, Seconds);
             MatchLength = 0;
             StartCoroutine("EndTimer");
             StopCoroutine("Timer");
@@ -194,7 +194,7 @@ public class MatchTimer : NetworkBehaviour
 
     //Puppets win. Show endscreen for all clients. 
     [ClientRpc]
-	public void RpcPuppetsWins(int puppetsRemaining, int minutes, int seconds)
+	public void RpcPuppetsWins(int puppetsEscaped, int minutes, int seconds)
 	{
 		//Disable all the cameras in the scene
 		foreach (var camera in GetComponents<Camera>())
@@ -212,7 +212,8 @@ public class MatchTimer : NetworkBehaviour
         //Set postgame info
         endOfMatchScript.SetWinnerText("The Puppets wins!");
 		endOfMatchScript.SetTimeLeftInfoText(minutes.ToString("00") + ":" + seconds.ToString("00"));
-		endOfMatchScript.SetPuppetsAliveInfoText(puppetsRemaining.ToString());
+        endOfMatchScript.SetPuppetsText("Puppets Escaped");
+		endOfMatchScript.SetPuppetsAliveInfoText(puppetsEscaped.ToString());
 
 		//Enable the "End of game Canvas"
 		endOfMatchScript.gameObject.SetActive(true);
