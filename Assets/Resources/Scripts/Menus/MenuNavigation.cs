@@ -22,6 +22,7 @@ using Mirror;
 
 public class MenuNavigation : MonoBehaviour
 {
+
 	public bool cooldown = true;                            // "animation" cooldown. (so the game don't register button presses while panels are moving and breaking...)
 
     [Header("Menu Panels")]
@@ -80,7 +81,8 @@ public class MenuNavigation : MonoBehaviour
 			AudioButton.onClick.AddListener(AudioOptions);
 			ControlsButton.onClick.AddListener(ControlsOptions);
 		ExitButton.onClick.AddListener(Exit);
-	}
+        
+    }
 
 	// Update is called once per frame
 	void Update()
@@ -135,7 +137,7 @@ public class MenuNavigation : MonoBehaviour
 		{
 			if (cooldown && currentState != GameState.OptionsAudio)
 			{
-			ChangeState(GameState.OptionsAudio);
+			    ChangeState(GameState.OptionsAudio);
 			}
 		}
 		void ControlsOptions()
@@ -155,7 +157,7 @@ public class MenuNavigation : MonoBehaviour
 	//------------------GameStates--------------------------
 	public void ChangeState(GameState newstate)
 	{
-		currentState = newstate;
+        currentState = newstate;
 		StartCoroutine(newstate.ToString() + "State");
 	}
 
