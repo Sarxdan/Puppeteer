@@ -8,43 +8,45 @@
  * Script used to simulate a fluid moving in a cylinder.
  * 
  * CODE REVIEWED BY:
- * 
+ * Philip Stenmark (15/05-2019)
  */
 
 public class FluidSimulation : MonoBehaviour
 {
+	// The actual fluid meshes that are rotated and scaled to create the effect.
 	public GameObject FluidTop;
 	public GameObject FluidBottom;
 
-	// Original scale and rotation values of the objects
+	// Original scale and rotation values of the objects.
 	private Vector3 topScale;
 	private Vector3 bottomScale;
 	private Vector3 topRotation;
 	private Vector3 bottomRotation;
 
-	private Rigidbody parentRigidBody;
+	// Height of object in Unity units. Might be tricky to find but found no way of automatically gathering it.
+	public float TopHeight;
+	public float BottomHeight;
 
-	// Height of objects in Unity units. Might be tricky to find but found no way of automatically gathering it.
-	public float topHeight;
-	public float bottomHeight;
-
-	// Degrees of tilt for fluid at standard scale
-	public float fluidTiltAmount;
+	// Degrees of tilt for fluid at standard scale.
+	public float FluidTiltAmount;
 
 	// Scale of top slanted fluid in local y-axis.
 	private float currentTopScale = 0.2f;
+	// Maximum allowed scale of top fluid object.
 	public float MaxTiltScale = 3;
 
 	// Liquid amounts used to calculate percentage of liquid left.
 	public float MaxLiquidAmount = 100;
-	public float CurrentLiquidAmount = 0;
+	public float CurrentLiquidAmount = 100;
 
-	public float sploshAmount = 0.007f;
-	public float sploshSlowdown = 0.7f;
+	public float SploshAmount = 0.007f;
+	public float SploshSlowdown = 0.7f;
 	private float rotateAcceleration = 0;
 	private float rotateSpeed = 0;
 
-	public float MovementSplosh = 0.5f;
+	public float MovementSplosh = 5.0f;
+	public float RotationSplosh = 0.07f;
+	public float ScaleLerpAmount = 0.1f;
 
 	private Vector3 lastPosition;
 	private float lastYRotation;
@@ -59,13 +61,11 @@ public class FluidSimulation : MonoBehaviour
 		bottomScale = FluidBottom.transform.localScale;
 		topRotation = FluidTop.transform.localEulerAngles;
 		bottomRotation = FluidBottom.transform.localEulerAngles;
-		parentRigidBody = GetComponentInParent<Rigidbody>();
 
 		UpdateRotationAndTilt();
 		UpdatePositionAndScale();
 	}
 
-	// Update is called once per frame
 	void FixedUpdate()
 	{
 		UpdateRotationAndTilt();
@@ -76,8 +76,14 @@ public class FluidSimulation : MonoBehaviour
 	{
 		Vector3 deltaPos = lastPosition - transform.position;
 		lastPosition = transform.position;
-		// Project the up vector + the movement vector of the fluid onto x/z plane by removing y-coord:
-		Vector2 leanVector = new Vector2(gameObject.transform.up.x, gameObject.transform.up.z) + new Vector2(deltaPos.x, deltaPos.z) * MovementSplosh;
+		float deltaYrot = lastYRotation - transform.eulerAngles.y;
+		lastYRotation = transform.eulerAngles.y;
+		while (deltaYrot > 180)
+			deltaYrot -= 360;
+		while (deltaYrot < -180)
+			deltaYrot += 360;
+		// Project the up vector + the movement vector + the rotation vector of the fluid onto x/z plane by removing y-coord:
+		Vector2 leanVector = new Vector2(gameObject.transform.up.x, gameObject.transform.up.z) + new Vector2(deltaPos.x, deltaPos.z) * MovementSplosh + new Vector2(transform.right.x, transform.right.z) * deltaYrot * RotationSplosh;
 		// Calculate angle of vector relative to positive z.
 		float angle = Vector2.SignedAngle(leanVector, new Vector2(0, 1));
 		float targetAngle = angle - transform.eulerAngles.y;
@@ -88,50 +94,33 @@ public class FluidSimulation : MonoBehaviour
 		while (angleDiff < -180)
 			angleDiff += 360;
 
-		rotateAcceleration += angleDiff * sploshAmount;
-		rotateAcceleration *= sploshSlowdown;
-
-		if (rotateAcceleration >= 1)
-		{
-			rotateAcceleration = 1;
-		}
-		else if (rotateAcceleration <= -1)
-		{
-			rotateAcceleration = -1;
-		}
+		rotateAcceleration += angleDiff * SploshAmount;
+		rotateAcceleration *= SploshSlowdown;
+		rotateAcceleration = Mathf.Clamp(rotateAcceleration, -1, 1);
 
 		rotateSpeed += rotateAcceleration;
 
-		if (parentRigidBody != null)
-		{
-			rotateSpeed += parentRigidBody.angularVelocity.y;
-		}
-		else
-		{
-			parentRigidBody = GetComponentInParent<Rigidbody>();
-		}
-
-
+		// Slow speed down when speed is moving away from target in order to prevent a perfect pendulum.
 		if (Mathf.Abs(rotateSpeed + angleDiff) < Mathf.Abs(rotateSpeed))
 		{
-			rotateSpeed *= sploshSlowdown;
+			rotateSpeed *= SploshSlowdown;
 		}
 
-		FluidTop.transform.localEulerAngles = new Vector3(0, FluidTop.transform.localEulerAngles.y + rotateSpeed, 0);
+		FluidTop.transform.localEulerAngles = new Vector3(0, FluidTop.transform.localEulerAngles.y + rotateSpeed + topRotation.y, 0);
 		FluidBottom.transform.localEulerAngles = new Vector3(0, FluidTop.transform.localEulerAngles.y + bottomRotation.y, 0);
 
-		// Calculate lentgh of lean vector to get amount of fluid tilt.
+		// Calculate length of lean vector to get amount of fluid tilt.
 		// When the length of the lean vector is 1, the fluid is tilted 90 degrees.
 		float fluidTiltAngle = Mathf.Asin(leanVector.magnitude);
-		currentTopScale = Mathf.Tan(fluidTiltAngle) * topScale.y / (Mathf.Deg2Rad * fluidTiltAmount);
+		currentTopScale = Mathf.Tan(fluidTiltAngle) * topScale.y / (Mathf.Deg2Rad * FluidTiltAmount);
 
-		if (currentTopScale > MaxTiltScale)
+		if (currentTopScale > MaxTiltScale || float.IsNaN(currentTopScale))
 		{
 			currentTopScale = MaxTiltScale;
 		}
-		else if (currentTopScale < 0.0001f || float.IsNaN(currentTopScale))
+		else if (currentTopScale < Mathf.Epsilon)
 		{
-			currentTopScale = 0.0001f;
+			currentTopScale = Mathf.Epsilon;
 		}
 	}
 
@@ -139,22 +128,20 @@ public class FluidSimulation : MonoBehaviour
 	{
 		// Calculate how much the bottom fluid has to move out of the way to make room for the top fluid as percentage of original scale.
 		float splashOffset = (currentTopScale / topScale.y);
-		// Calculate what percentage of its original scale the bottom fluid needs to be to make room for top fluid.
-		float bottomScalePercentage = splashOffset * (topHeight / 2) / bottomHeight;
-		float currentBottomScale = bottomScale.y - bottomScalePercentage * bottomScale.y;
 		// Calculate how much the total liquid has to sink as percentage of original amount.
 		float amountOffset = CurrentLiquidAmount / MaxLiquidAmount;
 		// Update positions of Liquid parts using offsets.
-		FluidTop.transform.localPosition = new Vector3(0, amountOffset * bottomHeight, 0);
+		FluidTop.transform.localPosition = new Vector3(0, amountOffset * BottomHeight, 0);
 		// Update Scale of Liquid parts using offsets
 		if (amountOffset != 0)
 		{
-			FluidTop.transform.localScale = new Vector3(topScale.x, currentTopScale, topScale.z);
+			FluidTop.transform.localScale = Vector3.Lerp(FluidTop.transform.localScale, new Vector3(topScale.x, currentTopScale, topScale.z), ScaleLerpAmount);
 		}
 		else
 		{
-			FluidTop.transform.localScale = new Vector3(topScale.x, 0.0001f, topScale.z);
+			// If there is no liquid left, scale of top should always be 0 (Or as close as possible)
+			FluidTop.transform.localScale = new Vector3(topScale.x, Mathf.Epsilon, topScale.z);
 		}
-		FluidBottom.transform.localScale = new Vector3(bottomScale.x, currentBottomScale + amountOffset * bottomScale.y - bottomScale.y, bottomScale.z);
+		FluidBottom.transform.localScale = new Vector3(bottomScale.x, amountOffset * bottomScale.y, bottomScale.z);
 	}
 }

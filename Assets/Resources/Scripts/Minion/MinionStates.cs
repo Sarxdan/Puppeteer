@@ -57,6 +57,12 @@ namespace MinionStates
             //Tests if player is in front
             if (Vector3.Distance(machine.transform.position, machine.TargetEntity.transform.position) < machine.AttackRange)
             {
+                if(machine.TargetEntity.Downed)
+                {
+                    machine.SetState(new WanderState(machine));
+                    machine.TargetEntity = null;
+                    return;
+                }
                 //If canAttack, perform attack. Otherwise stop moving (so minions don't push around the player)
                 if(machine.CanAttack)
                 {
@@ -182,6 +188,13 @@ namespace MinionStates
 
             //Fetches random destination close to spawner
             destination = machine.GetNearbyDestination();
+
+            //If no destination found, go idle
+            if(destination == Vector3.positiveInfinity)
+            {
+                machine.SetState(new IdleState(machine));
+                return;
+            }
             machine.PathFinder.MoveTo(destination);
         }
 
@@ -251,6 +264,12 @@ namespace MinionStates
         {
             this.machine = machine;
             this.waitTime = Random.Range(machine.MinIdleTime, machine.MaxIdleTime);
+        }
+
+        public IdleState(StateMachine machine, float waitTime)
+        {
+            this.machine = machine;
+            this.waitTime = waitTime;
         }
 
         public override void Enter()
