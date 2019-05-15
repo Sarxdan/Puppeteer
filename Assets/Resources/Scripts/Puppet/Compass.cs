@@ -73,7 +73,7 @@ public class Compass : MonoBehaviour
 
         if(!Targets.Contains(target))
         {
-            Targets.Add(target.transform);
+            Targets.Add(target);
         }
     }
 
