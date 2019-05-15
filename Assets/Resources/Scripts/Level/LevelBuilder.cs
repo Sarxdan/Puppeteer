@@ -38,6 +38,8 @@ public class LevelBuilder : NetworkBehaviour
 	// Used for deciding how many rooms should have items
 	public float PercentageOfRoomsWithItems;
 
+	private List<GameObject> rooms;
+
 	// List for storing RoomCollider scripts, used for checking if rooms are on the same position.
 	private List<RoomCollider> roomColliderPositions = new List<RoomCollider>();
 	// Queue with all doors not connected to other doors.
@@ -271,12 +273,15 @@ public class LevelBuilder : NetworkBehaviour
 	// Returns a List of rooms.
 	public List<GameObject> GetRooms()
 	{
-		List<GameObject> result = new List<GameObject>();
-		for (int i = 0; i < parent.transform.childCount; i++)
+		if (rooms == null)
 		{
-			result.Add(parent.transform.GetChild(i).gameObject);
+			rooms = new List<GameObject>();
+			foreach (var roomInteractable in FindObjectsOfType<RoomInteractable>())
+			{
+				rooms.Add(roomInteractable.gameObject);
+			}
 		}
-		return result;
+		return rooms;
 	}
 
 	// Connect doors if able
