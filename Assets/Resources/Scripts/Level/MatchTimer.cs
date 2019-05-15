@@ -23,6 +23,7 @@ public class MatchTimer : NetworkBehaviour
 	public Text TimeRemainingTextBox;
 	public int PostGameTime;
 	public GameObject Canvas;
+    public GameObject endGameCamera;
 
 	[SerializeField]
 	private int numberOfPuppetsAlive;
@@ -38,15 +39,15 @@ public class MatchTimer : NetworkBehaviour
     // Start is called before the first frame update
     void Start()
 	{
-        if (!isServer)
-            return;
-
 		numberOfPuppetsAlive = GameObject.Find("NetworkManager").GetComponent<CustomNetworkManager>().lobbySlots.Count - 1;
 		NumberOfPuppetsThatEscaped = 0;
 		endOfMatchScript = Canvas.GetComponent<EndOfMatchCanvas>();
+        Canvas.gameObject.SetActive(false);
 		gameEnded = false;
 		manager = GameObject.Find("NetworkManager").GetComponent<NetworkManager>();
-		StartCoroutine("Timer");
+
+        if (isServer)
+		    StartCoroutine("Timer");
 	}
 
 	public IEnumerator Timer()
@@ -175,8 +176,15 @@ public class MatchTimer : NetworkBehaviour
 			camera.enabled = false;
 		}
 
-		//Set postgame info
-		endOfMatchScript.SetWinnerText("The Puppeteer wins!");
+        foreach (var canvas in GetComponents<Canvas>())
+        {
+            canvas.enabled = false;
+        }
+
+        endGameCamera.SetActive(true);
+
+        //Set postgame info
+        endOfMatchScript.SetWinnerText("The Puppeteer wins!");
 		endOfMatchScript.SetTimeLeftInfoText(minutes.ToString("00") + ":" + seconds.ToString("00"));
 		endOfMatchScript.SetPuppetsAliveInfoText(puppetsRemaining.ToString());
 
@@ -194,8 +202,15 @@ public class MatchTimer : NetworkBehaviour
 			camera.enabled = false;
 		}
 
-		//Set postgame info
-		endOfMatchScript.SetWinnerText("The Puppets wins!");
+        foreach (var canvas in GetComponents<Canvas>())
+        {
+            canvas.enabled = false;
+        }
+
+        endGameCamera.SetActive(true);
+
+        //Set postgame info
+        endOfMatchScript.SetWinnerText("The Puppets wins!");
 		endOfMatchScript.SetTimeLeftInfoText(minutes.ToString("00") + ":" + seconds.ToString("00"));
 		endOfMatchScript.SetPuppetsAliveInfoText(puppetsRemaining.ToString());
 
