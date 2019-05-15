@@ -247,6 +247,7 @@ public class WeaponComponent : Interactable
         //Attaches new weapon to player
         user.CurrentWeapon = newWeapon.gameObject;
         newWeapon.HeadTransform = user.HeadTransform;
+        user.CurrentWeaponComponent = newWeapon;
         user.SetWeaponAnimation(newWeapon.AnimationIndex);
 
         if (userObject.GetComponent<PlayerController>().isLocalPlayer)

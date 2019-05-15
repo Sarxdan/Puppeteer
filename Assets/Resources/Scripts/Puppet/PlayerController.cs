@@ -79,6 +79,7 @@ public class PlayerController : NetworkBehaviour
     public GameObject CurrentWeapon;
     public int Ammunition;
     public bool CanShoot = true;
+    public WeaponComponent CurrentWeaponComponent;
 
     //References
     [Header("References")]
@@ -87,6 +88,8 @@ public class PlayerController : NetworkBehaviour
     public GameObject FPVArms;
     private Rigidbody rigidBody;
     
+  
+
 
     private IEnumerator StaminaRegenRoutine()
     {
@@ -247,9 +250,6 @@ public class PlayerController : NetworkBehaviour
                 hasLeftGround = true;
             }
         }
-        float weight = AnimController.GetFloat("JumpWeight");
-        AnimController.SetLayerWeight(2, AnimController.GetFloat("JumpWeight") / AnimController.GetLayerWeight(2) + .01f);
-        FPVAnimController.SetLayerWeight(2, FPVAnimController.GetFloat("JumpWeight") / FPVAnimController.GetLayerWeight(2)+ .01f);
     }
 
 

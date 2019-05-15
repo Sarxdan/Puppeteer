@@ -73,6 +73,7 @@ public class PathfinderComponent : NetworkBehaviour
         layerMask = ~(1 << LayerMask.NameToLayer("Puppeteer Interact"));
         if(!isServer)
         {
+            gameObject.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezeAll;
             this.enabled = false;
             return;
         }
@@ -109,10 +110,13 @@ public class PathfinderComponent : NetworkBehaviour
 
     public void Stop()
     {
-        this.worldPath.Clear();
-        this.roomPath.Clear();
+        this.worldPath = new List<AStarRoomNode>();
+        this.roomPath = new List<Vector3>();
         this.HasPath = false;
+        if(this.animController == null)
+            this.animController = GetComponent<Animator>();
         this.animController.SetBool("Moving", false);
+        
     }
 
     public void MoveTo(Vector3 endPos)
