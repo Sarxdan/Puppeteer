@@ -21,7 +21,6 @@ public class FakeItem : Interactable
     public ParticleSystem Explosion;
     public GameObject NewModel;
     public uint Damage;
-    public float DestroyTime;
     public float Radius;
     public bool Activated = false;
 
@@ -51,10 +50,7 @@ public class FakeItem : Interactable
         ShowTooltip(interactor);
     }
 
-    public override void OnRaycastExit(GameObject interactor)
-    {
-        HideToolTip(interactor);
-    }
+
 
     // Activate the trap and explode and damage puppet
     public override void OnInteractBegin(GameObject interactor)
@@ -73,6 +69,8 @@ public class FakeItem : Interactable
                 hit.GetComponent<HealthComponent>().Damage(Damage);
             }
         }
+
+        Destroy(NewModel);
         
     }
 

@@ -50,8 +50,4 @@ public class PowerupRecharge : Interactable
             ShowTooltip(interactor);
     }
 
-    public override void OnRaycastExit(GameObject interactor)
-    {
-        HideToolTip(interactor);
-    }
 }
