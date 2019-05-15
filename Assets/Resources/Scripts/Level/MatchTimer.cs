@@ -23,6 +23,7 @@ public class MatchTimer : NetworkBehaviour
 	public Text TimeRemainingTextBox;
 	public int PostGameTime;
 	public GameObject Canvas;
+    public GameObject endGameCamera;
 
 	[SerializeField]
 	private int numberOfPuppetsAlive;
@@ -38,15 +39,15 @@ public class MatchTimer : NetworkBehaviour
     // Start is called before the first frame update
     void Start()
 	{
-        if (!isServer)
-            return;
-
 		numberOfPuppetsAlive = GameObject.Find("NetworkManager").GetComponent<CustomNetworkManager>().lobbySlots.Count - 1;
 		NumberOfPuppetsThatEscaped = 0;
 		endOfMatchScript = Canvas.GetComponent<EndOfMatchCanvas>();
+        Canvas.gameObject.SetActive(false);
 		gameEnded = false;
 		manager = GameObject.Find("NetworkManager").GetComponent<NetworkManager>();
-		StartCoroutine("Timer");
+
+        if (isServer)
+		    StartCoroutine("Timer");
 	}
 
 	public IEnumerator Timer()
@@ -93,7 +94,7 @@ public class MatchTimer : NetworkBehaviour
             {
                 //End the game. Puppets wins
                 gameEnded = true;
-                RpcPuppetsWins(numberOfPuppetsAlive, Minutes, Seconds);
+                RpcPuppetsWins(NumberOfPuppetsThatEscaped, Minutes, Seconds);
                 MatchLength = 0;
                 StartCoroutine("EndTimer");
                 StopCoroutine("Timer");
@@ -118,7 +119,7 @@ public class MatchTimer : NetworkBehaviour
         {
             //End the game. Puppets wins
             gameEnded = true;
-            RpcPuppetsWins(numberOfPuppetsAlive, Minutes, Seconds);
+            RpcPuppetsWins(NumberOfPuppetsThatEscaped, Minutes, Seconds);
             MatchLength = 0;
             StartCoroutine("EndTimer");
             StopCoroutine("Timer");
@@ -175,8 +176,15 @@ public class MatchTimer : NetworkBehaviour
 			camera.enabled = false;
 		}
 
-		//Set postgame info
-		endOfMatchScript.SetWinnerText("The Puppeteer wins!");
+        foreach (var canvas in GetComponents<Canvas>())
+        {
+            canvas.enabled = false;
+        }
+
+        endGameCamera.SetActive(true);
+
+        //Set postgame info
+        endOfMatchScript.SetWinnerText("The Puppeteer wins!");
 		endOfMatchScript.SetTimeLeftInfoText(minutes.ToString("00") + ":" + seconds.ToString("00"));
 		endOfMatchScript.SetPuppetsAliveInfoText(puppetsRemaining.ToString());
 
@@ -186,7 +194,7 @@ public class MatchTimer : NetworkBehaviour
 
     //Puppets win. Show endscreen for all clients. 
     [ClientRpc]
-	public void RpcPuppetsWins(int puppetsRemaining, int minutes, int seconds)
+	public void RpcPuppetsWins(int puppetsEscaped, int minutes, int seconds)
 	{
 		//Disable all the cameras in the scene
 		foreach (var camera in GetComponents<Camera>())
@@ -194,10 +202,18 @@ public class MatchTimer : NetworkBehaviour
 			camera.enabled = false;
 		}
 
-		//Set postgame info
-		endOfMatchScript.SetWinnerText("The Puppets wins!");
+        foreach (var canvas in GetComponents<Canvas>())
+        {
+            canvas.enabled = false;
+        }
+
+        endGameCamera.SetActive(true);
+
+        //Set postgame info
+        endOfMatchScript.SetWinnerText("The Puppets wins!");
 		endOfMatchScript.SetTimeLeftInfoText(minutes.ToString("00") + ":" + seconds.ToString("00"));
-		endOfMatchScript.SetPuppetsAliveInfoText(puppetsRemaining.ToString());
+        endOfMatchScript.SetPuppetsText("Puppets Escaped");
+		endOfMatchScript.SetPuppetsAliveInfoText(puppetsEscaped.ToString());
 
 		//Enable the "End of game Canvas"
 		endOfMatchScript.gameObject.SetActive(true);

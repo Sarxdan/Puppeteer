@@ -42,18 +42,26 @@ public class InteractionController : NetworkBehaviour
                 {
                     CmdStopInteracting(new InteractStruct(gameObject, curInteractable.gameObject));
                     isInteracting = false;
-                    curInteractable.OnRaycastExit(gameObject);
+                    //curInteractable.OnRaycastExit(gameObject);
+                    InteractionTooltip.enabled = false;
                     curInteractable = null;
                 }
 
-                if(hit == null && curInteractable != null)
-                    curInteractable.OnRaycastExit(gameObject);
+                    
                 curInteractable = hit;
                 if(curInteractable != null)
                 {
                     curInteractable.OnRaycastEnter(gameObject);
                 }
+                else
+                {
+                    InteractionTooltip.enabled = false;
+                }
 
+            }
+            else if(hit == null)
+            {
+                InteractionTooltip.enabled = false;
             }
             
 
@@ -66,12 +74,12 @@ public class InteractionController : NetworkBehaviour
             {
                 CmdStopInteracting(new InteractStruct(gameObject, curInteractable.gameObject));
                 isInteracting = false;
-                curInteractable.OnRaycastExit(gameObject);
+                InteractionTooltip.enabled = false;
                 curInteractable = null;
             }
             else if(curInteractable != null)
             {
-                curInteractable.OnRaycastExit(gameObject);
+                InteractionTooltip.enabled = false;
                 curInteractable = null;
             }
         }
@@ -90,11 +98,11 @@ public class InteractionController : NetworkBehaviour
             if (Input.GetButtonUp("Use") && isInteracting)
             {
                 CmdStopInteracting(new InteractStruct(gameObject, curInteractable.gameObject));
-                //InteractionTooltip.enabled = false;
                 isInteracting = false;
-                curInteractable.OnRaycastExit(gameObject);
+                InteractionTooltip.enabled = false;
                 curInteractable = null;
             }
+           
         }
     }
     [Command]

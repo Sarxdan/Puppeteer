@@ -24,7 +24,7 @@ public class ItemGrabTool : NetworkBehaviour
     private LevelBuilder level;
 
 	// The maximum distance for snapping modules
-	private int SnapDistance = 10;
+	private int SnapDistance = 30;
 	// Maximum raycast ray length
 	private float RaycastDistance = 500;
 	// The lift height when grabbing an object
@@ -64,7 +64,7 @@ public class ItemGrabTool : NetworkBehaviour
         level = GetComponent<LevelBuilder>();
 		currency = GetComponent<Currency>();
 		previewLiftVector = new Vector3(0,PreviewLiftHeight,0);
-		SpawnPuppeteerSpawnables();
+		SetPrices();
     }
 
 	public void BearTrapClick()
@@ -90,6 +90,11 @@ public class ItemGrabTool : NetworkBehaviour
 	public void TankClick()
 	{
 		Pickup(Tank);
+	}
+
+	void SetPrices()
+	{
+		ButtonBearTrap.GetComponentInChildren<Text>();
 	}
 
     // Update is called once per frame
@@ -128,6 +133,7 @@ public class ItemGrabTool : NetworkBehaviour
 				selectedObject.transform.RotateAround(selectedObject.transform.position, selectedObject.transform.up, 90);
 				CmdRotate(selectedObject.transform.rotation);
 			}
+
 			if (!isServer)
 			{
 				ClientUpdatePositions();
@@ -388,42 +394,6 @@ public class ItemGrabTool : NetworkBehaviour
 		{
 			trans.gameObject.layer = layer;
 		}
-	}
-
-	private void SpawnPuppeteerSpawnables()
-	{
-
-		GameObject localPlayer = gameObject;
-		// Find LocalPlayer Puppeteer
-		foreach (GrabTool grabToolScript in FindObjectsOfType<GrabTool>())
-		{
-			if (grabToolScript.isLocalPlayer)
-			{
-				localPlayer = grabToolScript.gameObject;
-				break;
-			}
-		}
-
-		Transform cameraTransform = localPlayer.GetComponentInChildren<Camera>().transform;
-		Vector3[] pos = new Vector3[4];
-		pos[0] = new Vector3(Screen.width - 100, Screen.height / 2 + 225, 20);
-		pos[1] = new Vector3(Screen.width - 100, Screen.height / 2 + 75, 20);
-		pos[2] = new Vector3(Screen.width - 100, Screen.height / 2 - 75, 20);
-		pos[3] = new Vector3(Screen.width - 100, Screen.height / 2 - 225, 20);
-		int i = 0;
-
-		HudItems = new GameObject[level.PuppeteerItems.Count];
-
-		foreach (var item in level.PuppeteerItems)
-		{
-			var spawnable = Instantiate(item, cameraTransform);
-			spawnable.transform.position = Camera.main.ScreenToWorldPoint(pos[i]);
-			spawnable.transform.eulerAngles = new Vector3(0, 0, 0);
-			HudItems[i] = spawnable;
-			i++;
-		}
-
-		//RpcSetParents();
 	}
 
 	[ClientRpc]
