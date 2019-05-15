@@ -57,6 +57,12 @@ namespace MinionStates
             //Tests if player is in front
             if (Vector3.Distance(machine.transform.position, machine.TargetEntity.transform.position) < machine.AttackRange)
             {
+                if(machine.TargetEntity.GetComponent<HealthComponent>().Downed)
+                {
+                    machine.SetState(new WanderState(machine));
+                    machine.TargetEntity = null;
+                    return;
+                }
                 //If canAttack, perform attack. Otherwise stop moving (so minions don't push around the player)
                 if(machine.CanAttack)
                 {

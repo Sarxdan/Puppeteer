@@ -155,7 +155,7 @@ public class StateMachine : NetworkBehaviour
             {
                 try
                 {
-                    if(player.GetComponent<HealthComponent>().Health > 0)
+                    if(!player.GetComponent<HealthComponent>().Downed)
                     {
                         Puppets.Add(player);
                     }
