@@ -663,13 +663,13 @@ GameObject:
   - component: {fileID: 2781805961794470807}
   - component: {fileID: 2781805961785125949}
   - component: {fileID: 5400270672285470657}
+  - component: {fileID: 2372923552017005006}
   - component: {fileID: 9161826232786777549}
   - component: {fileID: 1569345194865761629}
   - component: {fileID: 55003624039892553}
   - component: {fileID: 2220566078404847079}
   - component: {fileID: 8956604464301979517}
   - component: {fileID: 4637723171867558907}
-  - component: {fileID: 3012254230700539824}
   - component: {fileID: -2051150632329404280}
   m_Layer: 0
   m_Name: Minion
@@ -726,9 +726,23 @@ Rigidbody:
   m_AngularDrag: 0.05
   m_UseGravity: 0
   m_IsKinematic: 0
-  m_Interpolate: 0
+  m_Interpolate: 1
   m_Constraints: 116
   m_CollisionDetection: 0
+--- !u!114 &2372923552017005006
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2781805961794641847}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2f74aedd71d9a4f55b3ce499326d45fb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncInterval: 0.1
+  compressRotation: 1
 --- !u!136 &9161826232786777549
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -780,7 +794,7 @@ MonoBehaviour:
   serverOnly: 0
   localPlayerAuthority: 0
   m_AssetId: 
-  m_SceneId: 407930182
+  m_SceneId: 137599447
 --- !u!114 &2220566078404847079
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -874,20 +888,6 @@ MonoBehaviour:
   RaycastOffset: {x: 0, y: 0.2, z: 0}
   debug: 0
   ChooseCurrentRoomChance: 0.3
---- !u!114 &3012254230700539824
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2781805961794641847}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2f74aedd71d9a4f55b3ce499326d45fb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  syncInterval: 0
-  compressRotation: 1
 --- !u!114 &-2051150632329404280
 MonoBehaviour:
   m_ObjectHideFlags: 0
