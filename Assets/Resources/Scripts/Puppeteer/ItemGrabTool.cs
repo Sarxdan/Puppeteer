@@ -250,10 +250,13 @@ public class ItemGrabTool : NetworkBehaviour
 
 			Destroy(selectedObject);
 			selectedObject = null;
-			Destroy(guideObject);
-			guideObject = null;
 			Destroy(sourceObject);
 			sourceObject = null;
+			if (!isServer)
+			{
+				Destroy(guideObject);
+				guideObject = null;
+			}
 		}
     }
 	[Command]
