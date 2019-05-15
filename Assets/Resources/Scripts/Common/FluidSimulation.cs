@@ -44,7 +44,9 @@ public class FluidSimulation : MonoBehaviour
 	private float rotateAcceleration = 0;
 	private float rotateSpeed = 0;
 
-	public float MovementSplosh = 0.5f;
+	public float MovementSplosh = 5.0f;
+	public float RotationSplosh = 0.07f;
+	public float ScaleLerpAmount = 0.1f;
 
 	private Vector3 lastPosition;
 	private float lastYRotation;
@@ -74,8 +76,14 @@ public class FluidSimulation : MonoBehaviour
 	{
 		Vector3 deltaPos = lastPosition - transform.position;
 		lastPosition = transform.position;
-		// Project the up vector + the movement vector of the fluid onto x/z plane by removing y-coord:
-		Vector2 leanVector = new Vector2(gameObject.transform.up.x, gameObject.transform.up.z) + new Vector2(deltaPos.x, deltaPos.z) * MovementSplosh;
+		float deltaYrot = lastYRotation - transform.eulerAngles.y;
+		lastYRotation = transform.eulerAngles.y;
+		while (deltaYrot > 180)
+			deltaYrot -= 360;
+		while (deltaYrot < -180)
+			deltaYrot += 360;
+		// Project the up vector + the movement vector + the rotation vector of the fluid onto x/z plane by removing y-coord:
+		Vector2 leanVector = new Vector2(gameObject.transform.up.x, gameObject.transform.up.z) + new Vector2(deltaPos.x, deltaPos.z) * MovementSplosh + new Vector2(transform.right.x, transform.right.z) * deltaYrot * RotationSplosh;
 		// Calculate angle of vector relative to positive z.
 		float angle = Vector2.SignedAngle(leanVector, new Vector2(0, 1));
 		float targetAngle = angle - transform.eulerAngles.y;
@@ -106,11 +114,11 @@ public class FluidSimulation : MonoBehaviour
 		float fluidTiltAngle = Mathf.Asin(leanVector.magnitude);
 		currentTopScale = Mathf.Tan(fluidTiltAngle) * topScale.y / (Mathf.Deg2Rad * FluidTiltAmount);
 
-		if (currentTopScale > MaxTiltScale)
+		if (currentTopScale > MaxTiltScale || float.IsNaN(currentTopScale))
 		{
 			currentTopScale = MaxTiltScale;
 		}
-		else if (currentTopScale < Mathf.Epsilon || float.IsNaN(currentTopScale))
+		else if (currentTopScale < Mathf.Epsilon)
 		{
 			currentTopScale = Mathf.Epsilon;
 		}
@@ -127,7 +135,7 @@ public class FluidSimulation : MonoBehaviour
 		// Update Scale of Liquid parts using offsets
 		if (amountOffset != 0)
 		{
-			FluidTop.transform.localScale = new Vector3(topScale.x, currentTopScale, topScale.z);
+			FluidTop.transform.localScale = Vector3.Lerp(FluidTop.transform.localScale, new Vector3(topScale.x, currentTopScale, topScale.z), ScaleLerpAmount);
 		}
 		else
 		{
