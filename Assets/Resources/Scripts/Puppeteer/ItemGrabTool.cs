@@ -71,7 +71,12 @@ public class ItemGrabTool : NetworkBehaviour
 	// TODO:
 	void SetPrices()
 	{
-		ButtonBearTrap.GetComponentInChildren<Text>();
+		ButtonBearTrap.GetComponentInChildren<Text>().text = BearTrap.GetComponent<SnapFunctionality>().Cost.ToString();
+		ButtonSpikeTrap.GetComponentInChildren<Text>().text = SpikeTrapFloor.GetComponent<SnapFunctionality>().Cost.ToString();
+		ButtonChandelier.GetComponentInChildren<Text>().text = Chandelier.GetComponent<SnapFunctionality>().Cost.ToString();
+		ButtonFakeItem.GetComponentInChildren<Text>().text = FakeItem.GetComponent<SnapFunctionality>().Cost.ToString();
+		ButtonMinionSpawner.GetComponentInChildren<Text>().text = MinionSpawner.GetComponent<SnapFunctionality>().Cost.ToString();
+		ButtonSpawnTank.GetComponentInChildren<Text>().text = Tank.GetComponent<SnapFunctionality>().Cost.ToString();
 	}
 
 	public void BearTrapClick()
@@ -157,6 +162,7 @@ public class ItemGrabTool : NetworkBehaviour
 
 		CmdPickUp(pickupTrap.name);
     }
+
 	[Command]
 	public void CmdPickUp(String pickupTrapName)
 	{
@@ -259,6 +265,7 @@ public class ItemGrabTool : NetworkBehaviour
 			}
 		}
     }
+
 	[Command]
     public void CmdDrop()
     {
