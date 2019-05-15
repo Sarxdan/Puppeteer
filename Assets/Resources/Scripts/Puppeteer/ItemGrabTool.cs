@@ -68,7 +68,7 @@ public class ItemGrabTool : NetworkBehaviour
 		previewLiftVector = new Vector3(0,PreviewLiftHeight,0);
 		SetPrices();
     }
-	// TODO:
+
 	void SetPrices()
 	{
 		ButtonBearTrap.GetComponentInChildren<Text>().text = BearTrap.GetComponent<SnapFunctionality>().Cost.ToString();
@@ -124,7 +124,30 @@ public class ItemGrabTool : NetworkBehaviour
 
 			if (Input.GetButtonDown("Rotate"))
 			{
-				selectedObject.transform.RotateAround(selectedObject.transform.position, selectedObject.transform.up, 90);
+				if (selectedObject.GetComponent<SnapFunctionality>().FloorSpike)
+				{
+					Destroy(selectedObject);
+					selectedObject = null;
+					Destroy(guideObject);
+					guideObject = null;
+					Destroy(sourceObject);
+					sourceObject = null;
+
+					Pickup(SpikeTrapRoof);
+				}
+				else if (selectedObject.GetComponent<SnapFunctionality>().RoofSpike)
+				{
+					Destroy(selectedObject);
+					selectedObject = null;
+					Destroy(guideObject);
+					guideObject = null;
+					Destroy(sourceObject);
+					sourceObject = null;
+
+					Pickup(SpikeTrapFloor);
+				}
+				else
+					selectedObject.transform.RotateAround(selectedObject.transform.position, selectedObject.transform.up, 90);
 			}
 
 			ClientUpdatePositions();
@@ -190,7 +213,7 @@ public class ItemGrabTool : NetworkBehaviour
 		}
 		else if (pickupTrapName == "Fake Item")
 		{
-
+			guideObject = Instantiate(FakeItem);
 		}
 		else if (pickupTrapName == "MinionSpawner")
 		{
@@ -198,7 +221,7 @@ public class ItemGrabTool : NetworkBehaviour
 		}
 		else if (pickupTrapName == "Tank")
 		{
-
+			guideObject = Instantiate(Tank);
 		}
 
 	}
