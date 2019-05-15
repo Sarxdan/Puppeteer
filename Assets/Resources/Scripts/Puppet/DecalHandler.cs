@@ -22,6 +22,12 @@ public class DecalHandler : MonoBehaviour
 	[HideInInspector]
 	public float DecayTime = 10;
 	private Queue<GameObject> decalQueue = new Queue<GameObject>();
+	private bool decayEnabled = false;
+
+	private void Update()
+	{
+		Debug.Log(decalQueue.Count);
+	}
 
 	// Adds decal to queue and starts decay if not already started
 	public void AddDecal(GameObject decal)
@@ -36,7 +42,7 @@ public class DecalHandler : MonoBehaviour
 		}
 		else if (decalQueue.Count == 1)  // If this is the first decal in queue, start decay if enabled.
 		{
-			if (DecalDecay)
+			if (DecalDecay && !decayEnabled)
 			{
 				StartCoroutine("DecayDecals");
 			}
@@ -47,15 +53,24 @@ public class DecalHandler : MonoBehaviour
 	{
 		while (true)
 		{
-			// Destroy first decal in queue
-			if (decalQueue.Count > 0)
+			if (decayEnabled)
 			{
-				Destroy(decalQueue.Dequeue());
+				// Destroy first decal in queue
+				if (decalQueue.Count > 0)
+				{
+					Destroy(decalQueue.Dequeue());
+				}
+				if (decalQueue.Count == 0) // If all decals have been destroyed, stop decay.
+				{
+					decayEnabled = false;
+					break;
+				}
 			}
 			else
 			{
-				break;
+				decayEnabled = true;
 			}
+			
 
 			yield return new WaitForSeconds(DecayTime);
 		}
