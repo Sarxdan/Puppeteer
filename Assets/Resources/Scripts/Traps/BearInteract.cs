@@ -22,7 +22,9 @@ public class BearInteract : Interactable
     public bool Activated = false;
     public GameObject interactor;
     public Animator anim;
-    
+
+    // Used for removing the E since it cant be done when the object is destroyed
+    public GameObject localInteractor;
     public float totalTime;
     public HUDScript HudScript;
     [SyncVar]
@@ -50,10 +52,6 @@ public class BearInteract : Interactable
     {
         if(Activated)
             ShowTooltip(interactor);
-    }
-    public override void OnRaycastExit(GameObject interactor)
-    {
-        HideToolTip(interactor);
     }
 
     //Start release timer and open animation on server
@@ -98,6 +96,7 @@ public class BearInteract : Interactable
         interacting = false;
         anim.SetBool("Releasing", false);
         sounds.ReClose();
+        //HideToolTip(interactor);
 
     }
 
