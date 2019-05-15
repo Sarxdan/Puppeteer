@@ -21,7 +21,6 @@ public class FakeItem : Interactable
     public ParticleSystem Explosion;
     public GameObject NewModel;
     public uint Damage;
-    public float DestroyTime;
     public float Radius;
     public bool Activated = false;
 
@@ -73,6 +72,8 @@ public class FakeItem : Interactable
                 hit.GetComponent<HealthComponent>().Damage(Damage);
             }
         }
+
+        Destroy(NewModel);
         
     }
 
