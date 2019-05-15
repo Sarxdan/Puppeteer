@@ -202,7 +202,6 @@ public class WeaponComponent : Interactable
 
     public override void OnInteractBegin(GameObject interactor)
     {
-        Debug.Log(this);
 
         this.HeadTransform = interactor.GetComponentInChildren<Camera>().transform;
        
