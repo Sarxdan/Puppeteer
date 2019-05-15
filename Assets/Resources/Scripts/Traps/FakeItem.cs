@@ -50,10 +50,7 @@ public class FakeItem : Interactable
         ShowTooltip(interactor);
     }
 
-    public override void OnRaycastExit(GameObject interactor)
-    {
-        HideToolTip(interactor);
-    }
+
 
     // Activate the trap and explode and damage puppet
     public override void OnInteractBegin(GameObject interactor)

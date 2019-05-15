@@ -33,6 +33,7 @@ public class Main_Menu : MonoBehaviour
         manager = GameObject.Find("NetworkManager").GetComponent<NetworkManager>();
         HostGameButton.onClick.AddListener(HostGame);
         JoinGameButton.onClick.AddListener(JoinGame);
+        Cursor.lockState = CursorLockMode.None;
 
     }
 

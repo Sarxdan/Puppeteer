@@ -118,9 +118,6 @@ public class PlayerController : NetworkBehaviour
         
         if(isLocalPlayer)
         {
-            CurrentWeapon.transform.SetParent(FPVHandTransform);
-            CurrentWeapon.transform.localPosition = Vector3.zero;
-            CurrentWeapon.transform.localRotation = CurrentWeapon.GetComponent<WeaponComponent>().HoldRotation;
             transform.Find("Mesh").gameObject.SetActive(false);
         }
         else
@@ -128,19 +125,6 @@ public class PlayerController : NetworkBehaviour
             FPVArms.SetActive(false);
         }
 
-        // configure compass
-        var compass = GetComponentInChildren<Compass>();
-        if (compass)
-        {
-            foreach (var player in GameObject.FindObjectsOfType<PlayerController>())
-            {
-                if (player.transform == transform || player.isLocalPlayer)
-                {
-                    continue;
-                }
-                compass.AddTarget(player.transform);
-            }
-        }
 		var CNLP = FindObjectsOfType<CustomNetworkLobbyPlayer>();
 		foreach (var LP in CNLP)
 		{
@@ -149,6 +133,24 @@ public class PlayerController : NetworkBehaviour
 				CmdSetName(LP.Nickname);
 			}
 		}
+
+        // setup compass late to prevent race condition
+        Invoke("SetupCompass", 2.0f);
+    }
+
+    private void SetupCompass()
+    {
+        var compass = GetComponent<Compass>();
+        Debug.Assert(compass != null, "Compass was not found in player prefab");
+
+        foreach (var player in GameObject.FindObjectsOfType<PlayerController>())
+        {
+            if (player.transform == transform || player.isLocalPlayer)
+            {
+                continue;
+            }
+            compass.AddTarget(player.transform);
+        }
     }
 
 	[Command]
