@@ -7,7 +7,7 @@ using UnityEngine;
  * Anton Jonsson
  * 
  * DESCRIPTION:
- * Script used to spawn and despawn decals
+ * Script used to spawn and despawn decals using a queue
  * 
  * CODE REVIEWED BY:
  * 
@@ -22,23 +22,25 @@ public class DecalHandler : MonoBehaviour
 	[HideInInspector]
 	public float DecayTime = 10;
 	private Queue<GameObject> decalQueue = new Queue<GameObject>();
+	private bool decayEnabled = false;
 
-    // Start is called before the first frame update
-    void Start()
-    {
-		if (DecalDecay)
-		{
-			StartCoroutine("DecayDecals");
-		}
-    }
-
+	// Adds decal to queue and starts decay if not already started
 	public void AddDecal(GameObject decal)
 	{
+		// Add decal last in queue
 		decalQueue.Enqueue(decal);
 
+		// If queue is too full, remove first item in queue
 		if (decalQueue.Count > MaxDecalAmount)
 		{
 			Destroy(decalQueue.Dequeue());
+		}
+		else if (decalQueue.Count == 1)  // If this is the first decal in queue, start decay if enabled.
+		{
+			if (DecalDecay && !decayEnabled)
+			{
+				StartCoroutine("DecayDecals");
+			}
 		}
 	}
 
@@ -46,11 +48,24 @@ public class DecalHandler : MonoBehaviour
 	{
 		while (true)
 		{
-			// Destroy first decal in queue
-			if (decalQueue.Count > 0)
+			if (decayEnabled)
 			{
-				Destroy(decalQueue.Dequeue());
+				// Destroy first decal in queue
+				if (decalQueue.Count > 0)
+				{
+					Destroy(decalQueue.Dequeue());
+				}
+				if (decalQueue.Count == 0) // If all decals have been destroyed, stop decay.
+				{
+					decayEnabled = false;
+					break;
+				}
 			}
+			else
+			{
+				decayEnabled = true;
+			}
+			
 
 			yield return new WaitForSeconds(DecayTime);
 		}

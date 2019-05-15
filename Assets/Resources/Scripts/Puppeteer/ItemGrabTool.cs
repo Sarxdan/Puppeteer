@@ -65,6 +65,7 @@ public class ItemGrabTool : NetworkBehaviour
 		currency = GetComponent<Currency>();
 		previewLiftVector = new Vector3(0,PreviewLiftHeight,0);
 		SpawnPuppeteerSpawnables();
+		SetPrices();
     }
 
 	public void BearTrapClick()
@@ -90,6 +91,11 @@ public class ItemGrabTool : NetworkBehaviour
 	public void TankClick()
 	{
 		Pickup(Tank);
+	}
+
+	void SetPrices()
+	{
+		ButtonBearTrap.GetComponentInChildren<Text>();
 	}
 
     // Update is called once per frame
