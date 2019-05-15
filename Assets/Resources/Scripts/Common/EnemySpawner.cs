@@ -26,6 +26,7 @@ public class EnemySpawner : NetworkBehaviour
 
     public int MinDelay = 5;
     public int MaxDelay = 10;
+    public bool TankSpawner;
     public List<StateMachine> LocalMinions = new List<StateMachine>();
     public static List<StateMachine> AllMinions = new List<StateMachine>();
     public static Transform MinionContainerObject;
@@ -71,8 +72,16 @@ public class EnemySpawner : NetworkBehaviour
                     
                     NetworkServer.Spawn(npcEnemy);
                     //Adds 
-                    AllMinions.Add(machine);
-                    LocalMinions.Add(machine);
+                    if(!TankSpawner)
+                    {
+                        AllMinions.Add(machine);
+                        LocalMinions.Add(machine);
+                    }
+                    else
+                    {
+                        gameObject.SetActive(false);
+                    }
+    
                 }
             }
             yield return new WaitForSeconds(Random.Range(MinDelay, MaxDelay));
