@@ -10,6 +10,7 @@ using UnityEngine;
  * Script used to spawn and despawn decals using a queue
  * 
  * CODE REVIEWED BY:
+ * Ludvig Björk Förare (190515)
  * 
  * CONTRIBUTORS:
  * Sandra Andersson
@@ -65,7 +66,6 @@ public class DecalHandler : MonoBehaviour
 			{
 				decayEnabled = true;
 			}
-			
 
 			yield return new WaitForSeconds(DecayTime);
 		}
