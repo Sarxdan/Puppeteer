@@ -91,7 +91,7 @@ public class PlayerController : NetworkBehaviour
     
     // Krig
     private int currentLiquid;
-    private GameObject reloadContainer;
+    public GameObject reloadContainer;
     public int CurrentLiquidPerRound;
 
 
@@ -277,6 +277,10 @@ public class PlayerController : NetworkBehaviour
             if(CurrentWeaponComponent.LiquidLeft < CurrentLiquidPerRound)
             {
                 reloadContainer.SetActive(true);
+            }
+            else
+            {
+                reloadContainer.SetActive(false);
             }
         }
     }
