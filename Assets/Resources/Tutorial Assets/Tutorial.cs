@@ -55,8 +55,9 @@ public class Tutorial : MonoBehaviour
 		NextButton.onClick.AddListener(Next);
 		PreviousButton.onClick.AddListener(Previous);
     }
-	// If Yes button is pressed load up the first text and image.
-	public void Yes()
+
+    // If Yes button is pressed load up the first text and image.
+    public void Yes()
 	{
 		TextBox.text = TutorialTexts[Index].text;
 		Image.sprite = TutorialImages[Index];

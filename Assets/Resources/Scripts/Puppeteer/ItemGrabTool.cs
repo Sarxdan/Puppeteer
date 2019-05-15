@@ -68,10 +68,15 @@ public class ItemGrabTool : NetworkBehaviour
 		previewLiftVector = new Vector3(0,PreviewLiftHeight,0);
 		SetPrices();
     }
-	// TODO:
+
 	void SetPrices()
 	{
-		ButtonBearTrap.GetComponentInChildren<Text>();
+		ButtonBearTrap.GetComponentInChildren<Text>().text = BearTrap.GetComponent<SnapFunctionality>().Cost.ToString();
+		ButtonSpikeTrap.GetComponentInChildren<Text>().text = SpikeTrapFloor.GetComponent<SnapFunctionality>().Cost.ToString();
+		ButtonChandelier.GetComponentInChildren<Text>().text = Chandelier.GetComponent<SnapFunctionality>().Cost.ToString();
+		ButtonFakeItem.GetComponentInChildren<Text>().text = FakeItem.GetComponent<SnapFunctionality>().Cost.ToString();
+		ButtonMinionSpawner.GetComponentInChildren<Text>().text = MinionSpawner.GetComponent<SnapFunctionality>().Cost.ToString();
+		ButtonSpawnTank.GetComponentInChildren<Text>().text = Tank.GetComponent<SnapFunctionality>().Cost.ToString();
 	}
 
 	public void BearTrapClick()
@@ -119,7 +124,30 @@ public class ItemGrabTool : NetworkBehaviour
 
 			if (Input.GetButtonDown("Rotate"))
 			{
-				selectedObject.transform.RotateAround(selectedObject.transform.position, selectedObject.transform.up, 90);
+				if (selectedObject.GetComponent<SnapFunctionality>().FloorSpike)
+				{
+					Destroy(selectedObject);
+					selectedObject = null;
+					Destroy(guideObject);
+					guideObject = null;
+					Destroy(sourceObject);
+					sourceObject = null;
+
+					Pickup(SpikeTrapRoof);
+				}
+				else if (selectedObject.GetComponent<SnapFunctionality>().RoofSpike)
+				{
+					Destroy(selectedObject);
+					selectedObject = null;
+					Destroy(guideObject);
+					guideObject = null;
+					Destroy(sourceObject);
+					sourceObject = null;
+
+					Pickup(SpikeTrapFloor);
+				}
+				else
+					selectedObject.transform.RotateAround(selectedObject.transform.position, selectedObject.transform.up, 90);
 			}
 
 			ClientUpdatePositions();
@@ -157,6 +185,7 @@ public class ItemGrabTool : NetworkBehaviour
 
 		CmdPickUp(pickupTrap.name);
     }
+
 	[Command]
 	public void CmdPickUp(String pickupTrapName)
 	{
@@ -184,7 +213,7 @@ public class ItemGrabTool : NetworkBehaviour
 		}
 		else if (pickupTrapName == "Fake Item")
 		{
-
+			guideObject = Instantiate(FakeItem);
 		}
 		else if (pickupTrapName == "MinionSpawner")
 		{
@@ -194,7 +223,7 @@ public class ItemGrabTool : NetworkBehaviour
         {
             guideObject = Instantiate(Tank);
         }
-
+			guideObject = Instantiate(Tank);
 	}
 
 	private void  ClientUpdatePositions()
@@ -259,6 +288,7 @@ public class ItemGrabTool : NetworkBehaviour
 			}
 		}
     }
+
 	[Command]
     public void CmdDrop()
     {
@@ -308,7 +338,7 @@ public class ItemGrabTool : NetworkBehaviour
         var rooms = level.GetRooms();
 		foreach (var room in rooms)
 		{
-			if (room.GetComponent<ItemSpawner>() /*&& !room.GetComponent<RoomInteractable>().RoomContainsPlayer()*/)
+			if (room.GetComponent<ItemSpawner>() && !room.GetComponent<RoomInteractable>().RoomContainsPlayer())
 			{
 				snapPoints.AddRange(room.GetComponent<ItemSpawner>().FindSnapPoints());
 			}
