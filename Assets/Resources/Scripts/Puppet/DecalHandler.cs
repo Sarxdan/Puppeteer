@@ -24,11 +24,6 @@ public class DecalHandler : MonoBehaviour
 	private Queue<GameObject> decalQueue = new Queue<GameObject>();
 	private bool decayEnabled = false;
 
-	private void Update()
-	{
-		Debug.Log(decalQueue.Count);
-	}
-
 	// Adds decal to queue and starts decay if not already started
 	public void AddDecal(GameObject decal)
 	{
