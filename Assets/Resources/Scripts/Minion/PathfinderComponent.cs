@@ -179,7 +179,7 @@ public class PathfinderComponent : NetworkBehaviour
     {
         if(Velocity.magnitude < MinVelocityThreshold)
         {
-            
+
             currentStuckTime += Time.deltaTime;
             if(currentStuckTime >= StuckTimeThreshold)
             {

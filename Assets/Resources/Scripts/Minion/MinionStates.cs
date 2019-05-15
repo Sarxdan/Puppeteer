@@ -389,6 +389,7 @@ namespace MinionStates
                 }
                 else
                 {
+                    machine.Corunning = true;
                     machine.StartCoroutine("chargeRoutine");
                 }
             }
