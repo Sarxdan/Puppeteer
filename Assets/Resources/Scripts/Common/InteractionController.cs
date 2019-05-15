@@ -59,6 +59,10 @@ public class InteractionController : NetworkBehaviour
                 }
 
             }
+            else if(hit == null)
+            {
+                InteractionTooltip.enabled = false;
+            }
             
 
 

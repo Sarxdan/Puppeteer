@@ -73,6 +73,7 @@ public class PathfinderComponent : NetworkBehaviour
         layerMask = ~(1 << LayerMask.NameToLayer("Puppeteer Interact"));
         if(!isServer)
         {
+            gameObject.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezeAll;
             this.enabled = false;
             return;
         }
