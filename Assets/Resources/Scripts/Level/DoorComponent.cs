@@ -110,7 +110,7 @@ public class DoorComponent : Interactable
 
 	public override void OnRaycastExit(GameObject interactor)
 	{
-		ShowTooltip(interactor);
+		HideToolTip(interactor);
 	}
     // Closes and opens the door
     void FixedUpdate()
