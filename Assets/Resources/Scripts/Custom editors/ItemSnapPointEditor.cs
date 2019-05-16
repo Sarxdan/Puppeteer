@@ -89,7 +89,12 @@ public class ItemSnapPointEditor : Editor
         currentSpawned = PrefabUtility.InstantiatePrefab(spawnables[index]) as GameObject;
         currentSpawned.transform.SetParent(snapPoint.transform);
         currentSpawned.transform.localPosition = Vector3.zero;
-        currentSpawned.transform.localEulerAngles = Vector3.zero; 
+		SpawnOffset spawnOffset = currentSpawned.GetComponent<SpawnOffset>();
+		if (spawnOffset != null)
+		{
+			currentSpawned.transform.localPosition += spawnOffset.Offset;
+		}
+		currentSpawned.transform.localEulerAngles = Vector3.zero; 
         index++;
         
     }
