@@ -198,9 +198,6 @@ public class HUDScript : NetworkBehaviour
 
     public void ScaleInteractionProgress(float percentage)
     {
-        if(percentage > 1)
-            percentage = 0;
-        InteractionProgress.fillAmount = percentage;
+        InteractionProgress.fillAmount = Mathf.Clamp01(percentage);
     }
-
 }
