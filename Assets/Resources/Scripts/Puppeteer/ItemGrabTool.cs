@@ -191,7 +191,10 @@ public class ItemGrabTool : NetworkBehaviour
 	{
 		if (guideObject != null)
 		{
-			Destroy(guideObject);
+			if (!guideObject.GetComponent<SnapFunctionality>().Placed)
+			{
+				Destroy(guideObject);
+			}
 			guideObject = null;
 		}
 
@@ -334,7 +337,7 @@ public class ItemGrabTool : NetworkBehaviour
 	private SnapPointBase FindNearestFreePoint(in SnapFunctionality heldTrap, ref float bestDist)
     {
         List<SnapPointBase> snapPoints = new List<SnapPointBase>();
-        var rooms = level.GetRooms();
+        var rooms = level.GetRoomsForItem();
 		foreach (var room in rooms)
 		{
 			if (room.GetComponent<ItemSpawner>() && !room.GetComponent<RoomInteractable>().RoomContainsPlayer())
