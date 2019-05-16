@@ -44,12 +44,15 @@ public class Main_Menu : MonoBehaviour
 
     void JoinGame()
     {
-		if (Ip_Field.text != "")
-		{
-			manager.networkAddress = Ip_Field.text;
-		}
-		else
+        if (Ip_Field.text != "")
+        {
+            manager.networkAddress = Ip_Field.text;
+        }
+        else
+        {
 			manager.networkAddress = "localhost";
+        }
+        JoinGameButton.interactable = false;
         manager.StartClient();
     }
     
