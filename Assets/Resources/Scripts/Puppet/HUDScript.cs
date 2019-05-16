@@ -127,13 +127,13 @@ public class HUDScript : NetworkBehaviour
         if(playerController.CurrentWeapon != null)
         {
             // Calculated the number of magazine left
-            float magazines = Mathf.Clamp(((float)playerController.Ammunition / (float)playerController.CurrentWeapon.GetComponent<WeaponComponent>().Capacity),0, 999); 
+            float magazines = Mathf.Clamp(((float)playerController.Ammunition / (float)playerController.CurrentWeapon.GetComponent<WeaponComponent>().Capacity), 0, 999); 
             // Changes the number of leading zeroes depending on the number of magazines
-            if(magazines > 100)
+            if(magazines >= 100)
             {
                 CurrentAmmo.text = Mathf.FloorToInt(magazines).ToString();
             }
-            if(magazines > 10)
+            if(magazines >= 10)
             {
                 CurrentAmmo.text = "0" + Mathf.FloorToInt(magazines).ToString();
             }

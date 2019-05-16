@@ -8,6 +8,8 @@ using UnityEngine.UI;
 /*
 * AUTHOR:
 * Benjamin "Boris" Vesterlund, Kristoffer "Krig" Lundgren
+* RE-AUTHERED 05-16
+* Benjamin "Boris" Vesterlund
 *
 * DESCRIPTION:
 * Tool used for grabbing and dropping traps and spawners as puppeteer. Also does checks to determine if drop is legal.
@@ -71,6 +73,7 @@ public class ItemGrabTool : NetworkBehaviour
 		SetPrices();
     }
 
+	// Sets pricetag to correct value att start of scene.
 	void SetPrices()
 	{
 		ButtonBearTrap.GetComponentInChildren<Text>().text = BearTrap.GetComponent<SnapFunctionality>().Cost.ToString();
@@ -81,6 +84,7 @@ public class ItemGrabTool : NetworkBehaviour
 		ButtonSpawnTank.GetComponentInChildren<Text>().text = Tank.GetComponent<SnapFunctionality>().Cost.ToString();
 	}
 
+	// Button presses on puppeteer UI.
 	public void BearTrapClick()
 	{
 		Pickup(BearTrap);
@@ -113,6 +117,7 @@ public class ItemGrabTool : NetworkBehaviour
 		ClientUpdate();
     }
 
+	// handels all input from the local player.
     private void ClientUpdate()
     {
         if (selectedObject == null)
@@ -185,16 +190,17 @@ public class ItemGrabTool : NetworkBehaviour
 
         grabOffset = selectedObject.transform.position - MouseToWorldPosition();
 
+		// tells the server what gameobject is picked up.
 		CmdPickUp(pickupTrap.name);
     }
 
+	// Server binding the guideobject to the correct object.
 	[Command]
 	public void CmdPickUp(String pickupTrapName)
 	{
 		if (isLocalPlayer)
-		{
 			return;
-		}
+		// Handels if guideobject is not null, make it null and only destroy it if not placed.
 		if (guideObject != null)
 		{
 			if (!guideObject.GetComponent<SnapFunctionality>().Placed)
@@ -203,7 +209,7 @@ public class ItemGrabTool : NetworkBehaviour
 			}
 			guideObject = null;
 		}
-
+		// All cases of pickup, handled by string, because gameobject needs to be spawned before being able to be past as argument.
 		if (pickupTrapName == "Bear Trap")
 		{
 			guideObject = Instantiate(BearTrap);
@@ -232,15 +238,18 @@ public class ItemGrabTool : NetworkBehaviour
         {
             guideObject = Instantiate(Tank);
         }
+		// Relay to all clients what object is picked up.
 		RpcPickUp(pickupTrapName);
 	}
+
+	// Same as CmdPickUp but binds the guideobject on all clients.
 	[ClientRpc]
 	public void RpcPickUp(string pickupTrapName)
 	{
 		if (isServer || FindObjectOfType<ItemGrabTool>().enabled)
-		{
 			return;
-		}
+
+		// Handels if guideobject is not null, make it null and only destroy it if not placed.
 		if (guideObject != null)
 		{
 			if (!guideObject.GetComponent<SnapFunctionality>().Placed)
@@ -249,7 +258,7 @@ public class ItemGrabTool : NetworkBehaviour
 			}
 			guideObject = null;
 		}
-
+		// All cases of pickup, handled by string, because gameobject needs to be spawned before being able to be past as argument.
 		if (pickupTrapName == "Bear Trap")
 		{
 			guideObject = Instantiate(BearTrap);
@@ -280,6 +289,8 @@ public class ItemGrabTool : NetworkBehaviour
 		}
 	}
 
+	// Checks all rooms for open nodes, finding the best available node and moves the guideObject to that location.
+	// if no position is available or close enough
 	private void  ClientUpdatePositions()
     {
 		Vector3 newPosition = MouseToWorldPosition() + grabOffset;
@@ -304,8 +315,10 @@ public class ItemGrabTool : NetworkBehaviour
 		}
 	}
 
+	// If Object is droped. (Placed)
 	public void Drop()
     {
+		// If the guideobject is still on the sourceobject (no new node or position is found at the time of release) destroy all objects and reset. 
 		if ((sourceObject.transform.position == guideObject.transform.position && sourceObject.transform.rotation == guideObject.transform.rotation) || bestDstPoint == null)
 		{
 			Destroy(selectedObject);
@@ -315,11 +328,13 @@ public class ItemGrabTool : NetworkBehaviour
 			Destroy(sourceObject);
 			sourceObject = null;
 		}
+		// Else draw money. set the room where the node is found into trap parent and place the gameobject correctly.
 		else
 		{
 			currency.CurrentCurrency = currency.CurrentCurrency - cost;
 
 			guideObject.name = "Placed Trap";
+			// sets the parent on server.
 			CmdSetParent(bestDstPoint.GetComponentInParent<NetworkIdentity>().gameObject);
 			guideObject.transform.position -= previewLiftVector;
 			guideObject.GetComponent<SnapFunctionality>().Placed = true;
@@ -327,10 +342,12 @@ public class ItemGrabTool : NetworkBehaviour
 
 			SnapPointBase point = bestDstPoint.GetComponent<SnapPointBase>();
 			point.Used = true;
-
+			// send transform of the trap to the server.
 			CmdSendTransform(new TransformStruct(guideObject.transform.position,guideObject.transform.rotation));
+			// tell the server to place and spawn the trap.
 			CmdDrop();
 
+			// destroy all object used in calculations, exept guideobject if this happens to be server.
 			Destroy(selectedObject);
 			selectedObject = null;
 			Destroy(sourceObject);
@@ -343,14 +360,16 @@ public class ItemGrabTool : NetworkBehaviour
 		}
     }
 
+	// Tells the server who the perent room is.
 	[Command]
 	public void CmdSetParent(GameObject sentParent)
 	{
 		parent = sentParent;
+		// relay the parent to all clients.
 		RpcSetParent(sentParent);
 	}
 
-
+	// Server spawns the gameobject. placing it in the correct position.
 	[Command]
     public void CmdDrop()
     {
@@ -360,13 +379,16 @@ public class ItemGrabTool : NetworkBehaviour
 			guideObject.transform.position = placingTransform.Position;
 			guideObject.transform.rotation = placingTransform.Rotation;
 			guideObject.transform.SetParent(parent.transform);
+			// tells all clients to parent the gameobjects.
 			RpcSetParent(parent);
 			guideObject.GetComponent<SnapFunctionality>().Placed = true;
 			guideObject.GetComponent<Collider>().enabled = true;
+			// updates layers so the trap is visable to clients.
 			RpcUpdateLayer(guideObject);
 		}
     }
 
+	// Tells server where the gameobject is going.
 	[Command]
 	public void CmdSendTransform(TransformStruct transformStruct)
 	{
@@ -376,12 +398,14 @@ public class ItemGrabTool : NetworkBehaviour
 		}
 	}
 
+	// Calls all clients and tells them to change layer of gameobject.
 	[ClientRpc]
 	public void RpcUpdateLayer(GameObject target)
 	{
 		SetLayerOnAll(target, 0);
 	}
 
+	// Calls all but the puppeteer to tell dem to parent the gameobjects.
 	[ClientRpc]
 	public void RpcSetParent(GameObject sentParent)
 	{
