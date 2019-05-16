@@ -115,7 +115,6 @@ public class PathfinderComponent : NetworkBehaviour
         this.HasPath = false;
         if(this.animController == null)
             this.animController = GetComponent<Animator>();
-        this.animController.SetBool("Moving", false);
         
     }
 
@@ -211,10 +210,10 @@ public class PathfinderComponent : NetworkBehaviour
                     closestMinion = minion.transform;
                     closestMinionDistance = localPos.magnitude;
                 }
-
         }
 
-        if(closestMinionDistance < MinionAvoidDistance){
+        if(closestMinionDistance < MinionAvoidDistance)
+        {
             minionAvoidVector = minionAvoidVector * (1-ForceSmoothingValue) + ((transform.position - closestMinion.position).normalized/closestMinionDistance) *ForceSmoothingValue;
         }
         else
@@ -256,9 +255,11 @@ public class PathfinderComponent : NetworkBehaviour
     {
         if(Physics.Raycast(transform.position + TransformRaycastOffset, transform.forward, out RaycastHit hit, DoorInteractRange, layerMask))
         {
-            if(hit.transform.tag.Equals("Door")){
+            if(hit.transform.tag.Equals("Door"))
+            {
                 DoorComponent door = hit.transform.GetComponent<DoorComponent>();
-                if(!door.Open){
+                if(!door.Open)
+                {
                     door.OnInteractBegin(gameObject);
                 }
             }
@@ -338,7 +339,6 @@ public class PathfinderComponent : NetworkBehaviour
             {
                 Debug.LogError("Subpath was not created! This is very bad");
             }
-
         }
     }
 
@@ -382,7 +382,6 @@ public class PathfinderComponent : NetworkBehaviour
             {
                 rigidBody.velocity = transform.forward * this.MovementSpeed * Time.deltaTime;
             }
-            
         }
 
         //Draws current path if debug is on
@@ -402,8 +401,6 @@ public class PathfinderComponent : NetworkBehaviour
 
             if(this.worldPath.Count > 0 ) Debug.DrawLine(transform.position, this.worldPath[worldPath.Count-1].EntrancePos, Color.cyan, Time.deltaTime);
         }
-        
-
     }
 
 

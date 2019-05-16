@@ -45,10 +45,10 @@ namespace MinionStates
         {
 
             //If no target, go idle
-            if(machine.TargetEntity == null){
+            if(machine.TargetEntity == null)
+            {
                 machine.SetState(new WanderState(machine));
                 return;
-
             }
 
             //Debug ray for attack range
@@ -411,6 +411,7 @@ namespace MinionStates
             machine.ChargeStopped = false;
             machine.PathFinder.RotationSpeed = 2f;
             machine.PathFinder.NodeArrivalMargin = 0.5f;
+            machine.AnimController.SetFloat("ChargeSpeed", machine.StartChargeSpeed);
         }
 
         public override void Run()

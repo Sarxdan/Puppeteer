@@ -28,13 +28,11 @@ public class InteractionController : NetworkBehaviour
 
     // The image which is displayed when a player looking at something that can be interacted with
     public RawImage InteractionTooltip;
-   // public PlayerController PlayerController;
 
     void Update()
     {
         RaycastHit hitInfo;
-        //If raycast hits an object
-        if(Physics.Raycast(Camera.main.ViewportPointToRay(new Vector3(0.5f, 0.5f)), out hitInfo, Lookahead, ~(1 << LayerMask.NameToLayer("Puppeteer Interact"))))
+        if (Physics.Raycast(Camera.main.ViewportPointToRay(new Vector3(0.5f, 0.5f)), out hitInfo, Lookahead, ~(1 << 8 | 1 << 2)))
         {
             var hit = hitInfo.transform.GetComponent<Interactable>();
             //Sets current interactable object
@@ -111,13 +109,6 @@ public class InteractionController : NetworkBehaviour
     {
         info.Target.GetComponent<Interactable>().OnInteractEnd(info.Source);
     }
-
-    private void StopInteraction()
-    {
-        //If there isn't any interaction to cancel
-       
-    }
-
 
 	[Command]
 	public void CmdBeginInteract(InteractStruct info)

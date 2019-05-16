@@ -84,8 +84,11 @@ public class CustomNetworkLobbyPlayer : NetworkLobbyPlayer
         gameObject.transform.localPosition = new Vector3(0, -(Index * (Screen.currentResolution.height / 15)), 0);
         gameObject.transform.localScale = new Vector3(1.2f , 1.2f, 1);
 
+        if (PlayerPrefs.HasKey("PlayerName"))
+            CmdSetNickname(PlayerPrefs.GetString("PlayerName"));
+        else
+            CmdSetNickname("Player " + playerCount.ToString());
 
-        CmdSetNickname("Player " + playerCount.ToString());
 
         if (isLocalPlayer)
         {
@@ -163,6 +166,7 @@ public class CustomNetworkLobbyPlayer : NetworkLobbyPlayer
     public void ChangeNickname()
     {
         CmdSetNickname(PlayerNameInput.text);
+        PlayerPrefs.SetString("PlayerName", PlayerNameInput.text);
     }
 
     void setStatcPlayerNumber(Scene current, Scene next)

@@ -307,7 +307,7 @@ public class StateMachine : NetworkBehaviour
                 CurrentChargeSpeed = CurrentChargeSpeed += ChargeAccelerationSpeed;
                 AnimController.SetFloat("ChargeSpeed", CurrentChargeSpeed);
             }
-            
+
             //HitPillars = Physics.OverlapSphere(gameObject.transform.position, 1f);
 
             //foreach (Collider pillar in HitPillars)
@@ -356,7 +356,6 @@ public class StateMachine : NetworkBehaviour
 
 
     //Isn't used at the time this file is reviewed
-
     private IEnumerator attackPriority()
     {
         AtkPrioRunning = true;
@@ -429,7 +428,8 @@ public class StateMachine : NetworkBehaviour
         while(doorReferences != null)
         {
             //Checks if this room is to be chosen
-            if(Random.Range(0.0f,1.0f) <= ChooseCurrentRoomChance){
+            if(Random.Range(0.0f,1.0f) <= ChooseCurrentRoomChance)
+            {
                 break;
             }
 
@@ -437,7 +437,8 @@ public class StateMachine : NetworkBehaviour
             if(doorReferences == null) break;
             foreach(AnchorPoint door in doorReferences.doors)
             {
-                if(door.Connected && door != currentDoor && door.ConnectedTo != null){ //TODO remove nullprodection
+                if(door.Connected && door != currentDoor && door.ConnectedTo != null)
+                { //TODO remove nullprodection
                     availableDoors.Add(door);
                 }
             }
