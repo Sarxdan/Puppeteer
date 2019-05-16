@@ -13,6 +13,7 @@ using Mirror;
  * Displays a icon for every puppet that have been added to the target list for the puppeteer
  * 
  * CODE REVIEWED BY:
+ * Anton Jonsson (16/05-2019)
  * 
  * CONTRIBUTORS:
  * 
@@ -20,9 +21,6 @@ using Mirror;
 
 public class PuppetTrackerIcon : MonoBehaviour
 {
-    public static readonly float ScreenWidthRatio = 0.7f;
-    // UI offset from top of the screen
-    public static readonly float TopOffset = 30.0f;
     // size of displayed icons
     public static readonly float IconSize = 50.0f;
     // How much further up the icon is going to be from the puppet
@@ -46,7 +44,7 @@ public class PuppetTrackerIcon : MonoBehaviour
         //If we are not the puppeteer then we disable this script
         if (!GameObject.FindGameObjectWithTag("GameController").GetComponent<NetworkIdentity>().isLocalPlayer)
         {
-            this.enabled = false;
+            enabled = false;
             return;
         }
     }
@@ -58,7 +56,6 @@ public class PuppetTrackerIcon : MonoBehaviour
         for (int i = 0; i < Targets.Count; i++)
         {
             var target = Targets[i];
-
             
             if (target != null)
             {
@@ -79,7 +76,7 @@ public class PuppetTrackerIcon : MonoBehaviour
         }
     }
 
-    // registers a new tracked target in the compass
+    // registers a new tracked target for the puppeteer
     public void AddTarget(in Transform target)
     {
         Debug.Assert(target.GetComponent<RawImage>() != null, "Compass targets requires an icon");
