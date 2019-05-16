@@ -34,6 +34,7 @@ public class CustomNetworkManager : NetworkLobbyManager
     {
         StartButton = GameObject.Find("StartCharacterSelectButton").GetComponent<Button>();
         StartButton.onClick.AddListener(HideCanvas);
+        StartButton.onClick.AddListener(CloseLobby);
         StartButton.gameObject.SetActive(false);
 
         GameObject.Find("DisconnectButton").GetComponent<Button>().onClick.AddListener(StopHost);
@@ -161,5 +162,10 @@ public class CustomNetworkManager : NetworkLobbyManager
         }
             GameObject playerPrefab = (GameObject)Instantiate(PlayableCharacters[prefabIndex], PlayableCharacters[prefabIndex].transform.position, Quaternion.identity);
             return playerPrefab;
+    }
+
+    public void CloseLobby()
+    {
+        maxConnections = lobbySlots.Count;
     }
 }
