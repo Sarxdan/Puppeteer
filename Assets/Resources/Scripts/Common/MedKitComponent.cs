@@ -13,6 +13,8 @@ using UnityEngine;
 * CODE REVIEWED BY:
 * Philip Stenmark
 * 
+* CONTRIBUTORS:
+* Kristoffer Lundgren
 */
 
 public class MedKitComponent : Interactable
@@ -35,7 +37,7 @@ public class MedKitComponent : Interactable
     {   
         // Empty
     }
-
+    // (KL) Used to show the interact tooltip
     public override void OnRaycastEnter(GameObject interactor)
     {
         ShowTooltip(interactor);

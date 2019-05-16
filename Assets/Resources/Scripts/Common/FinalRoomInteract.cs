@@ -15,7 +15,7 @@ using MinionStates;
 * CODE REVIEWED BY:
 *
 * CONTRIBUTORS:
-* 
+* Kristoffer Lundgren
 */
 
 public class FinalRoomInteract : Interactable
@@ -55,7 +55,7 @@ public class FinalRoomInteract : Interactable
 	{
 
 	}
-
+	// (KL) Used to show the interact tooltip
 	public override void OnRaycastEnter(GameObject interactor)
 	{
 		if(!ButtonPressed)

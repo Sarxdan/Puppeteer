@@ -23,8 +23,6 @@ public class GrabTool : NetworkBehaviour
     private PuppeteerRoomSounds sounds;
 	private LevelBuilder level;
 
-    // The maximum distance for snapping modules
-    public int SnapDistance = 25;
     // The lift height when grabbing an object
     public float LiftHeight = 3.0f;
     // The lift speed when grabbing an object
@@ -50,8 +48,8 @@ public class GrabTool : NetworkBehaviour
     // Current selected node in tree. Used by RoomTreeNode to allow the selected object to be used in new tree.
     public RoomTreeNode currentNode;
 
-    public readonly int MaxNumCollisions = 8;
-    public readonly float UpdateInterval = 0.1f;
+    public readonly int MaxNumCollisions = 16;
+    public readonly float UpdateFrequency = 0.12f;
     private Collider[] overlapColliders;
 
     void Start()
@@ -62,7 +60,7 @@ public class GrabTool : NetworkBehaviour
         if (isServer)
         {
             overlapColliders = new Collider[MaxNumCollisions];
-            InvokeRepeating("ServerUpdate", 0.0f, UpdateInterval);
+            InvokeRepeating("ServerUpdate", 0, UpdateFrequency);
         }
     }
 
@@ -97,6 +95,9 @@ public class GrabTool : NetworkBehaviour
             // send current mouse position to server
             CmdUpdateMousePos(this.MouseToWorldPosition());
 
+            Vector3 newPosition = MouseToWorldPosition() + grabOffset;
+            selectedObject.transform.position = Vector3.Lerp(selectedObject.transform.position, new Vector3(newPosition.x, LiftHeight, newPosition.z), LiftSpeed * Time.deltaTime);
+
             if (Input.GetButtonUp("Fire"))
             {
                 Drop();
@@ -108,9 +109,6 @@ public class GrabTool : NetworkBehaviour
                 selectedObject.transform.Rotate(Vector3.up * 90.0f);
                 CmdRotate(selectedObject.transform.rotation);
             }
-
-            Vector3 newPosition = MouseToWorldPosition() + grabOffset;
-            selectedObject.transform.position = Vector3.Lerp(selectedObject.transform.position, new Vector3(newPosition.x, LiftHeight, newPosition.z), LiftSpeed * Time.deltaTime);
         }
     }
 
@@ -139,7 +137,7 @@ public class GrabTool : NetworkBehaviour
         }
 
         // Move guideObject to best availible position. If there is none, move it to source.
-        if (bestDstPoint != null)
+        if (bestDstPoint != null && selectedObject.transform.hasChanged)
         {
             if (this.CanConnect(bestSrcPoint, bestDstPoint))
             {
@@ -202,9 +200,15 @@ public class GrabTool : NetworkBehaviour
 			selectedObject = Instantiate(sourceObject);
 			guideObject = Instantiate(sourceObject);
 			guideObject.name = "guideObject";
-		}
-		
-		grabOffset = sourceObject.transform.position - localPlayerMousePos;
+
+            // disable render
+            foreach (var renderer in selectedObject.GetComponentsInChildren<MeshRenderer>())
+            {
+                renderer.enabled = false;
+            }
+        }
+
+        grabOffset = sourceObject.transform.position - localPlayerMousePos;
 
 		// Save the parent node of the picked up room to be able to reset if the position doesn't change.
 		firstParentNode = sourceObject.GetComponent<RoomTreeNode>().GetParent();
@@ -218,8 +222,8 @@ public class GrabTool : NetworkBehaviour
 		CmdDrop();
 		if (!isServer)
 		{
-			Destroy(selectedObject);
 			Destroy(guideObject);
+			Destroy(selectedObject);
 			selectedObject = null;
 			guideObject = null;
 		}
@@ -229,7 +233,7 @@ public class GrabTool : NetworkBehaviour
 	[Command]
 	public void CmdDrop()
 	{
-        if(sourceObject != null)
+        if (sourceObject != null)
         {
             // Reset tree if position doesn't change.
             if (sourceObject.transform.position == guideObject.transform.position && sourceObject.transform.rotation == guideObject.transform.rotation)
@@ -279,12 +283,7 @@ public class GrabTool : NetworkBehaviour
         foreach (var item in list)
         {
             float curDist = Vector3.Distance(item.transform.position, target.transform.position);
-            if (curDist > SnapDistance)
-            {
-                // ignore if too far apart
-                continue;
-            }
-            else if (curDist < bestDist)
+            if (curDist < bestDist && !item.Connected)
             {
                 result = item;
                 bestDist = curDist;
@@ -295,12 +294,6 @@ public class GrabTool : NetworkBehaviour
 
     private bool CanConnect(in AnchorPoint src, in AnchorPoint dst)
     {
-        // cannot connect to source object
-        if (dst.transform.parent.IsChildOf(sourceObject.transform))
-        {
-            return false;
-        }
-
         // only connect modules with correct door angles.
         if (Mathf.RoundToInt((src.transform.forward + dst.transform.forward).magnitude) != 0)
         {
@@ -308,7 +301,7 @@ public class GrabTool : NetworkBehaviour
         }
 
         // check if source room contains player
-        if (sourceObject.GetComponent<RoomInteractable>().RoomContainsPlayer())
+        if (sourceObject != null && sourceObject.GetComponent<RoomInteractable>().RoomContainsPlayer())
         {
             return false;
         }
@@ -322,7 +315,7 @@ public class GrabTool : NetworkBehaviour
                 overlapColliders[i] = null;
             }
 
-            int numCollisions = Physics.OverlapBoxNonAlloc(bc.transform.position, bc.size * 0.5f, overlapColliders, bc.transform.rotation, 1 << 8);
+            int numCollisions = Physics.OverlapBoxNonAlloc(bc.transform.position, bc.size * 0.45f, overlapColliders, bc.transform.rotation, 1 << 8);
             if (numCollisions >= MaxNumCollisions)
             {
                 Debug.LogWarning("Too many collisions! Some collisions may be ignored.");

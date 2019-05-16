@@ -306,6 +306,7 @@ namespace MinionStates
     }
     //---------------------------------------------------------------------------------
     //TANK STATES
+    //the idle state above is shared between tanks and minions
     //---------------------------------------------------------------------------------
     public class BigAttackState : State
     {
@@ -400,6 +401,7 @@ namespace MinionStates
                 machine.ChargeStopped = false;
                 machine.SetState(new BigAttackState(machine));
             }
+            //If within a narrow long cone start the Charge Routine
             if (machine.WithinCone(machine.transform, machine.TargetEntity.transform, 30f, 15f, 0f))
             {
                 if (machine.Corunning)
