@@ -47,6 +47,8 @@ public class ItemGrabTool : NetworkBehaviour
 	private GameObject guideObject;
 	// The transform on the server.
 	private TransformStruct placingTransform;
+	// The parent object.
+	private GameObject parent;
 	// The vector that is added to the preview objects vector to move it up before it is placed
 	private Vector3 previewLiftVector;
 	private SnapPointBase bestDstPoint;
@@ -189,6 +191,10 @@ public class ItemGrabTool : NetworkBehaviour
 	[Command]
 	public void CmdPickUp(String pickupTrapName)
 	{
+		if (isLocalPlayer)
+		{
+			return;
+		}
 		if (guideObject != null)
 		{
 			if (!guideObject.GetComponent<SnapFunctionality>().Placed)
@@ -226,6 +232,52 @@ public class ItemGrabTool : NetworkBehaviour
         {
             guideObject = Instantiate(Tank);
         }
+		RpcPickUp(pickupTrapName);
+	}
+	[ClientRpc]
+	public void RpcPickUp(string pickupTrapName)
+	{
+		if (isServer || FindObjectOfType<ItemGrabTool>().enabled)
+		{
+			return;
+		}
+		if (guideObject != null)
+		{
+			if (!guideObject.GetComponent<SnapFunctionality>().Placed)
+			{
+				Destroy(guideObject);
+			}
+			guideObject = null;
+		}
+
+		if (pickupTrapName == "Bear Trap")
+		{
+			guideObject = Instantiate(BearTrap);
+		}
+		else if (pickupTrapName == "Chandelier")
+		{
+			guideObject = Instantiate(Chandelier);
+		}
+		else if (pickupTrapName == "Spike Floor")
+		{
+			guideObject = Instantiate(SpikeTrapFloor);
+		}
+		else if (pickupTrapName == "Spike Roof")
+		{
+			guideObject = Instantiate(SpikeTrapRoof);
+		}
+		else if (pickupTrapName == "Fake Item")
+		{
+			guideObject = Instantiate(FakeItem);
+		}
+		else if (pickupTrapName == "MinionSpawner")
+		{
+			guideObject = Instantiate(MinionSpawner);
+		}
+		else if (pickupTrapName == "TankSpawner")
+		{
+			guideObject = Instantiate(Tank);
+		}
 	}
 
 	private void  ClientUpdatePositions()
@@ -268,7 +320,7 @@ public class ItemGrabTool : NetworkBehaviour
 			currency.CurrentCurrency = currency.CurrentCurrency - cost;
 
 			guideObject.name = "Placed Trap";
-			guideObject.transform.SetParent(bestDstPoint.transform.parent);
+			CmdSetParent(bestDstPoint.GetComponentInParent<NetworkIdentity>().gameObject);
 			guideObject.transform.position -= previewLiftVector;
 			guideObject.GetComponent<SnapFunctionality>().Placed = true;
 			guideObject.GetComponent<Collider>().enabled = true;
@@ -292,6 +344,14 @@ public class ItemGrabTool : NetworkBehaviour
     }
 
 	[Command]
+	public void CmdSetParent(GameObject sentParent)
+	{
+		parent = sentParent;
+		RpcSetParent(sentParent);
+	}
+
+
+	[Command]
     public void CmdDrop()
     {
 		if (isServer)
@@ -299,6 +359,8 @@ public class ItemGrabTool : NetworkBehaviour
 			NetworkServer.Spawn(guideObject);
 			guideObject.transform.position = placingTransform.Position;
 			guideObject.transform.rotation = placingTransform.Rotation;
+			guideObject.transform.SetParent(parent.transform);
+			RpcSetParent(parent);
 			guideObject.GetComponent<SnapFunctionality>().Placed = true;
 			guideObject.GetComponent<Collider>().enabled = true;
 			RpcUpdateLayer(guideObject);
@@ -321,16 +383,13 @@ public class ItemGrabTool : NetworkBehaviour
 	}
 
 	[ClientRpc]
-	public void RpcSetParents()
+	public void RpcSetParent(GameObject sentParent)
 	{
-		if (isLocalPlayer)
+		if (FindObjectOfType<ItemGrabTool>().enabled)
 		{
-			Transform cameraTransform = GetComponentInChildren<Camera>().transform;
-			foreach (SnapFunctionality snappable in FindObjectsOfType<SnapFunctionality>())
-			{
-				snappable.transform.SetParent(cameraTransform);
-			}
+			return;
 		}
+		guideObject.transform.SetParent(sentParent.transform);
 	}
 
 	// Checks all other snap points in the level and picks the best one.
