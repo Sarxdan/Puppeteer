@@ -73,7 +73,6 @@ public class UISounds : MonoBehaviour
 
     public void Hover()
     {
-        Debug.Log("Hoooooover oooooover");
         FMODUnity.RuntimeManager.PlayOneShot(s_Hover, transform.position);
     }
 

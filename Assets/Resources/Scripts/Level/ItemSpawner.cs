@@ -23,6 +23,7 @@ public class ItemSpawner : NetworkBehaviour
 	private List<SnapPointBase> spawners;
 	private GameObject level;
     public List<GameObject> WeaponList;
+	private GameObject localSpawner;
 
     // Refrences to all prefabs that can spawn.
     public GameObject Shotgun;
@@ -108,6 +109,12 @@ public class ItemSpawner : NetworkBehaviour
         }
 	}
 
+	[ClientRpc]
+	public void RpcSetParent(GameObject parent, GameObject item)
+	{
+		item.transform.SetParent(parent.transform);
+	}
+
 	// Gets a num long list of random but unice int that is not the same 
 	public List<int> GetRandom(int min, int max, uint num)
 	{
@@ -169,6 +176,7 @@ public class ItemSpawner : NetworkBehaviour
 			spawnableObject.transform.localPosition += spawnOffset.Offset;
 		}
 		NetworkServer.Spawn(spawnableObject);
+		RpcSetParent(spawner.GetComponentInParent<NetworkIdentity>().gameObject, spawnableObject);
 	}
 
 }

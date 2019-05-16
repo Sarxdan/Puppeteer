@@ -297,8 +297,9 @@ namespace MinionStates
                 }
                 else
                 {
-                    if (machine.debug) Debug.Log("Player found and targeted");
                     machine.TargetEntity = machine.RoomContainsPlayer();
+                    if (machine.debug) Debug.Log("Player found and targeted");
+                    if (machine.debug) Debug.Log("Target: " + machine.TargetEntity);
                     machine.SetState(new BigAttackState(machine));
                 }
             }

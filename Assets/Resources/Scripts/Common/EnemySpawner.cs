@@ -43,7 +43,8 @@ public class EnemySpawner : NetworkBehaviour
         finalRoomDummy = GameObject.Find("DummySpawner").GetComponent<EnemySpawner>();
         if(finalRoomDummy == gameObject) return;
         
-        if(MinionContainerObject == null){
+        if(MinionContainerObject == null)
+        {
             MinionContainerObject = GameObject.Find("MinionContainer").transform;
         }
         snapFunctionality = GetComponent<SnapFunctionality>();
@@ -52,15 +53,16 @@ public class EnemySpawner : NetworkBehaviour
         HealthComponent hpComponent = GetComponent<HealthComponent>();
         hpComponent.AddDeathAction(OnDeath);
         hpComponent.AddOnDamageAction(CmdOnTakeDamage);
-
     }
 
 
     //Spawn is a modified Update with a set amount of time (SpawnRate) between runs
     private IEnumerator Spawn()
     { 
-        while(true){
-            if(isServer && snapFunctionality.Placed){
+        while(true)
+        {
+            if(isServer && snapFunctionality.Placed)
+            {
                 //Check if max amount of enemies has been reached
                 if (LocalMinions.Count < MaxEnemyCount && MaxEnemyCount > 0)
                 {
@@ -81,7 +83,6 @@ public class EnemySpawner : NetworkBehaviour
                     {
                         gameObject.SetActive(false);
                     }
-    
                 }
             }
             yield return new WaitForSeconds(Random.Range(MinDelay, MaxDelay));
@@ -92,15 +93,19 @@ public class EnemySpawner : NetworkBehaviour
     
 
     [Command]
-    public void CmdOnTakeDamage(){
-        foreach(StateMachine minion in LocalMinions){
+    public void CmdOnTakeDamage()
+    {
+        foreach(StateMachine minion in LocalMinions)
+        {
             if(minion.TargetEntity == null)
                 minion.SetState(new ReturnToSpawnerState(minion));
         }
     }
 
-    public void OnDeath(){
-        foreach(StateMachine minion in LocalMinions){
+    public void OnDeath()
+    {
+        foreach(StateMachine minion in LocalMinions)
+        {
             minion.Spawner = null;
         }
         Destroy(gameObject);

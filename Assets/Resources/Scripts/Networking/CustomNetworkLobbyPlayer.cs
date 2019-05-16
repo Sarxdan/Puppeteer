@@ -64,6 +64,7 @@ public class CustomNetworkLobbyPlayer : NetworkLobbyPlayer
 		if (lobby != null && SceneManager.GetActiveScene().name == lobby.LobbyScene)
 		{
 			gameObject.transform.SetParent(GameObject.Find("Players").transform);
+            SceneManager.activeSceneChanged += setStatcPlayerNumber;
 			playerCount++;
 		}
 
@@ -162,5 +163,10 @@ public class CustomNetworkLobbyPlayer : NetworkLobbyPlayer
     public void ChangeNickname()
     {
         CmdSetNickname(PlayerNameInput.text);
+    }
+
+    void setStatcPlayerNumber(Scene current, Scene next)
+    {
+        playerCount = 0;
     }
 }
