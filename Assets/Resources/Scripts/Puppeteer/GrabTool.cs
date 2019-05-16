@@ -20,6 +20,8 @@ using Mirror;
 
 public class GrabTool : NetworkBehaviour
 {
+    public static readonly bool UsePhysicsEngine = false;
+
     private PuppeteerRoomSounds sounds;
 	private LevelBuilder level;
 
@@ -51,6 +53,7 @@ public class GrabTool : NetworkBehaviour
     public readonly int MaxNumCollisions = 16;
     public readonly float UpdateFrequency = 0.12f;
     private Collider[] overlapColliders;
+    private RoomCollider[] guideColliders;
 
     void Start()
     {
@@ -169,6 +172,7 @@ public class GrabTool : NetworkBehaviour
 		selectedObject = Instantiate(sourceObject);
 		guideObject = Instantiate(sourceObject);
         guideObject.name = "guideObject";
+        guideColliders = guideObject.GetComponentsInChildren<RoomCollider>();
 
         grabOffset = sourceObject.transform.position - MouseToWorldPosition();
 
@@ -200,6 +204,7 @@ public class GrabTool : NetworkBehaviour
 			selectedObject = Instantiate(sourceObject);
 			guideObject = Instantiate(sourceObject);
 			guideObject.name = "guideObject";
+            guideColliders = guideObject.GetComponentsInChildren<RoomCollider>();
 
             // disable render
             foreach (var renderer in selectedObject.GetComponentsInChildren<MeshRenderer>())
@@ -294,6 +299,12 @@ public class GrabTool : NetworkBehaviour
 
     private bool CanConnect(in AnchorPoint src, in AnchorPoint dst)
     {
+        // ignore invalid
+        if(src == null || dst == null)
+        {
+            return false;
+        }
+         
         // only connect modules with correct door angles.
         if (Mathf.RoundToInt((src.transform.forward + dst.transform.forward).magnitude) != 0)
         {
@@ -306,34 +317,59 @@ public class GrabTool : NetworkBehaviour
             return false;
         }
 
-        // this is where the fun begins
-        var bcs = selectedObject.GetComponents<BoxCollider>();
-        foreach (var bc in bcs)
+        // check collisions
+        if(UsePhysicsEngine)
         {
-            for (int i = 0; i < overlapColliders.Length; i++)
+            // this is where the fun begins
+            var bcs = selectedObject.GetComponents<BoxCollider>();
+            foreach (var bc in bcs)
             {
-                overlapColliders[i] = null;
-            }
+                for (int i = 0; i < overlapColliders.Length; i++)
+                {
+                    overlapColliders[i] = null;
+                }
 
-            int numCollisions = Physics.OverlapBoxNonAlloc(bc.transform.position, bc.size * 0.45f, overlapColliders, bc.transform.rotation, 1 << 8);
-            if (numCollisions >= MaxNumCollisions)
-            {
-                Debug.LogWarning("Too many collisions! Some collisions may be ignored.");
-            }
+                int numCollisions = Physics.OverlapBoxNonAlloc(bc.transform.position, bc.size * 0.45f, overlapColliders, bc.transform.rotation, 1 << 8);
+                if (numCollisions >= MaxNumCollisions)
+                {
+                    Debug.LogWarning("Too many collisions! Some collisions may be ignored.");
+                }
 
-            for (int i = 0; i < overlapColliders.Length; i++)
+                for (int i = 0; i < overlapColliders.Length; i++)
+                {
+                    var collider = overlapColliders[i];
+                    if (collider == null || 
+                        collider.transform == selectedObject.transform || 
+                        collider.transform == sourceObject.transform || 
+                        collider.transform == guideObject.transform)
+                    {
+                        continue;
+                    }
+                    return false;
+                }
+            }
+        }
+        else
+        {
+            RoomCollider[] placedRoomColliders = level.GetLevel().GetComponentsInChildren<RoomCollider>();
+
+            foreach (var placedRoomCollider in placedRoomColliders)
             {
-                var collider = overlapColliders[i];
-                if (collider == null || 
-                    collider.transform == selectedObject.transform || 
-                    collider.transform == sourceObject.transform || 
-                    collider.transform == guideObject.transform)
+                if (placedRoomCollider.transform.IsChildOf(sourceObject.transform))
                 {
                     continue;
                 }
-                return false;
+                foreach (var guideCollider in guideColliders)
+                {
+                    if (guideCollider.GetPosition() == placedRoomCollider.GetPosition())
+                    {
+                        guideObject.transform.SetPositionAndRotation(sourceObject.transform.position, sourceObject.transform.rotation);
+                        return false;
+                    }
+                }
             }
         }
+
 
         guideObject.transform.position = selectedObject.transform.position - (bestSrcPoint.transform.position - bestDstPoint.transform.position);
         guideObject.transform.rotation = selectedObject.transform.rotation;

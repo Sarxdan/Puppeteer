@@ -54,6 +54,8 @@ public class MenuNavigation : MonoBehaviour
 	public Slider EffectsVolume; public Text EffectsVolumeText;
 	public Slider MusicVolume; public Text MusicVolumeText;
 
+    private bool buttonPressed = false;
+
 	//----------------Enum----------------
 	public enum GameState
 	{
@@ -87,15 +89,20 @@ public class MenuNavigation : MonoBehaviour
 	// Update is called once per frame
 	void Update()
 	{
-
+        if (buttonPressed)
+        {
+            HostGame();
+        }
 	}
 
 	void HostGame()
 	{
-		if (cooldown && currentState != GameState.LobbyMenu)
-		{
-			ChangeState(GameState.LobbyMenu);
-		}
+        buttonPressed = true;
+		    if (cooldown && currentState != GameState.LobbyMenu)
+		    {
+                buttonPressed = false;
+			    ChangeState(GameState.LobbyMenu);
+		    }
 	}
 
 	void JoinGame()

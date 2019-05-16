@@ -411,6 +411,7 @@ namespace MinionStates
             machine.ChargeStopped = false;
             machine.PathFinder.RotationSpeed = 2f;
             machine.PathFinder.NodeArrivalMargin = 0.5f;
+            machine.AnimController.SetFloat("ChargeSpeed", machine.StartChargeSpeed);
         }
 
         public override void Run()

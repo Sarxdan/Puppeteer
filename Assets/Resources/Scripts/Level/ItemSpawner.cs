@@ -170,6 +170,11 @@ public class ItemSpawner : NetworkBehaviour
 	{
 		spawner.GetComponent<ItemSnapPoint>().Used = true;
 		var spawnableObject = Instantiate(item, spawner.transform);
+		SpawnOffset spawnOffset = spawnableObject.GetComponent<SpawnOffset>();
+		if (spawnOffset != null)
+		{
+			spawnableObject.transform.localPosition += spawnOffset.Offset;
+		}
 		NetworkServer.Spawn(spawnableObject);
 		RpcSetParent(spawner.GetComponentInParent<NetworkIdentity>().gameObject, spawnableObject);
 	}

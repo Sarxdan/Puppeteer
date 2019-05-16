@@ -12,21 +12,26 @@ using UnityEngine;
  * 
  * CODE REVIEWED BY:
  * Anton Jonsson (24/4)
- * 
+ *
  * CONTRIBUTORS:
+ * Sandra Andersson (Implemented with animation)
  * Kristoffer Lundgren
+ * 
+ *
  */
 public class PowerupRecharge : Interactable
 {
     public override void OnInteractBegin(GameObject interactor)
     {
         var power = interactor.GetComponent<PowerupBase>();
+        Animator anim = GetComponentInChildren<Animator>();
 
         if (power.isServer && power.isLocalPlayer)
         {
             // attempt to pickup recharge
             if (power != null && power.PercentageLeft == 0.0f)
             {
+                anim.SetTrigger("Consume");
                 power.Charged = true;
             }
         }
@@ -34,11 +39,10 @@ public class PowerupRecharge : Interactable
         {
             if (power != null)
             {
+                anim.SetTrigger("Consume");
                 power.RpcBoostPowerup();
             }
         }
-
-        Destroy(gameObject);
     }
 
     public override void OnInteractEnd(GameObject interactor)
@@ -48,8 +52,12 @@ public class PowerupRecharge : Interactable
     // (KL) Used to show the interact tooltip
     public override void OnRaycastEnter(GameObject interactor)
     {
-        if(!interactor.GetComponent<PowerupBase>().Charged)
+        if (!interactor.GetComponent<PowerupBase>().Charged)
             ShowTooltip(interactor);
     }
 
+    public void Destroy()
+    {
+        Destroy(gameObject);
+    }
 }
