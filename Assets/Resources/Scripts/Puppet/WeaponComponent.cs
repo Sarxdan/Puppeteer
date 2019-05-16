@@ -15,6 +15,8 @@ using Mirror;
  * Benjamin Vesterlund
  * 
  * 
+ * CONTRIBUTORS:
+ * Kristoffer Lundgren
  */
 public class WeaponComponent : Interactable
 {
@@ -216,6 +218,7 @@ public class WeaponComponent : Interactable
     {
         // empty
     }
+    // (KL) Used to show the interact tooltip
     public override void OnRaycastEnter(GameObject interactor)
     {
         ShowTooltip(interactor);

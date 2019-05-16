@@ -29,6 +29,6 @@ public class LevelReturn : MonoBehaviour
 
 	private void OnTriggerEnter(Collider other)
 	{
-		other.gameObject.transform.position = GameObject.Find("startRoom").transform.position + new Vector3(0, 1, 0);
+		other.gameObject.transform.position = new Vector3(0, 1.0f, 0);
 	}
 }

@@ -49,7 +49,7 @@ public class GrabTool : NetworkBehaviour
     public RoomTreeNode currentNode;
 
     public readonly int MaxNumCollisions = 16;
-    public readonly float UpdateInterval = 0.1f;
+    public readonly float UpdateFrequency = 0.12f;
     private Collider[] overlapColliders;
 
     void Start()
@@ -60,7 +60,7 @@ public class GrabTool : NetworkBehaviour
         if (isServer)
         {
             overlapColliders = new Collider[MaxNumCollisions];
-            InvokeRepeating("ServerUpdate", 0.1f, UpdateInterval);
+            InvokeRepeating("ServerUpdate", 0, UpdateFrequency);
         }
     }
 
@@ -137,7 +137,7 @@ public class GrabTool : NetworkBehaviour
         }
 
         // Move guideObject to best availible position. If there is none, move it to source.
-        if (bestDstPoint != null)
+        if (bestDstPoint != null && selectedObject.transform.hasChanged)
         {
             if (this.CanConnect(bestSrcPoint, bestDstPoint))
             {
@@ -283,7 +283,7 @@ public class GrabTool : NetworkBehaviour
         foreach (var item in list)
         {
             float curDist = Vector3.Distance(item.transform.position, target.transform.position);
-            if (curDist < bestDist)
+            if (curDist < bestDist && !item.Connected)
             {
                 result = item;
                 bestDist = curDist;
@@ -294,12 +294,6 @@ public class GrabTool : NetworkBehaviour
 
     private bool CanConnect(in AnchorPoint src, in AnchorPoint dst)
     {
-        // cannot connect to source object
-        if (dst.transform.parent.IsChildOf(sourceObject.transform))
-        {
-            return false;
-        }
-
         // only connect modules with correct door angles.
         if (Mathf.RoundToInt((src.transform.forward + dst.transform.forward).magnitude) != 0)
         {

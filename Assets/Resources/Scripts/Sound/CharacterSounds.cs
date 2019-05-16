@@ -19,6 +19,7 @@ public class CharacterSounds : MonoBehaviour
     // Sound Events
     [FMODUnity.EventRef] public string s_Hit; // Played from HealthComponent
     [FMODUnity.EventRef] public string s_Die; // Played from animation
+    public FMOD.Studio.EventInstance die;
     [FMODUnity.EventRef] public string s_Footstep;
     [FMODUnity.EventRef] public string s_RunFootstep;
 
@@ -39,6 +40,8 @@ public class CharacterSounds : MonoBehaviour
 
     public void Death()
     {
-        FMODUnity.RuntimeManager.PlayOneShot(s_Die, transform.position);
+        die = FMODUnity.RuntimeManager.CreateInstance(s_Die);
+        die.set3DAttributes(FMODUnity.RuntimeUtils.To3DAttributes(gameObject));
+        die.start();
     }
 }

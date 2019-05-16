@@ -16,6 +16,8 @@ using UnityEngine;
  *
  * CONTRIBUTORS:
  * Sandra Andersson (Implemented with animation)
+ * Kristoffer Lundgren
+ * 
  *
  */
 public class PowerupRecharge : Interactable
@@ -48,7 +50,7 @@ public class PowerupRecharge : Interactable
     {
         // empty
     }
-
+    // (KL) Used to show the interact tooltip
     public override void OnRaycastEnter(GameObject interactor)
     {
         if (!interactor.GetComponent<PowerupBase>().Charged)

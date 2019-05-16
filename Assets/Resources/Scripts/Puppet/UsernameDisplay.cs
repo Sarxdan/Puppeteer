@@ -13,6 +13,7 @@ using Mirror;
  * Displays the username above the other puppets in the game. This is the name they had in the lobby.
  * 
  * CODE REVIEWED BY:
+ * Anton Jonsson (16/05-2019)
  * 
  * CONTRIBUTORS:
  * 
@@ -64,5 +65,4 @@ public class UsernameDisplay : NetworkBehaviour
             }
         }
     }
-
 }

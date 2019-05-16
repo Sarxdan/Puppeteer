@@ -55,7 +55,7 @@ namespace MinionStates
             if (machine.debug) Debug.DrawRay(machine.transform.position, Vector3.forward * machine.AttackRange, Color.green, 0.2f);
 
             //Tests if player is in front
-            if (Vector3.Distance(machine.transform.position, machine.TargetEntity.transform.position) < machine.AttackRange)
+            if (Vector3.Distance(machine.transform.position, StateMachine.RemoveY(machine.TargetEntity.transform.position)) < machine.AttackRange)
             {
                 if(machine.TargetEntity.Downed)
                 {
@@ -283,8 +283,28 @@ namespace MinionStates
 
         public override void Run()
         {
-            //Checks for nearby players
-            machine.CheckProximity();
+            if (machine.MinionType == EnemyType.Tank)
+            {
+                if (machine.RoomContainsPlayer() == null)
+                {
+                    if (machine.debug) Debug.Log("No players in room");
+                    return;
+                }
+                else if (machine.TargetEntity != null)
+                {
+                    if (machine.debug) Debug.Log("Already have a target");
+                    return;
+                }
+                else
+                {
+                    if (machine.debug) Debug.Log("Player found and targeted");
+                    machine.TargetEntity = machine.RoomContainsPlayer();
+                    machine.SetState(new BigAttackState(machine));
+                }
+            }
+
+            //Checks for nearby players if regular Minion
+            if (machine.MinionType == EnemyType.Minion) machine.CheckProximity();
 
             //Counts seconds standing idle
             currentWaitTime += (Time.time - lastTime);
@@ -293,7 +313,6 @@ namespace MinionStates
             if(currentWaitTime > waitTime && machine.MinionType == EnemyType.Minion)
             {
                 machine.SetState(new WanderState(machine));
-
             }
             
             this.lastTime = Time.time;
@@ -329,6 +348,9 @@ namespace MinionStates
             float dist = Vector3.Distance(machine.transform.position, machine.TargetEntity.transform.position);
 
             machine.ChargeCharge++;
+
+            //If the target has no healt remove it from TargetEntity
+            if (machine.TargetEntity.Health <= 0) machine.TargetEntity = null;
 
             //If no target, go idle
             if (machine.TargetEntity == null) machine.SetState(new IdleState(machine));

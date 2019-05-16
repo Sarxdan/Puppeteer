@@ -43,7 +43,7 @@ public class StateMachine : NetworkBehaviour
     //References
     [HideInInspector]
     public EnemySpawner Spawner;
-    [HideInInspector]
+    //[HideInInspector]
     public HealthComponent TargetEntity;
     [HideInInspector]
     public Animator AnimController;
@@ -177,7 +177,7 @@ public class StateMachine : NetworkBehaviour
     {
         if(!CanAttack && TargetEntity != null && !PathFinder.HasPath)
         {
-            transform.LookAt(TargetEntity.transform.position);
+            transform.LookAt(RemoveY(TargetEntity.transform.position));
         }
     }
 
@@ -202,8 +202,6 @@ public class StateMachine : NetworkBehaviour
                     {
                         SetState(new BigAttackState(this));
                     }
-                        
-                    
                 }
             }
             else if (puppet == null)
@@ -255,7 +253,8 @@ public class StateMachine : NetworkBehaviour
             }
             return;
         }
-        if (!TargetEntity.Downed && Vector3.Distance(transform.position, TargetEntity.transform.position) < AttackEscapeDistance)
+        
+        if (!TargetEntity.Downed && Vector3.Distance(transform.position, RemoveY(TargetEntity.transform.position)) < AttackEscapeDistance)
         {
             TargetEntity.Damage(AttackDamage);
         }
@@ -286,6 +285,14 @@ public class StateMachine : NetworkBehaviour
             }
         }
         return false;
+    }
+
+    //Removes the y axis of input vector
+    public static Vector3 RemoveY(Vector3 input)
+    {
+        Vector3 ret = input;
+        ret.y = 0;
+        return ret;
     }
 
     private IEnumerator chargeRoutine()
@@ -459,6 +466,22 @@ public class StateMachine : NetworkBehaviour
 
     }
 
+    public HealthComponent RoomContainsPlayer()
+    {
+        Physics.Raycast(transform.position + RaycastOffset, Vector3.down, out RaycastHit hit, 3, layerMask);
+        foreach (BoxCollider collider in hit.transform.GetComponentInParent<NavMesh>().GetComponents<BoxCollider>())
+        {
+            foreach (GameObject player in Puppets)
+            {
+                //Check if any player is within any collider on the room and if they are alive
+                if (collider.bounds.Contains(player.transform.position) && player.GetComponent<HealthComponent>().Health > 0)
+                {
+                    return player.GetComponent<HealthComponent>();
+                }
+            }
+        }
+        return null;
+    }
 }
 
 
