@@ -281,6 +281,16 @@ public class LevelBuilder : NetworkBehaviour
         return result;
     }
 
+	public List<GameObject> GetRoomsForItem()
+	{
+		List<GameObject> result = new List<GameObject>();
+		foreach (var roomTreeNode in FindObjectsOfType<RoomTreeNode>())
+		{
+			result.Add(roomTreeNode.gameObject);
+		}
+		return result;
+	}
+
 
     // Connect doors if able
     public void ConnectDoorsInRoomIfPossible(GameObject room)
