@@ -177,7 +177,7 @@ public class StateMachine : NetworkBehaviour
     {
         if(!CanAttack && TargetEntity != null && !PathFinder.HasPath)
         {
-            transform.LookAt(TargetEntity.transform.position);
+            transform.LookAt(RemoveY(TargetEntity.transform.position));
         }
     }
 
@@ -253,7 +253,8 @@ public class StateMachine : NetworkBehaviour
             }
             return;
         }
-        if (!TargetEntity.Downed && Vector3.Distance(transform.position, TargetEntity.transform.position) < AttackEscapeDistance)
+        
+        if (!TargetEntity.Downed && Vector3.Distance(transform.position, RemoveY(TargetEntity.transform.position)) < AttackEscapeDistance)
         {
             TargetEntity.Damage(AttackDamage);
         }
@@ -284,6 +285,14 @@ public class StateMachine : NetworkBehaviour
             }
         }
         return false;
+    }
+
+    //Removes the y axis of input vector
+    public static Vector3 RemoveY(Vector3 input)
+    {
+        Vector3 ret = input;
+        ret.y = 0;
+        return ret;
     }
 
     private IEnumerator chargeRoutine()

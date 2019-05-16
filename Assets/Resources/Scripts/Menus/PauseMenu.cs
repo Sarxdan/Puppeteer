@@ -31,7 +31,13 @@ public class PauseMenu : MonoBehaviour
     // Playercontroller is use for disabling the movement and the mouse camera control when paused
     private PlayerController playerController;
     private PuppeteerCameraController puppeteerController;
+    // Used for disabling the item grab tool when paused
+    private ItemGrabTool itemGrabTool;
+    // Used for disabling the grabTool when paused
+    private GrabTool grabTool;
     // Start is called before the first frame update
+
+    public GameObject itemHUD;
     void Start()
     {
 		var temp = Owner.GetComponent<PlayerController>();
@@ -42,6 +48,8 @@ public class PauseMenu : MonoBehaviour
 		else
 		{
 			puppeteerController = Owner.GetComponentInChildren<PuppeteerCameraController>();
+            itemGrabTool = Owner.GetComponentInChildren<ItemGrabTool>();
+            grabTool = Owner.GetComponentInChildren<GrabTool>();
 		}
     }
 
@@ -70,7 +78,12 @@ public class PauseMenu : MonoBehaviour
 		if (playerController != null)
 			playerController.DisableInput = true;
 		else
+        {
 			puppeteerController.DisableInput = true;
+            grabTool.enabled = false;
+            itemGrabTool.enabled = false;
+            itemHUD.SetActive(false);
+        }
     }
     // Turn off the UI and reenable the controls
     public void UnPause()
@@ -83,7 +96,12 @@ public class PauseMenu : MonoBehaviour
 		if (playerController != null)
 			playerController.DisableInput = false;
 		else
+        {
 			puppeteerController.DisableInput = false;
+            itemGrabTool.enabled = true;
+            grabTool.enabled = true;
+            itemHUD.SetActive(true);
+        }
 	}
 
     public void OnExit()

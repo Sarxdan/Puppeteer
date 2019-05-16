@@ -12,7 +12,8 @@ using UnityEngine.Experimental.PlayerLoop;
  * CODE REVIEWED BY:
  * 
  * 
- * 
+ * CONTRIBUTORS:
+ * Kristoffer Lundgren
  */
 
 public class FakeItem : Interactable
@@ -44,7 +45,7 @@ public class FakeItem : Interactable
             }
         }
     }
-
+    // (KL) Used to show the interact tooltip
     public override void OnRaycastEnter(GameObject interactor)
     {
         ShowTooltip(interactor);
