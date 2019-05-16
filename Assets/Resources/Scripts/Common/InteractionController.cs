@@ -16,6 +16,8 @@ using Mirror;
  * Ludvig Björk Förare
  * 
  * 
+ * CONTRIBUTORS:
+ * Kristoffer Lundgren (Interact Tooltip)
  */
 public class InteractionController : NetworkBehaviour
 {
@@ -26,7 +28,7 @@ public class InteractionController : NetworkBehaviour
 
     // The image which is displayed when a player looking at something that can be interacted with
     public RawImage InteractionTooltip;
-    public PlayerController PlayerController;
+   // public PlayerController PlayerController;
 
     void Update()
     {
@@ -42,7 +44,6 @@ public class InteractionController : NetworkBehaviour
                 {
                     CmdStopInteracting(new InteractStruct(gameObject, curInteractable.gameObject));
                     isInteracting = false;
-                    //curInteractable.OnRaycastExit(gameObject);
                     InteractionTooltip.enabled = false;
                     curInteractable = null;
                 }
