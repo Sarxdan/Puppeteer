@@ -43,7 +43,7 @@ public class StateMachine : NetworkBehaviour
     //References
     [HideInInspector]
     public EnemySpawner Spawner;
-    [HideInInspector]
+    //[HideInInspector]
     public HealthComponent TargetEntity;
     [HideInInspector]
     public Animator AnimController;
@@ -202,8 +202,6 @@ public class StateMachine : NetworkBehaviour
                     {
                         SetState(new BigAttackState(this));
                     }
-                        
-                    
                 }
             }
             else if (puppet == null)
@@ -468,6 +466,22 @@ public class StateMachine : NetworkBehaviour
 
     }
 
+    public HealthComponent RoomContainsPlayer()
+    {
+        Physics.Raycast(transform.position + RaycastOffset, Vector3.down, out RaycastHit hit, 3, layerMask);
+        foreach (BoxCollider collider in hit.transform.GetComponentInParent<NavMesh>().GetComponents<BoxCollider>())
+        {
+            foreach (GameObject player in Puppets)
+            {
+                //Check if any player is within any collider on the room and if they are alive
+                if (collider.bounds.Contains(player.transform.position) && player.GetComponent<HealthComponent>().Health > 0)
+                {
+                    return player.GetComponent<HealthComponent>();
+                }
+            }
+        }
+        return null;
+    }
 }
 
 
