@@ -45,10 +45,10 @@ namespace MinionStates
         {
 
             //If no target, go idle
-            if(machine.TargetEntity == null){
+            if(machine.TargetEntity == null)
+            {
                 machine.SetState(new WanderState(machine));
                 return;
-
             }
 
             //Debug ray for attack range
