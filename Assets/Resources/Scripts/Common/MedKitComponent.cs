@@ -40,7 +40,9 @@ public class MedKitComponent : Interactable
     // (KL) Used to show the interact tooltip
     public override void OnRaycastEnter(GameObject interactor)
     {
-        ShowTooltip(interactor);
+        PlayerController playerController = interactor.GetComponent<PlayerController>();
+        if(!playerController.HasMedkit)
+            ShowTooltip(interactor);
     }
 
 }
