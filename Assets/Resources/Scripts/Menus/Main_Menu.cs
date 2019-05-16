@@ -35,6 +35,9 @@ public class Main_Menu : MonoBehaviour
         JoinGameButton.onClick.AddListener(JoinGame);
         Cursor.lockState = CursorLockMode.None;
 
+        if (PlayerPrefs.HasKey("LatestIPToConnectTo"))
+            Ip_Field.text = PlayerPrefs.GetString("LatestIPToConnectTo");
+
     }
 
     void HostGame()
@@ -47,10 +50,12 @@ public class Main_Menu : MonoBehaviour
         if (Ip_Field.text != "")
         {
             manager.networkAddress = Ip_Field.text;
+            PlayerPrefs.SetString("LatestIPToConnectTo", Ip_Field.text);
         }
         else
         {
 			manager.networkAddress = "localhost";
+            PlayerPrefs.SetString("LatestIPToConnectTo", "localhost");
         }
         JoinGameButton.interactable = false;
         manager.StartClient();
