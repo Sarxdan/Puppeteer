@@ -286,15 +286,6 @@ namespace Mirror
         //    didn't reach the goal after too much time has elapsed
         bool NeedsTeleport()
         {
-            if (gameObject.GetComponent<DoorComponent>())
-            {
-            float startTime = start != null ? start.timeStamp : Time.time - syncInterval;
-            float goalTime = goal != null ? goal.timeStamp : Time.time;
-            float difference = goalTime - startTime;
-            float timeSinceGoalReceived = Time.time - goalTime;
-            return timeSinceGoalReceived > difference;
-            }
-
             return true;
         }
 
