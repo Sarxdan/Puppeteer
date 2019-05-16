@@ -1630,7 +1630,7 @@ Transform:
   - {fileID: 7360517884381538550}
   - {fileID: 7360517884381538454}
   - {fileID: 7360517883928525821}
-  - {fileID: 367971613416186618}
+  - {fileID: 367971613416193611}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1732,9 +1732,12 @@ MonoBehaviour:
   CurrentWeapon: {fileID: 0}
   Ammunition: 100000
   CanShoot: 1
+  CurrentWeaponComponent: {fileID: 0}
   HandTransform: {fileID: 7360517884381538474}
   FPVHandTransform: {fileID: 0}
   FPVArms: {fileID: 0}
+  reloadContainer: {fileID: 0}
+  CurrentLiquidPerRound: 0
 --- !u!114 &7360517884129133007
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1771,7 +1774,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   serverOnly: 0
   localPlayerAuthority: 1
-  m_AssetId: 18006152eb307d442af001b679082d28
+  m_AssetId: f383bf0bef98ddf488cdb51ea4e15620
   m_SceneId: 0
 --- !u!114 &7360517884129133002
 MonoBehaviour:
@@ -1818,9 +1821,9 @@ MonoBehaviour:
   syncInterval: 0.1
   componentsToDisable:
   - {fileID: 7360517883928525810}
-  - {fileID: 367971613416185888}
+  - {fileID: 367971613416193995}
   - {fileID: 7360517884129132995}
-  - {fileID: 367971613416186492}
+  - {fileID: 367971613416186292}
   - {fileID: 0}
 --- !u!114 &4729588506264016577
 MonoBehaviour:
@@ -1851,7 +1854,6 @@ MonoBehaviour:
   syncInterval: 0.1
   Lookahead: 4
   InteractionTooltip: {fileID: 0}
-  PlayerController: {fileID: 0}
 --- !u!114 &6232628983944618462
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3289,7 +3291,7 @@ PrefabInstance:
         type: 3}
       propertyPath: PauseMenuUI
       value: 
-      objectReference: {fileID: 367971613416181203}
+      objectReference: {fileID: 367971613416180258}
     - target: {fileID: 895376273027663872, guid: 27f6f56a79bae2e4b8ada12c45a4bc54,
         type: 3}
       propertyPath: owner
@@ -3300,7 +3302,7 @@ PrefabInstance:
         type: 3}
       propertyPath: MainUI
       value: 
-      objectReference: {fileID: 367971613416181207}
+      objectReference: {fileID: 367971613416180262}
     - target: {fileID: 895376272160003193, guid: 27f6f56a79bae2e4b8ada12c45a4bc54,
         type: 3}
       propertyPath: m_Material
@@ -3345,7 +3347,7 @@ PrefabInstance:
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 367971613416185888}
+      objectReference: {fileID: 367971613416193995}
     - target: {fileID: 895376273177909507, guid: 27f6f56a79bae2e4b8ada12c45a4bc54,
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
@@ -3428,13 +3430,13 @@ PrefabInstance:
       objectReference: {fileID: 7360517884381538538}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 27f6f56a79bae2e4b8ada12c45a4bc54, type: 3}
---- !u!223 &367971613416186492 stripped
+--- !u!223 &367971613416186292 stripped
 Canvas:
   m_CorrespondingSourceObject: {fileID: 895376273027663902, guid: 27f6f56a79bae2e4b8ada12c45a4bc54,
     type: 3}
   m_PrefabInstance: {fileID: 367971613416181261}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &367971613416185888 stripped
+--- !u!114 &367971613416193995 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 895376273027663872, guid: 27f6f56a79bae2e4b8ada12c45a4bc54,
     type: 3}
@@ -3446,19 +3448,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e6c2140a449ad05499e326b07ec04ad3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!1 &367971613416181203 stripped
+--- !u!1 &367971613416180258 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 895376271810932311, guid: 27f6f56a79bae2e4b8ada12c45a4bc54,
     type: 3}
   m_PrefabInstance: {fileID: 367971613416181261}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &367971613416181207 stripped
+--- !u!1 &367971613416180262 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 895376271677483971, guid: 27f6f56a79bae2e4b8ada12c45a4bc54,
     type: 3}
   m_PrefabInstance: {fileID: 367971613416181261}
   m_PrefabAsset: {fileID: 0}
---- !u!224 &367971613416186618 stripped
+--- !u!224 &367971613416193611 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 895376273027663903, guid: 27f6f56a79bae2e4b8ada12c45a4bc54,
     type: 3}

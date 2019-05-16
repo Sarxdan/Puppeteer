@@ -17,7 +17,6 @@ using UnityEngine;
 
 public class BasicTrap : TrapComponent
 {
-
     //Add only puppets to those who are to take damage
     public override void OnTriggerEnter(Collider other)
     {
@@ -27,6 +26,7 @@ public class BasicTrap : TrapComponent
             {
                 StartCoroutine("TrapTimer");
             }
+
             Puppets.Add(other.gameObject);
         }
     }
@@ -40,12 +40,11 @@ public class BasicTrap : TrapComponent
     //Damage all puppets inside aoe
     public override void ActivateTrap()
     {
-        
         foreach (GameObject puppet in Puppets)
         {
             puppet.GetComponent<HealthComponent>().Damage(Damage);
         }
-        
+
         StartCoroutine("StunPuppet");
         StartCoroutine("DestroyTimer");
     }
@@ -62,7 +61,12 @@ public class BasicTrap : TrapComponent
 
         foreach (GameObject puppet in Puppets)
         {
-            puppet.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.None | RigidbodyConstraints.FreezeRotation;
+            //Don't unstun the puppet if it is already downed
+            if (puppet.GetComponent<HealthComponent>().Downed == false)
+            {
+                puppet.GetComponent<Rigidbody>().constraints =
+                    RigidbodyConstraints.None | RigidbodyConstraints.FreezeRotation;
+            } 
         }
     }
 }
