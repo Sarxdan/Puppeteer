@@ -55,7 +55,7 @@ namespace MinionStates
             if (machine.debug) Debug.DrawRay(machine.transform.position, Vector3.forward * machine.AttackRange, Color.green, 0.2f);
 
             //Tests if player is in front
-            if (Vector3.Distance(machine.transform.position, machine.TargetEntity.transform.position) < machine.AttackRange)
+            if (Vector3.Distance(machine.transform.position, StateMachine.RemoveY(machine.TargetEntity.transform.position)) < machine.AttackRange)
             {
                 if(machine.TargetEntity.Downed)
                 {
