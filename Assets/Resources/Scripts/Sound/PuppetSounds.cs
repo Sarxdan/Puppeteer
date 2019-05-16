@@ -38,6 +38,7 @@ public class PuppetSounds : CharacterSounds
 
     public void Revive()
     {
+        die.release();
         FMODUnity.RuntimeManager.PlayOneShot(s_Revive, transform.position);
     }
 
