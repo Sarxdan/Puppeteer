@@ -25,7 +25,10 @@ public class NavMeshEditor : Editor
         
         DrawDefaultInspector();
 
-        GUILayout.Label("Navmesh face count: " + script.Faces.Length);
+        if(script.Faces != null)
+            GUILayout.Label("Navmesh face count: " + script.Faces.Length);
+        else
+            GUILayout.Label("Navmesh face count: null");
         EditorGUI.BeginDisabledGroup(script.Faces != null && script.Faces.Length > 0);
         if(GUILayout.Button("Bake navmesh"))
         {
