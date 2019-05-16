@@ -1,9 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using Mirror;
-
-// vis2k:
+﻿// vis2k:
 // base class for NetworkTransform and NetworkTransformChild.
 // New method is simple and stupid. No more 1500 lines of code.
 //
@@ -25,7 +20,7 @@ using UnityEngine;
 
 namespace Mirror
 {
-    public abstract class CustomNetworkTransformBase : NetworkBehaviour
+    public abstract class CustomDoorNetworkTransformBase : NetworkBehaviour
     {
         // rotation compression. not public so that other scripts can't modify
         // it at runtime. alternatively we could send 1 extra byte for the mode
@@ -286,7 +281,16 @@ namespace Mirror
         //    didn't reach the goal after too much time has elapsed
         bool NeedsTeleport()
         {
-            return true;
+            if (start.position != goal.position)
+            {
+				return true;
+            }
+
+            float startTime = start != null ? start.timeStamp : Time.time - syncInterval;
+            float goalTime = goal != null ? goal.timeStamp : Time.time;
+            float difference = goalTime - startTime;
+            float timeSinceGoalReceived = Time.time - goalTime;
+            return timeSinceGoalReceived > difference;
         }
 
         // moved since last time we checked it?
