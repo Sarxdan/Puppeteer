@@ -23,6 +23,8 @@ public class DoorComponent : Interactable
 
     private bool locked;
 
+    public PuppetRoomSounds sounds;
+    
     public bool Locked
     {
         get
@@ -81,12 +83,14 @@ public class DoorComponent : Interactable
     void Start()
     {
 		currentAngle = defaultAngle;
-	}
+        sounds = GetComponent<PuppetRoomSounds>();
+    }
     // When the used key is pressed the direction the door should open is calculated
     public override void OnInteractBegin(GameObject interactor)
     {
 		if (!locked)
-		{
+        {
+            sounds.Open();
 			float dotProduct = Vector3.Dot(transform.forward, interactor.transform.forward);
 			currentAngle = OpenAngle * Mathf.Sign(dotProduct);
 			Open = !Open;
@@ -100,6 +104,10 @@ public class DoorComponent : Interactable
 				StopCoroutine(closeRoutineInstance);
 			}
 		}
+        else
+        {
+            sounds.Locked();
+        }
 	}
     public override void OnInteractEnd(GameObject interactor){}
 	// Used to show the interact tooltip
@@ -129,5 +137,6 @@ public class DoorComponent : Interactable
 	{
 		yield return new WaitForSeconds(closeTime);
 		Open = false;
+        sounds.Close();
 	}
 }
