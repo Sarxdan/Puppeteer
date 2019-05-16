@@ -239,6 +239,10 @@ public class LevelBuilder : NetworkBehaviour
 		int index = 0;
         foreach (RoomInteractable room in rooms)
         {
+
+			index++;
+            NetworkServer.Spawn(room.gameObject);
+            room.transform.SetParent(parent.transform);
 			if(roomIndices.Contains(index))
 			{
 				var spawner = room.GetComponent<ItemSpawner>();
@@ -250,10 +254,6 @@ public class LevelBuilder : NetworkBehaviour
 
 				}
 			}
-
-			index++;
-            NetworkServer.Spawn(room.gameObject);
-            room.transform.SetParent(parent.transform);
         }
 
 		// Spawn Button and final door.

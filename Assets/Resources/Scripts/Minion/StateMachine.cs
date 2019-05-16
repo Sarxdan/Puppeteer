@@ -43,7 +43,7 @@ public class StateMachine : NetworkBehaviour
     //References
     [HideInInspector]
     public EnemySpawner Spawner;
-    //[HideInInspector]
+    [HideInInspector]
     public HealthComponent TargetEntity;
     [HideInInspector]
     public Animator AnimController;
@@ -109,7 +109,6 @@ public class StateMachine : NetworkBehaviour
 
         //TODO: remove when prefab gets changed from Acceleration 0
         
-
         CanAttack = true;
         PostThreat = Mathf.NegativeInfinity;
 
@@ -122,7 +121,8 @@ public class StateMachine : NetworkBehaviour
             return;
         }
 
-        if(FinalRoomInteract.isEndGame){
+        if(FinalRoomInteract.isEndGame)
+        {
             SetState(new ReturnToSpawnerState(this));
         }
         else
@@ -216,12 +216,12 @@ public class StateMachine : NetworkBehaviour
     {
         this.GetComponent<Collider>().enabled = false;
 
-        if(isServer){
+        if(isServer)
+        {
             this.enabled = false;
             PathFinder.Stop();
             PathFinder.enabled = false;
         }
-
         AnimController.SetTrigger("Death");
         AnimController.SetInteger("RandomAnimationIndex", Random.Range(0,3));
     }
@@ -385,7 +385,6 @@ public class StateMachine : NetworkBehaviour
                 {
                     PreThreat = ((-puppA / -puppH) - puppR) / puppDist;
                 }
-
             }
             else
             {
@@ -407,8 +406,8 @@ public class StateMachine : NetworkBehaviour
         yield return new WaitForSeconds(0.1f);
     }
 
-    public Vector3 GetNearbyDestination(){
-        
+    public Vector3 GetNearbyDestination()
+    {
         AnchorPoint currentDoor = null;
         DoorReferences doorReferences = null;
         
@@ -427,7 +426,8 @@ public class StateMachine : NetworkBehaviour
         }
 
 
-        while(doorReferences != null){
+        while(doorReferences != null)
+        {
             //Checks if this room is to be chosen
             if(Random.Range(0.0f,1.0f) <= ChooseCurrentRoomChance){
                 break;
@@ -435,13 +435,15 @@ public class StateMachine : NetworkBehaviour
 
             List<AnchorPoint> availableDoors = new List<AnchorPoint>();
             if(doorReferences == null) break;
-            foreach(AnchorPoint door in doorReferences.doors){
+            foreach(AnchorPoint door in doorReferences.doors)
+            {
                 if(door.Connected && door != currentDoor && door.ConnectedTo != null){ //TODO remove nullprodection
                     availableDoors.Add(door);
                 }
             }
             
-            if(availableDoors.Count == 0){
+            if(availableDoors.Count == 0)
+            {
                 break;
             }
 
@@ -461,9 +463,7 @@ public class StateMachine : NetworkBehaviour
             Debug.LogWarning("EnemySpawner tried to send minion to a room which had no navmesh: " + currentDoor.GetComponentInParent<NavMesh>().transform.name);
             return GetNearbyDestination(); //Attempts again
         }
-
         return doorReferences.transform.TransformPoint(navMesh.Faces[Random.Range(0,navMesh.Faces.Length-1)].Origin);
-
     }
 
     public HealthComponent RoomContainsPlayer()
