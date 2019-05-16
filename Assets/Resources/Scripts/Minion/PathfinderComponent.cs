@@ -115,7 +115,6 @@ public class PathfinderComponent : NetworkBehaviour
         this.HasPath = false;
         if(this.animController == null)
             this.animController = GetComponent<Animator>();
-        this.animController.SetBool("Moving", false);
         
     }
 
