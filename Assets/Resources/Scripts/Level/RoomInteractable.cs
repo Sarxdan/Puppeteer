@@ -29,7 +29,7 @@ public class RoomInteractable : Interactable
 
 	}
 
-	public override void OnRaycastEnter(GameObject interactor){HideToolTip(interactor);}
+	public override void OnRaycastEnter(GameObject interactor){}
 
 
 	// Returns true if there is a player in the room

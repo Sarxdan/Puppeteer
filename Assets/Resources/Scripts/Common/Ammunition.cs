@@ -16,11 +16,11 @@ using Mirror;
 *
 * CODE REVIEWED BY:
 * Kristoffer Lundgren
- *
- *
+*
+*
 * CONTRIBUTORS
- * Anton Jonsson
- *
+* Anton Jonsson
+* Kristoffer Lundgren
 */
 
 
@@ -51,7 +51,7 @@ public class Ammunition : Interactable
     {
         // Empty
     }
-
+    // (KL) Used to show the interact tooltip
     public override void OnRaycastEnter(GameObject interactor)
     {
         ShowTooltip(interactor);

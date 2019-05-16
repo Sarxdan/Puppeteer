@@ -102,7 +102,7 @@ public class DoorComponent : Interactable
 		}
 	}
     public override void OnInteractEnd(GameObject interactor){}
-
+	// Used to show the interact tooltip
 	public override void OnRaycastEnter(GameObject interactor)
 	{
 		ShowTooltip(interactor);
