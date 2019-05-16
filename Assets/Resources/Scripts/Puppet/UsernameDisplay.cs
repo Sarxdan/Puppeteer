@@ -24,8 +24,14 @@ public class UsernameDisplay : NetworkBehaviour
 
     void Update()
     {
-        Username.gameObject.transform.LookAt(lookAt.transform);
-        Username.gameObject.transform.eulerAngles = Username.gameObject.transform.eulerAngles + 180f * Vector3.up;
+        if (lookAt != null)
+        {
+            Vector3 v = lookAt.transform.position - transform.position;
+
+            v.x = v.z = 0.0f;
+            Username.transform.LookAt(lookAt.transform.position - v);
+            Username.transform.Rotate(45, 180, 0);
+        }
     }
 
     private void SetNickname()
@@ -36,7 +42,7 @@ public class UsernameDisplay : NetworkBehaviour
         {
             if (item.GetComponent<PlayerController>().isLocalPlayer)
             {
-                lookAt = item;
+                lookAt = item.GetComponentInChildren<Camera>().gameObject;
             }
         }
     }

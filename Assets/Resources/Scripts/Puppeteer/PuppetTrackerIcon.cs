@@ -10,7 +10,7 @@ public class PuppetTrackerIcon : MonoBehaviour
     // UI offset from top of the screen
     public static readonly float TopOffset = 30.0f;
     // size of displayed icons
-    public static readonly float IconSize = 32.0f;
+    public static readonly float IconSize = 50.0f;
 
     public static readonly float IconHeight = 1;
     public List<Transform> Targets;
