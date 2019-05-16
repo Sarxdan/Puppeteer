@@ -14,6 +14,9 @@ using Mirror;
  * CODE REVIEWED BY:
  * Benjamin Vesterlund
  * 
+ * CONTRIBUTORS:
+ * Kristoffer Lundgren
+ *
  */
 
 public class ReviveComponent : Interactable
@@ -25,9 +28,9 @@ public class ReviveComponent : Interactable
     // determines if the revive requires a medkit
     public bool RequireMedkit = true;
 
-    // Krig interact progress stuff
+    // Used for drawing the circle on the hud
     private HUDScript hudScript;
-
+    // Used for checking if a player is downed, variable is synced across all clients
     private HealthComponent healthComponent;
 
     void Start()
@@ -67,7 +70,7 @@ public class ReviveComponent : Interactable
                 hudScript.RpcScaleZero();
         }
     }
-
+    // (KL) Only show the interact tooltip if the player is downed and the interactor has a medkit
     public override void OnRaycastEnter(GameObject interactor)
     {
         bool medKit = interactor.GetComponent<PlayerController>().HasMedkit;
@@ -76,7 +79,7 @@ public class ReviveComponent : Interactable
             ShowTooltip(interactor);
     }
 
-    // called when the health of this object reaches zer zo
+    // called when the health of this object reaches zero
     private void OnZeroHealth()
     {
         //hudScript.ScaleInteractionProgress(0);
@@ -140,8 +143,8 @@ public class ReviveComponent : Interactable
         var revivingPlayer = reviver.GetComponent<InteractionController>();
         if(revivingPlayer.isLocalPlayer && revivingPlayer.isServer)
         {
+            // Scale the interaction progress to zero
             hudScript.RpcScaleZero();
-
         }
         hudScript.RpcScaleZero();
         if(RequireMedkit)
@@ -151,6 +154,7 @@ public class ReviveComponent : Interactable
             RpcRemoveMedkit(reviver);
         }
     }
+    // (KL) Sets the correct HUD script for the clients
     [ClientRpc]
     public void RpcGetHudScript(GameObject interactor)
     {
@@ -159,7 +163,7 @@ public class ReviveComponent : Interactable
             hudScript = interactor.GetComponent<HUDScript>();
         }
     }
-
+    // (KL) Since the revive action in running on the server the HUD has to be updated over the network
     [ClientRpc]
     public void RpcScaleProgress(float scale)
     {
@@ -168,7 +172,7 @@ public class ReviveComponent : Interactable
             hudScript.ScaleInteractionProgress(scale);
         }
     }
-
+    // (KL) Remove the medket when a revive is complete
     [ClientRpc]
     public void RpcRemoveMedkit(GameObject interactor)
     {

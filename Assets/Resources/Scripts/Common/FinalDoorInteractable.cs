@@ -13,7 +13,7 @@ using UnityEngine;
 * CODE REVIEWED BY:
 *
 * CONTRIBUTORS:
-* 
+* Kristoffer Lundgren
 */
 
 public class FinalDoorInteractable : Interactable
@@ -37,7 +37,7 @@ public class FinalDoorInteractable : Interactable
 	{
 		Debug.Log("End");
 	}
-
+	// (KL) Used to show the interact tooltip
 	public override void OnRaycastEnter(GameObject interactor)
 	{
 		var button = GameObject.Find("FinalButton(Clone)");

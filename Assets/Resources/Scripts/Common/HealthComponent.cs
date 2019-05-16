@@ -13,7 +13,8 @@ using Mirror;
  * CODE REVIEWED BY:
  * Ludvig Björk Förare
  * 
- * 
+ * CONTRIBUTORS:
+ * Kristoffer Lundgren (Interact tooltip)
  */
 
 public class HealthComponent : NetworkBehaviour
@@ -36,7 +37,7 @@ public class HealthComponent : NetworkBehaviour
     public uint RegenSpeed;
     public uint RegenDelay;     //Time before regen starts
     public bool AllowRegen;     //Can I regen?
-
+    // (KL) Used for checking if the tooltip should be showed when looking a player
     public bool Downed;
 
     private OnZeroHealth zeroHealthAction;
