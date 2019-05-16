@@ -303,7 +303,7 @@ public class LevelBuilder : NetworkBehaviour
 		{
 			foreach (var placedDoor in parent.GetComponentsInChildren<AnchorPoint>())
 			{
-				if (ownDoor == placedDoor)
+				if (placedDoor == null || ownDoor == placedDoor)
 					continue;
 
 				if (ownDoor.GetPosition() == placedDoor.GetPosition())

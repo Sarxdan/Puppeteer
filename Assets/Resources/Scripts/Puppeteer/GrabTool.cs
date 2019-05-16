@@ -317,8 +317,11 @@ public class GrabTool : NetworkBehaviour
             return false;
         }
 
+        guideObject.transform.position = selectedObject.transform.position - (bestSrcPoint.transform.position - bestDstPoint.transform.position);
+        guideObject.transform.rotation = selectedObject.transform.rotation;
+
         // check collisions
-        if(UsePhysicsEngine)
+        if (UsePhysicsEngine)
         {
             // this is where the fun begins
             var bcs = selectedObject.GetComponents<BoxCollider>();
@@ -363,16 +366,12 @@ public class GrabTool : NetworkBehaviour
                 {
                     if (guideCollider.GetPosition() == placedRoomCollider.GetPosition())
                     {
-                        guideObject.transform.SetPositionAndRotation(sourceObject.transform.position, sourceObject.transform.rotation);
                         return false;
                     }
                 }
             }
         }
 
-
-        guideObject.transform.position = selectedObject.transform.position - (bestSrcPoint.transform.position - bestDstPoint.transform.position);
-        guideObject.transform.rotation = selectedObject.transform.rotation;
         currentNode = sourceObject.GetComponent<RoomTreeNode>();
         RoomTreeNode parentNode = currentNode.GetParent();
 
