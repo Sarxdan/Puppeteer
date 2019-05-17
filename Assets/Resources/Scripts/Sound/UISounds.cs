@@ -50,13 +50,22 @@ public class UISounds : MonoBehaviour
         music.onValueChanged.AddListener(delegate {UpdateMusicVolume(); });
 
         if (PlayerPrefs.HasKey("MasterVolume"))
+        {
             master.value = PlayerPrefs.GetFloat("MasterVolume");
+            masterBus.setVolume(master.value);
+        }
 
         if (PlayerPrefs.HasKey("SfxVolume"))
+        {
             sfx.value = PlayerPrefs.GetFloat("SfxVolume");
+            sfxBus.setVolume(sfx.value);
+        }
 
         if (PlayerPrefs.HasKey("MusicVolume"))
+        {
             music.value = PlayerPrefs.GetFloat("MusicVolume");
+            musicBus.setVolume(music.value);
+        }
 
 
     }
