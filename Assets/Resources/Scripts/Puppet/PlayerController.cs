@@ -84,9 +84,8 @@ public class PlayerController : NetworkBehaviour
 
     //References
     [Header("References")]
-    public Transform HandTransform;
-    public Transform FPVHandTransform;
-    public GameObject FPVArms;
+    public HandDefinition FullBody;
+    public HandDefinition FPVArms;
     private Rigidbody rigidBody;
     
     // Krig
@@ -126,11 +125,13 @@ public class PlayerController : NetworkBehaviour
         
         if(isLocalPlayer)
         {
-            transform.Find("Mesh").gameObject.SetActive(false);
+            FullBody.transform.Find("Mesh").gameObject.SetActive(false);
+            FullBody.enabled = false;
         }
         else
         {
-            FPVArms.SetActive(false);
+            FPVArms.gameObject.SetActive(false);
+            FPVArms.enabled = false;
         }
 
 		var CNLP = FindObjectsOfType<CustomNetworkLobbyPlayer>();
@@ -195,9 +196,13 @@ public class PlayerController : NetworkBehaviour
                     CurrentWeapon.GetComponent<WeaponComponent>().Use();
                 }
                 // Reload current weapon
-                if (Input.GetButton("Reload"))
+                if (Input.GetButton("Reload") && CurrentWeaponComponent.CanReload() && Ammunition > 0)
                 {
-                    CurrentWeapon.GetComponent<WeaponComponent>().Reload(ref Ammunition);
+                    AnimController.SetFloat("ReloadSpeed", 4/CurrentWeaponComponent.ReloadTime);
+                    FPVAnimController.SetFloat("ReloadSpeed", 4/CurrentWeaponComponent.ReloadTime);
+                    AnimController.SetBool("Reload", true);
+                    FPVAnimController.SetBool("Reload", true);
+                    CurrentWeaponComponent.Reload(ref Ammunition);
                 }
             } 
 
