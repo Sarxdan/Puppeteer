@@ -103,7 +103,7 @@ public class StateMachine : NetworkBehaviour
 
     public void Start()
     {
-        layerMask = ~(1 << LayerMask.NameToLayer("Puppeteer Interact"));
+        layerMask = ~(1 << (LayerMask.NameToLayer("Puppeteer Interact")) | (LayerMask.NameToLayer("Ignore Raycast")));
         AnimController = GetComponent<Animator>();
         PathFinder = GetComponent<PathfinderComponent>();
 
@@ -184,7 +184,6 @@ public class StateMachine : NetworkBehaviour
     //Method to check if players are within proximity
     public void CheckProximity()
     {
-        int mask = ~(1 << LayerMask.NameToLayer("Puppeteer Interact"));
         //Finds closest puppet
         foreach (GameObject puppet in Puppets)
         {   
@@ -271,9 +270,8 @@ public class StateMachine : NetworkBehaviour
 
     public bool WithinCone(Transform source, Transform target, float coneAngle, float coneLength, float coneIgnoreRadius)
     {
-        int mask = ~(1 << LayerMask.NameToLayer("Puppeteer Interact"));
         float distance = Vector3.Distance(source.position, target.position);
-        if (distance <= coneLength && Physics.Raycast(source.position + RaycastOffset, target.position - source.position, out RaycastHit hit, coneLength, mask))
+        if (distance <= coneLength && Physics.Raycast(source.position + RaycastOffset, target.position - source.position, out RaycastHit hit, coneLength, layerMask))
         {
             if (hit.transform.tag.Equals("Player"))
             {
@@ -491,7 +489,7 @@ public class StateMachine : NetworkBehaviour
 public abstract class State
 {
     
-    protected int layerMask = ~(1 << LayerMask.NameToLayer("Puppeteer Interact"));
+    protected int layerMask = ~(1 << (LayerMask.NameToLayer("Puppeteer Interact")) | (LayerMask.NameToLayer("Ignore Raycast")));
     public abstract void Enter();
 
     public abstract void Run();

@@ -196,83 +196,6 @@ MonoBehaviour:
     format: 0
     data: 
   shadowDatas: []
---- !u!1 &563088536664638521
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 563088536664414233}
-  - component: {fileID: 563088536661547065}
-  - component: {fileID: 563088536662645497}
-  m_Layer: 0
-  m_Name: ST_Bookshelf_01
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 1
-  m_IsActive: 1
---- !u!4 &563088536664414233
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 563088536664638521}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -1.15}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 6080166934019230710}
-  m_RootOrder: 9
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!33 &563088536661547065
-MeshFilter:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 563088536664638521}
-  m_Mesh: {fileID: 4300002, guid: 16f45aa3f908c0244ae37e6d5413a85b, type: 3}
---- !u!23 &563088536662645497
-MeshRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 563088536664638521}
-  m_Enabled: 1
-  m_CastShadows: 1
-  m_ReceiveShadows: 1
-  m_DynamicOccludee: 1
-  m_MotionVectors: 1
-  m_LightProbeUsage: 1
-  m_ReflectionProbeUsage: 1
-  m_RenderingLayerMask: 1
-  m_RendererPriority: 0
-  m_Materials:
-  - {fileID: 2100000, guid: 7569ba7c095b0a34fbd3dea0414f9ebc, type: 2}
-  m_StaticBatchInfo:
-    firstSubMesh: 0
-    subMeshCount: 0
-  m_StaticBatchRoot: {fileID: 0}
-  m_ProbeAnchor: {fileID: 0}
-  m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1
-  m_PreserveUVs: 0
-  m_IgnoreNormalsForChartDetection: 0
-  m_ImportantGI: 0
-  m_StitchLightmapSeams: 1
-  m_SelectedEditorRenderState: 3
-  m_MinimumChartSize: 4
-  m_AutoUVMaxDistance: 0.5
-  m_AutoUVMaxAngle: 89
-  m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 0
 --- !u!1 &1209488167395959517
 GameObject:
   m_ObjectHideFlags: 0
@@ -1873,6 +1796,7 @@ GameObject:
   - component: {fileID: 6080166933617804889}
   - component: {fileID: 6080166933616706713}
   - component: {fileID: 3574004625362324923}
+  - component: {fileID: 3513897469488690764}
   m_Layer: 0
   m_Name: ST_Floor_Full_01
   m_TagString: Untagged
@@ -1960,6 +1884,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 68e3a3fd456e19b4b8affa303ac40966, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!65 &3513897469488690764
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6080166933618907737}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 3, y: 6.661338e-16, z: 3}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &6080166934019230711
 GameObject:
   m_ObjectHideFlags: 0
@@ -2005,7 +1942,7 @@ Transform:
   - {fileID: 7260091972581244805}
   - {fileID: 7260091970656350303}
   - {fileID: 7485131132689963873}
-  - {fileID: 563088536664414233}
+  - {fileID: 7252912208193355675}
   - {fileID: 5434157123756999093}
   - {fileID: 239473136228062990}
   - {fileID: 7379716844359080769}
@@ -2172,7 +2109,7 @@ BoxCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6080166934019230711}
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
   m_Size: {x: 3, y: 2.5, z: 3}
@@ -2700,6 +2637,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f9710899eefcec345b047054697f59b5, type: 3}
+--- !u!4 &4528320049572247113 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4471826945788808202, guid: f9710899eefcec345b047054697f59b5,
+    type: 3}
+  m_PrefabInstance: {fileID: 61025084848699971}
+  m_PrefabAsset: {fileID: 0}
 --- !u!114 &4528320049572247112 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 4471826945788808203, guid: f9710899eefcec345b047054697f59b5,
@@ -2712,12 +2655,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 247aa70dfea43524f93cc776d2e6ba0e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!4 &4528320049572247113 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 4471826945788808202, guid: f9710899eefcec345b047054697f59b5,
-    type: 3}
-  m_PrefabInstance: {fileID: 61025084848699971}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &714223723326107309
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2729,6 +2666,26 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: ItemSpawnPoint (4)
+      objectReference: {fileID: 0}
+    - target: {fileID: 2056081915888073517, guid: e964d494762c2b74ebcc1d86ac72f24c,
+        type: 3}
+      propertyPath: SpawningAmmo
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2056081915888073517, guid: e964d494762c2b74ebcc1d86ac72f24c,
+        type: 3}
+      propertyPath: ChanceToSpawnAmmo
+      value: 80
+      objectReference: {fileID: 0}
+    - target: {fileID: 2056081915888073517, guid: e964d494762c2b74ebcc1d86ac72f24c,
+        type: 3}
+      propertyPath: ChanceToSpawnMedKit
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 2056081915888073517, guid: e964d494762c2b74ebcc1d86ac72f24c,
+        type: 3}
+      propertyPath: SpawningMedKit
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3410433236442360425, guid: e964d494762c2b74ebcc1d86ac72f24c,
         type: 3}
@@ -2784,26 +2741,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2056081915888073517, guid: e964d494762c2b74ebcc1d86ac72f24c,
-        type: 3}
-      propertyPath: SpawningAmmo
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2056081915888073517, guid: e964d494762c2b74ebcc1d86ac72f24c,
-        type: 3}
-      propertyPath: ChanceToSpawnAmmo
-      value: 80
-      objectReference: {fileID: 0}
-    - target: {fileID: 2056081915888073517, guid: e964d494762c2b74ebcc1d86ac72f24c,
-        type: 3}
-      propertyPath: ChanceToSpawnMedKit
-      value: 20
-      objectReference: {fileID: 0}
-    - target: {fileID: 2056081915888073517, guid: e964d494762c2b74ebcc1d86ac72f24c,
-        type: 3}
-      propertyPath: SpawningMedKit
-      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e964d494762c2b74ebcc1d86ac72f24c, type: 3}
@@ -3093,6 +3030,16 @@ PrefabInstance:
       propertyPath: m_Name
       value: ItemSpawnPoint (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 2056081915888073517, guid: e964d494762c2b74ebcc1d86ac72f24c,
+        type: 3}
+      propertyPath: SpawningWeapons
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2056081915888073517, guid: e964d494762c2b74ebcc1d86ac72f24c,
+        type: 3}
+      propertyPath: ChanceToSpawnWeapon
+      value: 100
+      objectReference: {fileID: 0}
     - target: {fileID: 3410433236442360425, guid: e964d494762c2b74ebcc1d86ac72f24c,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -3148,16 +3095,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: -80.76
       objectReference: {fileID: 0}
-    - target: {fileID: 2056081915888073517, guid: e964d494762c2b74ebcc1d86ac72f24c,
-        type: 3}
-      propertyPath: SpawningWeapons
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2056081915888073517, guid: e964d494762c2b74ebcc1d86ac72f24c,
-        type: 3}
-      propertyPath: ChanceToSpawnWeapon
-      value: 100
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e964d494762c2b74ebcc1d86ac72f24c, type: 3}
 --- !u!4 &413760861480095944 stripped
@@ -3177,6 +3114,26 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: ItemSpawnPoint (6)
+      objectReference: {fileID: 0}
+    - target: {fileID: 2056081915888073517, guid: e964d494762c2b74ebcc1d86ac72f24c,
+        type: 3}
+      propertyPath: SpawningAmmo
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2056081915888073517, guid: e964d494762c2b74ebcc1d86ac72f24c,
+        type: 3}
+      propertyPath: ChanceToSpawnAmmo
+      value: 80
+      objectReference: {fileID: 0}
+    - target: {fileID: 2056081915888073517, guid: e964d494762c2b74ebcc1d86ac72f24c,
+        type: 3}
+      propertyPath: ChanceToSpawnMedKit
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 2056081915888073517, guid: e964d494762c2b74ebcc1d86ac72f24c,
+        type: 3}
+      propertyPath: SpawningMedKit
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3410433236442360425, guid: e964d494762c2b74ebcc1d86ac72f24c,
         type: 3}
@@ -3232,26 +3189,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2056081915888073517, guid: e964d494762c2b74ebcc1d86ac72f24c,
-        type: 3}
-      propertyPath: SpawningAmmo
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2056081915888073517, guid: e964d494762c2b74ebcc1d86ac72f24c,
-        type: 3}
-      propertyPath: ChanceToSpawnAmmo
-      value: 80
-      objectReference: {fileID: 0}
-    - target: {fileID: 2056081915888073517, guid: e964d494762c2b74ebcc1d86ac72f24c,
-        type: 3}
-      propertyPath: ChanceToSpawnMedKit
-      value: 20
-      objectReference: {fileID: 0}
-    - target: {fileID: 2056081915888073517, guid: e964d494762c2b74ebcc1d86ac72f24c,
-        type: 3}
-      propertyPath: SpawningMedKit
-      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e964d494762c2b74ebcc1d86ac72f24c, type: 3}
@@ -3802,6 +3739,26 @@ PrefabInstance:
       propertyPath: m_Name
       value: ItemSpawnPoint (3)
       objectReference: {fileID: 0}
+    - target: {fileID: 2056081915888073517, guid: e964d494762c2b74ebcc1d86ac72f24c,
+        type: 3}
+      propertyPath: SpawningAmmo
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2056081915888073517, guid: e964d494762c2b74ebcc1d86ac72f24c,
+        type: 3}
+      propertyPath: ChanceToSpawnAmmo
+      value: 80
+      objectReference: {fileID: 0}
+    - target: {fileID: 2056081915888073517, guid: e964d494762c2b74ebcc1d86ac72f24c,
+        type: 3}
+      propertyPath: ChanceToSpawnMedKit
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 2056081915888073517, guid: e964d494762c2b74ebcc1d86ac72f24c,
+        type: 3}
+      propertyPath: SpawningMedKit
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3410433236442360425, guid: e964d494762c2b74ebcc1d86ac72f24c,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -3856,26 +3813,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2056081915888073517, guid: e964d494762c2b74ebcc1d86ac72f24c,
-        type: 3}
-      propertyPath: SpawningAmmo
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2056081915888073517, guid: e964d494762c2b74ebcc1d86ac72f24c,
-        type: 3}
-      propertyPath: ChanceToSpawnAmmo
-      value: 80
-      objectReference: {fileID: 0}
-    - target: {fileID: 2056081915888073517, guid: e964d494762c2b74ebcc1d86ac72f24c,
-        type: 3}
-      propertyPath: ChanceToSpawnMedKit
-      value: 20
-      objectReference: {fileID: 0}
-    - target: {fileID: 2056081915888073517, guid: e964d494762c2b74ebcc1d86ac72f24c,
-        type: 3}
-      propertyPath: SpawningMedKit
-      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e964d494762c2b74ebcc1d86ac72f24c, type: 3}
@@ -4299,6 +4236,26 @@ PrefabInstance:
       propertyPath: m_Name
       value: ItemSpawnPoint (2)
       objectReference: {fileID: 0}
+    - target: {fileID: 2056081915888073517, guid: e964d494762c2b74ebcc1d86ac72f24c,
+        type: 3}
+      propertyPath: SpawningAmmo
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2056081915888073517, guid: e964d494762c2b74ebcc1d86ac72f24c,
+        type: 3}
+      propertyPath: ChanceToSpawnAmmo
+      value: 80
+      objectReference: {fileID: 0}
+    - target: {fileID: 2056081915888073517, guid: e964d494762c2b74ebcc1d86ac72f24c,
+        type: 3}
+      propertyPath: ChanceToSpawnMedKit
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 2056081915888073517, guid: e964d494762c2b74ebcc1d86ac72f24c,
+        type: 3}
+      propertyPath: SpawningMedKit
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3410433236442360425, guid: e964d494762c2b74ebcc1d86ac72f24c,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -4354,26 +4311,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 2056081915888073517, guid: e964d494762c2b74ebcc1d86ac72f24c,
-        type: 3}
-      propertyPath: SpawningAmmo
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2056081915888073517, guid: e964d494762c2b74ebcc1d86ac72f24c,
-        type: 3}
-      propertyPath: ChanceToSpawnAmmo
-      value: 80
-      objectReference: {fileID: 0}
-    - target: {fileID: 2056081915888073517, guid: e964d494762c2b74ebcc1d86ac72f24c,
-        type: 3}
-      propertyPath: ChanceToSpawnMedKit
-      value: 20
-      objectReference: {fileID: 0}
-    - target: {fileID: 2056081915888073517, guid: e964d494762c2b74ebcc1d86ac72f24c,
-        type: 3}
-      propertyPath: SpawningMedKit
-      value: 1
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e964d494762c2b74ebcc1d86ac72f24c, type: 3}
 --- !u!4 &9012153100490027191 stripped
@@ -4381,6 +4318,81 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 3410433236442360425, guid: e964d494762c2b74ebcc1d86ac72f24c,
     type: 3}
   m_PrefabInstance: {fileID: 5928377076518329054}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1001 &6186095880417446242
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 6080166934019230710}
+    m_Modifications:
+    - target: {fileID: 3566543403585432281, guid: a34e0b062a516384a9d2a484dfba8012,
+        type: 3}
+      propertyPath: m_Name
+      value: Bookshelf
+      objectReference: {fileID: 0}
+    - target: {fileID: 3566543403585861369, guid: a34e0b062a516384a9d2a484dfba8012,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3566543403585861369, guid: a34e0b062a516384a9d2a484dfba8012,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3566543403585861369, guid: a34e0b062a516384a9d2a484dfba8012,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -1.15
+      objectReference: {fileID: 0}
+    - target: {fileID: 3566543403585861369, guid: a34e0b062a516384a9d2a484dfba8012,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3566543403585861369, guid: a34e0b062a516384a9d2a484dfba8012,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3566543403585861369, guid: a34e0b062a516384a9d2a484dfba8012,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3566543403585861369, guid: a34e0b062a516384a9d2a484dfba8012,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3566543403585861369, guid: a34e0b062a516384a9d2a484dfba8012,
+        type: 3}
+      propertyPath: m_RootOrder
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 3566543403585861369, guid: a34e0b062a516384a9d2a484dfba8012,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3566543403585861369, guid: a34e0b062a516384a9d2a484dfba8012,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3566543403585861369, guid: a34e0b062a516384a9d2a484dfba8012,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: a34e0b062a516384a9d2a484dfba8012, type: 3}
+--- !u!4 &7252912208193355675 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 3566543403585861369, guid: a34e0b062a516384a9d2a484dfba8012,
+    type: 3}
+  m_PrefabInstance: {fileID: 6186095880417446242}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &6498381509708242847
 PrefabInstance:
@@ -4474,6 +4486,26 @@ PrefabInstance:
       propertyPath: m_Name
       value: ItemSpawnPoint
       objectReference: {fileID: 0}
+    - target: {fileID: 2056081915888073517, guid: e964d494762c2b74ebcc1d86ac72f24c,
+        type: 3}
+      propertyPath: SpawningAmmo
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2056081915888073517, guid: e964d494762c2b74ebcc1d86ac72f24c,
+        type: 3}
+      propertyPath: SpawningMedKit
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2056081915888073517, guid: e964d494762c2b74ebcc1d86ac72f24c,
+        type: 3}
+      propertyPath: ChanceToSpawnAmmo
+      value: 50
+      objectReference: {fileID: 0}
+    - target: {fileID: 2056081915888073517, guid: e964d494762c2b74ebcc1d86ac72f24c,
+        type: 3}
+      propertyPath: ChanceToSpawnMedKit
+      value: 50
+      objectReference: {fileID: 0}
     - target: {fileID: 3410433236442360425, guid: e964d494762c2b74ebcc1d86ac72f24c,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -4528,26 +4560,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2056081915888073517, guid: e964d494762c2b74ebcc1d86ac72f24c,
-        type: 3}
-      propertyPath: SpawningAmmo
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2056081915888073517, guid: e964d494762c2b74ebcc1d86ac72f24c,
-        type: 3}
-      propertyPath: SpawningMedKit
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2056081915888073517, guid: e964d494762c2b74ebcc1d86ac72f24c,
-        type: 3}
-      propertyPath: ChanceToSpawnAmmo
-      value: 50
-      objectReference: {fileID: 0}
-    - target: {fileID: 2056081915888073517, guid: e964d494762c2b74ebcc1d86ac72f24c,
-        type: 3}
-      propertyPath: ChanceToSpawnMedKit
-      value: 50
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e964d494762c2b74ebcc1d86ac72f24c, type: 3}
@@ -4909,6 +4921,26 @@ PrefabInstance:
       propertyPath: m_Name
       value: ItemSpawnPoint (5)
       objectReference: {fileID: 0}
+    - target: {fileID: 2056081915888073517, guid: e964d494762c2b74ebcc1d86ac72f24c,
+        type: 3}
+      propertyPath: SpawningAmmo
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2056081915888073517, guid: e964d494762c2b74ebcc1d86ac72f24c,
+        type: 3}
+      propertyPath: ChanceToSpawnAmmo
+      value: 80
+      objectReference: {fileID: 0}
+    - target: {fileID: 2056081915888073517, guid: e964d494762c2b74ebcc1d86ac72f24c,
+        type: 3}
+      propertyPath: ChanceToSpawnMedKit
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 2056081915888073517, guid: e964d494762c2b74ebcc1d86ac72f24c,
+        type: 3}
+      propertyPath: SpawningMedKit
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3410433236442360425, guid: e964d494762c2b74ebcc1d86ac72f24c,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -4963,26 +4995,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2056081915888073517, guid: e964d494762c2b74ebcc1d86ac72f24c,
-        type: 3}
-      propertyPath: SpawningAmmo
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2056081915888073517, guid: e964d494762c2b74ebcc1d86ac72f24c,
-        type: 3}
-      propertyPath: ChanceToSpawnAmmo
-      value: 80
-      objectReference: {fileID: 0}
-    - target: {fileID: 2056081915888073517, guid: e964d494762c2b74ebcc1d86ac72f24c,
-        type: 3}
-      propertyPath: ChanceToSpawnMedKit
-      value: 20
-      objectReference: {fileID: 0}
-    - target: {fileID: 2056081915888073517, guid: e964d494762c2b74ebcc1d86ac72f24c,
-        type: 3}
-      propertyPath: SpawningMedKit
-      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e964d494762c2b74ebcc1d86ac72f24c, type: 3}
