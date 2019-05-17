@@ -54,6 +54,9 @@ public class PuppetTrackerIcon : MonoBehaviour
     // Update is called once per frame
     void OnGUI()
     {
+        if (puppetGameobject == null)
+            puppetGameobject = GameObject.FindGameObjectWithTag("GameController").GetComponent<GrabTool>();
+
         if (!puppetGameobject.isLocalPlayer)
             return;
 
