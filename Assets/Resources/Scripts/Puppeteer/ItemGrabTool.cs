@@ -382,6 +382,10 @@ public class ItemGrabTool : NetworkBehaviour
     {
 		if (isServer)
 		{
+			if (guideObject.GetComponent<SnapFunctionality>().FakeItem)
+			{
+				
+			}
 			NetworkServer.Spawn(guideObject);
 			guideObject.transform.position = placingTransform.Position;
 			guideObject.transform.rotation = placingTransform.Rotation;
