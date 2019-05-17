@@ -49,7 +49,6 @@ public class FakeItem : Interactable
         Activated = true;
         GameObject spawnedExplosion = Instantiate(Explosion.gameObject, transform.position, transform.rotation) as GameObject;
         NetworkServer.Spawn(spawnedExplosion);
-        Explosion.transform.parent = gameObject.transform;
 
         // Damage all players in the explosion area
         Collider[] hitColliders = Physics.OverlapSphere(transform.position, Radius);
