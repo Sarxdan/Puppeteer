@@ -32,6 +32,8 @@ public class HUDScript : NetworkBehaviour
     public RectTransform MedKit;
     // The mask that shows how much is left on the power up duration
     public RectTransform PowerUpFill;
+    public Image PowerUpDisabled;
+    public Image PowerUpEnabled;
     // The text for the current ammo
     public Text CurrentAmmo;
     //The health component to monitor
