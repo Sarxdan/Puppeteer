@@ -52,7 +52,7 @@ public class PuppetTrackerIcon : MonoBehaviour
     // Update is called once per frame
     void OnGUI()
     {
-        if (gameObject.tag == "player")
+        if (gameObject.tag == "Player")
             return;
 
         //Check every target
