@@ -19,7 +19,7 @@ namespace Mirror
         // configuration
         [Header("Lobby Settings")]
         [FormerlySerializedAs("m_ShowLobbyGUI")] [SerializeField] internal bool showLobbyGUI = true;
-        [FormerlySerializedAs("m_MinPlayers")] [SerializeField] int minPlayers = 1;
+        [FormerlySerializedAs("m_MinPlayers")] /*[SerializeField]*/ int minPlayers = 1;
         [FormerlySerializedAs("m_LobbyPlayerPrefab")] [SerializeField] NetworkLobbyPlayer lobbyPlayerPrefab;
 
         [Scene]
