@@ -103,7 +103,7 @@ public class StateMachine : NetworkBehaviour
 
     public void Start()
     {
-        layerMask = ~(1 << (LayerMask.NameToLayer("Puppeteer Interact")) | (LayerMask.NameToLayer("Ignore Raycast")));
+        layerMask = ~(1 << LayerMask.NameToLayer("Puppeteer Interact") | 1 << LayerMask.NameToLayer("Ignore Raycast"));
         AnimController = GetComponent<Animator>();
         PathFinder = GetComponent<PathfinderComponent>();
 
@@ -489,7 +489,7 @@ public class StateMachine : NetworkBehaviour
 public abstract class State
 {
     
-    protected int layerMask = ~(1 << (LayerMask.NameToLayer("Puppeteer Interact")) | (LayerMask.NameToLayer("Ignore Raycast")));
+    protected int layerMask = ~(1 << LayerMask.NameToLayer("Puppeteer Interact") | 1 << LayerMask.NameToLayer("Ignore Raycast"));
     public abstract void Enter();
 
     public abstract void Run();

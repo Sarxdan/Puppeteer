@@ -34,11 +34,13 @@ public class PuppetTrackerIcon : MonoBehaviour
     // Half the icon size.
     private float halfIconSize;
 
+    private GrabTool puppetGameobject;
     // Start is called before the first frame update
     void Start()
     {
         halfIconSize = IconSize / 2;
-        puppeteerCamera = GameObject.FindGameObjectWithTag("GameController").GetComponentInChildren<Camera>();
+        puppetGameobject = GameObject.FindGameObjectWithTag("GameController").GetComponent<GrabTool>();
+        puppeteerCamera = puppetGameobject.GetComponentInChildren<Camera>();
         puppeteerCameraController = puppeteerCamera.GetComponent<PuppeteerCameraController>();
 
         //If we are not the puppeteer then we disable this script
@@ -52,7 +54,7 @@ public class PuppetTrackerIcon : MonoBehaviour
     // Update is called once per frame
     void OnGUI()
     {
-        if (gameObject.tag == "Player")
+        if (!puppetGameobject.isLocalPlayer)
             return;
 
         //Check every target

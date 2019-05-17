@@ -70,7 +70,7 @@ public class PathfinderComponent : NetworkBehaviour
 
     void Start()
     {
-        layerMask = ~(1 << LayerMask.NameToLayer("Puppeteer Interact"));
+        layerMask = ~(1 << LayerMask.NameToLayer("Puppeteer Interact") | 1 << LayerMask.NameToLayer("Ignore Raycast"));
         if(!isServer)
         {
             gameObject.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezeAll;
