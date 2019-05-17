@@ -41,7 +41,7 @@ public class EnemySpawner : NetworkBehaviour
     public void Start()
     {   
         finalRoomDummy = GameObject.Find("DummySpawner").GetComponent<EnemySpawner>();
-        if(finalRoomDummy == gameObject) return;
+        if(finalRoomDummy == this) return;
         
         if(MinionContainerObject == null)
         {
