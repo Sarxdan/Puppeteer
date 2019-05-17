@@ -32,7 +32,7 @@ public class InteractionController : NetworkBehaviour
     void Update()
     {
         RaycastHit hitInfo;
-        if (Physics.Raycast(Camera.main.ViewportPointToRay(new Vector3(0.5f, 0.5f)), out hitInfo, Lookahead, ~(1 << 8 | 1 << 2)))
+        if (Physics.Raycast(Camera.main.ViewportPointToRay(new Vector3(0.5f, 0.5f)), out hitInfo, Lookahead, ~(1 << 8 | 1 << 2 | 1 << 13)))
         {
             var hit = hitInfo.transform.GetComponent<Interactable>();
             //Sets current interactable object
