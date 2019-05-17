@@ -48,22 +48,45 @@ public class UISounds : MonoBehaviour
         master.onValueChanged.AddListener(delegate {UpdateMasterVolume(); });
         sfx.onValueChanged.AddListener(delegate {UpdateSFXVolume(); });
         music.onValueChanged.AddListener(delegate {UpdateMusicVolume(); });
+
+        if (PlayerPrefs.HasKey("MasterVolume"))
+        {
+            master.value = PlayerPrefs.GetFloat("MasterVolume");
+            masterBus.setVolume(master.value);
+        }
+
+        if (PlayerPrefs.HasKey("SfxVolume"))
+        {
+            sfx.value = PlayerPrefs.GetFloat("SfxVolume");
+            sfxBus.setVolume(sfx.value);
+        }
+
+        if (PlayerPrefs.HasKey("MusicVolume"))
+        {
+            music.value = PlayerPrefs.GetFloat("MusicVolume");
+            musicBus.setVolume(music.value);
+        }
+
+
     }
 
     // Update volume according to the sliders in the main menu
     public void UpdateMasterVolume()
     {
         masterBus.setVolume(master.value);
+        PlayerPrefs.SetFloat("MasterVolume", master.value);
     }
 
     public void UpdateSFXVolume()
     {
         sfxBus.setVolume(sfx.value);
+        PlayerPrefs.SetFloat("SfxVolume", sfx.value);
     }
 
     public void UpdateMusicVolume()
     {
-        musicBus.setVolume(master.value);
+        musicBus.setVolume(music.value);
+        PlayerPrefs.SetFloat("MusicVolume", music.value);
     }
 
     public void Click()
