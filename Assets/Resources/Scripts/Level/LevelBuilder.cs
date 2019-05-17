@@ -168,11 +168,14 @@ public class LevelBuilder : NetworkBehaviour
 				{
 					foreach (RoomCollider placedCollider in roomColliderPositions)
 					{
-						//if (Vector3.Distance(ownCollider.GetPosition(),placedCollider.GetPosition()) < 2) POTENTIAL CHANGE (I'D LIKE APPROVEMENT FIRST) -KÄT
 						if(ownCollider.GetPosition() == placedCollider.GetPosition())
 						{
 							canBePlaced = false;
 							break;
+						}
+						else if (Vector3.Distance(ownCollider.GetPosition(),placedCollider.GetPosition()) < 2)
+						{
+							Debug.LogWarning("Overlapping rooms! Room: " + room.name + " Distance: " + Vector3.Distance(ownCollider.GetPosition(),placedCollider.GetPosition()));
 						}
 					}
 				}
