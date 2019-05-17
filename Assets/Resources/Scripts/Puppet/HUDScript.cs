@@ -177,8 +177,11 @@ public class HUDScript : NetworkBehaviour
         // Increment the lerp
         HPIncrement += HealthBarSpeed * Time.deltaTime;
 
-        HealthPercentage.text = Mathf.RoundToInt(health/maxHealth).ToString() + "%";
-
+        HealthPercentage.text = Mathf.RoundToInt(((float)health/maxHealth)*100).ToString() + "%";
+        //Debug.Log("Current Health" + health);
+       // Debug.Log("Max health" + maxHealth);
+       // Debug.Log("Heath percent: " + (health/maxHealth)*100);
+       // Debug.Log((health/maxHealth)*100);
         // runs whe the lerp is complete
         if(HPIncrement >= 1)
         {
@@ -199,7 +202,7 @@ public class HUDScript : NetworkBehaviour
 
         StaminaBarFill.localScale = new Vector3(Mathf.Lerp(xScaleStamina * (Mathf.Clamp(lerpFromStamina, 0, playerController.MaxStamina)/playerController.MaxStamina), xScaleStamina * (Mathf.Clamp(playerController.CurrentStamina, 0, playerController.MaxStamina)/playerController.MaxStamina), StaminaIncrement),
                                                 StaminaBarFill.localScale.y, StaminaBarFill.localScale.z);
-        HealthPercentage.text = Mathf.RoundToInt(playerController.CurrentStamina/playerController.MaxStamina).ToString() + "%";
+        StaminaPercentage.text = Mathf.RoundToInt((playerController.CurrentStamina/playerController.MaxStamina) * 100).ToString() + "%";
         StaminaIncrement += StaminaBarSpeed*Time.deltaTime;
         if(StaminaIncrement >= 1)
         {
