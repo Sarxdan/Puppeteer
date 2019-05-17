@@ -23,7 +23,7 @@ using Mirror;
 public class MenuNavigation : MonoBehaviour
 {
 
-	public bool cooldown = true;                            // "animation" cooldown. (so the game don't register button presses while panels are moving and breaking...)
+	private int coroutinesRunning = 0;                      // "animation" cooldown. (so the game don't register button presses while panels are moving and breaking...)
 
     [Header("Menu Panels")]
     public GameObject OptionsPanel;							// the panel with options buttons on.
@@ -98,7 +98,7 @@ public class MenuNavigation : MonoBehaviour
 	void HostGame()
 	{
         buttonPressed = true;
-		    if (cooldown && currentState != GameState.LobbyMenu)
+		    if (coroutinesRunning == 0 && currentState != GameState.LobbyMenu)
 		    {
                 buttonPressed = false;
 			    ChangeState(GameState.LobbyMenu);
@@ -107,7 +107,7 @@ public class MenuNavigation : MonoBehaviour
 
 	void JoinGame()
 	{
-        if (cooldown && currentState != GameState.JoinMenuStep1)
+        if (coroutinesRunning == 0 && currentState != GameState.JoinMenuStep1)
         {
             ChangeState(GameState.JoinMenuStep1);
         }
@@ -119,7 +119,7 @@ public class MenuNavigation : MonoBehaviour
 
     void Credits()
     {
-        if (cooldown && currentState != GameState.Credits)
+        if (coroutinesRunning == 0 && currentState != GameState.Credits)
         {
             ChangeState(GameState.Credits);
         }
@@ -127,7 +127,7 @@ public class MenuNavigation : MonoBehaviour
 
 	void Options()
 	{
-		if (cooldown && (currentState != GameState.Options && currentState != GameState.OptionsAudio && currentState != GameState.OptionsVideo && currentState != GameState.OptionsControls))
+		if (coroutinesRunning == 0 && (currentState != GameState.Options && currentState != GameState.OptionsAudio && currentState != GameState.OptionsVideo && currentState != GameState.OptionsControls))
 		{
 			ChangeState(GameState.Options);
 		}
@@ -135,21 +135,21 @@ public class MenuNavigation : MonoBehaviour
 
 		void VideoOptions()
 		{
-			if (cooldown && currentState != GameState.OptionsVideo)
+			if (coroutinesRunning == 0 && currentState != GameState.OptionsVideo)
 			{
 				ChangeState(GameState.OptionsVideo);
 			}
 		}
 		void AudioOptions()
 		{
-			if (cooldown && currentState != GameState.OptionsAudio)
+			if (coroutinesRunning == 0 && currentState != GameState.OptionsAudio)
 			{
 			    ChangeState(GameState.OptionsAudio);
 			}
 		}
 		void ControlsOptions()
 		{
-			if (cooldown && currentState != GameState.OptionsControls)
+			if (coroutinesRunning == 0 && currentState != GameState.OptionsControls)
 			{
 				ChangeState(GameState.OptionsControls);
 			}
@@ -189,9 +189,6 @@ public class MenuNavigation : MonoBehaviour
 
 		// Start coroutine
 		StartCoroutine(SmoothMove(OptionsPanel, targetLocation, timeDelta));
-		StartCoroutine(FadeText(VideoText, targetOpacity, timeDelta));
-		StartCoroutine(FadeText(AudioText, targetOpacity, timeDelta));
-		StartCoroutine(FadeText(ControlsText, targetOpacity, timeDelta));
 
 
 		while (currentState == GameState.Options || currentState == GameState.OptionsAudio || currentState == GameState.OptionsVideo || currentState == GameState.OptionsControls) { yield return null; } // running.
@@ -206,9 +203,6 @@ public class MenuNavigation : MonoBehaviour
 
 		// Start coroutine
 		StartCoroutine(SmoothMove(OptionsPanel, targetLocation2, timeDelta));
-		StartCoroutine(FadeText(VideoText, targetOpacity2, timeDelta));
-		StartCoroutine(FadeText(AudioText, targetOpacity2, timeDelta));
-		StartCoroutine(FadeText(ControlsText, targetOpacity2, timeDelta));
 	}
 	IEnumerator OptionsAudioState()
 	{
@@ -223,13 +217,6 @@ public class MenuNavigation : MonoBehaviour
 
 		// Start coroutine
 		StartCoroutine(SmoothMove(AudioOptionsPanel, targetlocation, timeDelta));
-		StartCoroutine(FadeText(MasterVolumeText, targetOpacity, timeDelta));
-		StartCoroutine(FadeText(EffectsVolumeText, targetOpacity, timeDelta));
-		StartCoroutine(FadeText(MusicVolumeText, targetOpacity, timeDelta));
-
-		StartCoroutine(FadeSlider(MasterVolume, targetOpacity, timeDelta));
-		StartCoroutine(FadeSlider(EffectsVolume, targetOpacity, timeDelta));
-		StartCoroutine(FadeSlider(MusicVolume, targetOpacity, timeDelta));
 
 		while (currentState == GameState.OptionsAudio) { yield return null; } // running.
 
@@ -243,13 +230,6 @@ public class MenuNavigation : MonoBehaviour
 
 		// Start coroutine
 		StartCoroutine(SmoothMove(AudioOptionsPanel, targetLocation2, timeDelta));
-		StartCoroutine(FadeText(MasterVolumeText, targetOpacity2, timeDelta));
-		StartCoroutine(FadeText(EffectsVolumeText, targetOpacity2, timeDelta));
-		StartCoroutine(FadeText(MusicVolumeText, targetOpacity2, timeDelta));
-
-		StartCoroutine(FadeSlider(MasterVolume, targetOpacity2, timeDelta));
-		StartCoroutine(FadeSlider(EffectsVolume, targetOpacity2, timeDelta));
-		StartCoroutine(FadeSlider(MusicVolume, targetOpacity2, timeDelta));
 
 	}
 	IEnumerator OptionsVideoState()
@@ -363,7 +343,7 @@ public class MenuNavigation : MonoBehaviour
     //--------------------Movment--------------------
     IEnumerator SmoothMove(GameObject item, Vector3 target, float delta)
 	{
-		cooldown = false;
+        coroutinesRunning += 1;
 		// will need to perform some of this process and yeild until next frames
 		float closeEnough = 0.2f;
 		float distance = (item.transform.position - target).magnitude;
@@ -386,9 +366,10 @@ public class MenuNavigation : MonoBehaviour
 		// Complete the motion to prevent sliding
 		item.transform.position = target;
 
-		// Comfirm End
-		cooldown = true;
-	}
+        // Comfirm End
+        coroutinesRunning -= 1;
+
+    }
 
 	//--------------------Fade--------------------
 	IEnumerator FadeText(Text text, float target, float delta)

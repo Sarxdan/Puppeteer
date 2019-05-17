@@ -109,7 +109,7 @@ public class WeaponComponent : Interactable
             Vector3 offset = Random.insideUnitSphere * Spread;
 
             RaycastHit hitInfo;
-            if(Physics.Raycast(Camera.main.ViewportToWorldPoint(new Vector3(0.5f, 0.5f)), Camera.main.transform.forward + offset, out hitInfo, Mathf.Infinity, ~(1 << 8)))
+            if(Physics.Raycast(Camera.main.ViewportToWorldPoint(new Vector3(0.5f, 0.5f)), Camera.main.transform.forward + offset, out hitInfo, Mathf.Infinity, ~(1 << 8 | 1 << 2)))
             {
                 // deal damage to target if possible
                 var health = hitInfo.transform.GetComponentInParent<HealthComponent>();

@@ -90,7 +90,7 @@ public class DoorComponent : Interactable
     {
 		if (!locked)
         {
-            sounds.Open();
+			RpcPlaySoundOpen();
 			float dotProduct = Vector3.Dot(transform.forward, interactor.transform.forward);
 			currentAngle = OpenAngle * Mathf.Sign(dotProduct);
 			Open = !Open;
@@ -106,7 +106,7 @@ public class DoorComponent : Interactable
 		}
         else
         {
-            sounds.Locked();
+			RpcPlaySoundLocked();
         }
 	}
     public override void OnInteractEnd(GameObject interactor){}
@@ -116,6 +116,16 @@ public class DoorComponent : Interactable
 		ShowTooltip(interactor);
 	}
 
+	[ClientRpc]
+	public void RpcPlaySoundOpen()
+	{
+		sounds.Open();
+	}
+	[ClientRpc]
+	public void RpcPlaySoundLocked()
+	{
+		sounds.Locked();
+	}
 
     // Closes and opens the door
     void FixedUpdate()
