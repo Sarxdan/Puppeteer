@@ -33,7 +33,7 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
-  - {fileID: 2654198788152568988}
+  - {fileID: 2654198788152703023}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -65,8 +65,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   serverOnly: 0
   localPlayerAuthority: 0
-  m_AssetId: 3551e807289be504ea7bfa9e3abec92f
-  m_SceneId: 0
+  m_AssetId: 
+  m_SceneId: 1643135583
 --- !u!114 &5909226276687725837
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -81,20 +81,21 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   syncInterval: 0.1
   NoiseRadius: 10
-  Capacity: 20
-  LiquidLeft: 4
-  LiquidPerRound: 2
+  Capacity: 600
+  LiquidLeft: 600
+  LiquidPerRound: 100
   MagazinePrefab: {fileID: 3390378285604284034, guid: 0a3bd484c4ef219498b941d1dbb1c145,
     type: 3}
-  MagazineAttach: {fileID: 2654198788152568986}
-  Damage: 4
-  NumShots: 16
+  MagazineAttach: {fileID: 2654198788152703963}
+  Damage: 3
+  NumShots: 15
   RequireRelease: 1
-  FiringSpeed: 0.901
-  ReloadTime: 2.32
-  Spread: 0.0906
-  RecoilAmount: 3.04
-  DamageDropoff: 0.604
+  FiringSpeed: 0.8
+  ReloadTime: 2.3
+  Spread: 0.06
+  RecoilAmount: 2.6
+  RecoilRecoverySpeed: 0.7
+  DamageDropoff: 0.4
   ChargeTime: 0
   HeadTransform: {fileID: 0}
   HoldRotation: {x: 0.83373326, y: -0.11408261, z: 0.53616965, w: -0.06630344}
@@ -203,13 +204,13 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 79541ea2886513843ac3ed5d1fa46a85, type: 3}
---- !u!4 &2654198788152568988 stripped
+--- !u!4 &2654198788152703023 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 400006, guid: 79541ea2886513843ac3ed5d1fa46a85,
     type: 3}
   m_PrefabInstance: {fileID: 2654198788152702490}
   m_PrefabAsset: {fileID: 0}
---- !u!4 &2654198788152568986 stripped
+--- !u!4 &2654198788152703963 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 400000, guid: 79541ea2886513843ac3ed5d1fa46a85,
     type: 3}

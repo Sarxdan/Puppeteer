@@ -26,8 +26,10 @@ public class HUDScript : NetworkBehaviour
     public Transform Owner;
     // The actual health "bar"
     public RectTransform HealthBarFill;
+    public Text HealthPercentage;
     // The stamina bar
     public RectTransform StaminaBarFill;
+    public Text StaminaPercentage;
     // The med kit icon
     public RectTransform MedKit;
     // The mask that shows how much is left on the power up duration
@@ -105,7 +107,18 @@ public class HUDScript : NetworkBehaviour
         //Powerup Status
         #region powerUp status
         float delta = powerUp.PercentageLeft;
-        PowerUpFill.localScale = new Vector3(1, 1.0f - delta, 1);
+        if(delta == 0)
+        {
+            PowerUpDisabled.enabled = true;
+            PowerUpEnabled.enabled = false;
+            PowerUpFill.localScale = new Vector3(1, 0, 1);
+        }
+        else
+        {
+            PowerUpEnabled.enabled = true;
+            PowerUpDisabled.enabled = false;
+            PowerUpFill.localScale = new Vector3(1, 1.0f - delta, 1);
+        }
         #endregion
 
 
@@ -164,6 +177,11 @@ public class HUDScript : NetworkBehaviour
         // Increment the lerp
         HPIncrement += HealthBarSpeed * Time.deltaTime;
 
+        HealthPercentage.text = Mathf.RoundToInt(((float)health/maxHealth)*100).ToString() + "%";
+        //Debug.Log("Current Health" + health);
+       // Debug.Log("Max health" + maxHealth);
+       // Debug.Log("Heath percent: " + (health/maxHealth)*100);
+       // Debug.Log((health/maxHealth)*100);
         // runs whe the lerp is complete
         if(HPIncrement >= 1)
         {
@@ -184,7 +202,7 @@ public class HUDScript : NetworkBehaviour
 
         StaminaBarFill.localScale = new Vector3(Mathf.Lerp(xScaleStamina * (Mathf.Clamp(lerpFromStamina, 0, playerController.MaxStamina)/playerController.MaxStamina), xScaleStamina * (Mathf.Clamp(playerController.CurrentStamina, 0, playerController.MaxStamina)/playerController.MaxStamina), StaminaIncrement),
                                                 StaminaBarFill.localScale.y, StaminaBarFill.localScale.z);
-
+        StaminaPercentage.text = Mathf.RoundToInt((playerController.CurrentStamina/playerController.MaxStamina) * 100).ToString() + "%";
         StaminaIncrement += StaminaBarSpeed*Time.deltaTime;
         if(StaminaIncrement >= 1)
         {

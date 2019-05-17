@@ -26,9 +26,10 @@ public class CustomNetworkManager : NetworkLobbyManager
     public Button StartGameButton;
     public GameObject PlayersContainer;
     public GameObject[] PlayableCharacters;
+    public int PlayersRequiredToStartTheGame = 2;
 
     private int AmountOfPlayersLastUpdate = -1;
-
+    
 
     void Start()
     {
@@ -59,10 +60,12 @@ public class CustomNetworkManager : NetworkLobbyManager
             PlayersContainer = GameObject.Find("Players");
         }
 
-        if (!allPlayersReady)
-            StartButton.interactable = false;
-        else
+        if (allPlayersReady && lobbySlots.Count >= PlayersRequiredToStartTheGame)
+        {
             StartButton.interactable = true;
+        }
+        else
+            StartButton.interactable = false;
 
         if (AmountOfPlayersLastUpdate != lobbySlots.Count)
             PlayerReadyStatusChanged();
@@ -133,8 +136,6 @@ public class CustomNetworkManager : NetworkLobbyManager
             allPlayersReady = true;
         else
             allPlayersReady = false;
-
-        StartButton.interactable = allPlayersReady;
     }
 
     public override GameObject OnLobbyServerCreateGamePlayer(NetworkConnection conn)
