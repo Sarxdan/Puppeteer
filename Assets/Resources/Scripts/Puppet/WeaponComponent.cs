@@ -189,7 +189,7 @@ public class WeaponComponent : Interactable
     private void OnGUI()
     {
         // temporary crosshair 
-        GUI.Box(new Rect(Screen.width * 0.5f, Screen.height * 0.5f, 10, 10), "");
+        //GUI.Box(new Rect(Screen.width * 0.5f, Screen.height * 0.5f, 10, 10), "");
     }
 
 	public void UpdateAmmoContainer()

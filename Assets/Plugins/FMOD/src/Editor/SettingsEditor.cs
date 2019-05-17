@@ -33,6 +33,13 @@ namespace FMODUnity
         bool focused = false;
         bool bankFoldOutState = true;
 
+        enum SourceType : uint
+        {
+            Project = 0,
+            Single,
+            Multi
+        }
+
         string PlatformLabel(FMODPlatform platform)
         {
             switch(platform)
@@ -233,7 +240,7 @@ namespace FMODUnity
             int index = Array.IndexOf(buildDirectories, current);
             if (index < 0) index = 0;
 
-            int next = EditorGUILayout.Popup(label, index, buildDirectories);            
+            int next = EditorGUILayout.Popup(label, index, buildDirectories);
             Settings.SetSetting(settings, platform, buildDirectories[next]);
         }
 
@@ -383,13 +390,13 @@ namespace FMODUnity
 
             GUI.skin.FindStyle("HelpBox").richText = true;
 
-            int sourceType = settings.HasSourceProject ? 0 : (settings.HasPlatforms ? 2 : 1);
+            SourceType sourceType = settings.HasSourceProject ? SourceType.Project : (settings.HasPlatforms ? SourceType.Multi : SourceType.Single);
 
             EditorGUILayout.BeginHorizontal();
             EditorGUILayout.BeginVertical();
-            sourceType = GUILayout.Toggle(sourceType == 0, "Project", "Button") ? 0 : sourceType;
-            sourceType = GUILayout.Toggle(sourceType == 1, "Single Platform Build", "Button") ? 1 : sourceType;
-            sourceType = GUILayout.Toggle(sourceType == 2, "Multiple Platform Build", "Button") ? 2 : sourceType;
+            sourceType = GUILayout.Toggle(sourceType == SourceType.Project, "Project", "Button") ? 0 : sourceType;
+            sourceType = GUILayout.Toggle(sourceType == SourceType.Single, "Single Platform Build", "Button") ? SourceType.Single : sourceType;
+            sourceType = GUILayout.Toggle(sourceType == SourceType.Multi, "Multiple Platform Build", "Button") ? SourceType.Multi : sourceType;
             EditorGUILayout.EndVertical();
             EditorGUILayout.BeginVertical();
 
@@ -404,7 +411,7 @@ namespace FMODUnity
             EditorGUILayout.EndHorizontal();
             EditorGUILayout.Space();
 
-            if (sourceType == 0)
+            if (sourceType == SourceType.Project)
             {
                 EditorGUILayout.BeginHorizontal();
                 string oldPath = settings.SourceProjectPathUnformatted;
@@ -415,6 +422,7 @@ namespace FMODUnity
                 if (EditorGUI.EndChangeCheck())
                 {
                     settings.SourceProjectPath = settings.SourceProjectPathUnformatted;
+                    settings.SourceProjectPathUnformatted = MakePathRelativeToProject(settings.SourceProjectPathUnformatted);
                 }
 
                 if (GUILayout.Button("Browse", GUILayout.ExpandWidth(false)))
@@ -423,9 +431,8 @@ namespace FMODUnity
                     string path = EditorUtility.OpenFilePanel("Locate Studio Project", oldPath, "fspro");
                     if (!string.IsNullOrEmpty(path))
                     {
-                        path = MakePathRelativeToProject(path);
-                        settings.SourceProjectPathUnformatted = path;
                         settings.SourceProjectPath = path;
+                        settings.SourceProjectPathUnformatted = MakePathRelativeToProject(path);
                         Repaint();
                     }
                 }
@@ -445,7 +452,7 @@ namespace FMODUnity
                 }
             }
 
-            if (sourceType == 1 || sourceType == 2)
+            if (sourceType == SourceType.Single || sourceType == SourceType.Multi)
             {
                 EditorGUILayout.BeginHorizontal();
                 string oldPath = settings.SourceBankPathUnformatted;
@@ -455,7 +462,8 @@ namespace FMODUnity
                 settings.SourceBankPathUnformatted = EditorGUILayout.TextField(GUIContent.none, settings.SourceBankPathUnformatted);
                 if (EditorGUI.EndChangeCheck())
                 {
-                    settings.SourceBankPath = settings.SourceBankPathUnformatted;
+                    settings.SourceBankPath = Path.GetFullPath(settings.SourceBankPathUnformatted);
+                    settings.SourceBankPathUnformatted = MakePathRelativeToProject(settings.SourceBankPathUnformatted);
                 }
 
                 if (GUILayout.Button("Browse", GUILayout.ExpandWidth(false)))
@@ -464,14 +472,14 @@ namespace FMODUnity
                     var path = EditorUtility.OpenFolderPanel("Locate Build Folder", oldPath, null);
                     if (!string.IsNullOrEmpty(path))
                     {
-                        path = MakePathRelativeToProject(path);
-                        settings.SourceBankPathUnformatted = path;
                         settings.SourceBankPath = path;
+                        settings.SourceBankPathUnformatted = MakePathRelativeToProject(path);
+                        Repaint();
                     }
                 }
                 EditorGUILayout.EndHorizontal();
 
-                settings.HasPlatforms = (sourceType == 2);
+                settings.HasPlatforms = (sourceType == SourceType.Multi);
                 settings.HasSourceProject = false;
 
                 // First time project path is set or changes, copy to streaming assets
@@ -481,11 +489,11 @@ namespace FMODUnity
                 }
             }
 
-            if ((settings.HasSourceProject && !settings.SourceProjectPathUnformatted.Equals(settings.SourceProjectPath)) ||
-                    (sourceType >= 1 && !settings.SourceBankPathUnformatted.Equals(settings.SourceBankPath)))
+            if ((settings.HasSourceProject && !string.IsNullOrEmpty(settings.SourceProjectPathUnformatted) && !settings.SourceProjectPathUnformatted.Equals(settings.SourceProjectPath)) ||
+                    (sourceType >= SourceType.Single && !string.IsNullOrEmpty(settings.SourceBankPathUnformatted) && !settings.SourceBankPathUnformatted.Equals(settings.SourceBankPath)))
             {
                 EditorGUI.BeginDisabledGroup(true);
-                EditorGUILayout.TextField("Platform specific path", sourceType >= 1 ? settings.SourceBankPath : settings.SourceProjectPath);
+                EditorGUILayout.TextField("Local path", sourceType == SourceType.Project ? settings.SourceProjectPath : settings.SourceBankPath);
                 EditorGUI.EndDisabledGroup();
             }
 
@@ -625,8 +633,8 @@ namespace FMODUnity
                             var banksFound = new List<string>(Directory.GetFiles(EditorUtils.GetBankDirectory(), "*.bank", SearchOption.AllDirectories));
                             for (int i = 0; i < banksFound.Count; i++)
                             {
-                                string path = Path.GetFullPath(banksFound[i]);
-                                string bankShortName = Path.GetFullPath(path).Replace(EditorUtils.GetBankDirectory() + Path.DirectorySeparatorChar + settings.GetBankPlatform(platform) + Path.DirectorySeparatorChar, "");
+                                string sourceDir = EditorUtils.GetBankDirectory() + Path.DirectorySeparatorChar + (settings.HasSourceProject ? settings.GetBankPlatform(platform) + Path.DirectorySeparatorChar : "");
+                                string bankShortName = Path.GetFullPath(banksFound[i]).Replace(sourceDir, "");
                                 if (!settings.BanksToLoad.Contains(bankShortName))
                                 {
                                     settings.BanksToLoad.Add(bankShortName);
@@ -652,6 +660,8 @@ namespace FMODUnity
             settings.AutomaticSampleLoading = EditorGUILayout.Toggle("Load Bank Sample Data", settings.AutomaticSampleLoading);
             EditorGUI.EndDisabledGroup();
 
+            settings.EncryptionKey = EditorGUILayout.TextField("Bank Encryption Key", settings.EncryptionKey);
+
             EditorGUI.indentLevel--;
             EditorGUI.EndDisabledGroup();
 
@@ -666,16 +676,10 @@ namespace FMODUnity
                 settings.LiveUpdatePort = ushort.Parse(EditorGUILayout.TextField("Live Update Port:", settings.LiveUpdatePort.ToString()));
                 if (GUILayout.Button("Reset", GUILayout.ExpandWidth(false)))
                 {
-                    #if UNITY_5_0 || UNITY_5_1
-                    settings.LiveUpdatePort = 9265;
-                    #else
                     settings.LiveUpdatePort = 9264;
-                    #endif
                 }
                 EditorGUILayout.EndHorizontal();
-                #if UNITY_5_0 || UNITY_5_1
-                EditorGUILayout.HelpBox("Unity 5.0 or 5.1 detected: Live update will not be able to use port <b>9264</b>", MessageType.Warning, false);
-                #endif
+
             }
             DisplayEditorBool("Debug Overlay", settings.OverlaySettings, FMODPlatform.PlayInEditor);
             DisplayChildFreq("Sample Rate", settings.SampleRateSettings, FMODPlatform.PlayInEditor);
@@ -703,7 +707,13 @@ namespace FMODUnity
             DisplayParentBool("Live Update", settings.LiveUpdateSettings, FMODPlatform.Default);
             if (settings.IsLiveUpdateEnabled(FMODPlatform.Default))
             {
-                EditorGUILayout.HelpBox("Live update will listen on port <b>9264</b>", MessageType.Info, false);
+                EditorGUILayout.BeginHorizontal();
+                settings.LiveUpdatePort = ushort.Parse(EditorGUILayout.TextField("Live Update Port:", settings.LiveUpdatePort.ToString()));
+                if (GUILayout.Button("Reset", GUILayout.ExpandWidth(false)))
+                {
+                    settings.LiveUpdatePort = 9264;
+                }
+                EditorGUILayout.EndHorizontal();
             }
             DisplayParentBool("Debug Overlay", settings.OverlaySettings, FMODPlatform.Default);
             DisplayParentFreq("Sample Rate", settings.SampleRateSettings, FMODPlatform.Default);
@@ -763,11 +773,11 @@ namespace FMODUnity
 
             if (hasBankSourceChanged)
             {
-                EventManager.UpdateCache();
+                EventManager.RefreshBanks();
             }
             if (hasBankTargetChanged)
             {
-                EventManager.CopyToStreamingAssets();
+                EventManager.RefreshBanks();
             }
         }
 

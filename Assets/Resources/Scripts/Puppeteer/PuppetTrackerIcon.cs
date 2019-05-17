@@ -52,11 +52,13 @@ public class PuppetTrackerIcon : MonoBehaviour
     // Update is called once per frame
     void OnGUI()
     {
+        if (gameObject.tag == "player")
+            return;
+
         //Check every target
         for (int i = 0; i < Targets.Count; i++)
         {
             var target = Targets[i];
-            
             if (target != null)
             {
                 //Convert the targets position to 2d position based on the camera
