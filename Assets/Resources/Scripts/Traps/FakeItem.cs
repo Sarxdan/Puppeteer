@@ -47,7 +47,8 @@ public class FakeItem : Interactable
     {
         // Activate trap and create explosion
         Activated = true;
-        Explosion = Instantiate(Explosion, transform.position, transform.rotation);
+        GameObject spawnedExplosion = Instantiate(Explosion.gameObject, transform.position, transform.rotation) as GameObject;
+        NetworkServer.Spawn(spawnedExplosion);
         Explosion.transform.parent = gameObject.transform;
 
         // Damage all players in the explosion area
