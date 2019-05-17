@@ -24,16 +24,7 @@ public class FakeItem : Interactable
     public uint Damage;
     public float Radius;
     public bool Activated = false;
-
-    // Switch model to a random one of some specific items
-    void Start()
-    {
-        NewModel =
-            Instantiate(Models[Random.Range(1, Models.Length)], transform.position, transform.rotation);
-        NewModel.transform.parent = transform;
-        Destroy(Models[0]);
-    }
-
+    
     // Destroy the whole trap if the trap is activated and particle system is done playing
     private void Update()
     {
@@ -45,14 +36,39 @@ public class FakeItem : Interactable
             }
         }
     }
+
+    // Switch model to a random one of some specific items
+    public string SwitchModel()
+    {
+        NewModel =
+            Instantiate(Models[Random.Range(1, Models.Length)], transform.position, transform.rotation);
+        NewModel.transform.parent = transform;
+        Destroy(Models[0]);
+        return NewModel.name;
+    }
+    
+    // Switch model to a random one of some specific items
+    public void MakeModel(string name, TransformStruct placingTransform)
+    {
+        foreach (GameObject model in Models)
+        {
+            if (model != null && model.name + "(Clone)" == name)
+            {
+                NewModel =
+                    Instantiate(model, placingTransform.Position, placingTransform.Rotation);
+                NewModel.transform.parent = transform;
+                Destroy(Models[0]);
+            }
+        }
+        
+    }
+
     // (KL) Used to show the interact tooltip
     public override void OnRaycastEnter(GameObject interactor)
     {
         ShowTooltip(interactor);
     }
-
-
-
+    
     // Activate the trap and explode and damage puppet
     public override void OnInteractBegin(GameObject interactor)
     {
