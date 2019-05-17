@@ -671,6 +671,7 @@ GameObject:
   - component: {fileID: 8956604464301979517}
   - component: {fileID: 4637723171867558907}
   - component: {fileID: -2051150632329404280}
+  - component: {fileID: 7898033090599316391}
   m_Layer: 0
   m_Name: Minion
   m_TagString: Enemy
@@ -793,7 +794,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   serverOnly: 0
   localPlayerAuthority: 0
-  m_AssetId: ce7345ac27c4c674f85af1382637442e
+  m_AssetId: 
   m_SceneId: 0
 --- !u!114 &2220566078404847079
 MonoBehaviour:
@@ -908,6 +909,29 @@ MonoBehaviour:
   s_Thud: event:/Enemies/Minion/Thud
   s_Spawn: 
   s_Idle: 
+--- !u!114 &7898033090599316391
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2781805961794641847}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a6610d2e704f1648819acc8d7460285, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  CollisionTag: 
+  Event: event:/Enemies/Minion/Voice/Loop
+  PlayEvent: 1
+  StopEvent: 2
+  AllowFadeout: 1
+  TriggerOnce: 0
+  Preload: 0
+  Params: []
+  OverrideAttenuation: 0
+  OverrideMinDistance: 1
+  OverrideMaxDistance: 15
 --- !u!1 &2781805961794641849
 GameObject:
   m_ObjectHideFlags: 0
