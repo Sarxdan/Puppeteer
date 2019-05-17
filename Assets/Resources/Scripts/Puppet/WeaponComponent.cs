@@ -55,7 +55,7 @@ public class WeaponComponent : Interactable
     [Range(0.0f, 4.0f)]
     public float ChargeTime;
 
-    public static float RecoilRecovery = 20.0f;
+    public static float RecoilRecovery = 16.0f;
     public Transform HeadTransform;
     public Quaternion HoldRotation;
 
@@ -68,6 +68,8 @@ public class WeaponComponent : Interactable
     private float cooldown;
     private float recoil;
     private float charge;
+    private float rotX;
+    private bool resetRecoil;
 
     private bool isHeld;
 
@@ -98,13 +100,10 @@ public class WeaponComponent : Interactable
 		}
 
         PlayerController pc = GetComponentInParent<PlayerController>();
-        pc.AnimController.SetBool("Fire", true);
-        pc.FPVAnimController.SetTrigger("Fire");
-		DecalHandler decalHandler = pc.GetComponent<DecalHandler>();
+        DecalHandler decalHandler = pc.GetComponent<DecalHandler>();
         
         for(int i = 0; i < NumShots; i++)
         {
-
             // calculate spread
             Vector3 offset = Random.insideUnitSphere * Spread;
 
@@ -117,6 +116,7 @@ public class WeaponComponent : Interactable
                 {
                     uint damage = (uint)(this.Damage * Mathf.Pow(DamageDropoff, hitInfo.distance / 10.0f));
                     health.Damage(damage);
+                    Debug.LogFormat("Dealt {0} damage in range {1}", damage, hitInfo.distance);
                 }
 				// create hit decal
 				decalHandler.AddDecal(Instantiate(HitDecals[Random.Range(0, HitDecals.Length)], hitInfo.point, Quaternion.FromToRotation(Vector3.forward, hitInfo.normal), hitInfo.transform));
@@ -127,6 +127,12 @@ public class WeaponComponent : Interactable
                 Noise.MakeNoise(transform.position, NoiseRadius);
             }
         }
+
+        rotX = HeadTransform.localEulerAngles.x;
+        resetRecoil = true;
+
+        pc.AnimController.SetBool("Fire", true);
+        pc.FPVAnimController.SetTrigger("Fire");
 
         //Adds recoil and cooldown, and subtracts ammo left
         recoil += RecoilAmount;
@@ -156,8 +162,7 @@ public class WeaponComponent : Interactable
         cooldown += ReloadTime;
     }
 
-
-    void FixedUpdate()
+    void Update()
     {
         // decrease cooldown constantly
         cooldown = Mathf.Max(0.0f, cooldown -= Time.deltaTime);
@@ -167,10 +172,18 @@ public class WeaponComponent : Interactable
         // perform recoil
         if (HeadTransform != null)
         {
-            recoil = Mathf.Clamp(recoil - RecoilRecovery * Time.deltaTime, 0.0f, 45.0f);
+            recoil = Mathf.Max(Mathf.Lerp(recoil, recoil - RecoilRecovery, Time.deltaTime), 0.0f);
 
             // rotate head according to the recoil amount
             var rotation = HeadTransform.localEulerAngles + Vector3.left * recoil;
+            if(resetRecoil)
+            {
+                rotation.x = Mathf.MoveTowardsAngle(rotation.x, rotX, Time.deltaTime * RecoilRecovery * RecoilAmount);
+                if(rotation.x == rotX || Mathf.Abs(Input.GetAxis("Mouse Y")) > 0.1f)
+                {
+                    resetRecoil = false;
+                }
+            }
 
             //Prevents the recoil to go to far and making the camera turn upside down.
             if (rotation.x < 270 && rotation.x > 90)
@@ -189,7 +202,7 @@ public class WeaponComponent : Interactable
     private void OnGUI()
     {
         // temporary crosshair 
-        //GUI.Box(new Rect(Screen.width * 0.5f, Screen.height * 0.5f, 10, 10), "");
+        GUI.Box(new Rect(Screen.width * 0.5f - 5, Screen.height * 0.5f - 5, 10, 10), "");
     }
 
 	public void UpdateAmmoContainer()
