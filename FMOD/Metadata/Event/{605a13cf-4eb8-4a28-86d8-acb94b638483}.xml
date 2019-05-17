@@ -63,7 +63,7 @@
 			<value>8</value>
 		</property>
 		<property name="triggerCooldown">
-			<value>220</value>
+			<value>180</value>
 		</property>
 	</object>
 	<object class="MarkerTrack" id="{a79a9377-0597-4a9b-8b65-6137e3716ee0}" />
@@ -100,7 +100,7 @@
 	</object>
 	<object class="EventMixerMaster" id="{7ba3cf93-e9e0-4fb5-877c-74d22b0762ff}">
 		<property name="volume">
-			<value>-18.5</value>
+			<value>-14.5</value>
 		</property>
 		<relationship name="effectChain">
 			<destination>{048a043f-b996-4102-9396-dee577acaf4c}</destination>
@@ -123,7 +123,7 @@
 			<value>0.1875</value>
 		</property>
 		<property name="pitch">
-			<value>-4</value>
+			<value>-6</value>
 		</property>
 		<relationship name="sounds">
 			<destination>{8af07663-3bc6-4ab0-886b-804ae879537f}</destination>
@@ -190,11 +190,14 @@
 		</relationship>
 	</object>
 	<object class="MultiSound" id="{e6e0e154-c618-4400-a2a8-2c396b2df962}">
-		<property name="start">
-			<value>0.00390625</value>
-		</property>
 		<property name="length">
 			<value>0.22983123663464713</value>
+		</property>
+		<property name="delayType">
+			<value>0</value>
+		</property>
+		<property name="maximumTimeDelay">
+			<value>160</value>
 		</property>
 		<relationship name="fadeOutCurve">
 			<destination>{29cb1a48-3078-4ebd-873c-2e8b749dcbe6}</destination>
@@ -220,7 +223,7 @@
 	</object>
 	<object class="EventMixerGroup" id="{b2c2c99f-937a-41dc-b68f-0bd86a8da699}">
 		<property name="volume">
-			<value>-8</value>
+			<value>0.5</value>
 		</property>
 		<property name="name">
 			<value>Foley</value>
@@ -751,7 +754,7 @@
 	<object class="MixerBusFader" id="{1ceee923-1b85-45a4-b384-4785b4cc87ab}" />
 	<object class="AutomationPoint" id="{6c9addaf-8331-42c0-bc23-6a2365cb1932}">
 		<property name="position">
-			<value>0.15625</value>
+			<value>0.15234375</value>
 		</property>
 		<property name="value">
 			<value>1</value>
@@ -762,7 +765,7 @@
 	</object>
 	<object class="AutomationPoint" id="{6d8c12f7-a1a2-4779-be7f-ec1187e349e3}">
 		<property name="position">
-			<value>0.23373748663464713</value>
+			<value>0.22983123663464713</value>
 		</property>
 		<property name="value">
 			<value>0</value>
