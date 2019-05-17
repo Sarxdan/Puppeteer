@@ -63,6 +63,8 @@ public class DoorComponent : Interactable
 		}
 
 	}
+
+	public GameObject Icon;
     
     public float RotationSpeed;
     // How much the door should open
@@ -84,6 +86,7 @@ public class DoorComponent : Interactable
     {
 		currentAngle = defaultAngle;
         sounds = GetComponent<PuppetRoomSounds>();
+		Icon.transform.up = Vector3.forward;
     }
     // When the used key is pressed the direction the door should open is calculated
     public override void OnInteractBegin(GameObject interactor)
