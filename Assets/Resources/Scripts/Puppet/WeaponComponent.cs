@@ -34,7 +34,10 @@ public class WeaponComponent : Interactable
 	public GameObject MagazinePrefab;
     public Transform MagazineAttach;
 	private GameObject currentMagazine;
-	private FluidSimulation liquidScript;
+    [HideInInspector]
+	public FluidSimulation LiquidScript;
+
+    private PlayerController user;
 
     //Weapon attributes
     public uint Damage;
@@ -65,7 +68,7 @@ public class WeaponComponent : Interactable
 	public GameObject[] HitDecals;
 
     //Time left until weapon can be used again
-    private float cooldown;
+    private bool onCooldown = true;
     private float recoil;
     private float charge;
     private float rotX;
@@ -73,9 +76,13 @@ public class WeaponComponent : Interactable
 
     private bool isHeld;
 
+    private bool showingMagazine;
+
 	public void Start()
 	{
 		sounds = GetComponent<WeaponSounds>();
+        ShowMagazine();
+        onCooldown = false;
 	}
 
 	//Attemps to fire the weapon
@@ -87,7 +94,7 @@ public class WeaponComponent : Interactable
 
         charge = Mathf.Min(charge + Time.deltaTime, ChargeTime);
 
-        if (cooldown != 0 || charge < ChargeTime)
+        if (onCooldown || charge < ChargeTime)
         {
 			return;
         }
@@ -136,9 +143,8 @@ public class WeaponComponent : Interactable
 
         //Adds recoil and cooldown, and subtracts ammo left
         recoil += RecoilAmount;
-        cooldown += FiringSpeed;
         LiquidLeft -= LiquidPerRound;
-		UpdateAmmoContainer();
+		LiquidScript.CurrentLiquidAmount = LiquidLeft;
     }
 
     public void Release()
@@ -149,23 +155,20 @@ public class WeaponComponent : Interactable
     //Attemps to reload the weapon to its maximum capacity by the given input amount
     public void Reload(ref int liquidInput)
     {
-        // reload not possible if recently fired, currently reloading or weapon too charged
-        if (cooldown != 0 || (ChargeTime != 0 && charge > ChargeTime))
-            return;
-        
+        if(!CanReload()) return;
+
         int amount = Mathf.Min(Capacity - LiquidLeft, liquidInput);
         liquidInput -= amount;
         LiquidLeft += amount;
-		UpdateAmmoContainer();
+    }
 
-        // disallow firing while reloading
-        cooldown += ReloadTime;
+    public bool CanReload()
+    {
+         return !onCooldown && (ChargeTime == 0 || charge == 0);
     }
 
     void Update()
     {
-        // decrease cooldown constantly
-        cooldown = Mathf.Max(0.0f, cooldown -= Time.deltaTime);
         // decrease weapon charge
         charge = Mathf.Max(0.0f, charge -= Time.deltaTime * 0.5f);
 
@@ -205,16 +208,6 @@ public class WeaponComponent : Interactable
         GUI.Box(new Rect(Screen.width * 0.5f - 5, Screen.height * 0.5f - 5, 10, 10), "");
     }
 
-	public void UpdateAmmoContainer()
-	{
-		if (currentMagazine == null)
-		{
-			currentMagazine = Instantiate(MagazinePrefab, MagazineAttach);
-			liquidScript = currentMagazine.GetComponent<FluidSimulation>();
-			liquidScript.MaxLiquidAmount = Capacity;
-		}
-		liquidScript.CurrentLiquidAmount = LiquidLeft;
-	}
 
     public override void OnInteractBegin(GameObject interactor)
     {
@@ -269,11 +262,11 @@ public class WeaponComponent : Interactable
 
         if (userObject.GetComponent<PlayerController>().isLocalPlayer)
         {
-            newWeapon.transform.SetParent(user.FPVHandTransform);
+            newWeapon.transform.SetParent(user.FPVArms.Right);
         }
         else
         {
-            newWeapon.transform.SetParent(user.HandTransform);
+            newWeapon.transform.SetParent(user.FullBody.Right);
         }
 
         newWeapon.transform.localPosition = Vector3.zero;
@@ -281,8 +274,39 @@ public class WeaponComponent : Interactable
 
         if (user.isLocalPlayer)
         {
-            newWeapon.UpdateAmmoContainer();
+            newWeapon.ShowMagazine();
         }
     }
 
+    //Doesn't actually remove or add, just hides or shows
+    public void HideMagazine()
+    {
+        if(onCooldown) return;
+
+        if(currentMagazine != null)
+        {
+            currentMagazine.SetActive(false);
+        }
+
+        onCooldown = true;
+    }
+
+    public void ShowMagazine()
+    {
+        if(!onCooldown) return;
+
+        if(currentMagazine == null)
+        {
+			currentMagazine = Instantiate(MagazinePrefab, MagazineAttach);
+			LiquidScript = currentMagazine.GetComponent<FluidSimulation>();
+			LiquidScript.MaxLiquidAmount = Capacity;
+        }
+		LiquidScript.CurrentLiquidAmount = LiquidLeft;
+        currentMagazine.SetActive(true);
+    }
+
+    public void StopCooldown()
+    {
+        onCooldown = false;
+    }
 }

@@ -47,7 +47,11 @@ public class HealthComponent : NetworkBehaviour
 
     void Start(){
         sound = gameObject.GetComponent<CharacterSounds>();
+        AddOnDamageAction(nothing);
+        AddDeathAction(nothing);
     }
+
+    private void nothing(){}
 
     public override void OnStartLocalPlayer(){
         base.OnStartLocalPlayer();

@@ -382,11 +382,6 @@ public class ItemGrabTool : NetworkBehaviour
     {
 		if (isServer)
 		{
-			if (guideObject.GetComponent<SnapFunctionality>().FakeItem)
-            {
-                string name = guideObject.GetComponent<FakeItem>().SwitchModel();
-                RpcSwitchModel(name);
-            }
 			NetworkServer.Spawn(guideObject);
 			guideObject.transform.position = placingTransform.Position;
 			guideObject.transform.rotation = placingTransform.Rotation;
@@ -400,11 +395,6 @@ public class ItemGrabTool : NetworkBehaviour
 		}
     }
 
-    [ClientRpc]
-    public void RpcSwitchModel(string name)
-    {
-        guideObject.GetComponent<FakeItem>().MakeModel(name, placingTransform);
-    }
 
 	// Tells server where the gameobject is going.
 	[Command]

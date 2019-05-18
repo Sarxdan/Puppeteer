@@ -1,7 +1,7 @@
 ﻿using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Experimental.PlayerLoop;
-
+using Mirror;
 /*
  * AUTHOR:
  * Sandra "Sanders" Andersson
@@ -18,9 +18,7 @@ using UnityEngine.Experimental.PlayerLoop;
 
 public class FakeItem : Interactable
 {
-    public GameObject[] Models; //[0] is default model
     public ParticleSystem Explosion;
-    public GameObject NewModel;
     public uint Damage;
     public float Radius;
     public bool Activated = false;
@@ -37,31 +35,6 @@ public class FakeItem : Interactable
         }
     }
 
-    // Switch model to a random one of some specific items
-    public string SwitchModel()
-    {
-        NewModel =
-            Instantiate(Models[Random.Range(1, Models.Length)], transform.position, transform.rotation);
-        NewModel.transform.parent = transform;
-        Destroy(Models[0]);
-        return NewModel.name;
-    }
-    
-    // Switch model to a random one of some specific items
-    public void MakeModel(string name, TransformStruct placingTransform)
-    {
-        foreach (GameObject model in Models)
-        {
-            if (model != null && model.name + "(Clone)" == name)
-            {
-                NewModel =
-                    Instantiate(model, placingTransform.Position, placingTransform.Rotation);
-                NewModel.transform.parent = transform;
-                Destroy(Models[0]);
-            }
-        }
-        
-    }
 
     // (KL) Used to show the interact tooltip
     public override void OnRaycastEnter(GameObject interactor)
@@ -74,8 +47,8 @@ public class FakeItem : Interactable
     {
         // Activate trap and create explosion
         Activated = true;
-        Explosion = Instantiate(Explosion, transform.position, transform.rotation);
-        Explosion.transform.parent = gameObject.transform;
+        GameObject spawnedExplosion = Instantiate(Explosion.gameObject, transform.position, transform.rotation) as GameObject;
+        NetworkServer.Spawn(spawnedExplosion);
 
         // Damage all players in the explosion area
         Collider[] hitColliders = Physics.OverlapSphere(transform.position, Radius);
@@ -86,12 +59,17 @@ public class FakeItem : Interactable
                 hit.GetComponent<HealthComponent>().Damage(Damage);
             }
         }
-
-        Destroy(NewModel);
-        
+        CmdDie(gameObject);       
     }
 
     public override void OnInteractEnd(GameObject interactor)
     {
     }
+
+    [Command]
+    public void CmdDie(GameObject thing)
+    {
+        NetworkServer.Destroy(thing);
+    }
+
 }
