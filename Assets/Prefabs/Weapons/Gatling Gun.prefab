@@ -33,7 +33,7 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
-  - {fileID: 2654198788152703394}
+  - {fileID: 2654198788152703023}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -66,7 +66,7 @@ MonoBehaviour:
   serverOnly: 0
   localPlayerAuthority: 0
   m_AssetId: 
-  m_SceneId: 419470934
+  m_SceneId: 1679339550
 --- !u!114 &5909226276687725837
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -86,15 +86,14 @@ MonoBehaviour:
   LiquidPerRound: 6
   MagazinePrefab: {fileID: 3390378285604284034, guid: 0a3bd484c4ef219498b941d1dbb1c145,
     type: 3}
-  MagazineAttach: {fileID: 2654198788152703326}
-  LiquidScript: {fileID: 0}
+  MagazineAttach: {fileID: 2654198788152703963}
   Damage: 3
   NumShots: 1
   RequireRelease: 0
   FiringSpeed: 0.05
   ReloadTime: 3.1
   Spread: 0.05
-  RecoilAmount: 0.3
+  RecoilAmount: 0.83
   DamageDropoff: 0.7
   ChargeTime: 0.7
   HeadTransform: {fileID: 0}
@@ -154,6 +153,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 7436050445741599826}
     m_Modifications:
+    - target: {fileID: 100006, guid: 79541ea2886513843ac3ed5d1fa46a85, type: 3}
+      propertyPath: m_Name
+      value: SK_Shotgun_01_Rigged
+      objectReference: {fileID: 0}
     - target: {fileID: 400006, guid: 79541ea2886513843ac3ed5d1fa46a85, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -198,19 +201,15 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 1.764
       objectReference: {fileID: 0}
-    - target: {fileID: 100006, guid: 79541ea2886513843ac3ed5d1fa46a85, type: 3}
-      propertyPath: m_Name
-      value: SK_Shotgun_01_Rigged
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 79541ea2886513843ac3ed5d1fa46a85, type: 3}
---- !u!4 &2654198788152703394 stripped
+--- !u!4 &2654198788152703023 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 400006, guid: 79541ea2886513843ac3ed5d1fa46a85,
     type: 3}
   m_PrefabInstance: {fileID: 2654198788152702490}
   m_PrefabAsset: {fileID: 0}
---- !u!4 &2654198788152703326 stripped
+--- !u!4 &2654198788152703963 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 400000, guid: 79541ea2886513843ac3ed5d1fa46a85,
     type: 3}

@@ -167,7 +167,7 @@ public class WeaponComponent : Interactable
          return !onCooldown && (ChargeTime == 0 || charge == 0);
     }
 
-    void FixedUpdate()
+    void Update()
     {
         // decrease weapon charge
         charge = Mathf.Max(0.0f, charge -= Time.deltaTime * 0.5f);
@@ -175,13 +175,13 @@ public class WeaponComponent : Interactable
         // perform recoil
         if (HeadTransform != null)
         {
-            recoil = Mathf.Max(Mathf.Lerp(recoil, recoil - RecoilRecovery, Time.fixedDeltaTime), 0.0f);
+            recoil = Mathf.Max(Mathf.Lerp(recoil, recoil - RecoilRecovery, Time.deltaTime), 0.0f);
 
             // rotate head according to the recoil amount
             var rotation = HeadTransform.localEulerAngles + Vector3.left * recoil;
             if(resetRecoil)
             {
-                rotation.x = Mathf.MoveTowardsAngle(rotation.x, rotX, Time.fixedDeltaTime * RecoilRecovery * RecoilAmount);
+                rotation.x = Mathf.MoveTowardsAngle(rotation.x, rotX, Time.deltaTime * RecoilRecovery * RecoilAmount);
                 if(rotation.x == rotX || Mathf.Abs(Input.GetAxis("Mouse Y")) > 0.1f)
                 {
                     resetRecoil = false;
