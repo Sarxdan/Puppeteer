@@ -68,7 +68,9 @@ public class WeaponComponent : Interactable
 	public GameObject[] HitDecals;
 
     //Time left until weapon can be used again
-    private bool onCooldown = true;
+    private bool reloading = true;
+
+    private float cooldown;
     private float recoil;
     private float charge;
     private float rotX;
@@ -82,7 +84,7 @@ public class WeaponComponent : Interactable
 	{
 		sounds = GetComponent<WeaponSounds>();
         ShowMagazine();
-        onCooldown = false;
+        reloading = false;
 	}
 
 	//Attemps to fire the weapon
@@ -94,10 +96,11 @@ public class WeaponComponent : Interactable
 
         charge = Mathf.Min(charge + Time.deltaTime, ChargeTime);
 
-        if (onCooldown || charge < ChargeTime)
+        if (reloading || charge < ChargeTime || cooldown > 0)
         {
 			return;
         }
+        cooldown = FiringSpeed;
 
         sounds.Shoot(LiquidLeft / LiquidPerRound);    //Send amount of "bullets" left in mag to sound man.
 
@@ -164,13 +167,15 @@ public class WeaponComponent : Interactable
 
     public bool CanReload()
     {
-         return !onCooldown && (ChargeTime == 0 || charge == 0);
+         return !reloading && cooldown == 0  && (ChargeTime == 0 || charge == 0);
     }
 
     void Update()
     {
         // decrease weapon charge
         charge = Mathf.Max(0.0f, charge -= Time.deltaTime * 0.5f);
+        
+        cooldown = Mathf.Max(0.0f, cooldown - Time.deltaTime);
 
         // perform recoil
         if (HeadTransform != null)
@@ -281,19 +286,19 @@ public class WeaponComponent : Interactable
     //Doesn't actually remove or add, just hides or shows
     public void HideMagazine()
     {
-        if(onCooldown) return;
+        if(reloading) return;
 
         if(currentMagazine != null)
         {
             currentMagazine.SetActive(false);
         }
 
-        onCooldown = true;
+        reloading = true;
     }
 
     public void ShowMagazine()
     {
-        if(!onCooldown) return;
+        if(!reloading) return;
 
         if(currentMagazine == null)
         {
@@ -307,6 +312,6 @@ public class WeaponComponent : Interactable
 
     public void StopCooldown()
     {
-        onCooldown = false;
+        reloading = false;
     }
 }
