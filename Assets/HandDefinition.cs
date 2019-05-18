@@ -1,7 +1,16 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+/*
+ * AUTHOR:
+ * Ludvig Björk Förare
+ * 
+ * DESCRIPTION:
+ * Container script for an avatars hand transforms. Contains reload functionality
+ * 
+ * CODE REVIEWED BY:
+ * 
+ */
 public class HandDefinition : MonoBehaviour
 {
     public Transform Right;
