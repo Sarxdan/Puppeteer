@@ -7,17 +7,16 @@ using Mirror;
  * Ludvig Björk Förare
  * 
  * DESCRIPTION:
- * 
+ * Replaces itself with a random fake item
  * 
  * CODE REVIEWED BY:
- *
+ * Kristoffer Lungdren
  */
 
 public class FakeItemSpawner : NetworkBehaviour
 {
     public GameObject[] Spawnables;
     private SnapFunctionality snapFunctionality;
-
 
     public void Start()
     {   
