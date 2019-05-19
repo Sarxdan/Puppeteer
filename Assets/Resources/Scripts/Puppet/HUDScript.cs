@@ -209,7 +209,7 @@ public class HUDScript : NetworkBehaviour
 
         StaminaBarFill.localScale = new Vector3(Mathf.Lerp(xScaleStamina * (Mathf.Clamp(lerpFromStamina, 0, playerController.MaxStamina)/playerController.MaxStamina), xScaleStamina * (Mathf.Clamp(playerController.CurrentStamina, 0, playerController.MaxStamina)/playerController.MaxStamina), StaminaIncrement),
                                                 StaminaBarFill.localScale.y, StaminaBarFill.localScale.z);
-        StaminaPercentage.text = Mathf.RoundToInt((playerController.CurrentStamina/playerController.MaxStamina) * 100).ToString() + "%";
+        StaminaPercentage.text = Mathf.RoundToInt((Mathf.Clamp(playerController.CurrentStamina, 0, playerController.MaxStamina)/playerController.MaxStamina) * 100).ToString() + "%";
         StaminaIncrement += StaminaBarSpeed*Time.deltaTime;
         if(StaminaIncrement >= 1)
         {
