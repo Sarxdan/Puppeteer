@@ -31,6 +31,8 @@ public class PlayerController : NetworkBehaviour
     public static float SpawnRadius = 3.0f;
 	[SyncVar]
 	public string NickName;
+    [SyncVar, HideInInspector]
+    public bool HasSpawned;
 
     // Movement
     [Header("Movement")]
@@ -109,8 +111,10 @@ public class PlayerController : NetworkBehaviour
     {
         gameObject.GetComponent<HealthComponent>().AddDeathAction(Downed);
     }
+
     void Start()
     {
+        rigidBody = GetComponent<Rigidbody>();
        // CurrentWeaponComponent = CurrentWeapon.GetComponent<WeaponComponent>();
         rigidBody = GetComponent<Rigidbody>();
         AnimController = GetComponent<Animator>();
@@ -127,6 +131,8 @@ public class PlayerController : NetworkBehaviour
         {
             FullBody.transform.Find("Mesh").gameObject.SetActive(false);
             FullBody.enabled = false;
+            rigidBody.isKinematic = true;
+            StartCoroutine("LoadingRoutine");
         }
         else
         {
@@ -378,7 +384,6 @@ public class PlayerController : NetworkBehaviour
     // Freezes the position of the puppet and disables shooting and interacting
     public void Stunned()
     {
-
         rigidBody.constraints = RigidbodyConstraints.FreezeAll;
         CanShoot = false;
     }
@@ -404,6 +409,16 @@ public class PlayerController : NetworkBehaviour
         AnimController.SetLayerWeight(1,1);
     }
 
+    private IEnumerator LoadingRoutine()
+    {
+        while(!Physics.Raycast(transform.position + new Vector3(0,0.2f,0), Vector3.down, out RaycastHit hit, 10))
+        {
+            yield return new WaitForSeconds(0.2f);
+        }
+        CmdSpawned();
+        rigidBody.isKinematic = false;
+    }
+
     [ClientRpc]
     public void RpcAddAmmo(int liquid)
     {
@@ -420,5 +435,11 @@ public class PlayerController : NetworkBehaviour
         {
             HasMedkit = true;
         }
+    }
+
+    [Command]
+    private void CmdSpawned()
+    {
+        HasSpawned = true;
     }
 }
