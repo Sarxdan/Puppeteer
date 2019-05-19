@@ -137,6 +137,7 @@ GameObject:
   - component: {fileID: -4612029242079334992}
   - component: {fileID: 5323150377455828167}
   - component: {fileID: -5754076874651187656}
+  - component: {fileID: -3948299857446190914}
   m_Layer: 10
   m_Name: TankSpawner
   m_TagString: Untagged
@@ -175,7 +176,7 @@ MonoBehaviour:
   serverOnly: 0
   localPlayerAuthority: 0
   m_AssetId: 
-  m_SceneId: 2079959178
+  m_SceneId: 1801510596
 --- !u!114 &4963745196626812901
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -252,7 +253,7 @@ MonoBehaviour:
   RegenDelay: 0
   AllowRegen: 0
   Downed: 0
-  sound: {fileID: 0}
+  sounds: {fileID: 0}
 --- !u!114 &5323150377455828167
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -282,3 +283,17 @@ MonoBehaviour:
   s_Idle: 
   s_Spawn: 
   s_Destroy: event:/Enemies/Minion/Voice/Death
+--- !u!114 &-3948299857446190914
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4963745196626812900}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1f5b20ab626e9bb479736c392394fc8c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  s_Pickup: event:/Puppeteer/Traps/Spiketrap pickup
+  s_Place: event:/Puppeteer/Traps/Spiketrap place
