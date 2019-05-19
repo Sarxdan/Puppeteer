@@ -37,15 +37,13 @@ public class FinalRoomInteract : Interactable
     public bool ButtonPressed = false;
 
 	public static bool isEndGame;
-
-    public Music music;
-
+    
 	// Only runs on server. (by default)
 	public override void OnInteractBegin(GameObject interactor)
 	{
         if (!ButtonPressed)
         {
-            //music.ButtonPressed();
+            interactor.GetComponent<Music>().ButtonPressed();
 		    DoorToOpen = GameObject.Find("ST_Final_DoorFrame_03");
             ProgressTransform = GameObject.Find("ProgressBar").GetComponent<RectTransform>();
 		    StartCoroutine("FinalCountDown");

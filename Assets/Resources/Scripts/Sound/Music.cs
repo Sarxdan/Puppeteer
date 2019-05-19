@@ -8,7 +8,7 @@ public class Music : MonoBehaviour
     [FMODUnity.EventRef] public string s_Music;
     FMOD.Studio.EventInstance music;
 
-    public void StartMatch()
+    public void Start()
     {
         music = FMODUnity.RuntimeManager.CreateInstance(s_Music);
         music.start();

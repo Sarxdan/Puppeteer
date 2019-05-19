@@ -1610,6 +1610,7 @@ GameObject:
   - component: {fileID: 7054860906051087702}
   - component: {fileID: 2428568197462995401}
   - component: {fileID: -2482648877553790597}
+  - component: {fileID: -2624601903767478128}
   m_Layer: 0
   m_Name: Gekko
   m_TagString: Player
@@ -1631,7 +1632,7 @@ Transform:
   - {fileID: 7360517884381538550}
   - {fileID: 7360517884381538454}
   - {fileID: 7360517883928525821}
-  - {fileID: 681820090101515794}
+  - {fileID: 367971613416163798}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1759,7 +1760,7 @@ MonoBehaviour:
   RegenDelay: 10
   AllowRegen: 0
   Downed: 0
-  sound: {fileID: 0}
+  sounds: {fileID: 0}
 --- !u!114 &7360517884129133000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1774,8 +1775,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   serverOnly: 0
   localPlayerAuthority: 1
-  m_AssetId: f383bf0bef98ddf488cdb51ea4e15620
-  m_SceneId: 0
+  m_AssetId: 
+  m_SceneId: 1333315484
 --- !u!114 &7360517884129133002
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1821,9 +1822,9 @@ MonoBehaviour:
   syncInterval: 0.1
   componentsToDisable:
   - {fileID: 7360517883928525810}
-  - {fileID: 681820090101515789}
+  - {fileID: 367971613416162355}
   - {fileID: 7360517884129132995}
-  - {fileID: 681820090101515795}
+  - {fileID: 367971613416163690}
   - {fileID: 6860276935783239537}
 --- !u!114 &4729588506264016577
 MonoBehaviour:
@@ -1891,6 +1892,7 @@ MonoBehaviour:
   s_Land: event:/Character/Footsteps/Land
   s_Revive: 
   s_UseMedkit: 
+  music: {fileID: 0}
 --- !u!65 &7054860906051087702
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1932,6 +1934,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   PowerUp: event:/Character/Powerup
+--- !u!114 &-2624601903767478128
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7360517884381967562}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5e04beb7ce941d844aba60452ae2b7ad, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  s_Music: event:/Music/Music
 --- !u!1 &7360517884381967564
 GameObject:
   m_ObjectHideFlags: 0
@@ -3200,7 +3215,7 @@ PrefabInstance:
         type: 3}
       propertyPath: PauseMenuUI
       value: 
-      objectReference: {fileID: 681820089116516442}
+      objectReference: {fileID: 367971613416180600}
     - target: {fileID: 895376273027663872, guid: 27f6f56a79bae2e4b8ada12c45a4bc54,
         type: 3}
       propertyPath: owner
@@ -3211,7 +3226,7 @@ PrefabInstance:
         type: 3}
       propertyPath: MainUI
       value: 
-      objectReference: {fileID: 681820089254618574}
+      objectReference: {fileID: 367971613416180606}
     - target: {fileID: 895376273027663903, guid: 27f6f56a79bae2e4b8ada12c45a4bc54,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -3317,11 +3332,6 @@ PrefabInstance:
       propertyPath: m_Pivot.y
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 895376272160003193, guid: 27f6f56a79bae2e4b8ada12c45a4bc54,
-        type: 3}
-      propertyPath: m_Material
-      value: 
-      objectReference: {fileID: 0}
     - target: {fileID: 895376271274951128, guid: 27f6f56a79bae2e4b8ada12c45a4bc54,
         type: 3}
       propertyPath: m_Material
@@ -3366,7 +3376,7 @@ PrefabInstance:
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 681820090101515789}
+      objectReference: {fileID: 367971613416162355}
     - target: {fileID: 895376273177909507, guid: 27f6f56a79bae2e4b8ada12c45a4bc54,
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
@@ -3412,6 +3422,11 @@ PrefabInstance:
       propertyPath: m_Material
       value: 
       objectReference: {fileID: 0}
+    - target: {fileID: 895376272160003193, guid: 27f6f56a79bae2e4b8ada12c45a4bc54,
+        type: 3}
+      propertyPath: m_Material
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 895376271649585429, guid: 27f6f56a79bae2e4b8ada12c45a4bc54,
         type: 3}
       propertyPath: m_Material
@@ -3444,13 +3459,13 @@ PrefabInstance:
       objectReference: {fileID: 7360517884381538538}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 27f6f56a79bae2e4b8ada12c45a4bc54, type: 3}
---- !u!223 &681820090101515795 stripped
+--- !u!223 &367971613416163690 stripped
 Canvas:
   m_CorrespondingSourceObject: {fileID: 895376273027663902, guid: 27f6f56a79bae2e4b8ada12c45a4bc54,
     type: 3}
   m_PrefabInstance: {fileID: 367971613416181261}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &681820090101515789 stripped
+--- !u!114 &367971613416162355 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 895376273027663872, guid: 27f6f56a79bae2e4b8ada12c45a4bc54,
     type: 3}
@@ -3462,19 +3477,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e6c2140a449ad05499e326b07ec04ad3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!1 &681820089116516442 stripped
+--- !u!1 &367971613416180600 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 895376271810932311, guid: 27f6f56a79bae2e4b8ada12c45a4bc54,
     type: 3}
   m_PrefabInstance: {fileID: 367971613416181261}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &681820089254618574 stripped
+--- !u!1 &367971613416180606 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 895376271677483971, guid: 27f6f56a79bae2e4b8ada12c45a4bc54,
     type: 3}
   m_PrefabInstance: {fileID: 367971613416181261}
   m_PrefabAsset: {fileID: 0}
---- !u!224 &681820090101515794 stripped
+--- !u!224 &367971613416163798 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 895376273027663903, guid: 27f6f56a79bae2e4b8ada12c45a4bc54,
     type: 3}

@@ -27,6 +27,11 @@ public class PuppetSounds : CharacterSounds
     [FMODUnity.EventRef] public string s_UseMedkit;
 
     public Music music;
+
+    void Start()
+    {
+        music = GetComponent<Music>();
+    }
     
     public void Jump()
     {
