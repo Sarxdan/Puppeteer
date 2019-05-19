@@ -60,7 +60,7 @@ public class MatchTimer : NetworkBehaviour
 				Seconds = i;
 
 		//Loop while time is remaining
-		while (Minutes > 0 || Seconds > 0)
+		while (Minutes > 0 || Seconds >= 0)
 		{
 			string minutesString, secondsString;
 			if (Minutes > 10)

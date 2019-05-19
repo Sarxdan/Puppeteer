@@ -77,7 +77,7 @@ public class FinalRoomInteract : Interactable
 				minion.SetState(new ReturnToSpawnerState(minion));
 			}
 		}
-		var diffInWidth = (ProgressTransform.sizeDelta.x / TimeLeft);
+		var diffInWidth = (ProgressTransform.sizeDelta.x - 160 / TimeLeft);
 		while(true)
 		{
 			if (TimeLeft == 0)

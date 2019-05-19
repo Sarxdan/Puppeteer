@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using Mirror;
 
 /*
@@ -33,11 +34,16 @@ public class ReviveComponent : Interactable
     // Used for checking if a player is downed, variable is synced across all clients
     private HealthComponent healthComponent;
 
+    private RectTransform downedBar;
+
     void Start()
     {
         // register death action
         healthComponent = GetComponent<HealthComponent>();
+
         healthComponent.AddDeathAction(OnZeroHealth);
+
+        downedBar = GameObject.Find("DownedPanel").GetComponentInChildren<RectTransform>();
     }
 
     // An object has started to interact this object
@@ -88,19 +94,24 @@ public class ReviveComponent : Interactable
 
     private IEnumerator DeathRoutine()
     {
+        GameObject.Find("DownedPanel").SetActive(true);
+        downedBar.sizeDelta = new Vector2(550, downedBar.sizeDelta.y);
+        var diffInWidth = (downedBar.sizeDelta.x / DeathDelay);
         int time = 0;
         while(++time < DeathDelay)
         {
             if (healthComponent.Health != 0)
             {
                 // someone has revived!
+                GameObject.Find("DownedPanel").SetActive(false);
                 yield break;
             }
-
+            downedBar.sizeDelta = new Vector2(downedBar.sizeDelta.x - diffInWidth, downedBar.sizeDelta.y);
             yield return new WaitForSeconds(1);
         }
-		// TODO: perform death action across network
-		RpcStartSpectating(gameObject);
+        // TODO: perform death action across network
+        GameObject.Find("DownedPanel").SetActive(false);
+        RpcStartSpectating(gameObject);
         Destroy(gameObject);
     }
 
