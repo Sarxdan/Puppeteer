@@ -29,6 +29,7 @@ public class FinalRoomInteract : Interactable
 	public GameObject DoorToOpen;
 	public Image ProgressImage;
 	public RectTransform ProgressTransform;
+	public GameObject EndGameDisplay;
 
 	private float openAngle;
 	[SyncVar]
@@ -94,6 +95,10 @@ public class FinalRoomInteract : Interactable
 	[ClientRpc]
 	public void RpcShowProgress(Vector2 size)
 	{
+		if(EndGameDisplay == null)
+			EndGameDisplay = GameObject.Find("EndGameDisplay");
+		if(!EndGameDisplay.activeSelf)
+			EndGameDisplay.SetActive(true);
 		if (ProgressTransform == null)
 			ProgressTransform = GameObject.Find("ProgressBar").GetComponent<RectTransform>();
 		if (ProgressImage == null)
