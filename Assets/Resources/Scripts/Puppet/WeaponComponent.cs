@@ -61,6 +61,10 @@ public class WeaponComponent : Interactable
     public BulletTrail TrailObject;
     private Transform muzzlePoint;
 
+    //Splat particles
+
+    public WallSplat WallSplatObject;
+
     // time required before weapon is ready to fire (i.e gatling gun spinning up)
     [Range(0.0f, 4.0f)]
     public float ChargeTime;
@@ -141,7 +145,7 @@ public class WeaponComponent : Interactable
                 }
 				// create hit decal
 				decalHandler.AddDecal(Instantiate(HitDecals[Random.Range(0, HitDecals.Length)], hitInfo.point, Quaternion.FromToRotation(Vector3.forward, hitInfo.normal), hitInfo.transform));
-
+                Instantiate(WallSplatObject.gameObject, hitInfo.point, Quaternion.LookRotation(hitInfo.normal, Vector3.up));
                     
                 if(SpawnTrail)
                 {

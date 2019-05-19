@@ -66,7 +66,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   serverOnly: 0
   localPlayerAuthority: 0
-  m_AssetId: bf3f49f032856d145823954fa2677be6
+  m_AssetId: 704fc477692f6e941a90fc72b817e7f5
   m_SceneId: 0
 --- !u!114 &5880048625550611437
 MonoBehaviour:
@@ -97,6 +97,10 @@ MonoBehaviour:
   Spread: 0.02
   RecoilAmount: 1.4
   DamageDropoff: 0.6
+  SpawnTrail: 0
+  TrailObject: {fileID: 0}
+  WallSplatObject: {fileID: 7038216981833402508, guid: a861db92a1e214b47968bb1b68e57783,
+    type: 3}
   ChargeTime: 0
   HeadTransform: {fileID: 0}
   HoldRotation: {x: 0.841718, y: 0.1531711, z: 0.4977982, w: 0.1422896}
@@ -240,6 +244,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 5880048625550611442}
     m_Modifications:
+    - target: {fileID: -927199367670048503, guid: da3ed3cf060725442a5971c432a20d93,
+        type: 3}
+      propertyPath: m_Name
+      value: ST_Pistol_01
+      objectReference: {fileID: 0}
     - target: {fileID: -4216859302048453862, guid: da3ed3cf060725442a5971c432a20d93,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -304,11 +313,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalPosition.y
       value: 0.1433
-      objectReference: {fileID: 0}
-    - target: {fileID: -927199367670048503, guid: da3ed3cf060725442a5971c432a20d93,
-        type: 3}
-      propertyPath: m_Name
-      value: ST_Pistol_01
       objectReference: {fileID: 0}
     - target: {fileID: 528387169728820855, guid: da3ed3cf060725442a5971c432a20d93,
         type: 3}
