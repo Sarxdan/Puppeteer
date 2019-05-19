@@ -340,8 +340,8 @@ public class PlayerController : NetworkBehaviour
         {
             AnimController.SetBool("Sprint", true);
             isDown = true;
-            MovementSpeed = SprintSpeed;
-            AccelerationRate = SprintAcc;
+            MovementSpeed = SprintSpeed * MovementSpeedMod;
+            AccelerationRate = SprintAcc * MovementSpeedMod;
             CurrentStamina--;
             if (isDown == true && CurrentStamina > 0)
             {
