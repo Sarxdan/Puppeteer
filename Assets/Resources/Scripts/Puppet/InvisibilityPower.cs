@@ -17,6 +17,7 @@ public class InvisibilityPower : PowerupBase
 {
     [Tooltip("The container that contains all the meshes for the model")]
     public GameObject MeshContainer;
+    public GameObject FPVMeshContainer;
 
     //Set layer so the gameobject is invisible for the puppeteer and set the gameobject tag to something that is not player
     //so minions stop attacking you!
@@ -64,6 +65,11 @@ public class InvisibilityPower : PowerupBase
     {
         gameObject.layer = layer;
         foreach (Transform item in MeshContainer.transform)
+        {
+            item.gameObject.layer = layer;
+        }
+
+        foreach(Transform item in FPVMeshContainer.transform)
         {
             item.gameObject.layer = layer;
         }
