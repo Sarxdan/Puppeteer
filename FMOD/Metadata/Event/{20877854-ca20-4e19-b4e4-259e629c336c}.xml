@@ -95,6 +95,9 @@
 		</relationship>
 	</object>
 	<object class="EventMixerMaster" id="{aec7ec26-24bf-4d64-8b87-0069db514d47}">
+		<relationship name="modulators">
+			<destination>{4ab827c7-0786-4b90-9bd2-9ca43b28e68a}</destination>
+		</relationship>
 		<relationship name="effectChain">
 			<destination>{6fe7f273-0fba-4778-8ace-5a360f668c2f}</destination>
 		</relationship>
@@ -177,6 +180,9 @@
 		<property name="length">
 			<value>8.5</value>
 		</property>
+		<relationship name="modulators">
+			<destination>{4087f80e-5825-4ec7-ac86-564e0a3589fe}</destination>
+		</relationship>
 		<relationship name="event">
 			<destination>{bb592957-c12f-46f6-bb15-7a2a81a76b4a}</destination>
 		</relationship>
@@ -209,6 +215,20 @@
 			<destination>{7be7c6b6-c04a-4625-bc84-c64bdced5496}</destination>
 		</relationship>
 	</object>
+	<object class="ADSRModulator" id="{4ab827c7-0786-4b90-9bd2-9ca43b28e68a}">
+		<property name="nameOfPropertyBeingModulated">
+			<value>volume</value>
+		</property>
+		<property name="initialValue">
+			<value>-80</value>
+		</property>
+		<property name="attackTime">
+			<value>0</value>
+		</property>
+		<property name="finalValue">
+			<value>-80</value>
+		</property>
+	</object>
 	<object class="MixerBusEffectChain" id="{6fe7f273-0fba-4778-8ace-5a360f668c2f}">
 		<relationship name="effects">
 			<destination>{81723e85-4c52-4f61-9e8f-5f588bf3165e}</destination>
@@ -236,6 +256,17 @@
 		</relationship>
 	</object>
 	<object class="MixerBusPanner" id="{0cc215f2-cfe3-4f48-a68b-a8ce9ed4250c}" />
+	<object class="ADSRModulator" id="{4087f80e-5825-4ec7-ac86-564e0a3589fe}">
+		<property name="nameOfPropertyBeingModulated">
+			<value>intensity</value>
+		</property>
+		<property name="peakValue">
+			<value>100</value>
+		</property>
+		<property name="sustainValue">
+			<value>100</value>
+		</property>
+	</object>
 	<object class="MixerBusEffectChain" id="{9d4f4c4b-1993-410e-a5c6-9d6daa8ddb93}">
 		<relationship name="effects">
 			<destination>{4fc102b9-c6db-4e9b-9bf7-2253f2c63e7c}</destination>
