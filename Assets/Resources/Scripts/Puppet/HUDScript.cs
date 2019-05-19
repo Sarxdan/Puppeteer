@@ -36,8 +36,6 @@ public class HUDScript : NetworkBehaviour
     public RectTransform PowerUpFill;
     public Image PowerUpDisabled;
     public Image PowerUpEnabled;
-    // The text for the current ammo
-    public Text CurrentAmmo;
     //The health component to monitor
     private HealthComponent healthComponent;
     // Used to check is player has a med kit
@@ -46,6 +44,12 @@ public class HUDScript : NetworkBehaviour
     private PowerupBase powerUp;
     // The image that shows the progress of the current interaction
     public Image InteractionProgress;
+
+    //Reload vials
+    public RectTransform Vial1Mask;
+    public RectTransform Vial2Mask;
+    public RectTransform Vial3Mask;
+
 
     // Current health of the player
     private uint health;
@@ -139,7 +143,8 @@ public class HUDScript : NetworkBehaviour
 
         // Shows the current number of magazines depending on what weapon is currently equipped
         #region magazine counter 
-        if(playerController.CurrentWeapon != null)
+        // Code for old ammo system
+       /* if(playerController.CurrentWeapon != null)
         {
             // Calculated the number of magazine left
             float magazines = Mathf.Clamp(((float)playerController.Ammunition / (float)playerController.CurrentWeapon.GetComponent<WeaponComponent>().Capacity), 0, 999); 
@@ -156,7 +161,9 @@ public class HUDScript : NetworkBehaviour
             {
                 CurrentAmmo.text = "00" +  Mathf.FloorToInt(magazines).ToString();
             }
-        }
+        }*/
+        // Vial reload
+
         #endregion
     }
 
