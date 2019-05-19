@@ -186,6 +186,7 @@ public class WeaponComponent : Interactable
     {
         if(!CanReload()) return;
 
+        sounds.Reload();
         int amount = Mathf.Min(Capacity - LiquidLeft, liquidInput);
         liquidInput -= amount;
         LiquidLeft += amount;
