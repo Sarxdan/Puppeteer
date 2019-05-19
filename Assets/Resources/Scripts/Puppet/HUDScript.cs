@@ -46,10 +46,7 @@ public class HUDScript : NetworkBehaviour
     public Image InteractionProgress;
 
     //Reload vials
-    public RectTransform Vial1Mask;
-    public RectTransform Vial2Mask;
-    public RectTransform Vial3Mask;
-
+    public RectTransform[] VialMasks;
 
     // Current health of the player
     private uint health;
@@ -143,6 +140,29 @@ public class HUDScript : NetworkBehaviour
 
         // Shows the current number of magazines depending on what weapon is currently equipped
         #region magazine counter 
+
+        if (playerController.CurrentWeapon != null)
+        {
+            // Number off ful mags
+            int ammoLeft = playerController.Ammunition;
+            int capacity = playerController.CurrentWeapon.GetComponent<WeaponComponent>().Capacity;
+            //int wholeFullMags = playerController.Ammunition / playerController.CurrentWeapon.GetComponent<WeaponComponent>().Capacity;
+            //int restAmount = playerController.Ammunition % playerController.CurrentWeapon.GetComponent<WeaponComponent>().Capacity;
+
+            foreach (RectTransform vialMask in VialMasks)
+            {
+                if (ammoLeft >= capacity)
+                {
+                    vialMask.localScale = new Vector3(1, 1, 1);
+                    ammoLeft -= capacity;
+                }
+                else
+                {
+                    vialMask.localScale = new Vector3(1, (float)ammoLeft / capacity, 1);
+                    ammoLeft = 0;
+                }
+            }
+        }
         // Code for old ammo system
        /* if(playerController.CurrentWeapon != null)
         {
