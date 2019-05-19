@@ -48,6 +48,7 @@ GameObject:
   - component: {fileID: 8017574264632301460}
   - component: {fileID: 1934718475342239326}
   - component: {fileID: 425798708868083175}
+  - component: {fileID: -3365314886708241521}
   m_Layer: 0
   m_Name: Chandelier
   m_TagString: Untagged
@@ -163,7 +164,7 @@ MonoBehaviour:
   serverOnly: 0
   localPlayerAuthority: 0
   m_AssetId: 
-  m_SceneId: 0
+  m_SceneId: 818507537
 --- !u!114 &1934718475342239326
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -198,6 +199,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   s_Activate: event:/Traps/Chandelier
+--- !u!114 &-3365314886708241521
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2046261812361734448}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1f5b20ab626e9bb479736c392394fc8c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  s_Pickup: event:/Puppeteer/Traps/Beartrap pickup
+  s_Place: event:/Puppeteer/Traps/Beartrap place
 --- !u!1 &2588415746424615327
 GameObject:
   m_ObjectHideFlags: 0

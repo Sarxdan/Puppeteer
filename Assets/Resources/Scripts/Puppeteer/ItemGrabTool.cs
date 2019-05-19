@@ -169,8 +169,10 @@ public class ItemGrabTool : NetworkBehaviour
 		sourceObject.name = "sourceObject";
 		sourceObject.transform.position = new Vector3(0, -100, 0);
 
-		// Instansiate the floating object
-		selectedObject = Instantiate(sourceObject);
+        sourceObject.GetComponentInChildren<PuppeteerItemSounds>().Pickup();
+
+        // Instansiate the floating object
+        selectedObject = Instantiate(sourceObject);
 
 		Vector3 mousePos = Input.mousePosition;
 		mousePos.z = Camera.main.WorldToScreenPoint(new Vector3(0, LiftHeight, 0)).z;
@@ -245,6 +247,7 @@ public class ItemGrabTool : NetworkBehaviour
             guideObject = Instantiate(Tank);
 			guideObject.transform.position = new Vector3(0,-100,0);
         }
+        
 		// Relay to all clients what object is picked up.
 		RpcPickUp(pickupTrapName);
 	}
@@ -340,7 +343,9 @@ public class ItemGrabTool : NetworkBehaviour
 		{
 			currency.CurrentCurrency = currency.CurrentCurrency - cost;
 
-			guideObject.name = "Placed Trap";
+            guideObject.GetComponentInChildren<PuppeteerItemSounds>().Place();
+
+            guideObject.name = "Placed Trap";
 			// sets the parent on server.
 			CmdSetParent(bestDstPoint.GetComponentInParent<NetworkIdentity>().gameObject);
 			guideObject.transform.position -= previewLiftVector;
