@@ -44,8 +44,7 @@ public class FinalRoomInteract : Interactable
         if (!ButtonPressed)
         {
 		    DoorToOpen = GameObject.Find("ST_Final_DoorFrame_03");
-		    ProgressTransform = GameObject.Find("ProgressBar").GetComponent<RectTransform>();
-		    GameObject.Find("ProgressBar").GetComponent<Image>().enabled = true;
+            ProgressTransform = GameObject.Find("ProgressBar").GetComponent<RectTransform>();
 		    StartCoroutine("FinalCountDown");
             ButtonPressed = true;
         }
