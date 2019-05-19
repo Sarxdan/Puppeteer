@@ -14,9 +14,9 @@ using Mirror;
  * CODE REVIEWED BY:
  * Benjamin Vesterlund
  * 
- * 
  * CONTRIBUTORS:
  * Kristoffer Lundgren
+ * Ludvig Björk Förare (Reload animation, gatling gun spin, bullet effects)
  */
 public class WeaponComponent : Interactable
 {
@@ -76,6 +76,8 @@ public class WeaponComponent : Interactable
     //For hold animation
     public int AnimationIndex;
 
+    public GatlingGunAnimator GatlingAnimator;
+
 	public GameObject[] HitDecals;
 
     //Time left until weapon can be used again
@@ -100,6 +102,7 @@ public class WeaponComponent : Interactable
         muzzlePoint = transform.Find("MuzzlePoint");
 	}
 
+
 	//Attemps to fire the weapon
 	public void Use()
     {
@@ -108,6 +111,7 @@ public class WeaponComponent : Interactable
         isHeld = true;
 
         charge = Mathf.Min(charge + Time.deltaTime, ChargeTime);
+
 
         if (reloading || charge < ChargeTime || cooldown > 0)
         {
@@ -226,6 +230,15 @@ public class WeaponComponent : Interactable
 
             HeadTransform.localEulerAngles = rotation;
             rotation.y = 180.0f;
+        }
+        
+        if(GatlingAnimator != null)
+        {
+            if(reloading) 
+                GatlingAnimator.CurrentSpeed = 0;
+            else
+                GatlingAnimator.CurrentSpeed = charge/ChargeTime;
+
         }
     }
 
