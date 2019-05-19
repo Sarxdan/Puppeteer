@@ -18,6 +18,8 @@ using UnityEngine;
 
 public class FinalDoorInteractable : Interactable
 {
+    public Music music;
+
 	// only runs on server.
 	public override void OnInteractBegin(GameObject interactor)
 	{
@@ -28,7 +30,7 @@ public class FinalDoorInteractable : Interactable
 		{
             GameObject.Find("GameTimer").GetComponent<MatchTimer>().PuppetEscaped();
             Debug.Log("Interacting when door open.");
-			RpcTurnOff(interactor);
+            RpcTurnOff(interactor);
 			Destroy(interactor);
 		}
 	}
@@ -52,7 +54,8 @@ public class FinalDoorInteractable : Interactable
 	{
 		if (interactor.GetComponent<InteractionController>().isLocalPlayer)
 		{
-			var canvas = GameObject.FindObjectOfType<Spectator>().gameObject;
+            music.Escaped();
+            var canvas = GameObject.FindObjectOfType<Spectator>().gameObject;
 			canvas.GetComponent<Spectator>().SpectatorScreen.SetActive(true);
 			canvas.GetComponent<Spectator>().StartSpectating();
 		}
