@@ -2053,7 +2053,7 @@ MonoBehaviour:
   - {fileID: 4613968468419709114}
   - {fileID: 5504832617588455139}
   - {fileID: 1506945075332269099}
-  - {fileID: 5504832617583026132}
+  - {fileID: 0}
   - {fileID: 672066570212643218}
   - {fileID: 8763825384932027043}
   - {fileID: 1116959397860838576}
@@ -2081,9 +2081,10 @@ MonoBehaviour:
   PowerUpDisabled: {fileID: 1664236469702523670}
   PowerUpEnabled: {fileID: 5504832618882769817}
   InteractionProgress: {fileID: 8321978022312282578}
-  Vial1Mask: {fileID: 1464062136506580132}
-  Vial2Mask: {fileID: 4811510309668604007}
-  Vial3Mask: {fileID: 2080770697148113127}
+  VialMasks:
+  - {fileID: 1464062136506580132}
+  - {fileID: 4811510309668604007}
+  - {fileID: 2080770697148113127}
   HealthBarSpeed: 2
   StaminaBarSpeed: 0.8
 --- !u!114 &5877661781441777781
@@ -4709,6 +4710,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: PuppetCanvas
       objectReference: {fileID: 0}
+    - target: {fileID: 895376273027663902, guid: 27f6f56a79bae2e4b8ada12c45a4bc54,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 895376273027663872, guid: 27f6f56a79bae2e4b8ada12c45a4bc54,
         type: 3}
       propertyPath: Owner
@@ -4772,22 +4778,22 @@ PrefabInstance:
     - target: {fileID: 895376273027663903, guid: 27f6f56a79bae2e4b8ada12c45a4bc54,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: -102.573395
+      value: 50.426613
       objectReference: {fileID: 0}
     - target: {fileID: 895376273027663903, guid: 27f6f56a79bae2e4b8ada12c45a4bc54,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -6.485077
+      value: 49.014923
       objectReference: {fileID: 0}
     - target: {fileID: 895376273027663903, guid: 27f6f56a79bae2e4b8ada12c45a4bc54,
         type: 3}
       propertyPath: m_SizeDelta.x
-      value: 640
+      value: 1066.474
       objectReference: {fileID: 0}
     - target: {fileID: 895376273027663903, guid: 27f6f56a79bae2e4b8ada12c45a4bc54,
         type: 3}
       propertyPath: m_SizeDelta.y
-      value: 480
+      value: 600
       objectReference: {fileID: 0}
     - target: {fileID: 895376273027663903, guid: 27f6f56a79bae2e4b8ada12c45a4bc54,
         type: 3}
@@ -4819,6 +4825,21 @@ PrefabInstance:
       propertyPath: m_Pivot.y
       value: 0.5
       objectReference: {fileID: 0}
+    - target: {fileID: 895376273027663903, guid: 27f6f56a79bae2e4b8ada12c45a4bc54,
+        type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1.1533333
+      objectReference: {fileID: 0}
+    - target: {fileID: 895376273027663903, guid: 27f6f56a79bae2e4b8ada12c45a4bc54,
+        type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1.1533333
+      objectReference: {fileID: 0}
+    - target: {fileID: 895376273027663903, guid: 27f6f56a79bae2e4b8ada12c45a4bc54,
+        type: 3}
+      propertyPath: m_LocalScale.z
+      value: 1.1533333
+      objectReference: {fileID: 0}
     - target: {fileID: 895376271672357971, guid: 27f6f56a79bae2e4b8ada12c45a4bc54,
         type: 3}
       propertyPath: m_Sprite
@@ -4833,12 +4854,6 @@ PrefabInstance:
         type: 3}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 27f6f56a79bae2e4b8ada12c45a4bc54, type: 3}
---- !u!223 &5504832617583026132 stripped
-Canvas:
-  m_CorrespondingSourceObject: {fileID: 895376273027663902, guid: 27f6f56a79bae2e4b8ada12c45a4bc54,
-    type: 3}
-  m_PrefabInstance: {fileID: 4613968469160204234}
-  m_PrefabAsset: {fileID: 0}
 --- !u!114 &5504832617588455139 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 895376273033027881, guid: 27f6f56a79bae2e4b8ada12c45a4bc54,
