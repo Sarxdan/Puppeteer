@@ -1609,6 +1609,7 @@ GameObject:
   - component: {fileID: -8315978949328687986}
   - component: {fileID: 7054860906051087702}
   - component: {fileID: 2428568197462995401}
+  - component: {fileID: -2482648877553790597}
   m_Layer: 0
   m_Name: Gekko
   m_TagString: Player
@@ -1733,8 +1734,7 @@ MonoBehaviour:
   Ammunition: 100000
   CanShoot: 1
   CurrentWeaponComponent: {fileID: 0}
-  HandTransform: {fileID: 7360517884381538474}
-  FPVHandTransform: {fileID: 0}
+  FullBody: {fileID: 0}
   FPVArms: {fileID: 0}
   reloadContainer: {fileID: 0}
   CurrentLiquidPerRound: 0
@@ -1774,7 +1774,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   serverOnly: 0
   localPlayerAuthority: 1
-  m_AssetId: 18006152eb307d442af001b679082d28
+  m_AssetId: f383bf0bef98ddf488cdb51ea4e15620
   m_SceneId: 0
 --- !u!114 &7360517884129133002
 MonoBehaviour:
@@ -1869,6 +1869,7 @@ MonoBehaviour:
   syncInterval: 0.1
   Duration: 15
   Charged: 1
+  sounds: {fileID: 0}
   MeshContainer: {fileID: 7360517884381967574}
 --- !u!114 &-8315978949328687986
 MonoBehaviour:
@@ -1918,6 +1919,19 @@ MonoBehaviour:
   MaxDecalAmount: 50
   DecalDecay: 1
   DecayTime: 10
+--- !u!114 &-2482648877553790597
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7360517884381967562}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5040f79540b2e1c48870f93daa49b7dc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  PowerUp: event:/Character/Powerup
 --- !u!1 &7360517884381967564
 GameObject:
   m_ObjectHideFlags: 0
@@ -3308,6 +3322,11 @@ PrefabInstance:
       propertyPath: m_Material
       value: 
       objectReference: {fileID: 0}
+    - target: {fileID: 895376271274951128, guid: 27f6f56a79bae2e4b8ada12c45a4bc54,
+        type: 3}
+      propertyPath: m_Material
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 895376271264187001, guid: 27f6f56a79bae2e4b8ada12c45a4bc54,
         type: 3}
       propertyPath: m_Material
@@ -3368,32 +3387,12 @@ PrefabInstance:
       propertyPath: m_Material
       value: 
       objectReference: {fileID: 0}
-    - target: {fileID: 895376271274951128, guid: 27f6f56a79bae2e4b8ada12c45a4bc54,
-        type: 3}
-      propertyPath: m_Material
-      value: 
-      objectReference: {fileID: 0}
     - target: {fileID: 895376271855244963, guid: 27f6f56a79bae2e4b8ada12c45a4bc54,
         type: 3}
       propertyPath: m_Material
       value: 
       objectReference: {fileID: 0}
     - target: {fileID: 895376271726232750, guid: 27f6f56a79bae2e4b8ada12c45a4bc54,
-        type: 3}
-      propertyPath: m_Material
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 895376271649585429, guid: 27f6f56a79bae2e4b8ada12c45a4bc54,
-        type: 3}
-      propertyPath: m_Material
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 895376272434226664, guid: 27f6f56a79bae2e4b8ada12c45a4bc54,
-        type: 3}
-      propertyPath: m_Material
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 895376272315383792, guid: 27f6f56a79bae2e4b8ada12c45a4bc54,
         type: 3}
       propertyPath: m_Material
       value: 
@@ -3409,6 +3408,21 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 0}
     - target: {fileID: 895376272745486809, guid: 27f6f56a79bae2e4b8ada12c45a4bc54,
+        type: 3}
+      propertyPath: m_Material
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 895376271649585429, guid: 27f6f56a79bae2e4b8ada12c45a4bc54,
+        type: 3}
+      propertyPath: m_Material
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 895376272434226664, guid: 27f6f56a79bae2e4b8ada12c45a4bc54,
+        type: 3}
+      propertyPath: m_Material
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 895376272315383792, guid: 27f6f56a79bae2e4b8ada12c45a4bc54,
         type: 3}
       propertyPath: m_Material
       value: 
