@@ -28,13 +28,9 @@ public class FakeItemSpawner : NetworkBehaviour
     //Spawn is a modified Update with a set amount of time (SpawnRate) between runs
     public void Update()
     { 
-        
         if(snapFunctionality.Placed)
         {
-            if(!isServer){
-                Destroy(gameObject);
-                return;
-            }
+            if(!isServer) return;
             //If not then create a GameObject from attached prefab at the spawners position and make them children of the "folder" created earlier
             if(Physics.Raycast(transform.position, Vector3.down, out RaycastHit hit) && hit.transform.GetComponentInParent<NavMesh>() != null)
             {

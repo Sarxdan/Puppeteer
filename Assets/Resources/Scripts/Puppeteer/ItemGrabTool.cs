@@ -230,7 +230,7 @@ public class ItemGrabTool : NetworkBehaviour
 			guideObject = Instantiate(SpikeTrapRoof);
 			guideObject.transform.position = new Vector3(0,-100,0);
 		}
-		else if (pickupTrapName == "Fake Item")
+		else if (pickupTrapName == "Fake item spawner")
 		{
 			guideObject = Instantiate(FakeItem);
 			guideObject.transform.position = new Vector3(0,-100,0);
@@ -282,7 +282,7 @@ public class ItemGrabTool : NetworkBehaviour
 		{
 			guideObject = Instantiate(SpikeTrapRoof);
 		}
-		else if (pickupTrapName == "Fake Item")
+		else if (pickupTrapName == "Fake item spawner")
 		{
 			guideObject = Instantiate(FakeItem);
 		}
