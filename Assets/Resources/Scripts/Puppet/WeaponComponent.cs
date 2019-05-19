@@ -37,6 +37,7 @@ public class WeaponComponent : Interactable
     [HideInInspector]
 	public FluidSimulation LiquidScript;
 
+
     private PlayerController user;
 
     //Weapon attributes
@@ -53,6 +54,12 @@ public class WeaponComponent : Interactable
     public float RecoilAmount;
     [Range(0.0f, 1.0f)]
     public float DamageDropoff;
+
+    //Flash and trail
+    private MuzzleFlash muzzleFlash;
+    public bool SpawnTrail;
+    public BulletTrail TrailObject;
+    private Transform muzzlePoint;
 
     // time required before weapon is ready to fire (i.e gatling gun spinning up)
     [Range(0.0f, 4.0f)]
@@ -83,8 +90,10 @@ public class WeaponComponent : Interactable
 	public void Start()
 	{
 		sounds = GetComponent<WeaponSounds>();
+        muzzleFlash = GetComponentInChildren<MuzzleFlash>();
         ShowMagazine();
         reloading = false;
+        muzzlePoint = transform.Find("MuzzlePoint");
 	}
 
 	//Attemps to fire the weapon
@@ -111,6 +120,8 @@ public class WeaponComponent : Interactable
 
         PlayerController pc = GetComponentInParent<PlayerController>();
         DecalHandler decalHandler = pc.GetComponent<DecalHandler>();
+
+        muzzleFlash.Fire();
         
         for(int i = 0; i < NumShots; i++)
         {
@@ -130,6 +141,13 @@ public class WeaponComponent : Interactable
                 }
 				// create hit decal
 				decalHandler.AddDecal(Instantiate(HitDecals[Random.Range(0, HitDecals.Length)], hitInfo.point, Quaternion.FromToRotation(Vector3.forward, hitInfo.normal), hitInfo.transform));
+
+                    
+                if(SpawnTrail)
+                {
+                    BulletTrail spawnedTrail = Instantiate(TrailObject.gameObject, muzzlePoint.position, muzzlePoint.rotation).GetComponent<BulletTrail>();
+                    spawnedTrail.hit(hitInfo.point);
+                }
 
                 Debug.DrawRay(hitInfo.point, hitInfo.normal, Color.black, 1.0f);
                 Debug.DrawRay(transform.position, -transform.forward * 100.0f, Color.red, 0.2f);
