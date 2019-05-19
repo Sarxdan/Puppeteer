@@ -42,7 +42,8 @@ public class BasicTrap : TrapComponent
     {
         foreach (GameObject puppet in Puppets)
         {
-            puppet.GetComponent<HealthComponent>().Damage(Damage);
+            if (isServer)
+                puppet.GetComponent<HealthComponent>().Damage(Damage);
         }
 
         StartCoroutine("StunPuppet");
