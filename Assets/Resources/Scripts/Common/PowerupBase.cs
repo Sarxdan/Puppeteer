@@ -67,9 +67,9 @@ public abstract class PowerupBase : NetworkBehaviour
         }
 
         // deactivate power
+        sounds.PowerUpEnd();
         timeLeft = Duration;
         this.OnComplete();
-        sounds.PowerUpEnd();
     }
     
     // called once when the powerup is activated

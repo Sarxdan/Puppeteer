@@ -17,6 +17,6 @@ public class PowerUpSounds : MonoBehaviour
 
     public void PowerUpEnd()
     {
-    power.release();
+        power.release();
     }
 }
