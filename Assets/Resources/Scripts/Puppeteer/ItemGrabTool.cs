@@ -76,7 +76,7 @@ public class ItemGrabTool : NetworkBehaviour
 	// Sets pricetag to correct value att start of scene.
 	void SetPrices()
 	{
-		ButtonBearTrap.GetComponentInChildren<Text>().text = BearTrap.GetComponent<SnapFunctionality>().Cost.ToString();
+		ButtonBearTrap.GetComponentInChildren<Text>().text = BearTrap.GetComponent<SnapFunctionality>().Cost.ToString() + "$";
 		ButtonSpikeTrap.GetComponentInChildren<Text>().text = SpikeTrapFloor.GetComponent<SnapFunctionality>().Cost.ToString();
 		ButtonChandelier.GetComponentInChildren<Text>().text = Chandelier.GetComponent<SnapFunctionality>().Cost.ToString();
 		ButtonFakeItem.GetComponentInChildren<Text>().text = FakeItem.GetComponent<SnapFunctionality>().Cost.ToString();
