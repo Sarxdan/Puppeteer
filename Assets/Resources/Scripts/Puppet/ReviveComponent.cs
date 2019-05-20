@@ -213,7 +213,7 @@ public class ReviveComponent : Interactable
             hudScript.ScaleInteractionProgress(scale);
         }
     }
-    // (KL) Remove the medket when a revive is complete
+    // (KL) Remove the medkit when a revive is complete
     [ClientRpc]
     public void RpcRemoveMedkit(GameObject interactor)
     {

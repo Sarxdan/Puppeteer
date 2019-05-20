@@ -28,7 +28,6 @@ public class BearTrap : TrapComponent
 
     public void FixedUpdate()
     {
-        Debug.Log(Puppets[0]);
         if(Target != null)
         {
             Target.transform.position = Vector3.Lerp(Target.transform.position, transform.position, 0.5f);
