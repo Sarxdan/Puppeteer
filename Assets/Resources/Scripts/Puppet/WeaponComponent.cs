@@ -147,8 +147,8 @@ public class WeaponComponent : Interactable
                     health.Damage(damage);
                 }
 				// create hit decal
-				decalHandler.AddDecal(Instantiate(HitDecals[Random.Range(0, HitDecals.Length)], hitInfo.point, Quaternion.FromToRotation(Vector3.forward, hitInfo.normal), hitInfo.transform));
-                Instantiate(WallSplatObject.gameObject, hitInfo.point, Quaternion.LookRotation(hitInfo.normal, Vector3.up));
+				//decalHandler.AddDecal(Instantiate(HitDecals[Random.Range(0, HitDecals.Length)], hitInfo.point, Quaternion.FromToRotation(Vector3.forward, hitInfo.normal), hitInfo.transform));
+                Instantiate(WallSplatObject.gameObject, hitInfo.point, Quaternion.LookRotation(hitInfo.normal, Vector3.up), hitInfo.transform);
                     
                 if(SpawnTrail)
                 {
