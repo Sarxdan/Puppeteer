@@ -117,6 +117,10 @@ public class ReviveComponent : Interactable
     private IEnumerator DeathRoutine()
     {
         int time = 0;
+        MatchTimer matchTimer = FindObjectOfType<MatchTimer>();
+        if (matchTimer.numberOfPuppetsAlive == 1)
+            DeathDelay = 3;
+
         while(++time < DeathDelay)
         {
             if (healthComponent.Health != 0)
