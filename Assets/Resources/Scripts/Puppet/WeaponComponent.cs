@@ -242,13 +242,6 @@ public class WeaponComponent : Interactable
         }
     }
 
-    private void OnGUI()
-    {
-        // temporary crosshair 
-        GUI.Box(new Rect(Screen.width * 0.5f - 5, Screen.height * 0.5f - 5, 10, 10), "");
-    }
-
-
     public override void OnInteractBegin(GameObject interactor)
     {
 
