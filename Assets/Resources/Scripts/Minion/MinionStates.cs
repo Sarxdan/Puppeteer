@@ -353,6 +353,9 @@ namespace MinionStates
             //If the target has no healt remove it from TargetEntity
             if (machine.TargetEntity.Health <= 0) machine.TargetEntity = null;
 
+            //If the target somehow changes tag remove them from TargetEntity
+            if (machine.TargetEntity.tag == "Untagged" && machine.TargetEntity.name == "Gekko(Clone)") machine.TargetEntity = null;
+
             //If no target, go idle
             if (machine.TargetEntity == null) machine.SetState(new IdleState(machine));
 

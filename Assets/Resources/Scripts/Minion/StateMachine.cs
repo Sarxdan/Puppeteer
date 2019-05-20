@@ -43,7 +43,7 @@ public class StateMachine : NetworkBehaviour
     //References
     [HideInInspector]
     public EnemySpawner Spawner;
-    [HideInInspector]
+    //[HideInInspector]
     public HealthComponent TargetEntity;
     [HideInInspector]
     public Animator AnimController;
