@@ -28,7 +28,6 @@ public class FinalRoomInteract : Interactable
 	public float RotationSpeed;
 	public GameObject DoorToOpen;
 	private GameObject endGameDisplay;
-	public Image ProgressImage;
 	public RectTransform ProgressTransform;
 
 	private float openAngle;
@@ -85,7 +84,7 @@ public class FinalRoomInteract : Interactable
 				minion.SetState(new ReturnToSpawnerState(minion));
 			}
 		}
-		var diffInWidth = (ProgressTransform.sizeDelta.x - 160 / TimeLeft);
+		var diffInWidth = ((ProgressTransform.sizeDelta.x - 160) / TimeLeft);
 		while(true)
 		{
 			if (TimeLeft == 0)
@@ -96,6 +95,7 @@ public class FinalRoomInteract : Interactable
 			}
 			TimeLeft--;
 			RpcShowProgress(new Vector2(ProgressTransform.sizeDelta.x - diffInWidth, ProgressTransform.sizeDelta.y));
+
 			yield return new WaitForSeconds(1);
 		}
 	}
@@ -103,12 +103,10 @@ public class FinalRoomInteract : Interactable
 	[ClientRpc]
 	public void RpcShowProgress(Vector2 size)
 	{
+		if (!endGameDisplay.activeInHierarchy)
+			endGameDisplay.SetActive(true);
 		if (ProgressTransform == null)
 			ProgressTransform = GameObject.Find("ProgressBar").GetComponent<RectTransform>();
-		if (ProgressImage == null)
-			ProgressImage = GameObject.Find("ProgressBar").GetComponent<Image>();
-		if (!ProgressImage.enabled)
-			ProgressImage.enabled = true;
 
 		ProgressTransform.sizeDelta = size;
 	}
@@ -118,7 +116,7 @@ public class FinalRoomInteract : Interactable
 	{
 		if (DoorToOpen == null)
 		{
-			DoorToOpen = GameObject.Find("ST_Final_DoorFrame_03");
+			DoorToOpen = GameObject.Find("ST_Final_Door_01 (1)");
 		}
 		openAngle = DoorToOpen.transform.eulerAngles.y + 13;
 		while (true)
