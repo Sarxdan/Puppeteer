@@ -20,13 +20,15 @@ public class StaminaPower : PowerupBase
     {
         var player = GetComponent<PlayerController>();
         player.CurrentStamina = Mathf.Infinity;
-        player.MovementSpeedMod = this.SpeedModifier;
+        player.SprintAcc *= this.SpeedModifier;
+        player.SprintSpeed *= this.SpeedModifier;
     }
 
     public override void OnComplete()
     {
         var player = GetComponent<PlayerController>();
         player.CurrentStamina = player.MaxStamina;
-        player.MovementSpeedMod = 1.0f;
+        player.SprintAcc /= this.SpeedModifier;
+        player.SprintSpeed /= this.SpeedModifier;
     }
 }
