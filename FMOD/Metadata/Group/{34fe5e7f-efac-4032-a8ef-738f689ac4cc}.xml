@@ -2,7 +2,7 @@
 <objects serializationModel="Studio.02.00.00">
 	<object class="MixerGroup" id="{34fe5e7f-efac-4032-a8ef-738f689ac4cc}">
 		<property name="name">
-			<value>Minions</value>
+			<value>Minions VO</value>
 		</property>
 		<relationship name="effectChain">
 			<destination>{dc1e4965-88f9-4bb1-ba32-e4228137cddc}</destination>
@@ -11,28 +11,16 @@
 			<destination>{7e5030e1-90b6-4b02-8a71-c36cb0aebf3d}</destination>
 		</relationship>
 		<relationship name="output">
-			<destination>{1c998a90-c53a-48f1-a70b-73a76d3c2b3f}</destination>
+			<destination>{cafa269c-affc-43de-8478-b41cb6559179}</destination>
 		</relationship>
 	</object>
 	<object class="MixerBusEffectChain" id="{dc1e4965-88f9-4bb1-ba32-e4228137cddc}">
 		<relationship name="effects">
 			<destination>{81d2e430-1405-430d-b52e-9dc4cc8e10e7}</destination>
 			<destination>{123528a7-572f-48b0-a9d1-fc2b7980ee56}</destination>
-			<destination>{60c045c0-46c6-4a4e-95e2-2cf1463ce5c5}</destination>
 		</relationship>
 	</object>
 	<object class="MixerBusPanner" id="{7e5030e1-90b6-4b02-8a71-c36cb0aebf3d}" />
 	<object class="MixerBusFader" id="{81d2e430-1405-430d-b52e-9dc4cc8e10e7}" />
 	<object class="Sidechain" id="{123528a7-572f-48b0-a9d1-fc2b7980ee56}" />
-	<object class="MixerSend" id="{60c045c0-46c6-4a4e-95e2-2cf1463ce5c5}">
-		<property name="level">
-			<value>0</value>
-		</property>
-		<property name="inputFormat">
-			<value>2</value>
-		</property>
-		<relationship name="mixerReturn">
-			<destination>{62132562-1dea-4e31-b005-242056322e48}</destination>
-		</relationship>
-	</object>
 </objects>

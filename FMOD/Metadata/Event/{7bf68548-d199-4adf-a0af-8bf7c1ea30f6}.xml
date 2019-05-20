@@ -53,10 +53,17 @@
 			<destination>{9049d212-b278-44ae-93cb-3cacb7255a16}</destination>
 		</relationship>
 		<relationship name="output">
-			<destination>{0f244c97-2fad-4832-826d-94f1a476123e}</destination>
+			<destination>{672b0023-5583-417e-91a9-7abc706e96d7}</destination>
 		</relationship>
 	</object>
-	<object class="EventAutomatableProperties" id="{ee0b45cc-ec6b-40bd-8d81-dc6e92557d5d}" />
+	<object class="EventAutomatableProperties" id="{ee0b45cc-ec6b-40bd-8d81-dc6e92557d5d}">
+		<property name="maxVoices">
+			<value>4</value>
+		</property>
+		<property name="triggerCooldown">
+			<value>220</value>
+		</property>
+	</object>
 	<object class="MarkerTrack" id="{7a954660-7547-47ca-9d82-26de74cfcb9b}" />
 	<object class="GroupTrack" id="{7dc98a2b-88f8-4ecb-849e-0f84d4859b48}">
 		<relationship name="modules">
@@ -72,6 +79,9 @@
 		</relationship>
 	</object>
 	<object class="EventMixerMaster" id="{65841ad2-fe8d-4951-9d02-2d1342fea2f8}">
+		<property name="volume">
+			<value>-6.5</value>
+		</property>
 		<relationship name="effectChain">
 			<destination>{fa144fd7-1871-4e97-9e2c-266bfd5eba86}</destination>
 		</relationship>
@@ -87,7 +97,11 @@
 			<destination>{62c4bc2d-5331-415b-a589-2f973171a226}</destination>
 		</relationship>
 	</object>
-	<object class="MixerBusPanner" id="{9049d212-b278-44ae-93cb-3cacb7255a16}" />
+	<object class="MixerBusPanner" id="{9049d212-b278-44ae-93cb-3cacb7255a16}">
+		<property name="surroundPanExtent">
+			<value>0</value>
+		</property>
+	</object>
 	<object class="SingleSound" id="{e33db4c4-c6db-4cd8-b5ec-4e95b98648d0}">
 		<property name="length">
 			<value>1.8931972789115645</value>
@@ -116,7 +130,11 @@
 			<destination>{73264319-0562-4de6-a68a-42f294b50efe}</destination>
 		</relationship>
 	</object>
-	<object class="MixerBusPanner" id="{f25c5102-22f2-4206-93d4-8076133ed975}" />
+	<object class="MixerBusPanner" id="{f25c5102-22f2-4206-93d4-8076133ed975}">
+		<property name="surroundPanExtent">
+			<value>0</value>
+		</property>
+	</object>
 	<object class="MixerBusFader" id="{62c4bc2d-5331-415b-a589-2f973171a226}" />
 	<object class="MixerBusEffectChain" id="{24a54cbf-0c48-4392-af4c-c8e07e96d593}">
 		<relationship name="effects">
