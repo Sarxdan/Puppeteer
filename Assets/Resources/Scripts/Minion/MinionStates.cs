@@ -107,7 +107,7 @@ namespace MinionStates
         }
     }
 
-    //-------------------------------------------------------------
+    //---------------------------------------------------------------------------------
 
     public class ReturnToSpawnerState : State
     {
@@ -170,7 +170,7 @@ namespace MinionStates
 
     }
 
-    //-------------------------------------------------------------
+    //---------------------------------------------------------------------------------
 
     public class WanderState : State
     {
@@ -214,7 +214,7 @@ namespace MinionStates
         }
     }
 
-    //-------------------------------------------------------------
+    //---------------------------------------------------------------------------------
 
     public class SeekState : State
     {
@@ -315,7 +315,6 @@ namespace MinionStates
             {
                 machine.SetState(new WanderState(machine));
             }
-            
             this.lastTime = Time.time;
         }
 
@@ -350,7 +349,7 @@ namespace MinionStates
 
             machine.ChargeCharge++;
 
-            //If the target has no healt remove it from TargetEntity
+            //If the target has no health remove it from TargetEntity
             if (machine.TargetEntity.Health <= 0) machine.TargetEntity = null;
 
             //If the target somehow changes tag remove them from TargetEntity
@@ -398,6 +397,7 @@ namespace MinionStates
         }
     }
 
+    //---------------------------------------------------------------------------------
     public class ChargeAttackState : State
     {
         private StateMachine machine;
@@ -447,8 +447,8 @@ namespace MinionStates
         public override void Exit()
         {
             //TODO: fix so it works for tank model and size
-            machine.PathFinder.RotationSpeed = 20;
-            machine.PathFinder.NodeArrivalMargin = 0.5f;
+            machine.PathFinder.RotationSpeed = 15;
+            machine.PathFinder.NodeArrivalMargin = 0.6f;
             machine.AnimController.SetBool("IsCharging", false);
         }
     }
