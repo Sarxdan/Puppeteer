@@ -149,6 +149,7 @@ MonoBehaviour:
   m_Script: {fileID: 763001362}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_Entries: []
 --- !u!4 &85896834
 Transform:
   m_ObjectHideFlags: 19
@@ -266,6 +267,7 @@ MonoBehaviour:
   m_Script: {fileID: 763001362}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_Entries: []
 --- !u!4 &227577105
 Transform:
   m_ObjectHideFlags: 19
@@ -309,6 +311,7 @@ MonoBehaviour:
   m_Script: {fileID: 763001362}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_Entries: []
 --- !u!4 &242613220
 Transform:
   m_ObjectHideFlags: 19
@@ -475,6 +478,11 @@ PrefabInstance:
       propertyPath: m_BoundingSphereOverride.x
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8965281744521687799, guid: aee12e6cc9c1138479d32960cc4c155a,
+        type: 3}
+      propertyPath: m_SceneId
+      value: 916460106
+      objectReference: {fileID: 0}
     - target: {fileID: 1567466135303660799, guid: aee12e6cc9c1138479d32960cc4c155a,
         type: 3}
       propertyPath: m_BoundingSphereOverride.x
@@ -530,15 +538,15 @@ PrefabInstance:
       propertyPath: m_BoundingSphereOverride.w
       value: 1.02e-43
       objectReference: {fileID: 0}
-    - target: {fileID: 8965281744521661445, guid: aee12e6cc9c1138479d32960cc4c155a,
-        type: 3}
-      propertyPath: m_SceneId
-      value: 208271634
-      objectReference: {fileID: 0}
     - target: {fileID: 5464911013542377315, guid: aee12e6cc9c1138479d32960cc4c155a,
         type: 3}
       propertyPath: m_SceneId
       value: 299976229
+      objectReference: {fileID: 0}
+    - target: {fileID: 8965281744521661445, guid: aee12e6cc9c1138479d32960cc4c155a,
+        type: 3}
+      propertyPath: m_SceneId
+      value: 208271634
       objectReference: {fileID: 0}
     - target: {fileID: 6579484962822681543, guid: aee12e6cc9c1138479d32960cc4c155a,
         type: 3}
@@ -694,11 +702,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_SceneId
       value: 1983889149
-      objectReference: {fileID: 0}
-    - target: {fileID: 8965281744521687799, guid: aee12e6cc9c1138479d32960cc4c155a,
-        type: 3}
-      propertyPath: m_SceneId
-      value: 916460106
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: aee12e6cc9c1138479d32960cc4c155a, type: 3}
@@ -1264,7 +1267,7 @@ MonoBehaviour:
   - {fileID: 5331288348174855767, guid: 3a240439f74778847b0f0871a6ca28b8, type: 3}
   - {fileID: 5231393174559012986, guid: 3f6471fcdb03e5e41ae1a2cf4090e25b, type: 3}
   - {fileID: 6043325408564887852, guid: 68fdd5e38f5706641857483d43e3d582, type: 3}
-  - {fileID: 822964954428196605, guid: b091b94e17bd9f34b84b287bc733bc93, type: 3}
+  - {fileID: 5733567816084534936, guid: 9e1af8b73d684464dbc9b16d8dbf8097, type: 3}
   - {fileID: 3565548570659699362, guid: 44dec3f5c49221f4d8a32bbe8d3002a3, type: 3}
 --- !u!4 &1750891321
 Transform:
@@ -1487,6 +1490,7 @@ GameObject:
   - component: {fileID: 1828440935}
   - component: {fileID: 1828440934}
   - component: {fileID: 1828440933}
+  - component: {fileID: 1828440936}
   m_Layer: 0
   m_Name: Camera
   m_TagString: Untagged
@@ -1543,7 +1547,7 @@ Camera:
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
   m_TargetEye: 3
-  m_HDR: 1
+  m_HDR: 0
   m_AllowMSAA: 1
   m_AllowDynamicResolution: 0
   m_ForceIntoRT: 0
@@ -1564,6 +1568,100 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1828440936
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1828440932}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 23c1ce4fb46143f46bc5cb5224c934f6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  clearColorMode: 0
+  backgroundColorHDR: {r: 0.025, g: 0.07, b: 0.19, a: 0}
+  clearDepth: 1
+  volumeLayerMask:
+    serializedVersion: 2
+    m_Bits: 1
+  volumeAnchorOverride: {fileID: 0}
+  antialiasing: 0
+  SMAAQuality: 2
+  dithering: 0
+  stopNaNs: 0
+  physicalParameters:
+    m_Iso: 200
+    m_ShutterSpeed: 0.005
+    m_Aperture: 16
+    m_BladeCount: 5
+    m_Curvature: {x: 2, y: 11}
+    m_BarrelClipping: 0.25
+    m_Anamorphism: 0
+  flipYMode: 0
+  fullscreenPassthrough: 0
+  customRenderingSettings: 0
+  invertFaceCulling: 0
+  probeLayerMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_RenderingPathCustomFrameSettings:
+    bitDatas:
+      data1: 69284256022301
+      data2: 4539628424389459968
+  renderingPathCustomFrameSettingsOverrideMask:
+    mask:
+      data1: 0
+      data2: 0
+  defaultFrameSettings: 0
+  m_Version: 0
+  m_ObsoleteRenderingPath: 0
+  m_ObsoleteFrameSettings:
+    overrides: 0
+    enableShadow: 0
+    enableContactShadows: 0
+    enableShadowMask: 0
+    enableSSR: 0
+    enableSSAO: 0
+    enableSubsurfaceScattering: 0
+    enableTransmission: 0
+    enableAtmosphericScattering: 0
+    enableVolumetrics: 0
+    enableReprojectionForVolumetrics: 0
+    enableLightLayers: 0
+    enableExposureControl: 1
+    diffuseGlobalDimmer: 0
+    specularGlobalDimmer: 0
+    shaderLitMode: 0
+    enableDepthPrepassWithDeferredRendering: 0
+    enableTransparentPrepass: 0
+    enableMotionVectors: 0
+    enableObjectMotionVectors: 0
+    enableDecals: 0
+    enableRoughRefraction: 0
+    enableTransparentPostpass: 0
+    enableDistortion: 0
+    enablePostprocess: 0
+    enableOpaqueObjects: 0
+    enableTransparentObjects: 0
+    enableRealtimePlanarReflection: 0
+    enableMSAA: 0
+    enableAsyncCompute: 0
+    runLightListAsync: 0
+    runSSRAsync: 0
+    runSSAOAsync: 0
+    runContactShadowsAsync: 0
+    runVolumeVoxelizationAsync: 0
+    lightLoopSettings:
+      overrides: 0
+      enableDeferredTileAndCluster: 0
+      enableComputeLightEvaluation: 0
+      enableComputeLightVariants: 0
+      enableComputeMaterialVariants: 0
+      enableFptlForForwardOpaque: 0
+      enableBigTilePrepass: 0
+      isFptlEnabled: 0
 --- !u!1001 &1919178492
 PrefabInstance:
   m_ObjectHideFlags: 0
