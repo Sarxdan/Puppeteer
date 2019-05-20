@@ -27,6 +27,7 @@ public class FinalRoomInteract : Interactable
 
 	public float RotationSpeed;
 	public GameObject DoorToOpen;
+	private GameObject endGameDisplay;
 	public Image ProgressImage;
 	public RectTransform ProgressTransform;
 
@@ -37,12 +38,19 @@ public class FinalRoomInteract : Interactable
     public bool ButtonPressed = false;
 
 	public static bool isEndGame;
-    
+
+	private void Start()
+	{
+		endGameDisplay = GameObject.Find("EndGameDisplay");
+		endGameDisplay.SetActive(false);
+	}
+
 	// Only runs on server. (by default)
 	public override void OnInteractBegin(GameObject interactor)
 	{
         if (!ButtonPressed)
         {
+			endGameDisplay.SetActive(true);
             interactor.GetComponent<Music>().ButtonPressed();
 		    DoorToOpen = GameObject.Find("ST_Final_DoorFrame_03");
             ProgressTransform = GameObject.Find("ProgressBar").GetComponent<RectTransform>();
