@@ -256,7 +256,7 @@
 	</object>
 	<object class="EventMixerGroup" id="{62717acc-cc07-455a-9dfe-b4251c1304a1}">
 		<property name="volume">
-			<value>-6</value>
+			<value>-4.5</value>
 		</property>
 		<property name="name">
 			<value>Audio 1</value>
@@ -746,6 +746,9 @@
 		<relationship name="destination">
 			<destination>{a5d2251b-fe19-49f1-9017-ce5342f175dd}</destination>
 		</relationship>
+		<relationship name="triggerConditions">
+			<destination>{03b01160-df6b-4883-95de-86694052beb8}</destination>
+		</relationship>
 	</object>
 	<object class="TransitionMarker" id="{195b3161-1825-4025-94df-19c7494c0123}">
 		<property name="position">
@@ -760,6 +763,9 @@
 		<relationship name="destination">
 			<destination>{a5d2251b-fe19-49f1-9017-ce5342f175dd}</destination>
 		</relationship>
+		<relationship name="triggerConditions">
+			<destination>{23e62c86-b71a-4b0e-a769-10144d212152}</destination>
+		</relationship>
 	</object>
 	<object class="TransitionMarker" id="{a7b2bbcc-5ab2-4e31-8711-738cbe152b5c}">
 		<property name="position">
@@ -773,6 +779,9 @@
 		</relationship>
 		<relationship name="destination">
 			<destination>{a5d2251b-fe19-49f1-9017-ce5342f175dd}</destination>
+		</relationship>
+		<relationship name="triggerConditions">
+			<destination>{acf72cee-dbbc-4dfd-8f16-447f4a270d17}</destination>
 		</relationship>
 	</object>
 	<object class="LoopRegion" id="{026b8381-7baa-415d-938c-0696c90a4284}">
@@ -1377,6 +1386,39 @@
 			<destination>{8578c21f-c946-4ff2-a028-cb7d1eebf3d4}</destination>
 		</relationship>
 	</object>
+	<object class="ParameterCondition" id="{03b01160-df6b-4883-95de-86694052beb8}">
+		<property name="minimum">
+			<value>0</value>
+		</property>
+		<property name="maximum">
+			<value>0</value>
+		</property>
+		<relationship name="parameter">
+			<destination>{8578c21f-c946-4ff2-a028-cb7d1eebf3d4}</destination>
+		</relationship>
+	</object>
+	<object class="ParameterCondition" id="{23e62c86-b71a-4b0e-a769-10144d212152}">
+		<property name="minimum">
+			<value>0</value>
+		</property>
+		<property name="maximum">
+			<value>0</value>
+		</property>
+		<relationship name="parameter">
+			<destination>{8578c21f-c946-4ff2-a028-cb7d1eebf3d4}</destination>
+		</relationship>
+	</object>
+	<object class="ParameterCondition" id="{acf72cee-dbbc-4dfd-8f16-447f4a270d17}">
+		<property name="minimum">
+			<value>0</value>
+		</property>
+		<property name="maximum">
+			<value>0</value>
+		</property>
+		<relationship name="parameter">
+			<destination>{8578c21f-c946-4ff2-a028-cb7d1eebf3d4}</destination>
+		</relationship>
+	</object>
 	<object class="ParameterCondition" id="{6ca4450b-9fee-4436-b05d-2ef3e992d35e}">
 		<property name="minimum">
 			<value>1</value>
@@ -1699,7 +1741,7 @@
 			<value>1.006568144499179</value>
 		</property>
 		<property name="value">
-			<value>-6.5</value>
+			<value>-4</value>
 		</property>
 	</object>
 	<object class="AutomationPoint" id="{967190f5-ed5e-4f9b-ba8f-a54234ffa413}">

@@ -43,7 +43,7 @@ public class StateMachine : NetworkBehaviour
     //References
     [HideInInspector]
     public EnemySpawner Spawner;
-    //[HideInInspector]
+    [HideInInspector]
     public HealthComponent TargetEntity;
     [HideInInspector]
     public Animator AnimController;
@@ -70,6 +70,7 @@ public class StateMachine : NetworkBehaviour
     public float CurrentChargeSpeed;
     public float StartChargeSpeed;
     public int ChargeCharge;
+    public int ChargeDamageMultiplier;
     [HideInInspector]
     public Collider[] HitColliders;
     //[HideInInspector]
@@ -299,6 +300,9 @@ public class StateMachine : NetworkBehaviour
         {
             Corunning = true;
 
+            //If the multiplier is not chnaged it becomes the default (5)
+            if (ChargeDamageMultiplier <= 0) ChargeDamageMultiplier = 5;
+            
             //Accelerate if charging up to a speed limit
             if (AnimController.GetBool("IsCharging") == true && AnimController.GetFloat("ChargeSpeed") < 1)
             {
@@ -324,10 +328,10 @@ public class StateMachine : NetworkBehaviour
 
                 foreach(Collider coll in HitColliders)
                 {
-                    if (coll.tag == "Player")
+                    if (coll.tag == "Player" || coll.tag == "Untagged" && coll.name == "Gekko(clone)")
                     {
                         //Deals damage to the players in range based on charge speed
-                        float chargeDamage = CurrentChargeSpeed * 5;
+                        float chargeDamage = CurrentChargeSpeed * ChargeDamageMultiplier;
                         uint uChargeDamage = (uint)chargeDamage;
                         if (debug) Debug.Log("Damage dealt: " + chargeDamage + " Damage in uint: " + uChargeDamage + " Target hit = " + coll);
                         TargetEntity.Damage(uChargeDamage);
