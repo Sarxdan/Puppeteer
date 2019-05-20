@@ -3002,7 +3002,7 @@ MonoBehaviour:
   syncInterval: 0.1
   Damage: 5
   ActivationTime: 0.15
-  DestroyTime: 2
+  DestroyTime: 2.5
   Puppets: []
   Anim: {fileID: 0}
 --- !u!114 &2232649744647018411
@@ -3033,7 +3033,7 @@ MonoBehaviour:
   serverOnly: 0
   localPlayerAuthority: 0
   m_AssetId: 
-  m_SceneId: 1555864904
+  m_SceneId: 1124506763
 --- !u!114 &6131904198486339952
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3082,7 +3082,7 @@ MonoBehaviour:
   BearTrap: 0
   RoofSpike: 0
   FloorSpike: 1
-  Cost: 50
+  Cost: 150
 --- !u!114 &3644671184220131014
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3097,6 +3097,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   s_Pickup: event:/Puppeteer/Traps/Spiketrap pickup
   s_Place: event:/Puppeteer/Traps/Spiketrap place
+  pupCamPos: {x: 0, y: 0, z: 0}
 --- !u!1001 &6658304290687313232
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3104,11 +3105,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 2588813442285734549}
     m_Modifications:
-    - target: {fileID: -927199367670048503, guid: 3b89d56feb2336340bbe46e21e115dcf,
-        type: 3}
-      propertyPath: m_Name
-      value: ST_Spiketrap_Decal
-      objectReference: {fileID: 0}
     - target: {fileID: -4216859302048453862, guid: 3b89d56feb2336340bbe46e21e115dcf,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -3178,6 +3174,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalScale.z
       value: 1.5294
+      objectReference: {fileID: 0}
+    - target: {fileID: -927199367670048503, guid: 3b89d56feb2336340bbe46e21e115dcf,
+        type: 3}
+      propertyPath: m_Name
+      value: ST_Spiketrap_Decal
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 3b89d56feb2336340bbe46e21e115dcf, type: 3}

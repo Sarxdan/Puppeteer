@@ -26,9 +26,7 @@ public class MatchTimer : NetworkBehaviour
     public GameObject endGameCamera;
 	public RectTransform TimeTracker;
 
-	[SerializeField]
-	private int numberOfPuppetsAlive;
-	[SerializeField]
+	public int numberOfPuppetsAlive;
 	private int NumberOfPuppetsThatEscaped;
 	private EndOfMatchCanvas endOfMatchScript;
 	private bool gameEnded;
