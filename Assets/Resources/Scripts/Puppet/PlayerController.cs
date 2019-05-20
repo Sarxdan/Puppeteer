@@ -307,6 +307,7 @@ public class PlayerController : NetworkBehaviour
             Vector3 movementVector = (Input.GetAxisRaw("Horizontal") * transform.right + Input.GetAxisRaw("Vertical") * transform.forward).normalized; //Direction to move
             movementVector.x *= currentMovementSpeed * MovementSpeedMod; //Add Movementspeed multiplier 
             movementVector.y = rigidBody.velocity.y; //Add your y velocity
+            if(MovementSpeedMod > 1) movementVector.y = Mathf.Abs(movementVector.y) * -1; //DISABLES ELEVATION INCREASE
             movementVector.z *= currentMovementSpeed * MovementSpeedMod; //Add Movementspeed multiplier 
             rigidBody.velocity = movementVector;
         }
