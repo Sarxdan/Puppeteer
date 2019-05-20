@@ -302,13 +302,14 @@ public class PlayerController : NetworkBehaviour
         // Horizontal movement
         if ((Input.GetAxisRaw("Horizontal") != 0 || Input.GetAxisRaw("Vertical") != 0) && !DisableInput)
         {
-            currentMovementSpeed += currentMovementSpeed < MovementSpeed * MovementSpeedMod ? AccelerationRate * Time.deltaTime : 0; //Accelerates to MovementSpeed
-            currentMovementSpeed = Mathf.Clamp(currentMovementSpeed, 0, SprintSpeed * MovementSpeed); //Clamp the movementspeed so you dont run faster than the sprint speed
-            Vector3 direction = (Input.GetAxisRaw("Horizontal") * transform.right + Input.GetAxisRaw("Vertical") * transform.forward).normalized; //Direction to move
-            direction.x *= currentMovementSpeed; //Add Movementspeed multiplier 
-            direction.y = rigidBody.velocity.y; //Add your y velocity
-            direction.z *= currentMovementSpeed; //Add Movementspeed multiplier 
-            rigidBody.velocity = direction;
+            currentMovementSpeed += currentMovementSpeed < MovementSpeed ? AccelerationRate * Time.deltaTime * MovementSpeedMod : 0; //Accelerates to MovementSpeed
+            currentMovementSpeed = Mathf.Clamp(currentMovementSpeed, 0, SprintSpeed); //Clamp the movementspeed so you dont run faster than the sprint speed
+            Vector3 movementVector = (Input.GetAxisRaw("Horizontal") * transform.right + Input.GetAxisRaw("Vertical") * transform.forward).normalized; //Direction to move
+            movementVector.x *= currentMovementSpeed * MovementSpeedMod; //Add Movementspeed multiplier 
+            movementVector.y = rigidBody.velocity.y; //Add your y velocity
+            if(MovementSpeedMod > 1) movementVector.y = Mathf.Abs(movementVector.y) * -1; //DISABLES ELEVATION INCREASE
+            movementVector.z *= currentMovementSpeed * MovementSpeedMod; //Add Movementspeed multiplier 
+            rigidBody.velocity = movementVector;
         }
         else
         {
@@ -340,8 +341,8 @@ public class PlayerController : NetworkBehaviour
         {
             AnimController.SetBool("Sprint", true);
             isDown = true;
-            MovementSpeed = SprintSpeed * MovementSpeedMod;
-            AccelerationRate = SprintAcc * MovementSpeedMod;
+            MovementSpeed = SprintSpeed;
+            AccelerationRate = SprintAcc;
             CurrentStamina--;
             if (isDown == true && CurrentStamina > 0)
             {
