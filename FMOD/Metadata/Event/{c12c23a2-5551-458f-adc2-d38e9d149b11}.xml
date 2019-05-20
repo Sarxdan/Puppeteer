@@ -59,7 +59,7 @@
 	</object>
 	<object class="EventAutomatableProperties" id="{87314b95-9d69-460f-a552-d105cb6afb08}">
 		<property name="maxVoices">
-			<value>16</value>
+			<value>6</value>
 		</property>
 		<property name="voiceStealing">
 			<value>4</value>
@@ -92,6 +92,9 @@
 		</relationship>
 	</object>
 	<object class="EventMixerMaster" id="{7463ccc6-fb5f-43f6-904e-74c122d212f4}">
+		<relationship name="modulators">
+			<destination>{cbaebd9d-6bd0-4cf9-a4a3-25737864fcb0}</destination>
+		</relationship>
 		<relationship name="effectChain">
 			<destination>{81c6a8fe-d150-4eb2-86f1-5d85387f50bf}</destination>
 		</relationship>
@@ -177,6 +180,17 @@
 		<relationship name="markerTrack">
 			<destination>{63ee36f8-5f49-4438-89bd-dd160025f4b4}</destination>
 		</relationship>
+	</object>
+	<object class="ADSRModulator" id="{cbaebd9d-6bd0-4cf9-a4a3-25737864fcb0}">
+		<property name="nameOfPropertyBeingModulated">
+			<value>volume</value>
+		</property>
+		<property name="initialValue">
+			<value>-80</value>
+		</property>
+		<property name="finalValue">
+			<value>-80</value>
+		</property>
 	</object>
 	<object class="MixerBusEffectChain" id="{81c6a8fe-d150-4eb2-86f1-5d85387f50bf}">
 		<relationship name="effects">
