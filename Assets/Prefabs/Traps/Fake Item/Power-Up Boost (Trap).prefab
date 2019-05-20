@@ -519,6 +519,7 @@ GameObject:
   - component: {fileID: -2365034196142867877}
   - component: {fileID: -4878699934078777832}
   - component: {fileID: -6687787740614923174}
+  - component: {fileID: 5094175662525890068}
   m_Layer: 0
   m_Name: Power-Up Boost (Trap)
   m_TagString: Untagged
@@ -569,8 +570,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   serverOnly: 0
   localPlayerAuthority: 0
-  m_AssetId: 8b9cc288ce095a349aa9e77926c6dec3
-  m_SceneId: 0
+  m_AssetId: 
+  m_SceneId: 1322420959
 --- !u!114 &-4878699934078777832
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -603,3 +604,26 @@ MonoBehaviour:
   Damage: 5
   Radius: 2
   Activated: 0
+--- !u!114 &5094175662525890068
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9080411364129874698}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a6610d2e704f1648819acc8d7460285, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  CollisionTag: 
+  Event: event:/Traps/Fake item
+  PlayEvent: 2
+  StopEvent: 0
+  AllowFadeout: 1
+  TriggerOnce: 1
+  Preload: 0
+  Params: []
+  OverrideAttenuation: 0
+  OverrideMinDistance: 1
+  OverrideMaxDistance: 20
