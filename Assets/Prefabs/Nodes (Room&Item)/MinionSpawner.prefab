@@ -85,7 +85,7 @@ MonoBehaviour:
   serverOnly: 0
   localPlayerAuthority: 0
   m_AssetId: 
-  m_SceneId: 0
+  m_SceneId: 945429980
 --- !u!114 &4963745196626812901
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -189,8 +189,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e0c456cbfed4d8147aa2581f3d816444, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  s_Idle: 
-  s_Spawn: 
+  s_Idle: event:/Traps/Spawner/Spawner idle
+  s_Spawn: event:/Traps/Spawner/Spawner spawn
   s_Destroy: event:/Enemies/Minion/Voice/Death
 --- !u!114 &5579854646710383457
 MonoBehaviour:
@@ -242,11 +242,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 4963745196626812903}
     m_Modifications:
-    - target: {fileID: -927199367670048503, guid: edb263756ad751e43a4b46ba5d30c22c,
-        type: 3}
-      propertyPath: m_Name
-      value: Spawner_Minion_Head
-      objectReference: {fileID: 0}
     - target: {fileID: -4216859302048453862, guid: edb263756ad751e43a4b46ba5d30c22c,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -301,6 +296,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -927199367670048503, guid: edb263756ad751e43a4b46ba5d30c22c,
+        type: 3}
+      propertyPath: m_Name
+      value: Spawner_Minion_Head
       objectReference: {fileID: 0}
     - target: {fileID: 690413552820578058, guid: edb263756ad751e43a4b46ba5d30c22c,
         type: 3}
