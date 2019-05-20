@@ -31,7 +31,6 @@ public class PowerupRecharge : Interactable
             // attempt to pickup recharge
             if (power != null && power.PercentageLeft == 0.0f)
             {
-                anim.SetTrigger("Consume");
                 power.Charged = true;
             }
         }
@@ -39,10 +38,11 @@ public class PowerupRecharge : Interactable
         {
             if (power != null)
             {
-                anim.SetTrigger("Consume");
                 power.RpcBoostPowerup();
             }
         }
+
+        Destroy(gameObject);
     }
 
     public override void OnInteractEnd(GameObject interactor)
@@ -54,10 +54,5 @@ public class PowerupRecharge : Interactable
     {
         if (!interactor.GetComponent<PowerupBase>().Charged)
             ShowTooltip(interactor);
-    }
-
-    public void Destroy()
-    {
-        Destroy(gameObject);
     }
 }
