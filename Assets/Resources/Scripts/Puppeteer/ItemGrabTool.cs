@@ -27,7 +27,7 @@ public class ItemGrabTool : NetworkBehaviour
     private LevelBuilder level;
 
 	// The maximum distance for snapping modules
-	private int SnapDistance = 30;
+	private int SnapDistance = 60;
 	// Maximum raycast ray length
 	private float RaycastDistance = 500;
 	// The lift height when grabbing an object
