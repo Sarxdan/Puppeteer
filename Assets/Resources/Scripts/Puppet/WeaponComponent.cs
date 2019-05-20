@@ -112,9 +112,12 @@ public class WeaponComponent : Interactable
 
         charge = Mathf.Min(charge + Time.deltaTime, ChargeTime);
 
+        PlayerController pc = GetComponentInParent<PlayerController>();
 
         if (reloading || charge < ChargeTime || cooldown > 0)
         {
+            pc.AnimController.SetBool("Fire", false);
+            pc.FPVAnimController.SetBool("Fire", false);
 			return;
         }
         cooldown = FiringSpeed;
@@ -126,13 +129,13 @@ public class WeaponComponent : Interactable
 			return;
 		}
 
-        PlayerController pc = GetComponentInParent<PlayerController>();
         DecalHandler decalHandler = pc.GetComponent<DecalHandler>();
 
         muzzleFlash.Fire();
         
         for(int i = 0; i < NumShots; i++)
         {
+            
             // calculate spread
             Vector3 offset = Random.insideUnitSphere * Spread;
 
@@ -169,6 +172,10 @@ public class WeaponComponent : Interactable
         pc.AnimController.SetBool("Fire", true);
         pc.FPVAnimController.SetTrigger("Fire");
 
+        float animationSpeed = 0.367f / FiringSpeed;
+        pc.AnimController.SetFloat("FireSpeed", animationSpeed);
+        pc.FPVAnimController.SetFloat("FireSpeed", animationSpeed);
+
         //Adds recoil and cooldown, and subtracts ammo left
         recoil += RecoilAmount;
         LiquidLeft -= LiquidPerRound;
@@ -177,6 +184,9 @@ public class WeaponComponent : Interactable
 
     public void Release()
     {
+        PlayerController pc = GetComponentInParent<PlayerController>();
+        pc.AnimController.SetBool("Fire", false);
+        pc.FPVAnimController.SetBool("Fire", false);
         isHeld = false;
     }
 
@@ -193,7 +203,7 @@ public class WeaponComponent : Interactable
 
     public bool CanReload()
     {
-         return !reloading && cooldown == 0  && (ChargeTime == 0 || charge == 0);
+         return !reloading && cooldown == 0;
     }
 
     void Update()
@@ -246,7 +256,7 @@ public class WeaponComponent : Interactable
     {
 
         this.HeadTransform = interactor.GetComponentInChildren<Camera>().transform;
-       
+        
         RpcPickupWeapon(gameObject, interactor);
 
         sounds.Pickup(); // Send pickup trigger to sound
