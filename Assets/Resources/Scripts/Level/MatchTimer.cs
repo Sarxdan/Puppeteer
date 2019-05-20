@@ -21,6 +21,8 @@ public class MatchTimer : NetworkBehaviour
 {
 	public int MatchLength;
 	public Text TimeRemainingTextBox;
+	[SyncVar]
+	public string TimePrintOut; 
 	public int PostGameTime;
 	public GameObject Canvas;
     public GameObject endGameCamera;
@@ -53,8 +55,12 @@ public class MatchTimer : NetworkBehaviour
 			TimeTracker.position = new Vector3(TimeTracker.position.x, TimeTracker.position.y + 50, TimeTracker.position.z);
 		}
     }
+	private void Update()
+	{
+		TimeRemainingTextBox.text = TimePrintOut;
+	}
 
-    public IEnumerator Timer()
+	public IEnumerator Timer()
     {
         //Convert match time to minutes and seconds
 	    for (int i = MatchLength; i > 0; i -= 60)
@@ -76,10 +82,7 @@ public class MatchTimer : NetworkBehaviour
 		    else
 			    secondsString = Seconds.ToString("00");
 
-		    string TimePrint = minutesString + ":" + secondsString;
-
-		    //Update UI clock
-		    RpcUpdateTime(TimePrint);
+		    TimePrintOut = minutesString + ":" + secondsString;
 
 		    yield return new WaitForSeconds(1);
 

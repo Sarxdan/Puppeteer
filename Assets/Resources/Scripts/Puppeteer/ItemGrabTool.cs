@@ -16,6 +16,7 @@ using UnityEngine.UI;
 *
 * CODE REVIEWED BY:
 * Filip rehman 2019-05-07 
+* Kristoffer "Krig" Lundgren 2019-05-20
 *
 * CONTRIBUTORS:
 * Philip Stenmark, Anton "Knugen" Jonsson
@@ -26,7 +27,7 @@ public class ItemGrabTool : NetworkBehaviour
     private LevelBuilder level;
 
 	// The maximum distance for snapping modules
-	private int SnapDistance = 30;
+	private int SnapDistance = 60;
 	// Maximum raycast ray length
 	private float RaycastDistance = 500;
 	// The lift height when grabbing an object
@@ -76,7 +77,7 @@ public class ItemGrabTool : NetworkBehaviour
 	// Sets pricetag to correct value att start of scene.
 	void SetPrices()
 	{
-		ButtonBearTrap.GetComponentInChildren<Text>().text = BearTrap.GetComponent<SnapFunctionality>().Cost.ToString() + "$";
+		ButtonBearTrap.GetComponentInChildren<Text>().text = BearTrap.GetComponent<SnapFunctionality>().Cost.ToString();
 		ButtonSpikeTrap.GetComponentInChildren<Text>().text = SpikeTrapFloor.GetComponent<SnapFunctionality>().Cost.ToString();
 		ButtonChandelier.GetComponentInChildren<Text>().text = Chandelier.GetComponent<SnapFunctionality>().Cost.ToString();
 		ButtonFakeItem.GetComponentInChildren<Text>().text = FakeItem.GetComponent<SnapFunctionality>().Cost.ToString();
@@ -325,7 +326,7 @@ public class ItemGrabTool : NetworkBehaviour
 		}
 	}
 
-	// If Object is droped. (Placed)
+	// If Object is dropped. (Placed)
 	public void Drop()
     {
 		// If the guideobject is still on the sourceobject (no new node or position is found at the time of release) destroy all objects and reset. 

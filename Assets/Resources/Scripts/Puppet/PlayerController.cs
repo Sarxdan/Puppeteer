@@ -124,7 +124,7 @@ public class PlayerController : NetworkBehaviour
         accSave = AccelerationRate;
 
         // try to move to spawn position (physics enabled)
-        rigidBody.MovePosition(new Vector3(Random.Range(-SpawnRadius, SpawnRadius), 0.0f, Random.Range(-SpawnRadius, SpawnRadius)));
+      
 
         
         if(isLocalPlayer)
@@ -152,6 +152,7 @@ public class PlayerController : NetworkBehaviour
         // setup compass late to prevent race condition
         Invoke("SetupCompass", 2.0f);
         Invoke("SetupPuppeteerIcon", 2.0f);
+        Invoke("SetSpawnPosition", 1.5f);
     }
 
     private void SetupCompass()
@@ -167,6 +168,10 @@ public class PlayerController : NetworkBehaviour
             }
             compass.AddTarget(player.transform);
         }
+    }
+    private void SetSpawnPosition()
+    {
+          rigidBody.MovePosition(new Vector3(Random.Range(-SpawnRadius, SpawnRadius), 0.0f, Random.Range(-SpawnRadius, SpawnRadius)));
     }
 
     private void SetupPuppeteerIcon()
@@ -302,13 +307,12 @@ public class PlayerController : NetworkBehaviour
         // Horizontal movement
         if ((Input.GetAxisRaw("Horizontal") != 0 || Input.GetAxisRaw("Vertical") != 0) && !DisableInput)
         {
-            currentMovementSpeed += currentMovementSpeed < MovementSpeed ? AccelerationRate * Time.deltaTime * MovementSpeedMod : 0; //Accelerates to MovementSpeed
-            currentMovementSpeed = Mathf.Clamp(currentMovementSpeed, 0, SprintSpeed); //Clamp the movementspeed so you dont run faster than the sprint speed
+            currentMovementSpeed += currentMovementSpeed < MovementSpeed ? AccelerationRate * Time.deltaTime : 0; //Accelerates to MovementSpeed
+            currentMovementSpeed = Mathf.Clamp(currentMovementSpeed, 0, Mathf.Max(SprintSpeed, MovementSpeed)); //Clamp the movementspeed so you dont run faster than the sprint speed
             Vector3 movementVector = (Input.GetAxisRaw("Horizontal") * transform.right + Input.GetAxisRaw("Vertical") * transform.forward).normalized; //Direction to move
-            movementVector.x *= currentMovementSpeed * MovementSpeedMod; //Add Movementspeed multiplier 
+            movementVector.x *= currentMovementSpeed; //Add Movementspeed multiplier 
             movementVector.y = rigidBody.velocity.y; //Add your y velocity
-            if(MovementSpeedMod > 1) movementVector.y = Mathf.Abs(movementVector.y) * -1; //DISABLES ELEVATION INCREASE
-            movementVector.z *= currentMovementSpeed * MovementSpeedMod; //Add Movementspeed multiplier 
+            movementVector.z *= currentMovementSpeed; //Add Movementspeed multiplier 
             rigidBody.velocity = movementVector;
         }
         else

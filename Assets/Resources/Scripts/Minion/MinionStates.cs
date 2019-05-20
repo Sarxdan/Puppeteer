@@ -44,7 +44,7 @@ namespace MinionStates
         public override void Run()
         {
 
-            //If no target, go idle
+            //If no target, wander
             if(machine.TargetEntity == null)
             {
                 machine.SetState(new WanderState(machine));
@@ -341,6 +341,7 @@ namespace MinionStates
             machine.CurrentStateName = "BigAttack";
             machine.AnimController.SetBool("Running", true);
             machine.ChargeCharge = 0;
+            if (machine.debug) Debug.Log("Tank target: " + machine.TargetEntity.name);
         }
 
         public override void Run()
@@ -412,8 +413,8 @@ namespace MinionStates
             machine.CurrentStateName = "ChargeAttack";
             machine.AnimController.SetBool("IsCharging", true);
             machine.ChargeStopped = false;
-            machine.PathFinder.RotationSpeed = 2f;
-            machine.PathFinder.NodeArrivalMargin = 0.5f;
+            machine.PathFinder.RotationSpeed = 7f;
+            //machine.PathFinder.NodeArrivalMargin = 0.6f;
             machine.AnimController.SetFloat("ChargeSpeed", machine.StartChargeSpeed);
         }
 
@@ -446,9 +447,8 @@ namespace MinionStates
 
         public override void Exit()
         {
-            //TODO: fix so it works for tank model and size
             machine.PathFinder.RotationSpeed = 15;
-            machine.PathFinder.NodeArrivalMargin = 0.6f;
+            //machine.PathFinder.NodeArrivalMargin = 0.6f;
             machine.AnimController.SetBool("IsCharging", false);
         }
     }
