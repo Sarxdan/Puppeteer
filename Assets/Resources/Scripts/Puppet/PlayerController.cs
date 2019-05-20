@@ -124,7 +124,7 @@ public class PlayerController : NetworkBehaviour
         accSave = AccelerationRate;
 
         // try to move to spawn position (physics enabled)
-        rigidBody.MovePosition(new Vector3(Random.Range(-SpawnRadius, SpawnRadius), 0.0f, Random.Range(-SpawnRadius, SpawnRadius)));
+      
 
         
         if(isLocalPlayer)
@@ -152,6 +152,7 @@ public class PlayerController : NetworkBehaviour
         // setup compass late to prevent race condition
         Invoke("SetupCompass", 2.0f);
         Invoke("SetupPuppeteerIcon", 2.0f);
+        Invoke("SetSpawnPosition", 1.5f);
     }
 
     private void SetupCompass()
@@ -167,6 +168,10 @@ public class PlayerController : NetworkBehaviour
             }
             compass.AddTarget(player.transform);
         }
+    }
+    private void SetSpawnPosition()
+    {
+          rigidBody.MovePosition(new Vector3(Random.Range(-SpawnRadius, SpawnRadius), 0.0f, Random.Range(-SpawnRadius, SpawnRadius)));
     }
 
     private void SetupPuppeteerIcon()
