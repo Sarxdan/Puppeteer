@@ -43,9 +43,9 @@ GameObject:
   - component: {fileID: 212763664022185749}
   - component: {fileID: 5909226276687725837}
   - component: {fileID: 8382344744343605131}
-  - component: {fileID: -8188791328063026755}
   - component: {fileID: 8606084540862934754}
   - component: {fileID: 6308410934305055714}
+  - component: {fileID: -1769525171899847840}
   m_Layer: 0
   m_Name: Gatling Gun
   m_TagString: Untagged
@@ -99,8 +99,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   serverOnly: 0
   localPlayerAuthority: 0
-  m_AssetId: 74e905ea56207924aa40ff45e7c788d0
-  m_SceneId: 0
+  m_AssetId: 
+  m_SceneId: 2143397709
 --- !u!114 &5909226276687725837
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -157,23 +157,6 @@ CapsuleCollider:
   m_Height: 0.97
   m_Direction: 2
   m_Center: {x: 0, y: 0.09, z: 0.54}
---- !u!114 &-8188791328063026755
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 408449928367013862}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 32774754dd897474a8d5b105194c9824, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  s_Pickup: event:/Weapons/Gatling/Pickup
-  s_Shoot: event:/Weapons/Gatling/Shoot
-  s_OutOfAmmo: 
-  s_Reload: event:/Weapons/Gatling/Reload
-  s_Foley: 
 --- !u!114 &8606084540862934754
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -204,6 +187,25 @@ MonoBehaviour:
   TeethRatio: 2
   MaxSpeed: 5900
   CurrentSpeed: 0
+--- !u!114 &-1769525171899847840
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 408449928367013862}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f5db2217cddd6d74e91b35808661f5fa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  s_Pickup: event:/Weapons/Gatling/Pickup
+  s_Shoot: event:/Weapons/Gatling/Shoot
+  s_OutOfAmmo: 
+  s_Reload: event:/Weapons/Gatling/Reload
+  s_Foley: 
+  s_SpinUp: event:/Weapons/Gatling/Windup
+  s_SpinDown: event:/Weapons/Gatling/Winddown
 --- !u!1 &9064584943334168673
 GameObject:
   m_ObjectHideFlags: 0
@@ -388,11 +390,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 7436050445741599826}
     m_Modifications:
-    - target: {fileID: 3069823048868791228, guid: bf3f49f032856d145823954fa2677be6,
-        type: 3}
-      propertyPath: m_Name
-      value: Muzzle_Flash
-      objectReference: {fileID: 0}
     - target: {fileID: 6055311893754553150, guid: bf3f49f032856d145823954fa2677be6,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -447,6 +444,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3069823048868791228, guid: bf3f49f032856d145823954fa2677be6,
+        type: 3}
+      propertyPath: m_Name
+      value: Muzzle_Flash
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bf3f49f032856d145823954fa2677be6, type: 3}
