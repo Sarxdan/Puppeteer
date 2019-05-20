@@ -303,7 +303,7 @@ public class PlayerController : NetworkBehaviour
         if ((Input.GetAxisRaw("Horizontal") != 0 || Input.GetAxisRaw("Vertical") != 0) && !DisableInput)
         {
             currentMovementSpeed += currentMovementSpeed < MovementSpeed * MovementSpeedMod ? AccelerationRate * Time.deltaTime : 0; //Accelerates to MovementSpeed
-            currentMovementSpeed = Mathf.Clamp(currentMovementSpeed, 0, SprintSpeed); //Clamp the movementspeed so you dont run faster than the sprint speed
+            currentMovementSpeed = Mathf.Clamp(currentMovementSpeed, 0, SprintSpeed * MovementSpeed); //Clamp the movementspeed so you dont run faster than the sprint speed
             Vector3 direction = (Input.GetAxisRaw("Horizontal") * transform.right + Input.GetAxisRaw("Vertical") * transform.forward).normalized; //Direction to move
             direction.x *= currentMovementSpeed; //Add Movementspeed multiplier 
             direction.y = rigidBody.velocity.y; //Add your y velocity
