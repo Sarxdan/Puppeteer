@@ -24,10 +24,9 @@ public class MatchTimer : NetworkBehaviour
 	public int PostGameTime;
 	public GameObject Canvas;
     public GameObject endGameCamera;
+	public RectTransform TimeTracker;
 
-	[SerializeField]
-	private int numberOfPuppetsAlive;
-	[SerializeField]
+	public int numberOfPuppetsAlive;
 	private int NumberOfPuppetsThatEscaped;
 	private EndOfMatchCanvas endOfMatchScript;
 	private bool gameEnded;
@@ -48,6 +47,11 @@ public class MatchTimer : NetworkBehaviour
 
         if (isServer)
 		    StartCoroutine("Timer");
+
+		if (GameObject.FindObjectOfType<LevelBuilder>().isLocalPlayer)
+		{
+			TimeTracker.position = new Vector3(TimeTracker.position.x, TimeTracker.position.y + 50, TimeTracker.position.z);
+		}
     }
 
     public IEnumerator Timer()
