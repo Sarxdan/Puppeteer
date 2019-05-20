@@ -92,26 +92,36 @@ public class ReviveComponent : Interactable
     {
         //hudScript.ScaleInteractionProgress(0);
         StartCoroutine("DeathRoutine");
-        StartCoroutine("DownedBar");
+		RpcStartDown(gameObject);
     }
 
-    private IEnumerator DownedBar()
-    {
-        downedPanel.SetActive(true);
+	[ClientRpc]
+	public void RpcStartDown(GameObject puppet)
+	{
+		if (puppet.GetComponent<InteractionController>().isLocalPlayer)
+		{
+			StartCoroutine("DownedBar");
+		}
+	}
+
+	private IEnumerator DownedBar()
+	{
+		downedPanel.SetActive(true);
 		var currentSize = downedBar.sizeDelta;
-        var diffInWidth = (downedBar.sizeDelta.x / DeathDelay*1000);
-        var time = DeathDelay;
-        while (time > 0)
-        {
-            if (healthComponent.Health != 0)
-            {
-                break;
-            }
-            downedBar.sizeDelta = new Vector2(downedBar.sizeDelta.x - diffInWidth, downedBar.sizeDelta.y);
-            yield return new WaitForSeconds(0.1f);
-        }
+		var diffInWidth = (downedBar.sizeDelta.x / (DeathDelay));
+		var time = DeathDelay;
+		while (time > 0)
+		{
+			if (healthComponent.Health != 0)
+			{
+				break;
+			}
+			downedBar.sizeDelta = new Vector2(downedBar.sizeDelta.x - diffInWidth, downedBar.sizeDelta.y);
+			yield return new WaitForSeconds(1);
+			time--;
+		}
 		downedBar.sizeDelta = currentSize;
-        downedPanel.SetActive(false);
+		downedPanel.SetActive(false);
     }
 
     private IEnumerator DeathRoutine()
@@ -136,9 +146,9 @@ public class ReviveComponent : Interactable
     }
 
 	[ClientRpc]
-	void RpcStartSpectating(GameObject thing)
+	void RpcStartSpectating(GameObject puppet)
 	{
-		if (thing.GetComponent<InteractionController>().isLocalPlayer)
+		if (puppet.GetComponent<InteractionController>().isLocalPlayer)
 		{
 			var canvas = GameObject.FindObjectOfType<Spectator>().gameObject;
 			canvas.GetComponent<Spectator>().SpectatorScreen.SetActive(true);
