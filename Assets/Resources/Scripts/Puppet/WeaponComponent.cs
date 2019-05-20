@@ -145,7 +145,6 @@ public class WeaponComponent : Interactable
                 {
                     uint damage = (uint)(this.Damage * Mathf.Pow(DamageDropoff, hitInfo.distance / 10.0f));
                     health.Damage(damage);
-                    Debug.LogFormat("Dealt {0} damage in range {1}", damage, hitInfo.distance);
                 }
 				// create hit decal
 				decalHandler.AddDecal(Instantiate(HitDecals[Random.Range(0, HitDecals.Length)], hitInfo.point, Quaternion.FromToRotation(Vector3.forward, hitInfo.normal), hitInfo.transform));
