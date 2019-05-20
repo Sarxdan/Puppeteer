@@ -24,11 +24,13 @@ public class BearInteract : Interactable
     public Animator anim;
 
     // (KL) Total time of animation state
-    public float totalTime;
+    private float totalTime = 1.3f;
     // (KL) Reference to hud script to scale interaction progress
     public HUDScript HudScript;
     [SyncVar]
     private bool interacting;
+
+    public float interactionProgress;
 
     public BearTrapSounds sounds;
 
@@ -42,9 +44,8 @@ public class BearInteract : Interactable
     {
         if(interacting)
         {
-            // (KL) Scale the animation bar depening on how long the opening animation has been playing
-            var currentTime = anim.GetCurrentAnimatorStateInfo(0).normalizedTime;
-            HudScript.ScaleInteractionProgress((currentTime*totalTime)/totalTime);
+            interactionProgress += Time.deltaTime;
+            HudScript.ScaleInteractionProgress((interactionProgress)/totalTime);
         }
     }
     // (KL) Shows the interactable tooltip if the trap has been activated
@@ -66,9 +67,6 @@ public class BearInteract : Interactable
         HudScript = interactor.GetComponent<HUDScript>();
         if(interactionController.isServer && interactionController.isLocalPlayer)
         {
-            // (KL) If the local player is also the server ser the length of the animation
-            var clip = anim.GetCurrentAnimatorClipInfo(0);
-            totalTime = clip[0].clip.length;
             interacting = true;
         }
         else
@@ -91,14 +89,13 @@ public class BearInteract : Interactable
         if(interactionController.isServer)
         {
             RpcDisableInteracting(interactor);
-            // (KL) Scale the interaction bar to zero
             HudScript.RpcScaleZero();
 
         }
         interacting = false;
         anim.SetBool("Releasing", false);
         sounds.ReClose();
-        //HideToolTip(interactor);
+        interactionProgress = 0;
 
     }
 
@@ -131,10 +128,6 @@ public class BearInteract : Interactable
         {
             // (KL) Set the HUD script for the local player in order to scale the interaction progress
             HudScript = interactor.GetComponent<HUDScript>();
-            // (KL) Get all the clips from the current animation state
-            var clip = anim.GetCurrentAnimatorClipInfo(0);
-            // (KL) Get the total length of the current clip
-            totalTime = clip[0].clip.length;
             interacting = true;
         }
     }
