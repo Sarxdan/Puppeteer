@@ -98,7 +98,7 @@ public class ReviveComponent : Interactable
     private IEnumerator DownedBar()
     {
         downedPanel.SetActive(true);
-        downedBar.sizeDelta = new Vector2(550, downedBar.sizeDelta.y);
+		var currentSize = downedBar.sizeDelta;
         var diffInWidth = (downedBar.sizeDelta.x / DeathDelay*1000);
         var time = DeathDelay;
         while (time > 0)
@@ -110,6 +110,7 @@ public class ReviveComponent : Interactable
             downedBar.sizeDelta = new Vector2(downedBar.sizeDelta.x - diffInWidth, downedBar.sizeDelta.y);
             yield return new WaitForSeconds(0.1f);
         }
+		downedBar.sizeDelta = currentSize;
         downedPanel.SetActive(false);
     }
 
