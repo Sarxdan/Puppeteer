@@ -53,7 +53,7 @@ public class SnifferPower : PowerupBase
 					renderer.material.SetColor("Color_D2F3C594", OpenColor);
 				}
 				// For all renderers in door, start blending the colors to the chosen amount
-				renderer.material.SetInt("Vector1_67A4DF5D", ColorAmount);
+				renderer.material.SetInt("Boolean_B9D5E5BD", ColorAmount);
 			}
 		}
 		activated = true;
@@ -69,7 +69,7 @@ public class SnifferPower : PowerupBase
 		{
 			foreach (var renderer in door.GetComponentsInChildren<Renderer>())
 			{
-				renderer.material.SetInt("Vector1_67A4DF5D", 0);
+				renderer.material.SetInt("Boolean_B9D5E5BD", 0);
 			}
 		}
 	}
