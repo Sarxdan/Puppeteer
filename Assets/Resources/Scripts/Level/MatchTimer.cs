@@ -22,7 +22,7 @@ public class MatchTimer : NetworkBehaviour
 {
 	public int MatchLength;
 	public Text TimeRemainingTextBox;
-	//[SyncVar]
+	[SyncVar]
 	public string TimePrintOut; 
 	public int PostGameTime;
 	public GameObject Canvas;
@@ -48,7 +48,7 @@ public class MatchTimer : NetworkBehaviour
         Canvas.gameObject.SetActive(false);
 	    gameEnded = false;
 	    manager = GameObject.Find("NetworkManager").GetComponent<NetworkManager>();
-
+		TimeRemainingTextBox = GameObject.Find("TimeLeft").GetComponent<Text>();
         if (isServer)
 		    StartCoroutine("Timer", 1);
 
@@ -59,7 +59,7 @@ public class MatchTimer : NetworkBehaviour
     }
 	private void Update()
 	{
-		//TimeRemainingTextBox.text = TimePrintOut;
+		TimeRemainingTextBox.text = TimePrintOut;
 	}
 
 	public IEnumerator Timer()
