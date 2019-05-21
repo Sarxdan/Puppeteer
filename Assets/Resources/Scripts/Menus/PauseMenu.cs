@@ -113,6 +113,7 @@ public class PauseMenu : MonoBehaviour
         }
         else
         {
+            Owner.GetComponent<Music>().EndMatch();
             temp.StopHost();
         }
 
