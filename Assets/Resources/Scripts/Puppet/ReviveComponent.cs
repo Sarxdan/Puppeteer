@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using Mirror;
+using UnityEngine.Rendering;
+using UnityEngine.Rendering.PostProcessing;
 
 /*
  * AUTHOR:
@@ -36,6 +38,10 @@ public class ReviveComponent : Interactable
 
     private GameObject downedPanel;
     private RectTransform downedBar;
+
+    private float DefaultVignette = 0.1f;
+    private float MaxVignette = 0.5f;
+    public Image DeathVignette;
 
     void Start()
     {
@@ -104,12 +110,23 @@ public class ReviveComponent : Interactable
 		}
 	}
 
+    private bool isVignette(VolumeComponent component)
+    {
+        return(component is UnityEngine.Experimental.Rendering.HDPipeline.Vignette);
+    }
+
 	private IEnumerator DownedBar()
 	{
+        //UnityEngine.Experimental.Rendering.HDPipeline.Vignette vignette;
+        //System.Predicate<VolumeComponent> isVig = isVignette;
 		downedPanel.SetActive(true);
+        //var volume = GameObject.Find("PostProcess").GetComponent<Volume>();
+        //vignette = volume.profile.components.Find(isVig) as UnityEngine.Experimental.Rendering.HDPipeline.Vignette;
+        
 		var currentSize = downedBar.sizeDelta;
-		var diffInWidth = (downedBar.sizeDelta.x / (DeathDelay));
+		var diffInWidth = (downedBar.sizeDelta.x / (DeathDelay * 10));
 		var time = DeathDelay;
+        float vignetteDelta = (MaxVignette - DefaultVignette) / (DeathDelay * 10);
 		while (time > 0)
 		{
 			if (healthComponent.Health != 0)
@@ -117,12 +134,16 @@ public class ReviveComponent : Interactable
 				break;
 			}
 			downedBar.sizeDelta = new Vector2(downedBar.sizeDelta.x - diffInWidth, downedBar.sizeDelta.y);
-			yield return new WaitForSeconds(1);
+            //vignette.intensity =  new UnityEngine.Rendering.ClampedFloatParameter(vignette.intensity.value + vignetteDelta, 0, 1, true);
+            
+			yield return new WaitForSeconds(0.1f);
 			time--;
 		}
 		downedBar.sizeDelta = currentSize;
 		downedPanel.SetActive(false);
+        //vignette.intensity = new UnityEngine.Rendering.ClampedFloatParameter(DefaultVignette, 0, 1);
     }
+
 
     private IEnumerator DeathRoutine()
     {
