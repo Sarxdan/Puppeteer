@@ -314,7 +314,7 @@ public class WeaponComponent : Interactable
         WeaponComponent newWeapon = weaponObject.GetComponent<WeaponComponent>();
         PlayerController user = userObject.GetComponent<PlayerController>();
         // plays sound.
-        sounds.Pickup(); // Send pickup trigger to sound
+        if(sounds != null)sounds.Pickup(); // Send pickup trigger to sound
 
         //Disables new weapons collider
         newWeapon.GetComponent<CapsuleCollider>().enabled = false;
