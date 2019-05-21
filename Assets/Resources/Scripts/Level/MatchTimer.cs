@@ -65,7 +65,7 @@ public class MatchTimer : NetworkBehaviour
     {
         //Convert match time to minutes and seconds
 	    for (int i = MatchLength; i > 0; i -= 60)
-		    if (i > 60)
+		    if (i >= 60)
 			    Minutes++;
 		    else
 			    Seconds = i;
