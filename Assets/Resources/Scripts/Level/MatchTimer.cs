@@ -28,8 +28,9 @@ public class MatchTimer : NetworkBehaviour
 	public GameObject Canvas;
     public GameObject endGameCamera;
 	public RectTransform TimeTracker;
+    public FMOD.Studio.EventInstance music;
 
-	public int numberOfPuppetsAlive;
+    public int numberOfPuppetsAlive;
 	private int NumberOfPuppetsThatEscaped;
 	private EndOfMatchCanvas endOfMatchScript;
 	private bool gameEnded;
@@ -157,6 +158,8 @@ public class MatchTimer : NetworkBehaviour
 		    PostGameTime--;
 		    yield return new WaitForSeconds(1);
 	    }
+
+        music.release();
         if (isServer)
             manager.StopHost();
     }
