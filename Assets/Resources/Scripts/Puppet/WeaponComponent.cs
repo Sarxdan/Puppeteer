@@ -286,6 +286,7 @@ public class WeaponComponent : Interactable
 	{
 		RpcShotSound();
 	}
+
 	[Command]
 	public void CmdReloadSound()
 	{

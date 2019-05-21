@@ -46,8 +46,14 @@ public class PuppetTracker : MonoBehaviour
         {
             var target = Targets[i];
 
+            if (target == null)
+            {
+                // remove invalid target
+                Targets.RemoveAt(i);
+                Icons[i].color = new Color(1, 1, 1, 0);
+            }
             //Special case for gekko if he is invisible
-            if (target.GetComponent<InvisibilityPower>().IsActive)
+            else if (target.GetComponent<InvisibilityPower>().IsActive)
             {
                 //Convert the targets position to 2d position based on the camera
                 Vector3 coords = puppeteerCamera.WorldToScreenPoint(target.transform.position);
@@ -64,12 +70,6 @@ public class PuppetTracker : MonoBehaviour
                 Icons[i].transform.position = coords;
                 //Set the alpha on the icon
                 Icons[i].color = new Color(1, 1, 1, Mathf.Clamp(Mathf.Pow(2 * (puppeteerCamera.transform.position.y / puppeteerCameraController.FarCameraZoomLimit) - 0.4f, 3), 0, 1));
-            }
-            else
-            {
-                // remove invalid target
-                Targets.RemoveAt(i);
-                Icons[i].color = new Color(1, 1, 1, 0);
             }
         }
     }
