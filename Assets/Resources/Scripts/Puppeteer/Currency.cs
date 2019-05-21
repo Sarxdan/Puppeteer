@@ -24,17 +24,38 @@ public class Currency : MonoBehaviour
 	public int TemporaryCurrency;   // Current currency - the chosen item to place
 
     public Text CurrencyText;
+	private FinalRoomInteract Gamestate;
+	private bool firstTime = true;
 
     // Start is called before the first frame update
     void Start()
     {
+		Gamestate = GetComponent<FinalRoomInteract>();
 		StartCoroutine("CountUpCurrency");
     }
+
+
 
 	public IEnumerator CountUpCurrency()
 	{
 		while (true)
 		{
+			if (Gamestate.ButtonPressed && firstTime)
+			{
+				CurrentCurrency += 500;
+				CurrencyIncrease += 5;
+				foreach (var room in GetComponent<LevelBuilder>().GetRoomsForItem())
+				{
+					foreach (var point in room.GetComponent<ItemSpawner>().FindSnapPoints())
+					{
+						if (point is ItemSnapPoint)
+						{
+							continue;
+						}
+						point.Used = false;
+					}
+				}
+			}
 			CurrentCurrency += CurrencyIncrease;
 			TemporaryCurrency += CurrencyIncrease;
             CurrencyText.text = CurrentCurrency.ToString();
