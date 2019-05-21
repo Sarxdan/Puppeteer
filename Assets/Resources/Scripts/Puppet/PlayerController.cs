@@ -149,8 +149,9 @@ public class PlayerController : NetworkBehaviour
 			}
 		}
 
-        // setup compass late to prevent race condition
+        // Setup compass late to prevent race condition
         Invoke("SetupCompass", 2.0f);
+        // Set Spawn position late to avoid spawning on roof or below map
         Invoke("SetSpawnPosition", 1.5f);
     }
 

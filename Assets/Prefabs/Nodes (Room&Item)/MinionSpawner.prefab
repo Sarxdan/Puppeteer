@@ -67,7 +67,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 89670621584907357}
-  - {fileID: 1707387271120811511}
+  - {fileID: 5965984605809167436}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -85,8 +85,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   serverOnly: 0
   localPlayerAuthority: 0
-  m_AssetId: 74164b7b500a80d41af59122632b64c3
-  m_SceneId: 0
+  m_AssetId: 
+  m_SceneId: 553871036
 --- !u!114 &4963745196626812901
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -106,7 +106,7 @@ MonoBehaviour:
   MinDelay: 10
   MaxDelay: 15
   TankSpawner: 0
-  SpawnerAnim: {fileID: 1707387271120798570}
+  SpawnerAnim: {fileID: 4341870960457081142}
   MinionAnim: {fileID: 7490873450770538372}
   LocalMinions: []
   spawnPoint: {fileID: 89670621584907357}
@@ -143,7 +143,7 @@ MonoBehaviour:
   BearTrap: 1
   RoofSpike: 0
   FloorSpike: 0
-  Cost: 150
+  Cost: 250
 --- !u!114 &-4612029242079334992
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -194,7 +194,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   s_Idle: event:/Traps/Spawner/Spawner idle
   s_Spawn: event:/Traps/Spawner/Spawner spawn
-  s_Destroy: event:/Enemies/Minion/Voice/Death
+  s_Destroy: event:/Traps/Spawner/Spawner destroyed
 --- !u!114 &5579854646710383457
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -541,13 +541,13 @@ PrefabInstance:
       objectReference: {fileID: 2100000, guid: de7badb76df319e41a9601652a171d20, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: edb263756ad751e43a4b46ba5d30c22c, type: 3}
---- !u!4 &1707387271120811511 stripped
+--- !u!4 &5965984605809167436 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -4216859302048453862, guid: edb263756ad751e43a4b46ba5d30c22c,
     type: 3}
   m_PrefabInstance: {fileID: 1707387271120807766}
   m_PrefabAsset: {fileID: 0}
---- !u!95 &1707387271120798570 stripped
+--- !u!95 &4341870960457081142 stripped
 Animator:
   m_CorrespondingSourceObject: {fileID: -6057140222963153312, guid: edb263756ad751e43a4b46ba5d30c22c,
     type: 3}
