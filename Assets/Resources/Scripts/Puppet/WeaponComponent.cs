@@ -128,7 +128,7 @@ public class WeaponComponent : Interactable
         }
         cooldown = FiringSpeed;
 
-		CmdShotSound();
+		CmdShotSound(LiquidLeft / LiquidPerRound);
 
 		if (LiquidLeft < LiquidPerRound)
 		{
@@ -282,9 +282,9 @@ public class WeaponComponent : Interactable
 
 
 	[Command]
-	public void CmdShotSound()
+	public void CmdShotSound(float ammoleft)
 	{
-		RpcShotSound();
+		RpcShotSound(ammoleft);
 	}
 
 	[Command]
@@ -342,9 +342,9 @@ public class WeaponComponent : Interactable
     }
 
 	[ClientRpc]
-	public void RpcShotSound()
+	public void RpcShotSound(float ammoleft)
 	{
-		sounds.Shoot(LiquidLeft / LiquidPerRound);    //Send amount of "bullets" left in mag to sound man.
+		sounds.Shoot(ammoleft);    //Send amount of "bullets" left in mag to sound man.
 	}
 
 	[ClientRpc]
