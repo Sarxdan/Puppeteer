@@ -258,7 +258,7 @@ Transform:
   - {fileID: 591953402505392352}
   - {fileID: 591953402505392378}
   - {fileID: 591953402505392380}
-  - {fileID: 8294334777384012720}
+  - {fileID: 6635612728302011188}
   m_Father: {fileID: 591953402505392364}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -2446,14 +2446,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   s_Hit: event:/Character/Hits/Froggo
-  s_Die: event:/Character/Downed
+  s_Die: event:/Character/Deaths/Froggo death
   s_Footstep: event:/Character/Footsteps/Walk
   s_RunFootstep: event:/Character/Footsteps/Run
   s_Jump: event:/Character/Footsteps/Jump
   s_Land: event:/Character/Footsteps/Land
-  s_Revive: 
-  s_Reviving: 
-  s_UseMedkit: 
+  s_Reviving: event:/Character/Revive
   music: {fileID: 0}
 --- !u!114 &591953401651075576
 MonoBehaviour:
@@ -2469,7 +2467,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   serverOnly: 0
   localPlayerAuthority: 1
-  m_AssetId: 33b9c727c533647419579d7e52a92de5
+  m_AssetId: 
   m_SceneId: 0
 --- !u!114 &591953401651075578
 MonoBehaviour:
@@ -2731,7 +2729,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Right: {fileID: 591953402505392282}
   Left: {fileID: 591953402505392354}
-  HeldMagazine: {fileID: 8294334777384012721}
+  HeldMagazine: {fileID: 6635612728302034309}
 --- !u!114 &-6381041943037152025
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3336,7 +3334,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Right: {fileID: 2440165673884206526}
   Left: {fileID: 2037497106130844768}
-  HeldMagazine: {fileID: 2312365238696591534}
+  HeldMagazine: {fileID: 1088218511984858778}
 --- !u!1 &6420251008613944001
 GameObject:
   m_ObjectHideFlags: 0
@@ -3507,7 +3505,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 0a3bd484c4ef219498b941d1dbb1c145, type: 3}
---- !u!114 &2312365238696591534 stripped
+--- !u!114 &1088218511984858778 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 3390378285604284033, guid: 0a3bd484c4ef219498b941d1dbb1c145,
     type: 3}
@@ -3654,11 +3652,6 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 3390378285604284033, guid: 0a3bd484c4ef219498b941d1dbb1c145,
-        type: 3}
-      propertyPath: m_Enabled
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 3390378285604284032, guid: 0a3bd484c4ef219498b941d1dbb1c145,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -3714,15 +3707,20 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: -160.666
       objectReference: {fileID: 0}
+    - target: {fileID: 3390378285604284033, guid: 0a3bd484c4ef219498b941d1dbb1c145,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 0a3bd484c4ef219498b941d1dbb1c145, type: 3}
---- !u!4 &8294334777384012720 stripped
+--- !u!4 &6635612728302011188 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3390378285604284032, guid: 0a3bd484c4ef219498b941d1dbb1c145,
     type: 3}
   m_PrefabInstance: {fileID: 6635612728302021936}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &8294334777384012721 stripped
+--- !u!114 &6635612728302034309 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 3390378285604284033, guid: 0a3bd484c4ef219498b941d1dbb1c145,
     type: 3}
@@ -3741,21 +3739,16 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 7159594667242304648}
     m_Modifications:
-    - target: {fileID: 895376273027663898, guid: 27f6f56a79bae2e4b8ada12c45a4bc54,
-        type: 3}
-      propertyPath: m_Name
-      value: PuppetCanvas
-      objectReference: {fileID: 0}
-    - target: {fileID: 895376273027663902, guid: 27f6f56a79bae2e4b8ada12c45a4bc54,
-        type: 3}
-      propertyPath: m_Enabled
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 895376273027663872, guid: 27f6f56a79bae2e4b8ada12c45a4bc54,
         type: 3}
       propertyPath: Owner
       value: 
       objectReference: {fileID: 7159594667242304648}
+    - target: {fileID: 895376273027663902, guid: 27f6f56a79bae2e4b8ada12c45a4bc54,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 895376273027663903, guid: 27f6f56a79bae2e4b8ada12c45a4bc54,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -3876,10 +3869,10 @@ PrefabInstance:
       propertyPath: m_LocalScale.z
       value: 1.1533333
       objectReference: {fileID: 0}
-    - target: {fileID: 5933529738732171975, guid: 27f6f56a79bae2e4b8ada12c45a4bc54,
+    - target: {fileID: 895376273027663898, guid: 27f6f56a79bae2e4b8ada12c45a4bc54,
         type: 3}
-      propertyPath: m_Enabled
-      value: 0
+      propertyPath: m_Name
+      value: PuppetCanvas
       objectReference: {fileID: 0}
     - target: {fileID: 895376273177909507, guid: 27f6f56a79bae2e4b8ada12c45a4bc54,
         type: 3}
@@ -3910,6 +3903,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
       value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 5933529738732171975, guid: 27f6f56a79bae2e4b8ada12c45a4bc54,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 27f6f56a79bae2e4b8ada12c45a4bc54, type: 3}
