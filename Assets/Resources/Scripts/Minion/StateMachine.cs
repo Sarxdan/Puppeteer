@@ -223,17 +223,22 @@ public class StateMachine : NetworkBehaviour
             PathFinder.Stop();
             PathFinder.enabled = false;
         }
-        AnimController.SetTrigger("Death");
+        AnimController.SetBool("Death", true);
         AnimController.SetInteger("RandomAnimationIndex", Random.Range(0,3));
     }
 
     //Runs when death animation is complete, despawns object
     public void Despawn()
     {
-        if(isServer);
+        CmdRemoveFromSpawner();
+    }
+
+    [Command]
+    public void CmdRemoveFromSpawner()
+    {
         EnemySpawner.AllMinions.Remove(this);
         if(Spawner !=null) Spawner.LocalMinions.Remove(this);
-        Destroy(this.gameObject);
+        NetworkServer.Destroy(gameObject);
     }
 
     //Runs during attack animation, deals damage to player
@@ -324,7 +329,7 @@ public class StateMachine : NetworkBehaviour
             //Hit cone, triggered when the target is within the parameters
             if (WithinCone(transform, TargetEntity.transform, 80f, 2f, 0f))
             {
-                //Checks for players in range and deals damage to them aswell
+                //Checks for players in range and deals damage to them aswelle
                 HitColliders = Physics.OverlapSphere(gameObject.transform.position, 2f);
 
                 foreach(Collider coll in HitColliders)
