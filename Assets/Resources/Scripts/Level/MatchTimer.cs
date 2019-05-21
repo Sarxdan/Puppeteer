@@ -22,7 +22,7 @@ public class MatchTimer : NetworkBehaviour
 {
 	public int MatchLength;
 	public Text TimeRemainingTextBox;
-	[SyncVar]
+	//[SyncVar]
 	public string TimePrintOut; 
 	public int PostGameTime;
 	public GameObject Canvas;
@@ -59,7 +59,7 @@ public class MatchTimer : NetworkBehaviour
     }
 	private void Update()
 	{
-		TimeRemainingTextBox.text = TimePrintOut;
+		//TimeRemainingTextBox.text = TimePrintOut;
 	}
 
 	public IEnumerator Timer()
@@ -85,7 +85,7 @@ public class MatchTimer : NetworkBehaviour
 			    secondsString = Seconds.ToString("00");
 
 		    TimePrintOut = minutesString + ":" + secondsString;
-			RpcUpdateTime();
+			RpcUpdateTime(TimePrintOut);
 
             //Gives the puppets some time to load in.
 		    yield return new WaitForSeconds(1);
@@ -175,9 +175,9 @@ public class MatchTimer : NetworkBehaviour
     }
 
     [ClientRpc]
-    public void RpcUpdateTime()
+    public void RpcUpdateTime(string value)
     {
-	    TimeRemainingTextBox.text = TimePrintOut;
+	    TimeRemainingTextBox.text = value;
     }
 
     //Puppeteer win. Show endscreen for all clients
