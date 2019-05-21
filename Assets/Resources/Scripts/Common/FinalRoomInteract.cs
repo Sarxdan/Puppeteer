@@ -52,7 +52,6 @@ public class FinalRoomInteract : Interactable
         if (!ButtonPressed)
         {
 			endGameDisplay.SetActive(true);
-            interactor.GetComponent<Music>().ButtonPressed();
 		    DoorToOpen = GameObject.Find("ST_Final_DoorFrame_03");
             ProgressTransform = GameObject.Find("ProgressBar").GetComponent<RectTransform>();
 			LeverTransform = GameObject.Find("ST_lever_low").GetComponent<Transform>();
@@ -134,6 +133,12 @@ public class FinalRoomInteract : Interactable
 			yield return new WaitForSeconds(1);
 		}
 	}
+
+    [ClientRpc]
+    public void RpcPlayMusic()
+    {
+        FindObjectOfType<Music>().ButtonPressed();
+    }
 
 	[ClientRpc]
 	public void RpcMoveLever(Quaternion rotation)
