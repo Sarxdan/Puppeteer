@@ -48,7 +48,7 @@ public class ReviveComponent : Interactable
 
         healthComponent.AddDeathAction(OnZeroHealth);
         downedPanel = GameObject.Find("DownedPanel");
-        DeathVignette = GameObject.Find("Vignette").GetComponent<RectTransform>();
+        //DeathVignette = GameObject.Find("Vignette").GetComponent<RectTransform>();
         downedBar = downedPanel.GetComponentsInChildren<RectTransform>()[1];
         downedPanel.SetActive(false);
     }
