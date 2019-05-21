@@ -128,9 +128,9 @@ public class WeaponComponent : Interactable
         }
         cooldown = FiringSpeed;
 
-        sounds.Shoot(LiquidLeft / LiquidPerRound);    //Send amount of "bullets" left in mag to sound man.
+		CmdShotSound();
 
-        if (LiquidLeft < LiquidPerRound)
+		if (LiquidLeft < LiquidPerRound)
 		{
 			return;
 		}
@@ -205,7 +205,7 @@ public class WeaponComponent : Interactable
     {
         if(!CanReload()) return;
 
-        sounds.Reload();
+		CmdReloadSound();
         int amount = Mathf.Min(Capacity - LiquidLeft, liquidInput);
         liquidInput -= amount;
         LiquidLeft += amount;
@@ -268,9 +268,6 @@ public class WeaponComponent : Interactable
         this.HeadTransform = interactor.GetComponentInChildren<Camera>().transform;
         
         RpcPickupWeapon(gameObject, interactor);
-
-        sounds.Pickup(); // Send pickup trigger to sound
-
     }
 
     public override void OnInteractEnd(GameObject interactor)
@@ -284,16 +281,29 @@ public class WeaponComponent : Interactable
     }
 
 
-    [ClientRpc]
+	[Command]
+	public void CmdShotSound()
+	{
+		RpcShotSound();
+	}
+
+	[Command]
+	public void CmdReloadSound()
+	{
+		RpcReloadSound();
+	}
+	
+	[ClientRpc]
     public void RpcPickupWeapon(GameObject weaponObject, GameObject userObject)
     {
 
         WeaponComponent newWeapon = weaponObject.GetComponent<WeaponComponent>();
         PlayerController user = userObject.GetComponent<PlayerController>();
+		// plays sound.
+		sounds.Pickup(); // Send pickup trigger to sound
 
-
-        //Disables new weapons collider
-        newWeapon.GetComponent<CapsuleCollider>().enabled = false;
+		//Disables new weapons collider
+		newWeapon.GetComponent<CapsuleCollider>().enabled = false;
 
         GameObject CurrentWeaponObject = user.CurrentWeapon;
         //If carrying a weapon, detach it and place it on new weapons location
@@ -330,6 +340,18 @@ public class WeaponComponent : Interactable
             newWeapon.ShowMagazine();
         }
     }
+
+	[ClientRpc]
+	public void RpcShotSound()
+	{
+		sounds.Shoot(LiquidLeft / LiquidPerRound);    //Send amount of "bullets" left in mag to sound man.
+	}
+
+	[ClientRpc]
+	public void RpcReloadSound()
+	{
+		sounds.Reload();
+	}
 
     //Doesn't actually remove or add, just hides or shows
     public void HideMagazine()

@@ -12,6 +12,7 @@ public class Music : MonoBehaviour
     {
         music = FMODUnity.RuntimeManager.CreateInstance(s_Music);
         music.start();
+        FindObjectOfType<MatchTimer>().music = this.music;
     }
 
     public void Progression()
