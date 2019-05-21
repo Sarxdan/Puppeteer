@@ -384,7 +384,8 @@ public class PlayerController : NetworkBehaviour
         rigidBody.constraints = RigidbodyConstraints.FreezeAll;
         CanShoot = false;
         gameObject.GetComponent<InteractionController>().enabled = false;
-        
+        if(isLocalPlayer)
+            GetComponent<Interactable>().HideToolTip(gameObject);
         AnimController.SetBool("Downed", true);
         AnimController.SetLayerWeight(1,0);
 
