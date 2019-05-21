@@ -21,7 +21,7 @@ using MinionStates;
  */
 public class WeaponComponent : Interactable
 {
-	// Sound Test
+    // Sound Test
     private WeaponSounds sounds;
 
     public float NoiseRadius;
@@ -32,11 +32,11 @@ public class WeaponComponent : Interactable
     public int LiquidLeft;
     public int LiquidPerRound;
 
-	public GameObject MagazinePrefab;
+    public GameObject MagazinePrefab;
     public Transform MagazineAttach;
-	private GameObject currentMagazine;
+    private GameObject currentMagazine;
     [HideInInspector]
-	public FluidSimulation LiquidScript;
+    public FluidSimulation LiquidScript;
 
 
     private PlayerController user;
@@ -80,7 +80,7 @@ public class WeaponComponent : Interactable
     public GatlingGunAnimator GatlingAnimator;
     public GatlingGunSounds gatlingGunSounds;
 
-	public GameObject[] HitDecals;
+    public GameObject[] HitDecals;
 
     //Time left until weapon can be used again
     private bool reloading = true;
@@ -95,26 +95,26 @@ public class WeaponComponent : Interactable
 
     private bool showingMagazine;
 
-	public void Start()
-	{
-		sounds = GetComponent<WeaponSounds>();
+    public void Start()
+    {
+        sounds = GetComponent<WeaponSounds>();
         gatlingGunSounds = GetComponent<GatlingGunSounds>();
         muzzleFlash = GetComponentInChildren<MuzzleFlash>();
         ShowMagazine();
         reloading = false;
         muzzlePoint = transform.Find("MuzzlePoint");
-	}
+    }
 
 
-	//Attemps to fire the weapon
-	public void Use()
+    //Attemps to fire the weapon
+    public void Use()
     {
         if (!isHeld && gatlingGunSounds != null)
         {
             gatlingGunSounds.SpinUp();
         }
 
-        if(RequireRelease && isHeld) return;
+        if (RequireRelease && isHeld) return;
         isHeld = true;
 
         charge = Mathf.Min(charge + Time.deltaTime, ChargeTime);
@@ -125,33 +125,33 @@ public class WeaponComponent : Interactable
         {
             pc.AnimController.SetBool("Fire", false);
             pc.FPVAnimController.SetBool("Fire", false);
-			return;
+            return;
         }
         cooldown = FiringSpeed;
 
-		CmdShotSound(LiquidLeft / LiquidPerRound);
+        CmdShotSound(LiquidLeft / LiquidPerRound);
 
-		if (LiquidLeft < LiquidPerRound)
-		{
-			return;
-		}
+        if (LiquidLeft < LiquidPerRound)
+        {
+            return;
+        }
 
         DecalHandler decalHandler = pc.GetComponent<DecalHandler>();
 
         muzzleFlash.Fire();
-        
-        for(int i = 0; i < NumShots; i++)
+
+        for (int i = 0; i < NumShots; i++)
         {
-            
+
             // calculate spread
             Vector3 offset = Random.insideUnitSphere * Spread;
 
             RaycastHit hitInfo;
-            if(Physics.Raycast(Camera.main.ViewportToWorldPoint(new Vector3(0.5f, 0.5f)), Camera.main.transform.forward + offset, out hitInfo, Mathf.Infinity, ~(1 << 8 | 1 << 2)))
+            if (Physics.Raycast(Camera.main.ViewportToWorldPoint(new Vector3(0.5f, 0.5f)), Camera.main.transform.forward + offset, out hitInfo, Mathf.Infinity, ~(1 << 8 | 1 << 2)))
             {
                 // deal damage to target if possible
                 var health = hitInfo.transform.GetComponentInParent<HealthComponent>();
-                if(health != null)
+                if (health != null)
                 {
                     if(hitInfo.transform.tag == "Enemy"){
                         CmdAggro(hitInfo.transform.gameObject);
@@ -159,11 +159,11 @@ public class WeaponComponent : Interactable
                     uint damage = (uint)(this.Damage * Mathf.Pow(DamageDropoff, hitInfo.distance / 10.0f));
                     health.Damage(damage);
                 }
-				// create hit decal
-				//decalHandler.AddDecal(Instantiate(HitDecals[Random.Range(0, HitDecals.Length)], hitInfo.point, Quaternion.FromToRotation(Vector3.forward, hitInfo.normal), hitInfo.transform));
+                // create hit decal
+                //decalHandler.AddDecal(Instantiate(HitDecals[Random.Range(0, HitDecals.Length)], hitInfo.point, Quaternion.FromToRotation(Vector3.forward, hitInfo.normal), hitInfo.transform));
                 Instantiate(WallSplatObject.gameObject, hitInfo.point, Quaternion.LookRotation(hitInfo.normal, Vector3.up), hitInfo.transform);
-                    
-                if(SpawnTrail)
+
+                if (SpawnTrail)
                 {
                     BulletTrail spawnedTrail = Instantiate(TrailObject.gameObject, muzzlePoint.position, muzzlePoint.rotation).GetComponent<BulletTrail>();
                     spawnedTrail.hit(hitInfo.point);
@@ -189,7 +189,7 @@ public class WeaponComponent : Interactable
         //Adds recoil and cooldown, and subtracts ammo left
         recoil += RecoilAmount;
         LiquidLeft -= LiquidPerRound;
-		LiquidScript.CurrentLiquidAmount = LiquidLeft;
+        LiquidScript.CurrentLiquidAmount = LiquidLeft;
     }
 
     public void Release()
@@ -207,9 +207,9 @@ public class WeaponComponent : Interactable
     //Attemps to reload the weapon to its maximum capacity by the given input amount
     public void Reload(ref int liquidInput)
     {
-        if(!CanReload()) return;
+        if (!CanReload()) return;
 
-		CmdReloadSound();
+        CmdReloadSound();
         int amount = Mathf.Min(Capacity - LiquidLeft, liquidInput);
         liquidInput -= amount;
         LiquidLeft += amount;
@@ -217,14 +217,14 @@ public class WeaponComponent : Interactable
 
     public bool CanReload()
     {
-         return !reloading && cooldown == 0;
+        return !reloading && cooldown == 0;
     }
 
     void Update()
     {
         // decrease weapon charge
         charge = Mathf.Max(0.0f, charge -= Time.deltaTime * 0.5f);
-        
+
         cooldown = Mathf.Max(0.0f, cooldown - Time.deltaTime);
 
         // perform recoil
@@ -234,10 +234,10 @@ public class WeaponComponent : Interactable
 
             // rotate head according to the recoil amount
             var rotation = HeadTransform.localEulerAngles + Vector3.left * recoil;
-            if(resetRecoil)
+            if (resetRecoil)
             {
                 rotation.x = Mathf.MoveTowardsAngle(rotation.x, rotX, Time.deltaTime * RecoilRecovery * RecoilAmount);
-                if(rotation.x == rotX || Mathf.Abs(Input.GetAxis("Mouse Y")) > 0.1f)
+                if (rotation.x == rotX || Mathf.Abs(Input.GetAxis("Mouse Y")) > 0.1f)
                 {
                     resetRecoil = false;
                 }
@@ -255,13 +255,13 @@ public class WeaponComponent : Interactable
             HeadTransform.localEulerAngles = rotation;
             rotation.y = 180.0f;
         }
-        
-        if(GatlingAnimator != null)
+
+        if (GatlingAnimator != null)
         {
-            if(reloading) 
+            if (reloading)
                 GatlingAnimator.CurrentSpeed = 0;
             else
-                GatlingAnimator.CurrentSpeed = charge/ChargeTime;
+                GatlingAnimator.CurrentSpeed = charge / ChargeTime;
 
         }
     }
@@ -270,7 +270,7 @@ public class WeaponComponent : Interactable
     {
 
         this.HeadTransform = interactor.GetComponentInChildren<Camera>().transform;
-        
+
         RpcPickupWeapon(gameObject, interactor);
     }
 
@@ -295,29 +295,29 @@ public class WeaponComponent : Interactable
         }
     }
 
-	[Command]
-	public void CmdShotSound(float ammoleft)
-	{
-		RpcShotSound(ammoleft);
-	}
+    [Command]
+    public void CmdShotSound(float ammoleft)
+    {
+        RpcShotSound(ammoleft);
+    }
 
-	[Command]
-	public void CmdReloadSound()
-	{
-		RpcReloadSound();
-	}
-	
-	[ClientRpc]
+    [Command]
+    public void CmdReloadSound()
+    {
+        RpcReloadSound();
+    }
+
+    [ClientRpc]
     public void RpcPickupWeapon(GameObject weaponObject, GameObject userObject)
     {
 
         WeaponComponent newWeapon = weaponObject.GetComponent<WeaponComponent>();
         PlayerController user = userObject.GetComponent<PlayerController>();
-		// plays sound.
-		sounds.Pickup(); // Send pickup trigger to sound
+        // plays sound.
+        sounds.Pickup(); // Send pickup trigger to sound
 
-		//Disables new weapons collider
-		newWeapon.GetComponent<CapsuleCollider>().enabled = false;
+        //Disables new weapons collider
+        newWeapon.GetComponent<CapsuleCollider>().enabled = false;
 
         GameObject CurrentWeaponObject = user.CurrentWeapon;
         //If carrying a weapon, detach it and place it on new weapons location
@@ -328,6 +328,7 @@ public class WeaponComponent : Interactable
             CurrentWeapon.transform.SetPositionAndRotation(transform.position, transform.rotation);
             CurrentWeapon.transform.SetParent(null);
             CurrentWeapon.GetComponent<Collider>().enabled = true;
+            CmdSetWeaponLayer(CurrentWeaponObject, 0);
         }
 
         //Attaches new weapon to player
@@ -355,24 +356,24 @@ public class WeaponComponent : Interactable
         }
     }
 
-	[ClientRpc]
-	public void RpcShotSound(float ammoleft)
-	{
-		sounds.Shoot(ammoleft);    //Send amount of "bullets" left in mag to sound man.
-	}
+    [ClientRpc]
+    public void RpcShotSound(float ammoleft)
+    {
+        sounds.Shoot(ammoleft);    //Send amount of "bullets" left in mag to sound man.
+    }
 
-	[ClientRpc]
-	public void RpcReloadSound()
-	{
-		sounds.Reload();
-	}
+    [ClientRpc]
+    public void RpcReloadSound()
+    {
+        sounds.Reload();
+    }
 
     //Doesn't actually remove or add, just hides or shows
     public void HideMagazine()
     {
-        if(reloading) return;
+        if (reloading) return;
 
-        if(currentMagazine != null)
+        if (currentMagazine != null)
         {
             currentMagazine.SetActive(false);
         }
@@ -382,20 +383,54 @@ public class WeaponComponent : Interactable
 
     public void ShowMagazine()
     {
-        if(!reloading) return;
+        if (!reloading) return;
 
-        if(currentMagazine == null)
+        if (currentMagazine == null)
         {
-			currentMagazine = Instantiate(MagazinePrefab, MagazineAttach);
-			LiquidScript = currentMagazine.GetComponent<FluidSimulation>();
-			LiquidScript.MaxLiquidAmount = Capacity;
+            currentMagazine = Instantiate(MagazinePrefab, MagazineAttach);
+            LiquidScript = currentMagazine.GetComponent<FluidSimulation>();
+            LiquidScript.MaxLiquidAmount = Capacity;
         }
-		LiquidScript.CurrentLiquidAmount = LiquidLeft;
+        LiquidScript.CurrentLiquidAmount = LiquidLeft;
         currentMagazine.SetActive(true);
     }
 
     public void StopCooldown()
     {
         reloading = false;
+    }
+
+    [Command]
+    public void CmdSetWeaponLayer(GameObject obj, int value)
+    {
+        RpcSetWeaponLayer(obj, value);
+    }
+
+    [ClientRpc]
+    public void RpcSetWeaponLayer(GameObject obj, int value)
+    {
+        setWeaponLayer(obj, value);
+    }
+
+    public void setWeaponLayer(GameObject obj, int layer)
+    {
+        //Exit condidtion
+        if (null == obj)
+        {
+            return;
+        }
+
+        //Set the layer of the gameObject
+        obj.layer = layer;
+
+        //For each child in the gameObject, Call this function again.
+        foreach (Transform child in obj.transform)
+        {
+            if (null == child)
+            {
+                continue;
+            }
+            setWeaponLayer(child.gameObject, layer);
+        }
     }
 }
