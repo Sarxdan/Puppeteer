@@ -2451,9 +2451,7 @@ MonoBehaviour:
   s_RunFootstep: event:/Character/Footsteps/Run
   s_Jump: event:/Character/Footsteps/Jump
   s_Land: event:/Character/Footsteps/Land
-  s_Revive: 
-  s_Reviving: 
-  s_UseMedkit: 
+  s_Reviving: event:/Character/Revive
   music: {fileID: 0}
 --- !u!114 &591953401651075576
 MonoBehaviour:
@@ -2469,8 +2467,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   serverOnly: 0
   localPlayerAuthority: 1
-  m_AssetId: 33b9c727c533647419579d7e52a92de5
-  m_SceneId: 0
+  m_AssetId: 
+  m_SceneId: 102499933
 --- !u!114 &591953401651075578
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3536,6 +3534,16 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: -6057140222963153312, guid: 29a2df5d003174342a4404f09d5bfef9,
+        type: 3}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 9100000, guid: 1902308df37c0e84d8970b5b5b9db1a6, type: 2}
+    - target: {fileID: -6057140222963153312, guid: 29a2df5d003174342a4404f09d5bfef9,
+        type: 3}
+      propertyPath: m_ApplyRootMotion
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: -4216859302048453862, guid: 29a2df5d003174342a4404f09d5bfef9,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -3591,16 +3599,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 3.7300003
       objectReference: {fileID: 0}
-    - target: {fileID: -6057140222963153312, guid: 29a2df5d003174342a4404f09d5bfef9,
-        type: 3}
-      propertyPath: m_Controller
-      value: 
-      objectReference: {fileID: 9100000, guid: 1902308df37c0e84d8970b5b5b9db1a6, type: 2}
-    - target: {fileID: -6057140222963153312, guid: 29a2df5d003174342a4404f09d5bfef9,
-        type: 3}
-      propertyPath: m_ApplyRootMotion
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: -529800294720967240, guid: 29a2df5d003174342a4404f09d5bfef9,
         type: 3}
       propertyPath: m_LocalRotation.x
@@ -3653,11 +3651,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_IsActive
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3390378285604284033, guid: 0a3bd484c4ef219498b941d1dbb1c145,
-        type: 3}
-      propertyPath: m_Enabled
-      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3390378285604284032, guid: 0a3bd484c4ef219498b941d1dbb1c145,
         type: 3}
@@ -3714,6 +3707,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: -160.666
       objectReference: {fileID: 0}
+    - target: {fileID: 3390378285604284033, guid: 0a3bd484c4ef219498b941d1dbb1c145,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 0a3bd484c4ef219498b941d1dbb1c145, type: 3}
 --- !u!4 &8294334777384012720 stripped
@@ -3741,21 +3739,16 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 7159594667242304648}
     m_Modifications:
-    - target: {fileID: 895376273027663898, guid: 27f6f56a79bae2e4b8ada12c45a4bc54,
-        type: 3}
-      propertyPath: m_Name
-      value: PuppetCanvas
-      objectReference: {fileID: 0}
-    - target: {fileID: 895376273027663902, guid: 27f6f56a79bae2e4b8ada12c45a4bc54,
-        type: 3}
-      propertyPath: m_Enabled
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 895376273027663872, guid: 27f6f56a79bae2e4b8ada12c45a4bc54,
         type: 3}
       propertyPath: Owner
       value: 
       objectReference: {fileID: 7159594667242304648}
+    - target: {fileID: 895376273027663902, guid: 27f6f56a79bae2e4b8ada12c45a4bc54,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 895376273027663903, guid: 27f6f56a79bae2e4b8ada12c45a4bc54,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -3876,10 +3869,10 @@ PrefabInstance:
       propertyPath: m_LocalScale.z
       value: 1.1533333
       objectReference: {fileID: 0}
-    - target: {fileID: 5933529738732171975, guid: 27f6f56a79bae2e4b8ada12c45a4bc54,
+    - target: {fileID: 895376273027663898, guid: 27f6f56a79bae2e4b8ada12c45a4bc54,
         type: 3}
-      propertyPath: m_Enabled
-      value: 0
+      propertyPath: m_Name
+      value: PuppetCanvas
       objectReference: {fileID: 0}
     - target: {fileID: 895376273177909507, guid: 27f6f56a79bae2e4b8ada12c45a4bc54,
         type: 3}
@@ -3910,6 +3903,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
       value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 5933529738732171975, guid: 27f6f56a79bae2e4b8ada12c45a4bc54,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 27f6f56a79bae2e4b8ada12c45a4bc54, type: 3}

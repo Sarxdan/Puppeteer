@@ -23,10 +23,8 @@ public class PuppetSounds : CharacterSounds
     // Sound Events
     [FMODUnity.EventRef] public string s_Jump;
     [FMODUnity.EventRef] public string s_Land;
-    [FMODUnity.EventRef] public string s_Revive;
     [FMODUnity.EventRef] public string s_Reviving;
     FMOD.Studio.EventInstance ress;
-    [FMODUnity.EventRef] public string s_UseMedkit;
 
     public Music music;
 
@@ -62,21 +60,16 @@ public class PuppetSounds : CharacterSounds
     
     public void Revive()
     {
+        die.release();
         music.Revived();
 
         ress.setParameterByName("Ress", 1);
         ress.release();
-        die.release();
-        FMODUnity.RuntimeManager.PlayOneShot(s_Revive, transform.position);
     }
 
     public void ReviveEnd()
     {
+        ress.release();
         ress.stop(FMOD.Studio.STOP_MODE.ALLOWFADEOUT);
-    }
-    
-    public void UseMedkit()
-    {
-        FMODUnity.RuntimeManager.PlayOneShot(s_UseMedkit, transform.position);
     }
 }
