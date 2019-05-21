@@ -384,9 +384,11 @@ public class PlayerController : NetworkBehaviour
         rigidBody.constraints = RigidbodyConstraints.FreezeAll;
         CanShoot = false;
         gameObject.GetComponent<InteractionController>().enabled = false;
+        
         AnimController.SetBool("Downed", true);
-        FPVAnimController.SetBool("Downed", true);
         AnimController.SetLayerWeight(1,0);
+
+        FPVAnimController.SetBool("Downed", true);
         FPVAnimController.SetLayerWeight(1,0);
     }
 
@@ -396,8 +398,12 @@ public class PlayerController : NetworkBehaviour
         rigidBody.constraints = RigidbodyConstraints.None | RigidbodyConstraints.FreezeRotation;
         CanShoot = true;
         gameObject.GetComponent<InteractionController>().enabled = true;
+
         AnimController.SetBool("Downed", false);
         AnimController.SetLayerWeight(1,1);
+
+        FPVAnimController.SetBool("Downed", false);
+        FPVAnimController.SetLayerWeight(1,1);
     }
 
     private IEnumerator LoadingRoutine()

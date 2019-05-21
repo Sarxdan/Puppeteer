@@ -13,7 +13,7 @@ using Mirror;
 *
 * CODE REVIEWED BY:
 * Anton Jonnson 14/05-2019
-* 
+s* 
 * CONTRIBUTORS:
 * 
 */
@@ -28,8 +28,9 @@ public class MatchTimer : NetworkBehaviour
 	public GameObject Canvas;
     public GameObject endGameCamera;
 	public RectTransform TimeTracker;
+    public FMOD.Studio.EventInstance music;
 
-	public int numberOfPuppetsAlive;
+    public int numberOfPuppetsAlive;
 	private int NumberOfPuppetsThatEscaped;
 	private EndOfMatchCanvas endOfMatchScript;
 	private bool gameEnded;
@@ -65,7 +66,7 @@ public class MatchTimer : NetworkBehaviour
     {
         //Convert match time to minutes and seconds
 	    for (int i = MatchLength; i > 0; i -= 60)
-		    if (i > 60)
+		    if (i >= 60)
 			    Minutes++;
 		    else
 			    Seconds = i;
@@ -84,19 +85,21 @@ public class MatchTimer : NetworkBehaviour
 			    secondsString = Seconds.ToString("00");
 
 		    TimePrintOut = minutesString + ":" + secondsString;
+			RpcUpdateTime();
 
             //Gives the puppets some time to load in.
 		    yield return new WaitForSeconds(1);
 
 		    MatchLength--;
 		    Seconds--;
-		    if (Seconds < 0)
+			
+		    if (Seconds < 0 && Minutes > 0)
 		    {
 			    Minutes--;
 			    Seconds = 59;
 		    }
 
-            //    //Check if a team have won
+            //Check if a team have won
 
             //If a puppet have escaped and all other are dead, the puppets win
             if (numberOfPuppetsAlive <= 0 && NumberOfPuppetsThatEscaped != 0 && !gameEnded)
@@ -155,6 +158,8 @@ public class MatchTimer : NetworkBehaviour
 		    PostGameTime--;
 		    yield return new WaitForSeconds(1);
 	    }
+
+        music.release();
         if (isServer)
             manager.StopHost();
     }
@@ -170,9 +175,9 @@ public class MatchTimer : NetworkBehaviour
     }
 
     [ClientRpc]
-    public void RpcUpdateTime(string timePrint)
+    public void RpcUpdateTime()
     {
-	    TimeRemainingTextBox.text = timePrint;
+	    TimeRemainingTextBox.text = TimePrintOut;
     }
 
     //Puppeteer win. Show endscreen for all clients

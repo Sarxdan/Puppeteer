@@ -12,13 +12,9 @@ public class Music : MonoBehaviour
     {
         music = FMODUnity.RuntimeManager.CreateInstance(s_Music);
         music.start();
+        FindObjectOfType<MatchTimer>().music = this.music;
     }
-
-    public void Progression()
-    {
-        music.setParameterByName("Progression", 1);
-    }
-
+    
     public void Downed()
     {
         music.setParameterByName("Downed", 1);

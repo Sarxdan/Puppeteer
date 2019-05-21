@@ -43,9 +43,10 @@ namespace MinionStates
 
         public override void Run()
         {
+            if (machine.TargetEntity.tag == "Untagged" && machine.TargetEntity.name == "Gekko(Clone)") machine.TargetEntity = null;
 
             //If no target, wander
-            if(machine.TargetEntity == null)
+            if (machine.TargetEntity == null)
             {
                 machine.SetState(new WanderState(machine));
                 return;

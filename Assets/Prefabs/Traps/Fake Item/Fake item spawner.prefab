@@ -14,6 +14,8 @@ GameObject:
   - component: {fileID: 6170952321584352463}
   - component: {fileID: 1452723701858283180}
   - component: {fileID: 1944591013325773782}
+  - component: {fileID: 40349048382956472}
+  - component: {fileID: 3444735258584622115}
   m_Layer: 0
   m_Name: Fake item spawner
   m_TagString: Untagged
@@ -45,7 +47,7 @@ BoxCollider:
   m_GameObject: {fileID: 7878347970347006104}
   m_Material: {fileID: 0}
   m_IsTrigger: 1
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 2
   m_Size: {x: 0.57558197, y: 0.41389883, z: 0.35092473}
   m_Center: {x: 0.004330784, y: 0.20066023, z: 0.011616893}
@@ -64,7 +66,7 @@ MonoBehaviour:
   serverOnly: 0
   localPlayerAuthority: 0
   m_AssetId: 
-  m_SceneId: 1357951325
+  m_SceneId: 1719109358
 --- !u!114 &6170952321584352463
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -118,6 +120,37 @@ MonoBehaviour:
   s_Pickup: event:/Puppeteer/Traps/Fake item pickup
   s_Place: event:/Puppeteer/Traps/Fake item place
   pupCamPos: {x: 0, y: 0, z: 0}
+--- !u!114 &40349048382956472
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7878347970347006104}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5bb98d5cfea00ff47a55c4d6156d31d3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GlowColor: {r: 1, g: 1, b: 1, a: 1}
+  LerpFactor: 10
+--- !u!114 &3444735258584622115
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7878347970347006104}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c5e289cc50f085b4a8b8998615cd743c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncInterval: 0.1
+  Explosion: {fileID: 0}
+  Damage: 5
+  Radius: 4
+  Activated: 0
 --- !u!1001 &9206092677246510135
 PrefabInstance:
   m_ObjectHideFlags: 0

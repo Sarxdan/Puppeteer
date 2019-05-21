@@ -45,7 +45,19 @@ public class PuppetTracker : MonoBehaviour
         for (int i = 0; i < Targets.Count; i++)
         {
             var target = Targets[i];
-            if (target != null)
+
+            if (target == null)
+            {
+                // remove invalid target
+                Targets.RemoveAt(i);
+                Icons[i].color = new Color(1, 1, 1, 0);
+                return;
+            }
+
+            //Special case for gekko if he is invisible
+            InvisibilityPower gekkoPower = target.GetComponent<InvisibilityPower>();
+
+            if (gekkoPower == null)
             {
                 //Convert the targets position to 2d position based on the camera
                 Vector3 coords = puppeteerCamera.WorldToScreenPoint(target.transform.position);
@@ -54,11 +66,23 @@ public class PuppetTracker : MonoBehaviour
                 //Set the alpha on the icon
                 Icons[i].color = new Color(1, 1, 1, Mathf.Clamp(Mathf.Pow(2 * (puppeteerCamera.transform.position.y / puppeteerCameraController.FarCameraZoomLimit) - 0.4f, 3), 0, 1));
             }
+            else if (target.GetComponent<InvisibilityPower>().IsActive)
+            {
+                //Convert the targets position to 2d position based on the camera
+                Vector3 coords = puppeteerCamera.WorldToScreenPoint(target.transform.position);
+                //Set the icon's position to the new position
+                Icons[i].transform.position = coords;
+                //Set the alpha on the icon
+                Icons[i].color = new Color(1, 1, 1, 0);
+            }
             else
             {
-                // remove invalid target
-                Targets.RemoveAt(i);
-                Icons[i].color = new Color(1, 1, 1, 0);
+                //Convert the targets position to 2d position based on the camera
+                Vector3 coords = puppeteerCamera.WorldToScreenPoint(target.transform.position);
+                //Set the icon's position to the new position
+                Icons[i].transform.position = coords;
+                //Set the alpha on the icon
+                Icons[i].color = new Color(1, 1, 1, Mathf.Clamp(Mathf.Pow(2 * (puppeteerCamera.transform.position.y / puppeteerCameraController.FarCameraZoomLimit) - 0.4f, 3), 0, 1));
             }
         }
     }
