@@ -108,9 +108,12 @@ public class HealthComponent : NetworkBehaviour
     [ClientRpc]
     public void RpcDeath()
     {
-        if(sounds != null) sounds.Death();
-        this.zeroHealthAction();
-        Downed = true;
+		if (isLocalPlayer)
+		{
+			if(sounds != null) sounds.Death();
+			this.zeroHealthAction();
+			Downed = true;
+		}
     }
     
     //Starts regenerate HP after delay, up to the max amount of regen
