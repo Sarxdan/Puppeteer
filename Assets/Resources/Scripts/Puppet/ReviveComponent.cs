@@ -66,12 +66,14 @@ public class ReviveComponent : Interactable
         {
             RpcGetHudScript(interactor);
         }
+        gameObject.GetComponent<PuppetSounds>().ReviveStart();
         StartCoroutine("ReviveRoutine", interactor);
     }
 
     public override void OnInteractEnd(GameObject interactor)
     {
         StopCoroutine("ReviveRoutine");
+        gameObject.GetComponent<PuppetSounds>().ReviveEnd();
         var interactionController = interactor.GetComponent<InteractionController>();
         if(interactionController.isServer && interactionController.isLocalPlayer)
         {
