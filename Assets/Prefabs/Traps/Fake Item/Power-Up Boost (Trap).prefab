@@ -518,8 +518,8 @@ GameObject:
   - component: {fileID: 2484390785486819303}
   - component: {fileID: -2365034196142867877}
   - component: {fileID: -4878699934078777832}
-  - component: {fileID: -6687787740614923174}
   - component: {fileID: 5094175662525890068}
+  - component: {fileID: 705466737083174098}
   m_Layer: 0
   m_Name: Power-Up Boost (Trap)
   m_TagString: Untagged
@@ -570,8 +570,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   serverOnly: 0
   localPlayerAuthority: 0
-  m_AssetId: 08e673ea00307eb47849c40a7135ae16
-  m_SceneId: 0
+  m_AssetId: 
+  m_SceneId: 1979175388
 --- !u!114 &-4878699934078777832
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -586,24 +586,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   GlowColor: {r: 1, g: 1, b: 1, a: 1}
   LerpFactor: 10
---- !u!114 &-6687787740614923174
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9080411364129874698}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c5e289cc50f085b4a8b8998615cd743c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  syncInterval: 0.1
-  Explosion: {fileID: 319878755365815425, guid: 9cdcc99a33805d44ba5be4349f841e01,
-    type: 3}
-  Damage: 5
-  Radius: 2
-  Activated: 0
 --- !u!114 &5094175662525890068
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -627,3 +609,23 @@ MonoBehaviour:
   OverrideAttenuation: 0
   OverrideMinDistance: 1
   OverrideMaxDistance: 20
+--- !u!114 &705466737083174098
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9080411364129874698}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c5e289cc50f085b4a8b8998615cd743c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncInterval: 0.1
+  Explosions:
+  - {fileID: 3325416912435186391, guid: 6ac1754f36f1e2e4c9c4ab2e0f48822a, type: 3}
+  - {fileID: 4796977145430650454, guid: 6e9755a6fb08e3d47be875cadf88575e, type: 3}
+  - {fileID: 9008108264999584755, guid: e64257d88058a8946b74ad7e43066e35, type: 3}
+  Damage: 5
+  Radius: 2
+  Activated: 0

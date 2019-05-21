@@ -18,7 +18,7 @@ using Mirror;
 
 public class FakeItem : Interactable
 {
-    public ParticleSystem Explosion;
+    public ParticleSystem[] Explosions;
     public uint Damage;
     public float Radius;
     public bool Activated = false;
@@ -26,9 +26,9 @@ public class FakeItem : Interactable
     // Destroy the whole trap if the trap is activated and particle system is done playing
     private void Update()
     {
-        if (Activated && Explosion)
+        if (Activated && Explosions[0])
         {
-            if (!Explosion.IsAlive())
+            if (!Explosions[0].IsAlive())
             {
                 Destroy(gameObject);
             }
@@ -47,9 +47,12 @@ public class FakeItem : Interactable
     {
         // Activate trap and create explosion
         Activated = true;
-        GameObject spawnedExplosion = Instantiate(Explosion.gameObject, transform.position, transform.rotation) as GameObject;
-        NetworkServer.Spawn(spawnedExplosion);
-
+        foreach (var explosion in Explosions)
+        {
+            GameObject spawnedExplosion = Instantiate(explosion.gameObject, transform.position, transform.rotation) as GameObject;
+            NetworkServer.Spawn(spawnedExplosion);
+        }
+        
         // Damage all players in the explosion area
         Collider[] hitColliders = Physics.OverlapSphere(transform.position, Radius);
         foreach (Collider hit in hitColliders)
