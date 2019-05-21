@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Mono.Cecil;
 using UnityEngine;
 
 public class Music : MonoBehaviour
@@ -14,12 +15,7 @@ public class Music : MonoBehaviour
         music.start();
         FindObjectOfType<MatchTimer>().music = this.music;
     }
-
-    public void Progression()
-    {
-        music.setParameterByName("Progression", 1);
-    }
-
+    
     public void Downed()
     {
         music.setParameterByName("Downed", 1);
