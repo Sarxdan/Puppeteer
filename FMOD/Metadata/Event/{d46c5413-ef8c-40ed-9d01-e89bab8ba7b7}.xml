@@ -75,6 +75,9 @@
 		</relationship>
 	</object>
 	<object class="EventMixerMaster" id="{4403044b-3559-40cc-839d-cc94a330be78}">
+		<relationship name="modulators">
+			<destination>{d6c4f454-a28c-4627-81e8-9b42ac135d3f}</destination>
+		</relationship>
 		<relationship name="effectChain">
 			<destination>{027ae462-8d35-45c9-b4ca-617761edede7}</destination>
 		</relationship>
@@ -106,6 +109,9 @@
 		<relationship name="automators">
 			<destination>{0d4e7953-d849-4808-b4b6-8590a72ea9bb}</destination>
 		</relationship>
+		<relationship name="modulators">
+			<destination>{0d250eee-4d1b-4e22-b85f-fd2d4de9e7d8}</destination>
+		</relationship>
 		<relationship name="event">
 			<destination>{6bd5fd35-89df-4694-9d5a-8f61c91454d9}</destination>
 		</relationship>
@@ -124,6 +130,17 @@
 			<destination>{4403044b-3559-40cc-839d-cc94a330be78}</destination>
 		</relationship>
 	</object>
+	<object class="ADSRModulator" id="{d6c4f454-a28c-4627-81e8-9b42ac135d3f}">
+		<property name="nameOfPropertyBeingModulated">
+			<value>volume</value>
+		</property>
+		<property name="initialValue">
+			<value>-80</value>
+		</property>
+		<property name="finalValue">
+			<value>-80</value>
+		</property>
+	</object>
 	<object class="MixerBusEffectChain" id="{027ae462-8d35-45c9-b4ca-617761edede7}">
 		<relationship name="effects">
 			<destination>{863bff97-92b9-480e-bfe2-9a518de90375}</destination>
@@ -140,6 +157,17 @@
 			<destination>{f143f960-a36b-4190-bfdb-05f62acdc8e6}</destination>
 		</relationship>
 	</object>
+	<object class="ADSRModulator" id="{0d250eee-4d1b-4e22-b85f-fd2d4de9e7d8}">
+		<property name="nameOfPropertyBeingModulated">
+			<value>intensity</value>
+		</property>
+		<property name="peakValue">
+			<value>100</value>
+		</property>
+		<property name="sustainValue">
+			<value>100</value>
+		</property>
+	</object>
 	<object class="MixerBusEffectChain" id="{b883c6bc-e94a-48c9-9f62-da7943605aa6}">
 		<relationship name="effects">
 			<destination>{f85a6efd-adf4-4d56-8d91-89d466cf8ec1}</destination>
@@ -149,7 +177,7 @@
 	<object class="MixerBusFader" id="{863bff97-92b9-480e-bfe2-9a518de90375}" />
 	<object class="SpatialiserEffect" id="{2e6785ea-39b6-4339-94b2-9534258c3fc9}">
 		<property name="maximumDistance">
-			<value>1</value>
+			<value>2</value>
 		</property>
 	</object>
 	<object class="AutomationCurve" id="{f143f960-a36b-4190-bfdb-05f62acdc8e6}">
@@ -164,7 +192,7 @@
 	<object class="MixerBusFader" id="{f85a6efd-adf4-4d56-8d91-89d466cf8ec1}" />
 	<object class="AutomationPoint" id="{eed7d269-b1fd-4c52-b770-218b3ff95866}">
 		<property name="position">
-			<value>29.98207547169811</value>
+			<value>22</value>
 		</property>
 		<property name="value">
 			<value>100</value>
@@ -175,7 +203,7 @@
 			<value>0</value>
 		</property>
 		<property name="value">
-			<value>48</value>
+			<value>80</value>
 		</property>
 	</object>
 </objects>

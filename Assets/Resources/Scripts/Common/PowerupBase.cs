@@ -14,6 +14,9 @@ using Mirror;
  * 
  * CODE REVIEWED BY:
  * Benjamin Vesterlund
+ *
+ * CONTRIBUTORS:
+ * Sandra Andersson (Sound)
  * 
  */
 public abstract class PowerupBase : NetworkBehaviour
@@ -22,6 +25,13 @@ public abstract class PowerupBase : NetworkBehaviour
     public int Duration;
     // checks if the power is charged and ready to use
     public bool Charged;
+    // script for playing sounds
+    public PowerUpSounds sounds;
+
+    void Start()
+    {
+        sounds = GetComponent<PowerUpSounds>();
+    }
 
     // get percentage left of powerup
     public float PercentageLeft
@@ -48,6 +58,7 @@ public abstract class PowerupBase : NetworkBehaviour
 
         // activate power
         this.OnActivate();
+        sounds.PowerUpStart();
 
         while(timeLeft < Duration)
         {
@@ -56,6 +67,7 @@ public abstract class PowerupBase : NetworkBehaviour
         }
 
         // deactivate power
+        sounds.PowerUpEnd();
         timeLeft = Duration;
         this.OnComplete();
     }

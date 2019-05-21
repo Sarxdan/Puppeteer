@@ -29,7 +29,8 @@ public class StartWeaponSpawner : NetworkBehaviour
         GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
         foreach(GameObject player in players)
         {
-            if(player.GetComponent<PlayerController>().CurrentWeapon == null)
+            PlayerController pc = player.GetComponent<PlayerController>();
+            if(pc.CurrentWeapon == null && pc.HasSpawned)
             {
                 GameObject spawnedWeapon = Instantiate(StartWeapon, Vector3.zero, transform.rotation);
                 NetworkServer.Spawn(spawnedWeapon);

@@ -12,17 +12,32 @@ using Mirror;
  * 
  * CODE REVIEWED BY:
  * Anton Jonsson (07/05-2019)
+ *
+ * CONTRIBUTORS:
+ * Ludvig "Kät" Björk Förare (Added shader animation)
  */
 public class InvisibilityPower : PowerupBase
 {
     [Tooltip("The container that contains all the meshes for the model")]
     public GameObject MeshContainer;
+    public GameObject FPVMeshContainer;
+    public float TransitionSpeed;
+
+
+    [SyncVar(hook = nameof(UpdateMaterial))]
+    public float StealthValue;
+
+    private Coroutine fadeRoutineInstance;
 
     //Set layer so the gameobject is invisible for the puppeteer and set the gameobject tag to something that is not player
     //so minions stop attacking you!
+    
+    
+    
     public override void OnActivate()
     {
         CmdSetLayers(1);
+        CmdStartFade(1);
         CmdSetTag("Untagged");
     }
 
@@ -30,6 +45,7 @@ public class InvisibilityPower : PowerupBase
     public override void OnComplete()
     {
         CmdSetLayers(9);
+        CmdStartFade(0);
         CmdSetTag("Player");
     }
 
@@ -38,7 +54,30 @@ public class InvisibilityPower : PowerupBase
     {
         setLayers(layer);
         RpcSetLayers(layer);
+    }
 
+    [Command]
+    public void CmdStartFade(float target)
+    {
+        if(fadeRoutineInstance != null) StopCoroutine(fadeRoutineInstance);
+        fadeRoutineInstance = StartCoroutine("fadeTo", target);
+    }
+
+    private void UpdateMaterial(float newValue)
+    {
+        Shader.SetGlobalFloat("_Gekko_Animate", newValue);
+    }
+
+    private IEnumerator fadeTo(float target)
+    {
+        float direction = (target - StealthValue)/Mathf.Abs(target - StealthValue);
+        while(StealthValue != target)
+        {
+            Debug.Log("Value: " + StealthValue + " Target: " + target + "Direction: " + direction);
+            StealthValue = Mathf.Clamp(StealthValue + TransitionSpeed * Time.deltaTime * direction, 0, 1);
+            yield return new WaitForEndOfFrame();
+        }
+        fadeRoutineInstance = null;
     }
 
     [ClientRpc]
@@ -64,6 +103,11 @@ public class InvisibilityPower : PowerupBase
     {
         gameObject.layer = layer;
         foreach (Transform item in MeshContainer.transform)
+        {
+            item.gameObject.layer = layer;
+        }
+
+        foreach(Transform item in FPVMeshContainer.transform)
         {
             item.gameObject.layer = layer;
         }

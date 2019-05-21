@@ -59,7 +59,7 @@
 	</object>
 	<object class="EventAutomatableProperties" id="{87314b95-9d69-460f-a552-d105cb6afb08}">
 		<property name="maxVoices">
-			<value>16</value>
+			<value>6</value>
 		</property>
 		<property name="voiceStealing">
 			<value>4</value>
@@ -92,6 +92,9 @@
 		</relationship>
 	</object>
 	<object class="EventMixerMaster" id="{7463ccc6-fb5f-43f6-904e-74c122d212f4}">
+		<relationship name="modulators">
+			<destination>{cbaebd9d-6bd0-4cf9-a4a3-25737864fcb0}</destination>
+		</relationship>
 		<relationship name="effectChain">
 			<destination>{81c6a8fe-d150-4eb2-86f1-5d85387f50bf}</destination>
 		</relationship>
@@ -178,8 +181,20 @@
 			<destination>{63ee36f8-5f49-4438-89bd-dd160025f4b4}</destination>
 		</relationship>
 	</object>
+	<object class="ADSRModulator" id="{cbaebd9d-6bd0-4cf9-a4a3-25737864fcb0}">
+		<property name="nameOfPropertyBeingModulated">
+			<value>volume</value>
+		</property>
+		<property name="initialValue">
+			<value>-80</value>
+		</property>
+		<property name="finalValue">
+			<value>-80</value>
+		</property>
+	</object>
 	<object class="MixerBusEffectChain" id="{81c6a8fe-d150-4eb2-86f1-5d85387f50bf}">
 		<relationship name="effects">
+			<destination>{0842eaac-71e7-4ebe-939a-f4e00e28fdad}</destination>
 			<destination>{c2ea12b5-a4bc-421a-84ac-ac54d48d13a9}</destination>
 			<destination>{1864a1b7-f367-4011-96b5-633b5f0a726a}</destination>
 		</relationship>
@@ -226,6 +241,20 @@
 		</relationship>
 	</object>
 	<object class="MixerBusPanner" id="{a3f740eb-ca7b-4556-b63d-27dd39577bed}" />
+	<object class="CompressorEffect" id="{0842eaac-71e7-4ebe-939a-f4e00e28fdad}">
+		<property name="threshold">
+			<value>-59.5</value>
+		</property>
+		<property name="ratio">
+			<value>50</value>
+		</property>
+		<property name="attackTime">
+			<value>9</value>
+		</property>
+		<relationship name="sidechains">
+			<destination>{f4cea028-bf1e-4d6f-9270-737db7488671}</destination>
+		</relationship>
+	</object>
 	<object class="MixerBusFader" id="{c2ea12b5-a4bc-421a-84ac-ac54d48d13a9}" />
 	<object class="SpatialiserEffect" id="{1864a1b7-f367-4011-96b5-633b5f0a726a}">
 		<property name="maximumDistance">

@@ -16,6 +16,7 @@ using UnityEngine.UI;
 *
 * CODE REVIEWED BY:
 * Filip rehman 2019-05-07 
+* Kristoffer "Krig" Lundgren 2019-05-20
 *
 * CONTRIBUTORS:
 * Philip Stenmark, Anton "Knugen" Jonsson
@@ -26,7 +27,7 @@ public class ItemGrabTool : NetworkBehaviour
     private LevelBuilder level;
 
 	// The maximum distance for snapping modules
-	private int SnapDistance = 30;
+	private int SnapDistance = 60;
 	// Maximum raycast ray length
 	private float RaycastDistance = 500;
 	// The lift height when grabbing an object
@@ -169,8 +170,10 @@ public class ItemGrabTool : NetworkBehaviour
 		sourceObject.name = "sourceObject";
 		sourceObject.transform.position = new Vector3(0, -100, 0);
 
-		// Instansiate the floating object
-		selectedObject = Instantiate(sourceObject);
+        sourceObject.GetComponentInChildren<PuppeteerItemSounds>().Pickup();
+
+        // Instansiate the floating object
+        selectedObject = Instantiate(sourceObject);
 
 		Vector3 mousePos = Input.mousePosition;
 		mousePos.z = Camera.main.WorldToScreenPoint(new Vector3(0, LiftHeight, 0)).z;
@@ -230,7 +233,7 @@ public class ItemGrabTool : NetworkBehaviour
 			guideObject = Instantiate(SpikeTrapRoof);
 			guideObject.transform.position = new Vector3(0,-100,0);
 		}
-		else if (pickupTrapName == "Fake Item")
+		else if (pickupTrapName == "Fake item spawner")
 		{
 			guideObject = Instantiate(FakeItem);
 			guideObject.transform.position = new Vector3(0,-100,0);
@@ -245,6 +248,7 @@ public class ItemGrabTool : NetworkBehaviour
             guideObject = Instantiate(Tank);
 			guideObject.transform.position = new Vector3(0,-100,0);
         }
+        
 		// Relay to all clients what object is picked up.
 		RpcPickUp(pickupTrapName);
 	}
@@ -282,7 +286,7 @@ public class ItemGrabTool : NetworkBehaviour
 		{
 			guideObject = Instantiate(SpikeTrapRoof);
 		}
-		else if (pickupTrapName == "Fake Item")
+		else if (pickupTrapName == "Fake item spawner")
 		{
 			guideObject = Instantiate(FakeItem);
 		}
@@ -322,7 +326,7 @@ public class ItemGrabTool : NetworkBehaviour
 		}
 	}
 
-	// If Object is droped. (Placed)
+	// If Object is dropped. (Placed)
 	public void Drop()
     {
 		// If the guideobject is still on the sourceobject (no new node or position is found at the time of release) destroy all objects and reset. 
@@ -340,7 +344,9 @@ public class ItemGrabTool : NetworkBehaviour
 		{
 			currency.CurrentCurrency = currency.CurrentCurrency - cost;
 
-			guideObject.name = "Placed Trap";
+            guideObject.GetComponentInChildren<PuppeteerItemSounds>().Place();
+
+            guideObject.name = "Placed Trap";
 			// sets the parent on server.
 			CmdSetParent(bestDstPoint.GetComponentInParent<NetworkIdentity>().gameObject);
 			guideObject.transform.position -= previewLiftVector;

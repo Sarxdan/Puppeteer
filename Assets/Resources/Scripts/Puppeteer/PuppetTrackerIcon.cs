@@ -44,7 +44,7 @@ public class PuppetTrackerIcon : MonoBehaviour
         puppeteerCameraController = puppeteerCamera.GetComponent<PuppeteerCameraController>();
 
         //If we are not the puppeteer then we disable this script
-        if (!GameObject.FindGameObjectWithTag("GameController").GetComponent<NetworkIdentity>().isLocalPlayer)
+        if (!GameObject.FindGameObjectWithTag("GameController").GetComponent<NetworkIdentity>().isLocalPlayer && gameObject.GetComponent<PlayerController>().isLocalPlayer)
         {
             enabled = false;
             return;

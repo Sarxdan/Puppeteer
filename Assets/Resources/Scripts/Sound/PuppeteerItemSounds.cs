@@ -21,14 +21,20 @@ public class PuppeteerItemSounds : MonoBehaviour
     // Sound Events
     [FMODUnity.EventRef] public string s_Pickup;
     [FMODUnity.EventRef] public string s_Place;
+    public Vector3 pupCamPos;
+
+    public void Start()
+    {
+        pupCamPos = GameObject.FindGameObjectWithTag("GameController").GetComponentInChildren<Camera>().transform.position;
+    }
 
     public void Pickup()
     {
-        FMODUnity.RuntimeManager.PlayOneShot(s_Pickup, transform.position);
+        FMODUnity.RuntimeManager.PlayOneShot(s_Pickup, pupCamPos);
     }
 
     public void Place()
     {
-        FMODUnity.RuntimeManager.PlayOneShot(s_Place, transform.position);
+        FMODUnity.RuntimeManager.PlayOneShot(s_Place, pupCamPos);
     }
 }

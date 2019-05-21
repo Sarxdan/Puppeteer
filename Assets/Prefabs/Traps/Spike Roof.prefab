@@ -2930,6 +2930,7 @@ GameObject:
   - component: {fileID: 6131904198486339952}
   - component: {fileID: 2136451015889515893}
   - component: {fileID: 406466625037547016}
+  - component: {fileID: 3608489746178781705}
   m_Layer: 10
   m_Name: Spike Roof
   m_TagString: Untagged
@@ -3000,7 +3001,7 @@ MonoBehaviour:
   syncInterval: 0.1
   Damage: 5
   ActivationTime: 0.15
-  DestroyTime: 2
+  DestroyTime: 2.5
   Puppets: []
   Anim: {fileID: 4407621342713457746}
 --- !u!114 &8661122797694138405
@@ -3031,7 +3032,7 @@ MonoBehaviour:
   serverOnly: 0
   localPlayerAuthority: 0
   m_AssetId: 
-  m_SceneId: 418519464
+  m_SceneId: 1291506016
 --- !u!114 &6131904198486339952
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3080,4 +3081,19 @@ MonoBehaviour:
   BearTrap: 0
   RoofSpike: 1
   FloorSpike: 0
-  Cost: 50
+  Cost: 150
+--- !u!114 &3608489746178781705
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2588813442285734548}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1f5b20ab626e9bb479736c392394fc8c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  s_Pickup: event:/Puppeteer/Traps/Spiketrap pickup
+  s_Place: event:/Puppeteer/Traps/Spiketrap place
+  pupCamPos: {x: 0, y: 0, z: 0}

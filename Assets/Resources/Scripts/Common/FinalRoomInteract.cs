@@ -27,7 +27,7 @@ public class FinalRoomInteract : Interactable
 
 	public float RotationSpeed;
 	public GameObject DoorToOpen;
-	public Image ProgressImage;
+	private GameObject endGameDisplay;
 	public RectTransform ProgressTransform;
 
 	private float openAngle;
@@ -38,14 +38,21 @@ public class FinalRoomInteract : Interactable
 
 	public static bool isEndGame;
 
+	private void Start()
+	{
+		endGameDisplay = GameObject.Find("EndGameDisplay");
+		endGameDisplay.SetActive(false);
+	}
+
 	// Only runs on server. (by default)
 	public override void OnInteractBegin(GameObject interactor)
 	{
         if (!ButtonPressed)
         {
+			endGameDisplay.SetActive(true);
+            interactor.GetComponent<Music>().ButtonPressed();
 		    DoorToOpen = GameObject.Find("ST_Final_DoorFrame_03");
-		    ProgressTransform = GameObject.Find("ProgressBar").GetComponent<RectTransform>();
-		    GameObject.Find("ProgressBar").GetComponent<Image>().enabled = true;
+            ProgressTransform = GameObject.Find("ProgressBar").GetComponent<RectTransform>();
 		    StartCoroutine("FinalCountDown");
             ButtonPressed = true;
         }
@@ -77,7 +84,7 @@ public class FinalRoomInteract : Interactable
 				minion.SetState(new ReturnToSpawnerState(minion));
 			}
 		}
-		var diffInWidth = (ProgressTransform.sizeDelta.x / TimeLeft);
+		var diffInWidth = ((ProgressTransform.sizeDelta.x - 160) / TimeLeft);
 		while(true)
 		{
 			if (TimeLeft == 0)
@@ -88,6 +95,7 @@ public class FinalRoomInteract : Interactable
 			}
 			TimeLeft--;
 			RpcShowProgress(new Vector2(ProgressTransform.sizeDelta.x - diffInWidth, ProgressTransform.sizeDelta.y));
+
 			yield return new WaitForSeconds(1);
 		}
 	}
@@ -95,12 +103,10 @@ public class FinalRoomInteract : Interactable
 	[ClientRpc]
 	public void RpcShowProgress(Vector2 size)
 	{
+		if (!endGameDisplay.activeInHierarchy)
+			endGameDisplay.SetActive(true);
 		if (ProgressTransform == null)
 			ProgressTransform = GameObject.Find("ProgressBar").GetComponent<RectTransform>();
-		if (ProgressImage == null)
-			ProgressImage = GameObject.Find("ProgressBar").GetComponent<Image>();
-		if (!ProgressImage.enabled)
-			ProgressImage.enabled = true;
 
 		ProgressTransform.sizeDelta = size;
 	}
@@ -110,7 +116,7 @@ public class FinalRoomInteract : Interactable
 	{
 		if (DoorToOpen == null)
 		{
-			DoorToOpen = GameObject.Find("ST_Final_DoorFrame_03");
+			DoorToOpen = GameObject.Find("ST_Final_Door_01 (1)");
 		}
 		openAngle = DoorToOpen.transform.eulerAngles.y + 13;
 		while (true)

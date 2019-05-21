@@ -36,8 +36,6 @@ public class HUDScript : NetworkBehaviour
     public RectTransform PowerUpFill;
     public Image PowerUpDisabled;
     public Image PowerUpEnabled;
-    // The text for the current ammo
-    public Text CurrentAmmo;
     //The health component to monitor
     private HealthComponent healthComponent;
     // Used to check is player has a med kit
@@ -46,6 +44,9 @@ public class HUDScript : NetworkBehaviour
     private PowerupBase powerUp;
     // The image that shows the progress of the current interaction
     public Image InteractionProgress;
+
+    //Reload vials
+    public RectTransform[] VialMasks;
 
     // Current health of the player
     private uint health;
@@ -139,24 +140,27 @@ public class HUDScript : NetworkBehaviour
 
         // Shows the current number of magazines depending on what weapon is currently equipped
         #region magazine counter 
-        if(playerController.CurrentWeapon != null)
+
+        if (playerController.CurrentWeapon != null)
         {
-            // Calculated the number of magazine left
-            float magazines = Mathf.Clamp(((float)playerController.Ammunition / (float)playerController.CurrentWeapon.GetComponent<WeaponComponent>().Capacity), 0, 999); 
-            // Changes the number of leading zeroes depending on the number of magazines
-            if(magazines >= 100)
+            int ammoLeft = playerController.Ammunition;
+            int capacity = playerController.CurrentWeapon.GetComponent<WeaponComponent>().Capacity;
+
+            foreach (RectTransform vialMask in VialMasks)
             {
-                CurrentAmmo.text = Mathf.FloorToInt(magazines).ToString();
-            }
-            if(magazines >= 10)
-            {
-                CurrentAmmo.text = "0" + Mathf.FloorToInt(magazines).ToString();
-            }
-            else
-            {
-                CurrentAmmo.text = "00" +  Mathf.FloorToInt(magazines).ToString();
+                if (ammoLeft >= capacity)
+                {
+                    vialMask.localScale = new Vector3(1, 1, 1);
+                    ammoLeft -= capacity;
+                }
+                else
+                {
+                    vialMask.localScale = new Vector3(1, (float)ammoLeft / capacity, 1);
+                    ammoLeft = 0;
+                }
             }
         }
+
         #endregion
     }
 
@@ -202,7 +206,7 @@ public class HUDScript : NetworkBehaviour
 
         StaminaBarFill.localScale = new Vector3(Mathf.Lerp(xScaleStamina * (Mathf.Clamp(lerpFromStamina, 0, playerController.MaxStamina)/playerController.MaxStamina), xScaleStamina * (Mathf.Clamp(playerController.CurrentStamina, 0, playerController.MaxStamina)/playerController.MaxStamina), StaminaIncrement),
                                                 StaminaBarFill.localScale.y, StaminaBarFill.localScale.z);
-        StaminaPercentage.text = Mathf.RoundToInt((playerController.CurrentStamina/playerController.MaxStamina) * 100).ToString() + "%";
+        StaminaPercentage.text = Mathf.RoundToInt((Mathf.Clamp(playerController.CurrentStamina, 0, playerController.MaxStamina)/playerController.MaxStamina) * 100).ToString() + "%";
         StaminaIncrement += StaminaBarSpeed*Time.deltaTime;
         if(StaminaIncrement >= 1)
         {

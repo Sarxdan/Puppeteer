@@ -26,6 +26,13 @@ public class PuppetSounds : CharacterSounds
     [FMODUnity.EventRef] public string s_Revive;
     [FMODUnity.EventRef] public string s_UseMedkit;
 
+    public Music music;
+
+    void Start()
+    {
+        music = GetComponent<Music>();
+    }
+    
     public void Jump()
     {
         FMODUnity.RuntimeManager.PlayOneShot(s_Jump, transform.position);
@@ -35,9 +42,19 @@ public class PuppetSounds : CharacterSounds
     {
         FMODUnity.RuntimeManager.PlayOneShot(s_Land, transform.position);
     }
+    public void Death()
+    {
+        music.Downed();
+
+        die = FMODUnity.RuntimeManager.CreateInstance(s_Die);
+        die.set3DAttributes(FMODUnity.RuntimeUtils.To3DAttributes(gameObject));
+        die.start();
+    }
 
     public void Revive()
     {
+        music.Revived();
+
         die.release();
         FMODUnity.RuntimeManager.PlayOneShot(s_Revive, transform.position);
     }

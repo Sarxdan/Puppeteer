@@ -43,10 +43,11 @@ public class HealthComponent : NetworkBehaviour
     private OnZeroHealth zeroHealthAction;
     private OnTakeDamage takeDamageAction;
 
-    public CharacterSounds sound;
+    public PuppetSounds sounds;
 
-    void Start(){
-        sound = gameObject.GetComponent<CharacterSounds>();
+    void Start()
+    {
+        sounds = GetComponent<PuppetSounds>();
         AddOnDamageAction(nothing);
         AddDeathAction(nothing);
     }
@@ -100,14 +101,14 @@ public class HealthComponent : NetworkBehaviour
     public void RpcDamage()
 	{
         this.takeDamageAction();
-        sound.Damage(); 
+        sounds.Damage(); 
     }
 
     //Sends death update to clients
     [ClientRpc]
     public void RpcDeath()
     {
-        if(sound != null) sound.Death();
+        if(sounds != null) sounds.Death();
         this.zeroHealthAction();
         Downed = true;
     }
@@ -132,6 +133,7 @@ public class HealthComponent : NetworkBehaviour
         PlayerController playerController = gameObject.GetComponent<PlayerController>();
         playerController.UnStunned();
         AddDeathAction(playerController.Downed);
+        sounds.Revive();
         RpcSendRevive();    
     }
 
@@ -142,6 +144,7 @@ public class HealthComponent : NetworkBehaviour
         if (!isLocalPlayer)
             return;
         Debug.Log("Rezed");
+        sounds.Revive();
         AllowRegen = true;
         PlayerController playerController = gameObject.GetComponent<PlayerController>();
         playerController.UnStunned();

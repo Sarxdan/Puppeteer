@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using Mirror;
 
 /*
@@ -33,11 +34,18 @@ public class ReviveComponent : Interactable
     // Used for checking if a player is downed, variable is synced across all clients
     private HealthComponent healthComponent;
 
+    private GameObject downedPanel;
+    private RectTransform downedBar;
+
     void Start()
     {
         // register death action
         healthComponent = GetComponent<HealthComponent>();
+
         healthComponent.AddDeathAction(OnZeroHealth);
+        downedPanel = GameObject.Find("DownedPanel");
+        downedBar = downedPanel.GetComponentsInChildren<RectTransform>()[1];
+        downedPanel.SetActive(false);
     }
 
     // An object has started to interact this object
@@ -84,11 +92,45 @@ public class ReviveComponent : Interactable
     {
         //hudScript.ScaleInteractionProgress(0);
         StartCoroutine("DeathRoutine");
+		RpcStartDown(gameObject);
+    }
+
+	[ClientRpc]
+	public void RpcStartDown(GameObject puppet)
+	{
+		if (puppet.GetComponent<InteractionController>().isLocalPlayer)
+		{
+			StartCoroutine("DownedBar");
+		}
+	}
+
+	private IEnumerator DownedBar()
+	{
+		downedPanel.SetActive(true);
+		var currentSize = downedBar.sizeDelta;
+		var diffInWidth = (downedBar.sizeDelta.x / (DeathDelay));
+		var time = DeathDelay;
+		while (time > 0)
+		{
+			if (healthComponent.Health != 0)
+			{
+				break;
+			}
+			downedBar.sizeDelta = new Vector2(downedBar.sizeDelta.x - diffInWidth, downedBar.sizeDelta.y);
+			yield return new WaitForSeconds(1);
+			time--;
+		}
+		downedBar.sizeDelta = currentSize;
+		downedPanel.SetActive(false);
     }
 
     private IEnumerator DeathRoutine()
     {
         int time = 0;
+        MatchTimer matchTimer = FindObjectOfType<MatchTimer>();
+        if (matchTimer.numberOfPuppetsAlive == 1)
+            DeathDelay = 3;
+
         while(++time < DeathDelay)
         {
             if (healthComponent.Health != 0)
@@ -96,18 +138,17 @@ public class ReviveComponent : Interactable
                 // someone has revived!
                 yield break;
             }
-
             yield return new WaitForSeconds(1);
         }
-		// TODO: perform death action across network
-		RpcStartSpectating(gameObject);
+        // TODO: perform death action across network
+        RpcStartSpectating(gameObject);
         Destroy(gameObject);
     }
 
 	[ClientRpc]
-	void RpcStartSpectating(GameObject thing)
+	void RpcStartSpectating(GameObject puppet)
 	{
-		if (thing.GetComponent<InteractionController>().isLocalPlayer)
+		if (puppet.GetComponent<InteractionController>().isLocalPlayer)
 		{
 			var canvas = GameObject.FindObjectOfType<Spectator>().gameObject;
 			canvas.GetComponent<Spectator>().SpectatorScreen.SetActive(true);
@@ -172,7 +213,7 @@ public class ReviveComponent : Interactable
             hudScript.ScaleInteractionProgress(scale);
         }
     }
-    // (KL) Remove the medket when a revive is complete
+    // (KL) Remove the medkit when a revive is complete
     [ClientRpc]
     public void RpcRemoveMedkit(GameObject interactor)
     {

@@ -31,6 +31,8 @@ public class PlayerController : NetworkBehaviour
     public static float SpawnRadius = 3.0f;
 	[SyncVar]
 	public string NickName;
+    [SyncVar, HideInInspector]
+    public bool HasSpawned;
 
     // Movement
     [Header("Movement")]
@@ -109,8 +111,10 @@ public class PlayerController : NetworkBehaviour
     {
         gameObject.GetComponent<HealthComponent>().AddDeathAction(Downed);
     }
+
     void Start()
     {
+        rigidBody = GetComponent<Rigidbody>();
        // CurrentWeaponComponent = CurrentWeapon.GetComponent<WeaponComponent>();
         rigidBody = GetComponent<Rigidbody>();
         AnimController = GetComponent<Animator>();
@@ -120,13 +124,15 @@ public class PlayerController : NetworkBehaviour
         accSave = AccelerationRate;
 
         // try to move to spawn position (physics enabled)
-        rigidBody.MovePosition(new Vector3(Random.Range(-SpawnRadius, SpawnRadius), 0.0f, Random.Range(-SpawnRadius, SpawnRadius)));
+      
 
         
         if(isLocalPlayer)
         {
             FullBody.transform.Find("Mesh").gameObject.SetActive(false);
             FullBody.enabled = false;
+            rigidBody.isKinematic = true;
+            StartCoroutine("LoadingRoutine");
         }
         else
         {
@@ -146,6 +152,7 @@ public class PlayerController : NetworkBehaviour
         // setup compass late to prevent race condition
         Invoke("SetupCompass", 2.0f);
         Invoke("SetupPuppeteerIcon", 2.0f);
+        Invoke("SetSpawnPosition", 1.5f);
     }
 
     private void SetupCompass()
@@ -161,6 +168,10 @@ public class PlayerController : NetworkBehaviour
             }
             compass.AddTarget(player.transform);
         }
+    }
+    private void SetSpawnPosition()
+    {
+          rigidBody.MovePosition(new Vector3(Random.Range(-SpawnRadius, SpawnRadius), 0.0f, Random.Range(-SpawnRadius, SpawnRadius)));
     }
 
     private void SetupPuppeteerIcon()
@@ -296,13 +307,13 @@ public class PlayerController : NetworkBehaviour
         // Horizontal movement
         if ((Input.GetAxisRaw("Horizontal") != 0 || Input.GetAxisRaw("Vertical") != 0) && !DisableInput)
         {
-            currentMovementSpeed += currentMovementSpeed < MovementSpeed * MovementSpeedMod ? AccelerationRate * Time.deltaTime : 0; //Accelerates to MovementSpeed
-            currentMovementSpeed = Mathf.Clamp(currentMovementSpeed, 0, SprintSpeed); //Clamp the movementspeed so you dont run faster than the sprint speed
-            Vector3 direction = (Input.GetAxisRaw("Horizontal") * transform.right + Input.GetAxisRaw("Vertical") * transform.forward).normalized; //Direction to move
-            direction.x *= currentMovementSpeed; //Add Movementspeed multiplier 
-            direction.y = rigidBody.velocity.y; //Add your y velocity
-            direction.z *= currentMovementSpeed; //Add Movementspeed multiplier 
-            rigidBody.velocity = direction;
+            currentMovementSpeed += currentMovementSpeed < MovementSpeed ? AccelerationRate * Time.deltaTime : 0; //Accelerates to MovementSpeed
+            currentMovementSpeed = Mathf.Clamp(currentMovementSpeed, 0, Mathf.Max(SprintSpeed, MovementSpeed)); //Clamp the movementspeed so you dont run faster than the sprint speed
+            Vector3 movementVector = (Input.GetAxisRaw("Horizontal") * transform.right + Input.GetAxisRaw("Vertical") * transform.forward).normalized; //Direction to move
+            movementVector.x *= currentMovementSpeed; //Add Movementspeed multiplier 
+            movementVector.y = rigidBody.velocity.y; //Add your y velocity
+            movementVector.z *= currentMovementSpeed; //Add Movementspeed multiplier 
+            rigidBody.velocity = movementVector;
         }
         else
         {
@@ -378,7 +389,6 @@ public class PlayerController : NetworkBehaviour
     // Freezes the position of the puppet and disables shooting and interacting
     public void Stunned()
     {
-
         rigidBody.constraints = RigidbodyConstraints.FreezeAll;
         CanShoot = false;
     }
@@ -404,6 +414,16 @@ public class PlayerController : NetworkBehaviour
         AnimController.SetLayerWeight(1,1);
     }
 
+    private IEnumerator LoadingRoutine()
+    {
+        while(!Physics.Raycast(transform.position + new Vector3(0,0.2f,0), Vector3.down, out RaycastHit hit, 10))
+        {
+            yield return new WaitForSeconds(0.2f);
+        }
+        CmdSpawned();
+        rigidBody.isKinematic = false;
+    }
+
     [ClientRpc]
     public void RpcAddAmmo(int liquid)
     {
@@ -420,5 +440,11 @@ public class PlayerController : NetworkBehaviour
         {
             HasMedkit = true;
         }
+    }
+
+    [Command]
+    private void CmdSpawned()
+    {
+        HasSpawned = true;
     }
 }
