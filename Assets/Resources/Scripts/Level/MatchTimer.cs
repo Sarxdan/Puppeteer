@@ -93,13 +93,13 @@ public class MatchTimer : NetworkBehaviour
 		    MatchLength--;
 		    Seconds--;
 			
-		    if (Seconds < 0)
+		    if (Seconds < 0 && Minutes > 0)
 		    {
 			    Minutes--;
 			    Seconds = 59;
 		    }
 
-            //    //Check if a team have won
+            //Check if a team have won
 
             //If a puppet have escaped and all other are dead, the puppets win
             if (numberOfPuppetsAlive <= 0 && NumberOfPuppetsThatEscaped != 0 && !gameEnded)
