@@ -45,7 +45,7 @@
 	</object>
 	<object class="MasterTrack" id="{f9175c2b-83a3-46f5-9bcd-b1aa94f33a7d}">
 		<relationship name="automationTracks">
-			<destination>{f0d30963-646c-43b7-af0d-e0489446c7dc}</destination>
+			<destination>{3e788343-2284-453d-a2ca-d728b33047cd}</destination>
 		</relationship>
 		<relationship name="mixerGroup">
 			<destination>{aec5e4d6-ed85-41f8-b161-ef2a03958463}</destination>
@@ -86,6 +86,9 @@
 		</relationship>
 	</object>
 	<object class="EventMixerMaster" id="{aec5e4d6-ed85-41f8-b161-ef2a03958463}">
+		<property name="volume">
+			<value>-6</value>
+		</property>
 		<relationship name="effectChain">
 			<destination>{653316c5-7e5e-4b2a-96df-ba8d70be2de2}</destination>
 		</relationship>
@@ -96,7 +99,7 @@
 			<destination>{97e80167-735f-41b0-9254-da85181d6e13}</destination>
 		</relationship>
 	</object>
-	<object class="AutomationTrack" id="{f0d30963-646c-43b7-af0d-e0489446c7dc}">
+	<object class="AutomationTrack" id="{3e788343-2284-453d-a2ca-d728b33047cd}">
 		<relationship name="automator">
 			<destination>{86724913-4ddf-4767-aa53-9275afe40a5f}</destination>
 		</relationship>
@@ -163,7 +166,11 @@
 			<destination>{4a67cda5-6811-432d-91a9-c75c5cb2f238}</destination>
 		</relationship>
 	</object>
-	<object class="MixerBusPanner" id="{ef69b748-6780-489e-8743-4e8c7cfcae82}" />
+	<object class="MixerBusPanner" id="{ef69b748-6780-489e-8743-4e8c7cfcae82}">
+		<property name="surroundPanDirection">
+			<value>26.565052</value>
+		</property>
+	</object>
 	<object class="MixerBusFader" id="{e654aa61-b17f-46c3-a06d-01557cadc2a8}" />
 	<object class="ADSRModulator" id="{2ca70565-6e7f-4ec0-9f1d-729d3a3d1ad4}">
 		<property name="nameOfPropertyBeingModulated">
@@ -201,7 +208,7 @@
 			<value>1.80000007</value>
 		</property>
 		<property name="maximumDistance">
-			<value>9.40000057</value>
+			<value>9.80000019</value>
 		</property>
 	</object>
 	<object class="MixerBusFader" id="{4040d1a1-5595-418e-9f22-a09032eb43c3}" />
@@ -232,7 +239,7 @@
 	</object>
 	<object class="AutomationPoint" id="{5336408a-10f6-4f77-b04d-eb518ded5044}">
 		<property name="position">
-			<value>20</value>
+			<value>7</value>
 		</property>
 		<property name="value">
 			<value>0</value>
