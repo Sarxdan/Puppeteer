@@ -121,8 +121,31 @@ public class InvisibilityPower : PowerupBase
         {
             item.gameObject.layer = layer;
         }
+
+        setWeaponLayer(gameObject, layer);
     }
 
+    private void setWeaponLayer(GameObject obj, int layer)
+    {
+        //Exit condidtion
+        if (null == gameObject)
+        {
+            return;
+        }
+
+        //Set the layer of the gameObject
+        obj.layer = layer;
+
+        //For each child in the gameObject, Call this function again.
+        foreach (Transform child in obj.transform)
+        {
+            if (null == child)
+            {
+                continue;
+            }
+            setWeaponLayer(child.gameObject, layer);
+        }
+    }
     private void setTag(string tag)
     {
         gameObject.tag = tag;
