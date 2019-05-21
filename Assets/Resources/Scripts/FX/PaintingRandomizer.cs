@@ -18,6 +18,6 @@ public class PaintingRandomizer : MonoBehaviour
     void Start()
     {
         rend = transform.Find("Canvas").GetComponent<Renderer>();
-        rend.material.SetInt("_Picture_Select", Random.Range(0, NumberOfPictures - 1));
+        rend.material.SetInt("_Picture_Select", Random.Range(0, NumberOfPictures));
     }
 }
