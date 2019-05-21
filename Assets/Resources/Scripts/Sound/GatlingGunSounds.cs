@@ -18,16 +18,21 @@ using UnityEngine;
 public class GatlingGunSounds : WeaponSounds
 {
     // Sound Events
-    [FMODUnity.EventRef] public string s_SpinUp;
-    [FMODUnity.EventRef] public string s_SpinDown;
+    [FMODUnity.EventRef] public string s_Spin;
+    FMOD.Studio.EventInstance spin;
+    
     
     public void SpinUp()
     {
-        FMODUnity.RuntimeManager.PlayOneShot(s_SpinUp, transform.position);
+        spin = FMODUnity.RuntimeManager.CreateInstance(s_Spin);
+        spin.set3DAttributes(FMODUnity.RuntimeUtils.To3DAttributes(gameObject));
+        spin.start();
     }
 
     public void SpinDown()
     {
-        FMODUnity.RuntimeManager.PlayOneShot(s_SpinDown, transform.position);
+        spin.setParameterByName("Stop", 1);
+        //spin.stop(FMOD.Studio.STOP_MODE.ALLOWFADEOUT);
+        spin.release();
     }
 }
