@@ -22,7 +22,6 @@ public class MatchTimer : NetworkBehaviour
 {
 	public int MatchLength;
 	public Text TimeRemainingTextBox;
-	//[SyncVar]
 	public string TimePrintOut; 
 	public int PostGameTime;
 	public GameObject Canvas;
@@ -48,7 +47,7 @@ public class MatchTimer : NetworkBehaviour
         Canvas.gameObject.SetActive(false);
 	    gameEnded = false;
 	    manager = GameObject.Find("NetworkManager").GetComponent<NetworkManager>();
-
+		TimeRemainingTextBox = GameObject.Find("TimeLeft").GetComponent<Text>();
         if (isServer)
 		    StartCoroutine("Timer", 1);
 
@@ -59,13 +58,15 @@ public class MatchTimer : NetworkBehaviour
     }
 	private void Update()
 	{
-		//TimeRemainingTextBox.text = TimePrintOut;
+		TimeRemainingTextBox.text = TimePrintOut;
 	}
 
 	public IEnumerator Timer()
     {
-        //Convert match time to minutes and seconds
-	    for (int i = MatchLength; i > 0; i -= 60)
+		yield return new WaitForSeconds(5);
+
+		//Convert match time to minutes and seconds
+		for (int i = MatchLength; i > 0; i -= 60)
 		    if (i >= 60)
 			    Minutes++;
 		    else
@@ -177,7 +178,7 @@ public class MatchTimer : NetworkBehaviour
     [ClientRpc]
     public void RpcUpdateTime(string value)
     {
-	    TimeRemainingTextBox.text = value;
+	    TimePrintOut = value;
     }
 
     //Puppeteer win. Show endscreen for all clients

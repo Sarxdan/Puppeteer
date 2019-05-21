@@ -65,9 +65,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   serverOnly: 0
-  localPlayerAuthority: 0
+  localPlayerAuthority: 1
   m_AssetId: 
-  m_SceneId: 413717046
+  m_SceneId: 1983354464
 --- !u!114 &5909226276687725837
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -106,6 +106,7 @@ MonoBehaviour:
   HoldRotation: {x: 0.83373326, y: -0.11408261, z: 0.53616965, w: -0.06630344}
   AnimationIndex: 1
   GatlingAnimator: {fileID: 0}
+  gatlingGunSounds: {fileID: 0}
   HitDecals:
   - {fileID: 1812705381986157764, guid: 10d41af551a86514a89c55a48575426d, type: 3}
   - {fileID: 7092592049257055965, guid: 77a17281451a18143b6cdc618132017b, type: 3}
@@ -235,6 +236,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 7436050445741599826}
     m_Modifications:
+    - target: {fileID: 100006, guid: 79541ea2886513843ac3ed5d1fa46a85, type: 3}
+      propertyPath: m_Name
+      value: SK_Shotgun_01_Rigged
+      objectReference: {fileID: 0}
     - target: {fileID: 400006, guid: 79541ea2886513843ac3ed5d1fa46a85, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0.001
@@ -278,10 +283,6 @@ PrefabInstance:
     - target: {fileID: 400006, guid: 79541ea2886513843ac3ed5d1fa46a85, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 1.764
-      objectReference: {fileID: 0}
-    - target: {fileID: 100006, guid: 79541ea2886513843ac3ed5d1fa46a85, type: 3}
-      propertyPath: m_Name
-      value: SK_Shotgun_01_Rigged
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 79541ea2886513843ac3ed5d1fa46a85, type: 3}

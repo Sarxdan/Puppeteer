@@ -270,6 +270,7 @@ public class WeaponComponent : Interactable
     {
 
         this.HeadTransform = interactor.GetComponentInChildren<Camera>().transform;
+        GetComponent<NetworkIdentity>().AssignClientAuthority(interactor.GetComponent<NetworkIdentity>().connectionToClient);
 
         RpcPickupWeapon(gameObject, interactor);
     }
@@ -314,7 +315,7 @@ public class WeaponComponent : Interactable
         WeaponComponent newWeapon = weaponObject.GetComponent<WeaponComponent>();
         PlayerController user = userObject.GetComponent<PlayerController>();
         // plays sound.
-        sounds.Pickup(); // Send pickup trigger to sound
+        if(sounds != null)sounds.Pickup(); // Send pickup trigger to sound
 
         //Disables new weapons collider
         newWeapon.GetComponent<CapsuleCollider>().enabled = false;
