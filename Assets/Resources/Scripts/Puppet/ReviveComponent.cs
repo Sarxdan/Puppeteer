@@ -37,6 +37,10 @@ public class ReviveComponent : Interactable
     private GameObject downedPanel;
     private RectTransform downedBar;
 
+    private Vector3 DefaultVignette = new Vector3(1,1,1);
+    private Vector3 MaxVignette = new Vector3(2,2,1);
+    public RectTransform DeathVignette;
+
     void Start()
     {
         // register death action
@@ -44,6 +48,7 @@ public class ReviveComponent : Interactable
 
         healthComponent.AddDeathAction(OnZeroHealth);
         downedPanel = GameObject.Find("DownedPanel");
+        DeathVignette = GameObject.Find("Vignette").GetComponent<RectTransform>();
         downedBar = downedPanel.GetComponentsInChildren<RectTransform>()[1];
         downedPanel.SetActive(false);
     }
@@ -104,11 +109,16 @@ public class ReviveComponent : Interactable
 		}
 	}
 
+
+
 	private IEnumerator DownedBar()
 	{
+
 		downedPanel.SetActive(true);
+        
 		var currentSize = downedBar.sizeDelta;
 		var diffInWidth = (downedBar.sizeDelta.x / (DeathDelay));
+        var vignetteDelta = 1.0f/(DeathDelay);
 		var time = DeathDelay;
 		while (time > 0)
 		{
@@ -117,12 +127,15 @@ public class ReviveComponent : Interactable
 				break;
 			}
 			downedBar.sizeDelta = new Vector2(downedBar.sizeDelta.x - diffInWidth, downedBar.sizeDelta.y);
+          //  DeathVignette.localScale = new Vector3(DeathVignette.localScale.x - vignetteDelta, DeathVignette.localScale.y - vignetteDelta, 1);
 			yield return new WaitForSeconds(1);
 			time--;
 		}
 		downedBar.sizeDelta = currentSize;
 		downedPanel.SetActive(false);
+      //  DeathVignette.localScale = MaxVignette;
     }
+
 
     private IEnumerator DeathRoutine()
     {

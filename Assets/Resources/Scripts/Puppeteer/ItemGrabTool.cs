@@ -273,30 +273,37 @@ public class ItemGrabTool : NetworkBehaviour
 		if (pickupTrapName == "Bear Trap")
 		{
 			guideObject = Instantiate(BearTrap);
+			guideObject.transform.position = new Vector3(0, -100, 0);
 		}
 		else if (pickupTrapName == "Chandelier")
 		{
 			guideObject = Instantiate(Chandelier);
+			guideObject.transform.position = new Vector3(0, -100, 0);
 		}
 		else if (pickupTrapName == "Spike Floor")
 		{
 			guideObject = Instantiate(SpikeTrapFloor);
+			guideObject.transform.position = new Vector3(0, -100, 0);
 		}
 		else if (pickupTrapName == "Spike Roof")
 		{
 			guideObject = Instantiate(SpikeTrapRoof);
+			guideObject.transform.position = new Vector3(0, -100, 0);
 		}
 		else if (pickupTrapName == "Fake item spawner")
 		{
 			guideObject = Instantiate(FakeItem);
+			guideObject.transform.position = new Vector3(0, -100, 0);
 		}
 		else if (pickupTrapName == "MinionSpawner")
 		{
 			guideObject = Instantiate(MinionSpawner);
+			guideObject.transform.position = new Vector3(0, -100, 0);
 		}
 		else if (pickupTrapName == "TankSpawner")
 		{
 			guideObject = Instantiate(Tank);
+			guideObject.transform.position = new Vector3(0, -100, 0);
 		}
 	}
 
