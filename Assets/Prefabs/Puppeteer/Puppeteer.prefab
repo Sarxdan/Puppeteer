@@ -70,8 +70,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   serverOnly: 0
   localPlayerAuthority: 1
-  m_AssetId: a355b3cf20abdf34d86a9cdb43b0bbaf
-  m_SceneId: 0
+  m_AssetId: 
+  m_SceneId: 206960346
 --- !u!114 &2594469943257660708
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -232,7 +232,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 56d998eda61b14e4b849900a5f47e419, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  CurrencyIncrease: 2
+  CurrencyIncrease: 5
   CurrentCurrency: 400
   TemporaryCurrency: 0
   CurrencyText: {fileID: 3219454129538878312}
@@ -401,6 +401,7 @@ MonoBehaviour:
   NearCameraZoomLimit: 7
   DisableInput: 0
   SmoothMovement: 1
+  SpectatorMode: 0
 --- !u!114 &7118272359595411618
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -519,6 +520,16 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: PuppeterCanvas
+      objectReference: {fileID: 0}
+    - target: {fileID: 562352205098411871, guid: de5b860bcf5de96408015734d5c66ad3,
+        type: 3}
+      propertyPath: puppeteerCamera
+      value: 
+      objectReference: {fileID: 882945471475474462}
+    - target: {fileID: 562352205098411871, guid: de5b860bcf5de96408015734d5c66ad3,
+        type: 3}
+      propertyPath: puppeteerCameraController
+      value: 
       objectReference: {fileID: 0}
     - target: {fileID: 895376273027663903, guid: de5b860bcf5de96408015734d5c66ad3,
         type: 3}
@@ -901,16 +912,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
       value: OnExit
-      objectReference: {fileID: 0}
-    - target: {fileID: 562352205098411871, guid: de5b860bcf5de96408015734d5c66ad3,
-        type: 3}
-      propertyPath: puppeteerCamera
-      value: 
-      objectReference: {fileID: 882945471475474462}
-    - target: {fileID: 562352205098411871, guid: de5b860bcf5de96408015734d5c66ad3,
-        type: 3}
-      propertyPath: puppeteerCameraController
-      value: 
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: de5b860bcf5de96408015734d5c66ad3, type: 3}
