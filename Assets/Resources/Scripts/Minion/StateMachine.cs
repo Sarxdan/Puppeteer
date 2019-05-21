@@ -230,10 +230,15 @@ public class StateMachine : NetworkBehaviour
     //Runs when death animation is complete, despawns object
     public void Despawn()
     {
-        if(isServer);
+        CmdRemoveFromSpawner();
+    }
+
+    [Command]
+    public void CmdRemoveFromSpawner()
+    {
         EnemySpawner.AllMinions.Remove(this);
         if(Spawner !=null) Spawner.LocalMinions.Remove(this);
-        Destroy(this.gameObject);
+        NetworkServer.Destroy(gameObject);
     }
 
     //Runs during attack animation, deals damage to player
