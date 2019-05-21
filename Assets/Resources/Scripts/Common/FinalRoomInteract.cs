@@ -29,6 +29,8 @@ public class FinalRoomInteract : Interactable
 	public GameObject DoorToOpen;
 	private GameObject endGameDisplay;
 	public RectTransform ProgressTransform;
+	public Transform LeverTransform;
+	public int LeverFrames;
 
 	private float openAngle;
 	[SyncVar]
@@ -53,7 +55,9 @@ public class FinalRoomInteract : Interactable
             interactor.GetComponent<Music>().ButtonPressed();
 		    DoorToOpen = GameObject.Find("ST_Final_DoorFrame_03");
             ProgressTransform = GameObject.Find("ProgressBar").GetComponent<RectTransform>();
+			LeverTransform = GameObject.Find("ST_lever_low").GetComponent<Transform>();
 		    StartCoroutine("FinalCountDown");
+			StartCoroutine("LeverDown");
             ButtonPressed = true;
         }
 	}
@@ -70,6 +74,19 @@ public class FinalRoomInteract : Interactable
 	}
 
 
+	IEnumerator LeverDown()
+	{
+		var z = LeverTransform.rotation.z;
+		var end_z = 35;
+
+		var diff = (z - end_z) / LeverFrames;
+		while (z <= end_z)
+		{
+			LeverTransform.rotation = new Quaternion(LeverTransform.rotation.x, LeverTransform.rotation.y, LeverTransform.rotation.z - diff, LeverTransform.rotation.w);
+			RpcMoveLever(LeverTransform.rotation);
+			yield return new WaitForEndOfFrame();
+		}
+	}
 
 	// Only runs on server.
 	IEnumerator FinalCountDown()
@@ -98,6 +115,16 @@ public class FinalRoomInteract : Interactable
 
 			yield return new WaitForSeconds(1);
 		}
+	}
+
+	[ClientRpc]
+	public void RpcMoveLever(Quaternion rotation)
+	{
+		if (isServer)
+			return;
+		if (LeverTransform == null)
+			LeverTransform = GameObject.Find("ST_lever_low").GetComponent<Transform>();
+		LeverTransform.rotation = rotation;
 	}
 
 	[ClientRpc]

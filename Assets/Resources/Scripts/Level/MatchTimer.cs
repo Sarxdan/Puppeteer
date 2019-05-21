@@ -83,11 +83,12 @@ public class MatchTimer : NetworkBehaviour
 			    secondsString = Seconds.ToString("00");
 
 		    TimePrintOut = minutesString + ":" + secondsString;
-
+			RpcUpdateTime();
 		    yield return new WaitForSeconds(1);
 
 		    MatchLength--;
 		    Seconds--;
+			
 		    if (Seconds < 0)
 		    {
 			    Minutes--;
@@ -167,9 +168,9 @@ public class MatchTimer : NetworkBehaviour
     }
 
     [ClientRpc]
-    public void RpcUpdateTime(string timePrint)
+    public void RpcUpdateTime()
     {
-	    TimeRemainingTextBox.text = timePrint;
+	    TimeRemainingTextBox.text = TimePrintOut;
     }
 
     //Puppeteer win. Show endscreen for all clients
