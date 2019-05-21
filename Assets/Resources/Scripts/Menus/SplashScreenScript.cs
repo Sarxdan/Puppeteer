@@ -9,6 +9,7 @@ public class SplashScreenScript : MonoBehaviour
     public GameObject SplashScreen;
     public GameObject FadeOverlay;
     public GameObject Pulsate;
+    public GameObject Background;
 
 
     private Image fadeImage;
@@ -36,6 +37,7 @@ public class SplashScreenScript : MonoBehaviour
                 PressAnyKey.SetActive(false);
                 SplashScreen.SetActive(false);
                 FadeOverlay.SetActive(false);
+                Background.SetActive(false);
                 ListenForInput = false;
             }
             Pulsate.SetActive(true);
