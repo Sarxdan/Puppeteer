@@ -76,13 +76,31 @@ public class FinalRoomInteract : Interactable
 
 	IEnumerator LeverDown()
 	{
-		var z = LeverTransform.rotation.z;
+		var z = LeverTransform.localEulerAngles.z;
 		var end_z = 35;
 
 		var diff = (z - end_z) / LeverFrames;
-		while (z <= end_z)
+		while (LeverTransform.localEulerAngles.z <= 359)
 		{
-			LeverTransform.rotation = new Quaternion(LeverTransform.rotation.x, LeverTransform.rotation.y, LeverTransform.rotation.z - diff, LeverTransform.rotation.w);
+			LeverTransform.localEulerAngles = new Vector3(
+				LeverTransform.localEulerAngles.x,
+				LeverTransform.localEulerAngles.y,
+				LeverTransform.localEulerAngles.z + diff);
+			RpcMoveLever(LeverTransform.rotation);
+			yield return new WaitForEndOfFrame();
+		}
+		Debug.Log(LeverTransform.localEulerAngles);
+		LeverTransform.localEulerAngles = new Vector3(
+				LeverTransform.localEulerAngles.x,
+				LeverTransform.localEulerAngles.y,
+				0);
+		RpcMoveLever(LeverTransform.rotation);
+		while (LeverTransform.localEulerAngles.z <= end_z)
+		{
+			LeverTransform.localEulerAngles = new Vector3(
+				LeverTransform.localEulerAngles.x,
+				LeverTransform.localEulerAngles.y,
+				LeverTransform.localEulerAngles.z + diff);
 			RpcMoveLever(LeverTransform.rotation);
 			yield return new WaitForEndOfFrame();
 		}
