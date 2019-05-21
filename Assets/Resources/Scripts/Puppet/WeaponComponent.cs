@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Mirror;
+using MinionStates;
 
 /*
  * AUTHOR:
@@ -152,6 +153,9 @@ public class WeaponComponent : Interactable
                 var health = hitInfo.transform.GetComponentInParent<HealthComponent>();
                 if (health != null)
                 {
+                    if(hitInfo.transform.tag == "Enemy"){
+                        CmdAggro(hitInfo.transform.gameObject);
+                    }
                     uint damage = (uint)(this.Damage * Mathf.Pow(DamageDropoff, hitInfo.distance / 10.0f));
                     health.Damage(damage);
                 }
@@ -280,6 +284,16 @@ public class WeaponComponent : Interactable
         ShowTooltip(interactor);
     }
 
+    [Command]
+    public void CmdAggro(GameObject target)
+    {
+        StateMachine machine = target.GetComponent<StateMachine>();
+        if(machine.TargetEntity == null)
+        {
+            machine.TargetEntity = transform.GetComponentInParent<HealthComponent>();
+            machine.SetState(new AttackState(machine));
+        }
+    }
 
     [Command]
     public void CmdShotSound(float ammoleft)
