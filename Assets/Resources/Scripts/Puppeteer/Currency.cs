@@ -30,7 +30,6 @@ public class Currency : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-		Gamestate = GetComponent<FinalRoomInteract>();
 		StartCoroutine("CountUpCurrency");
     }
 
@@ -38,12 +37,18 @@ public class Currency : MonoBehaviour
 
 	public IEnumerator CountUpCurrency()
 	{
+		while (Gamestate == null)
+		{
+			Gamestate = FindObjectOfType<FinalRoomInteract>();
+			yield return new WaitForSeconds(1);
+		}
 		while (true)
 		{
 			if (Gamestate.ButtonPressed && firstTime)
 			{
 				CurrentCurrency += 500;
 				CurrencyIncrease += 5;
+				firstTime = false;
 				foreach (var room in GetComponent<LevelBuilder>().GetRoomsForItem())
 				{
 					foreach (var point in room.GetComponent<ItemSpawner>().FindSnapPoints())
