@@ -18,6 +18,7 @@ GameObject:
   - component: {fileID: 2164618449766289586}
   - component: {fileID: 6560965921680926819}
   - component: {fileID: 5846211066637989002}
+  - component: {fileID: 5468114520175771361}
   m_Layer: 0
   m_Name: Puppeteer
   m_TagString: GameController
@@ -281,6 +282,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   syncInterval: 0.1
+--- !u!114 &5468114520175771361
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 882945469650525590}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5e04beb7ce941d844aba60452ae2b7ad, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  s_Music: 
 --- !u!1 &882945471475474460
 GameObject:
   m_ObjectHideFlags: 0
@@ -516,11 +530,16 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 882945469650525591}
     m_Modifications:
-    - target: {fileID: 895376273027663898, guid: de5b860bcf5de96408015734d5c66ad3,
+    - target: {fileID: 2593386292954911814, guid: de5b860bcf5de96408015734d5c66ad3,
         type: 3}
-      propertyPath: m_Name
-      value: PuppeterCanvas
-      objectReference: {fileID: 0}
+      propertyPath: Owner
+      value: 
+      objectReference: {fileID: 882945469650525591}
+    - target: {fileID: 2593386292954911814, guid: de5b860bcf5de96408015734d5c66ad3,
+        type: 3}
+      propertyPath: itemHUD
+      value: 
+      objectReference: {fileID: 3157663734689611195}
     - target: {fileID: 562352205098411871, guid: de5b860bcf5de96408015734d5c66ad3,
         type: 3}
       propertyPath: puppeteerCamera
@@ -530,6 +549,11 @@ PrefabInstance:
         type: 3}
       propertyPath: puppeteerCameraController
       value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 895376273027663898, guid: de5b860bcf5de96408015734d5c66ad3,
+        type: 3}
+      propertyPath: m_Name
+      value: PuppeterCanvas
       objectReference: {fileID: 0}
     - target: {fileID: 895376273027663903, guid: de5b860bcf5de96408015734d5c66ad3,
         type: 3}
@@ -672,16 +696,6 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: -2.9483643
       objectReference: {fileID: 0}
-    - target: {fileID: 2593386292954911814, guid: de5b860bcf5de96408015734d5c66ad3,
-        type: 3}
-      propertyPath: Owner
-      value: 
-      objectReference: {fileID: 882945469650525591}
-    - target: {fileID: 2593386292954911814, guid: de5b860bcf5de96408015734d5c66ad3,
-        type: 3}
-      propertyPath: itemHUD
-      value: 
-      objectReference: {fileID: 3157663734689611195}
     - target: {fileID: 3175581219286968744, guid: de5b860bcf5de96408015734d5c66ad3,
         type: 3}
       propertyPath: m_SizeDelta.x
