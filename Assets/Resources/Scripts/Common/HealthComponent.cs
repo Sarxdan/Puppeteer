@@ -133,17 +133,18 @@ public class HealthComponent : NetworkBehaviour
         PlayerController playerController = gameObject.GetComponent<PlayerController>();
         playerController.UnStunned();
         AddDeathAction(playerController.Downed);
+        sounds.Revive();
         RpcSendRevive();    
     }
 
     [ClientRpc]
     public void RpcSendRevive()
     {
-        sounds.Revive();
         Downed = false;
         if (!isLocalPlayer)
             return;
         Debug.Log("Rezed");
+        sounds.Revive();
         AllowRegen = true;
         PlayerController playerController = gameObject.GetComponent<PlayerController>();
         playerController.UnStunned();

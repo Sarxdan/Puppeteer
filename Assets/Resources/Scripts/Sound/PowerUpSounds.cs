@@ -17,6 +17,6 @@ public class PowerUpSounds : MonoBehaviour
 
     public void PowerUpEnd()
     {
-    power.release();
+        power.stop(FMOD.Studio.STOP_MODE.ALLOWFADEOUT);
     }
 }

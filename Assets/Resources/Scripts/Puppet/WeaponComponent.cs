@@ -77,6 +77,7 @@ public class WeaponComponent : Interactable
     public int AnimationIndex;
 
     public GatlingGunAnimator GatlingAnimator;
+    public GatlingGunSounds gatlingGunSounds;
 
 	public GameObject[] HitDecals;
 
@@ -96,6 +97,7 @@ public class WeaponComponent : Interactable
 	public void Start()
 	{
 		sounds = GetComponent<WeaponSounds>();
+        gatlingGunSounds = GetComponent<GatlingGunSounds>();
         muzzleFlash = GetComponentInChildren<MuzzleFlash>();
         ShowMagazine();
         reloading = false;
@@ -106,7 +108,11 @@ public class WeaponComponent : Interactable
 	//Attemps to fire the weapon
 	public void Use()
     {
-        
+        if (!isHeld && gatlingGunSounds != null)
+        {
+            gatlingGunSounds.SpinUp();
+        }
+
         if(RequireRelease && isHeld) return;
         isHeld = true;
 
@@ -187,6 +193,10 @@ public class WeaponComponent : Interactable
         PlayerController pc = GetComponentInParent<PlayerController>();
         pc.AnimController.SetBool("Fire", false);
         pc.FPVAnimController.SetBool("Fire", false);
+        if (gatlingGunSounds != null)
+        {
+            gatlingGunSounds.SpinDown();
+        }
         isHeld = false;
     }
 
