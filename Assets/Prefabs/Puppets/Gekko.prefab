@@ -3120,7 +3120,7 @@ Transform:
   - {fileID: 1921940296}
   - {fileID: 1715672702}
   - {fileID: 91779378}
-  - {fileID: 1439530182832077393}
+  - {fileID: 4393039358514213589}
   m_Father: {fileID: 511756855}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -3188,7 +3188,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Right: {fileID: 7212113995909305488}
   Left: {fileID: 6452816474257288526}
-  HeldMagazine: {fileID: 7957937356500970886}
+  HeldMagazine: {fileID: 4719014616874187698}
 --- !u!114 &6398161402664258899
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3671,7 +3671,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   s_Hit: event:/Character/Hits/Gekko
-  s_Die: event:/Character/Downed
+  s_Die: event:/Character/Deaths/Gekko death
   s_Footstep: event:/Character/Footsteps/Walk
   s_RunFootstep: event:/Character/Footsteps/Run
   s_Jump: event:/Character/Footsteps/Jump
@@ -3693,7 +3693,7 @@ MonoBehaviour:
   serverOnly: 0
   localPlayerAuthority: 1
   m_AssetId: 
-  m_SceneId: 224335013
+  m_SceneId: 0
 --- !u!114 &7360517884129133002
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3852,7 +3852,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Right: {fileID: 861004314}
   Left: {fileID: 2086027011}
-  HeldMagazine: {fileID: 1439530182832077392}
+  HeldMagazine: {fileID: 4393039358514228324}
 --- !u!114 &6239604695596738320
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4013,12 +4013,6 @@ PrefabInstance:
       propertyPath: m_Enabled
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 895376271672357971, guid: 27f6f56a79bae2e4b8ada12c45a4bc54,
-        type: 3}
-      propertyPath: m_Sprite
-      value: 
-      objectReference: {fileID: 21300000, guid: 3aee95af2264a3741961e267d02eb76f,
-        type: 3}
     - target: {fileID: 895376273027663872, guid: 27f6f56a79bae2e4b8ada12c45a4bc54,
         type: 3}
       propertyPath: Owner
@@ -4149,6 +4143,12 @@ PrefabInstance:
       propertyPath: m_LocalScale.z
       value: 0.77
       objectReference: {fileID: 0}
+    - target: {fileID: 895376271672357971, guid: 27f6f56a79bae2e4b8ada12c45a4bc54,
+        type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 3aee95af2264a3741961e267d02eb76f,
+        type: 3}
     - target: {fileID: 895376273027663898, guid: 27f6f56a79bae2e4b8ada12c45a4bc54,
         type: 3}
       propertyPath: m_Name
@@ -4391,13 +4391,13 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 0a3bd484c4ef219498b941d1dbb1c145, type: 3}
---- !u!4 &1439530182832077393 stripped
+--- !u!4 &4393039358514213589 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3390378285604284032, guid: 0a3bd484c4ef219498b941d1dbb1c145,
     type: 3}
   m_PrefabInstance: {fileID: 4393039358514207953}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1439530182832077392 stripped
+--- !u!114 &4393039358514228324 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 3390378285604284033, guid: 0a3bd484c4ef219498b941d1dbb1c145,
     type: 3}
@@ -4488,7 +4488,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 0a3bd484c4ef219498b941d1dbb1c145, type: 3}
---- !u!114 &7957937356500970886 stripped
+--- !u!114 &4719014616874187698 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 3390378285604284033, guid: 0a3bd484c4ef219498b941d1dbb1c145,
     type: 3}

@@ -386,7 +386,7 @@ public class ItemGrabTool : NetworkBehaviour
 	{
 		parent = sentParent;
 		// relay the parent to all clients.
-		RpcSetParent(sentParent);
+		RpcSetParent(new InteractStruct(sentParent, guideObject));
 	}
 
 	// Server spawns the gameobject. placing it in the correct position.
@@ -400,7 +400,7 @@ public class ItemGrabTool : NetworkBehaviour
 			guideObject.transform.rotation = placingTransform.Rotation;
 			guideObject.transform.SetParent(parent.transform);
 			// tells all clients to parent the gameobjects.
-			RpcSetParent(parent);
+			RpcSetParent(new InteractStruct(parent, guideObject));
 			guideObject.GetComponent<SnapFunctionality>().Placed = true;
 			guideObject.GetComponent<Collider>().enabled = true;
 			// updates layers so the trap is visable to clients.
@@ -428,13 +428,13 @@ public class ItemGrabTool : NetworkBehaviour
 
 	// Calls all but the puppeteer to tell dem to parent the gameobjects.
 	[ClientRpc]
-	public void RpcSetParent(GameObject sentParent)
+	public void RpcSetParent(InteractStruct info)
 	{
-		if (FindObjectOfType<ItemGrabTool>().enabled)
+		if (FindObjectOfType<ItemGrabTool>().enabled || info.Target == null)
 		{
 			return;
 		}
-		guideObject.transform.SetParent(sentParent.transform);
+		info.Target.transform.SetParent(info.Source.transform);
 	}
 
 	// Checks all other snap points in the level and picks the best one.

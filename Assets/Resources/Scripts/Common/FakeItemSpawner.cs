@@ -33,7 +33,7 @@ public class FakeItemSpawner : NetworkBehaviour
             //If not then create a GameObject from attached prefab at the spawners position and make them children of the "folder" created earlier
             if(Physics.Raycast(transform.position + new Vector3(0,0.1f,0), Vector3.down, out RaycastHit hit) && hit.transform.GetComponentInParent<NavMesh>() != null)
             {
-                GameObject item = Instantiate(Spawnables[Random.Range(0, Spawnables.Length - 1)], transform.position, transform.rotation, hit.transform) as GameObject;
+                GameObject item = Instantiate(Spawnables[Random.Range(0, Spawnables.Length)], transform.position, transform.rotation, hit.transform) as GameObject;
                 NetworkServer.Spawn(item);
             }
             else
