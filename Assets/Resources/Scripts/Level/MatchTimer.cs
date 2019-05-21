@@ -13,6 +13,7 @@ using Mirror;
 *
 * CODE REVIEWED BY:
 * Anton Jonnson 14/05-2019
+s* 
 * CONTRIBUTORS:
 * 
 */
@@ -84,6 +85,8 @@ public class MatchTimer : NetworkBehaviour
 
 		    TimePrintOut = minutesString + ":" + secondsString;
 			RpcUpdateTime();
+
+            //Gives the puppets some time to load in.
 		    yield return new WaitForSeconds(1);
 
 		    MatchLength--;
@@ -119,7 +122,8 @@ public class MatchTimer : NetworkBehaviour
                 StopCoroutine("Timer");
             }
 
-            numberOfPuppetsAlive = GameObject.FindGameObjectsWithTag("Player").Length;
+            //Problem line
+            numberOfPuppetsAlive = FindObjectsOfType<PlayerController>().Length;
         }
 
         //If the time runs out and one puppet have escaped. The puppets win
