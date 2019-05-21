@@ -45,7 +45,18 @@ public class PuppetTracker : MonoBehaviour
         for (int i = 0; i < Targets.Count; i++)
         {
             var target = Targets[i];
-            if (target != null)
+
+            //Special case for gekko if he is invisible
+            if (target.GetComponent<InvisibilityPower>().IsActive)
+            {
+                //Convert the targets position to 2d position based on the camera
+                Vector3 coords = puppeteerCamera.WorldToScreenPoint(target.transform.position);
+                //Set the icon's position to the new position
+                Icons[i].transform.position = coords;
+                //Set the alpha on the icon
+                Icons[i].color = new Color(1, 1, 1, 0);
+            }
+            else if (target != null)
             {
                 //Convert the targets position to 2d position based on the camera
                 Vector3 coords = puppeteerCamera.WorldToScreenPoint(target.transform.position);

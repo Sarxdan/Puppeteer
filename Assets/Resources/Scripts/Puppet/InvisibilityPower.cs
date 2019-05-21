@@ -22,7 +22,7 @@ public class InvisibilityPower : PowerupBase
     public GameObject MeshContainer;
     public GameObject FPVMeshContainer;
     public float TransitionSpeed;
-
+    public bool IsActive = false;
 
     [SyncVar(hook = nameof(UpdateMaterial))]
     public float StealthValue;
@@ -36,6 +36,7 @@ public class InvisibilityPower : PowerupBase
     
     public override void OnActivate()
     {
+        CmdSetIsActive(true);
         CmdSetLayers(1);
         CmdStartFade(1);
         CmdSetTag("Untagged");
@@ -44,6 +45,7 @@ public class InvisibilityPower : PowerupBase
     //Revert everything we did OnActivate()
     public override void OnComplete()
     {
+        CmdSetIsActive(false);
         CmdSetLayers(9);
         CmdStartFade(0);
         CmdSetTag("Player");
@@ -63,9 +65,31 @@ public class InvisibilityPower : PowerupBase
         fadeRoutineInstance = StartCoroutine("fadeTo", target);
     }
 
-    private void UpdateMaterial(float newValue)
+    [Command]
+    public void CmdSetTag(string tag)
     {
-        Shader.SetGlobalFloat("_Gekko_Animate", newValue);
+        setTag(tag);
+        RpcSetTag(tag);
+    }
+
+    [Command]
+    public void CmdSetIsActive(bool value)
+    {
+        setIsActive(value);
+    }
+
+
+    [ClientRpc]
+    public void RpcSetLayers(int layer)
+    {
+        setLayers(layer);
+    }
+
+
+    [ClientRpc]
+    public void RpcSetTag(string tag)
+    {
+        setTag(tag);
     }
 
     private IEnumerator fadeTo(float target)
@@ -80,23 +104,9 @@ public class InvisibilityPower : PowerupBase
         fadeRoutineInstance = null;
     }
 
-    [ClientRpc]
-    public void RpcSetLayers(int layer)
+    private void UpdateMaterial(float newValue)
     {
-        setLayers(layer);
-    }
-
-    [Command]
-    public void CmdSetTag(string tag)
-    {
-        setTag(tag);
-        RpcSetTag(tag);
-    }
-
-    [ClientRpc]
-    public void RpcSetTag(string tag)
-    {
-        setTag(tag);
+        Shader.SetGlobalFloat("_Gekko_Animate", newValue);
     }
 
     private void setLayers(int layer)
@@ -116,5 +126,10 @@ public class InvisibilityPower : PowerupBase
     private void setTag(string tag)
     {
         gameObject.tag = tag;
+    }
+
+    private void setIsActive(bool value)
+    {
+        IsActive = value;
     }
 }
