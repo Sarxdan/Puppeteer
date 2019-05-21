@@ -110,7 +110,8 @@ public class HealthComponent : NetworkBehaviour
     {
 		if (isLocalPlayer)
 			if(sounds != null) sounds.Death();
-        this.zeroHealthAction();
+        if (isServer)
+            this.zeroHealthAction();
         Downed = true;
     }
     

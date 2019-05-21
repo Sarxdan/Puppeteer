@@ -268,6 +268,7 @@ GameObject:
   - component: {fileID: 7762505400529500106}
   - component: {fileID: 6471338345194681486}
   - component: {fileID: -6045430645507548857}
+  - component: {fileID: -868323902482213579}
   m_Layer: 0
   m_Name: Tank
   m_TagString: Untagged
@@ -526,8 +527,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   serverOnly: 0
   localPlayerAuthority: 0
-  m_AssetId: dd69ac9000615904b99edf7c3e4f1ca2
-  m_SceneId: 0
+  m_AssetId: 
+  m_SceneId: 750970776
 --- !u!114 &6471338345194681486
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -574,6 +575,29 @@ MonoBehaviour:
   OverrideAttenuation: 0
   OverrideMinDistance: 0
   OverrideMaxDistance: 0
+--- !u!114 &-868323902482213579
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1772193524115870375}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a6610d2e704f1648819acc8d7460285, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  CollisionTag: 
+  Event: event:/Enemies/Tank/Smoke
+  PlayEvent: 1
+  StopEvent: 2
+  AllowFadeout: 1
+  TriggerOnce: 0
+  Preload: 0
+  Params: []
+  OverrideAttenuation: 0
+  OverrideMinDistance: 1
+  OverrideMaxDistance: 20
 --- !u!1 &2434364248674743760
 GameObject:
   m_ObjectHideFlags: 0
