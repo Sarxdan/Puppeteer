@@ -43,11 +43,11 @@ public class HealthComponent : NetworkBehaviour
     private OnZeroHealth zeroHealthAction;
     private OnTakeDamage takeDamageAction;
 
-    public PuppetSounds sounds;
+    public CharacterSounds sounds;
 
     void Start()
     {
-        sounds = GetComponent<PuppetSounds>();
+        sounds = GetComponent<CharacterSounds>();
         AddOnDamageAction(nothing);
         AddDeathAction(nothing);
     }
@@ -109,11 +109,10 @@ public class HealthComponent : NetworkBehaviour
     public void RpcDeath()
     {
 		if (isLocalPlayer)
-		{
 			if(sounds != null) sounds.Death();
-			this.zeroHealthAction();
-			Downed = true;
-		}
+        if (isServer)
+            this.zeroHealthAction();
+        Downed = true;
     }
     
     //Starts regenerate HP after delay, up to the max amount of regen
@@ -136,7 +135,7 @@ public class HealthComponent : NetworkBehaviour
         PlayerController playerController = gameObject.GetComponent<PlayerController>();
         playerController.UnStunned();
         AddDeathAction(playerController.Downed);
-        sounds.Revive();
+        gameObject.GetComponent<PuppetSounds>().Revive();
         RpcSendRevive();    
     }
 
@@ -147,7 +146,7 @@ public class HealthComponent : NetworkBehaviour
         if (!isLocalPlayer)
             return;
         Debug.Log("Rezed");
-        sounds.Revive();
+        gameObject.GetComponent<PuppetSounds>().Revive();
         AllowRegen = true;
         PlayerController playerController = gameObject.GetComponent<PlayerController>();
         playerController.UnStunned();
