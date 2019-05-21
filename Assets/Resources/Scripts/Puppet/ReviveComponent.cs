@@ -117,8 +117,8 @@ public class ReviveComponent : Interactable
 		downedPanel.SetActive(true);
         
 		var currentSize = downedBar.sizeDelta;
-		var diffInWidth = (downedBar.sizeDelta.x / (DeathDelay * 10));
-        var vignetteDelta = 1.0f/(DeathDelay * 10);
+		var diffInWidth = (downedBar.sizeDelta.x / (DeathDelay));
+        var vignetteDelta = 1.0f/(DeathDelay);
 		var time = DeathDelay;
 		while (time > 0)
 		{
@@ -128,7 +128,7 @@ public class ReviveComponent : Interactable
 			}
 			downedBar.sizeDelta = new Vector2(downedBar.sizeDelta.x - diffInWidth, downedBar.sizeDelta.y);
           //  DeathVignette.localScale = new Vector3(DeathVignette.localScale.x - vignetteDelta, DeathVignette.localScale.y - vignetteDelta, 1);
-			yield return new WaitForSeconds(0.1f);
+			yield return new WaitForSeconds(1);
 			time--;
 		}
 		downedBar.sizeDelta = currentSize;
