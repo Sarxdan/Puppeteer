@@ -50,7 +50,7 @@ public class MatchTimer : NetworkBehaviour
 	    manager = GameObject.Find("NetworkManager").GetComponent<NetworkManager>();
 
         if (isServer)
-		    StartCoroutine("Timer");
+		    StartCoroutine("Timer", 1);
 
 		if (GameObject.FindObjectOfType<LevelBuilder>().isLocalPlayer)
 		{

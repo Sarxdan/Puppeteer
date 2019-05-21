@@ -211,6 +211,7 @@ public class StateMachine : NetworkBehaviour
         }
     }
 
+
     //Runs when health = 0
     public void Die()
     {
