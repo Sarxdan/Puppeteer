@@ -27,6 +27,8 @@ public class EnemySpawner : NetworkBehaviour
     public int MinDelay = 5;
     public int MaxDelay = 10;
     public bool TankSpawner;
+    public Animator SpawnerAnim;
+    public Animator MinionAnim;
     public List<StateMachine> LocalMinions = new List<StateMachine>();
     public static List<StateMachine> AllMinions = new List<StateMachine>();
     public static Transform MinionContainerObject;
@@ -40,15 +42,23 @@ public class EnemySpawner : NetworkBehaviour
 
     public void Start()
     {   
-        finalRoomDummy = GameObject.Find("DummySpawner").GetComponent<EnemySpawner>();
-        if(finalRoomDummy == this) return;
-        
-        if(MinionContainerObject == null)
+        try
         {
-            MinionContainerObject = GameObject.Find("MinionContainer").transform;
+            finalRoomDummy = GameObject.Find("DummySpawner").GetComponent<EnemySpawner>();
+            if(finalRoomDummy == this) return;
+            
+            if(MinionContainerObject == null)
+            {
+                MinionContainerObject = GameObject.Find("MinionContainer").transform;
+            }
         }
+        catch(System.NullReferenceException e)
+        {
+            Debug.LogWarning("Minion spawner did not find dummy! Has endroom been spawned?");
+        }
+
         snapFunctionality = GetComponent<SnapFunctionality>();
-        StartCoroutine("Spawn");
+        StartCoroutine("SpawnRoutine");
 
         HealthComponent hpComponent = GetComponent<HealthComponent>();
         hpComponent.AddDeathAction(OnDeath);
@@ -58,7 +68,7 @@ public class EnemySpawner : NetworkBehaviour
 
 
     //Spawn is a modified Update with a set amount of time (SpawnRate) between runs
-    private IEnumerator Spawn()
+    private IEnumerator SpawnRoutine()
     { 
         while(true)
         {
@@ -67,22 +77,18 @@ public class EnemySpawner : NetworkBehaviour
                 //Check if max amount of enemies has been reached
                 if (LocalMinions.Count < MaxEnemyCount && MaxEnemyCount > 0)
                 {
-                    //If not then create a GameObject from attached prefab at the spawners position and make them children of the "folder" created earlier
-                    GameObject npcEnemy = Instantiate(EnemyPrefab, spawnPoint.position, transform.rotation, MinionContainerObject) as GameObject;
-                    StateMachine machine = npcEnemy.GetComponent<StateMachine>();
                     
-                    machine.Spawner = FinalRoomInteract.isEndGame ? finalRoomDummy : this;
-                    
-                    NetworkServer.Spawn(npcEnemy);
                     //Adds 
                     if(!TankSpawner)
                     {
-                        AllMinions.Add(machine);
-                        LocalMinions.Add(machine);
+                        SpawnerAnim.SetTrigger("Spawn"); //Runs spawn through animation event
+                        MinionAnim.SetTrigger("Spawn");
                     }
                     else
                     {
-                        gameObject.SetActive(false);
+                        Spawn();
+                        NetworkServer.Destroy(gameObject);
+                        yield break; //Safety first :^)
                     }
     
                 }
@@ -91,8 +97,25 @@ public class EnemySpawner : NetworkBehaviour
         }
     }
 
-    //Returns a random point from a room somewhat close to the spawners room
+    public void Spawn()
+    {
+        //If not then create a GameObject from attached prefab at the spawners position and make them children of the "folder" created earlier
+        GameObject npcEnemy = Instantiate(EnemyPrefab, spawnPoint.position, transform.rotation * Quaternion.Euler(0,180,0), MinionContainerObject) as GameObject;
+        StateMachine machine = npcEnemy.GetComponent<StateMachine>();
+
+
+        if(!TankSpawner)
+        {
+            AllMinions.Add(machine);
+            LocalMinions.Add(machine);
+        } 
     
+        machine.Spawner = FinalRoomInteract.isEndGame ? finalRoomDummy : this;
+        NetworkServer.Spawn(npcEnemy);
+    }
+
+
+
 
     [Command]
     public void CmdOnTakeDamage()
