@@ -60,11 +60,11 @@ public class PuppetSounds : CharacterSounds
     
     public void Revive()
     {
+        die.release();
         music.Revived();
 
         ress.setParameterByName("Ress", 1);
         ress.release();
-        die.release();
     }
 
     public void ReviveEnd()

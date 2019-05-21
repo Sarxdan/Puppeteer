@@ -66,14 +66,14 @@ public class ReviveComponent : Interactable
         {
             RpcGetHudScript(interactor);
         }
-        gameObject.GetComponent<PuppetSounds>().ReviveStart();
         StartCoroutine("ReviveRoutine", interactor);
+        RpcReviveStart();
     }
 
     public override void OnInteractEnd(GameObject interactor)
     {
         StopCoroutine("ReviveRoutine");
-        gameObject.GetComponent<PuppetSounds>().ReviveEnd();
+        RpcReviveEnd();
         var interactionController = interactor.GetComponent<InteractionController>();
         if(interactionController.isServer && interactionController.isLocalPlayer)
         {
@@ -85,6 +85,19 @@ public class ReviveComponent : Interactable
                 hudScript.RpcScaleZero();
         }
     }
+
+    [ClientRpc]
+    public void RpcReviveStart()
+    {
+        gameObject.GetComponent<PuppetSounds>().ReviveStart();
+    }
+
+    [ClientRpc]
+    public void RpcReviveEnd()
+    {
+        gameObject.GetComponent<PuppetSounds>().ReviveEnd();
+    }
+
     // (KL) Only show the interact tooltip if the player is downed and the interactor has a medkit
     public override void OnRaycastEnter(GameObject interactor)
     {
