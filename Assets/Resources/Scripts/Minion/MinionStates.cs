@@ -37,6 +37,7 @@ namespace MinionStates
 
         public override void Enter()
         {
+            lastSeenTime = Time.time;
             machine.CurrentStateName = "Attack";
             machine.AnimController.SetBool("Running", true);
         }
