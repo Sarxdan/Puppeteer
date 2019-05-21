@@ -270,6 +270,7 @@ public class WeaponComponent : Interactable
     {
 
         this.HeadTransform = interactor.GetComponentInChildren<Camera>().transform;
+        GetComponent<NetworkIdentity>().AssignClientAuthority(interactor.GetComponent<NetworkIdentity>().connectionToClient);
 
         RpcPickupWeapon(gameObject, interactor);
     }
