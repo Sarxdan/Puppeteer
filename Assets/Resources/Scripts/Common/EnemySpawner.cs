@@ -81,8 +81,7 @@ public class EnemySpawner : NetworkBehaviour
                     //Adds 
                     if(!TankSpawner)
                     {
-                        SpawnerAnim.SetTrigger("Spawn"); //Runs spawn through animation event
-                        MinionAnim.SetTrigger("Spawn");
+                        RpcPlayAnimation();
                     }
                     else
                     {
@@ -99,6 +98,7 @@ public class EnemySpawner : NetworkBehaviour
 
     public void Spawn()
     {
+        if(!isServer) return;
         //If not then create a GameObject from attached prefab at the spawners position and make them children of the "folder" created earlier
         GameObject npcEnemy = Instantiate(EnemyPrefab, spawnPoint.position, transform.rotation * Quaternion.Euler(0,180,0), MinionContainerObject) as GameObject;
         StateMachine machine = npcEnemy.GetComponent<StateMachine>();
@@ -125,6 +125,14 @@ public class EnemySpawner : NetworkBehaviour
             if(minion.TargetEntity == null)
                 minion.SetState(new ReturnToSpawnerState(minion));
         }
+    }
+
+
+    [ClientRpc]
+    public void RpcPlayAnimation()
+    {
+        SpawnerAnim.SetTrigger("Spawn"); //Runs spawn through animation event
+        MinionAnim.SetTrigger("Spawn");
     }
 
     public void OnDeath()
