@@ -16,7 +16,7 @@ using UnityEngine;
 public class SnifferPower : PowerupBase
 {
 	// Int used to describe how much of the currently selected color should be blended into the doors colors
-	public int ColorAmount = 1;
+	public int FlashSpeed = 1;
 	public Color LockedColor = Color.red;
 	public Color OpenColor = Color.green;
 
@@ -46,14 +46,15 @@ public class SnifferPower : PowerupBase
 				// Choose color depending on if the door is locked or not
 				if (doorArray[i].Locked)
 				{
-					renderer.material.SetColor("Color_D2F3C594", LockedColor);
+					renderer.material.SetColor("_Paw_Color", LockedColor);
 				}
 				else
 				{
-					renderer.material.SetColor("Color_D2F3C594", OpenColor);
+					renderer.material.SetColor("_Paw_Color", OpenColor);
 				}
 				// For all renderers in door, start blending the colors to the chosen amount
-				renderer.material.SetInt("Boolean_B9D5E5BD", ColorAmount);
+				renderer.material.SetInt("_Flash_Speed", FlashSpeed);
+				renderer.material.SetInt("_Paw_On", 1);
 			}
 		}
 		activated = true;
@@ -69,7 +70,7 @@ public class SnifferPower : PowerupBase
 		{
 			foreach (var renderer in door.GetComponentsInChildren<Renderer>())
 			{
-				renderer.material.SetInt("Boolean_B9D5E5BD", 0);
+				renderer.material.SetInt("_Paw_On", 0);
 			}
 		}
 	}

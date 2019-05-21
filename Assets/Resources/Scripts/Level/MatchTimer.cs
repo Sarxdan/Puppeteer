@@ -13,6 +13,7 @@ using Mirror;
 *
 * CODE REVIEWED BY:
 * Anton Jonnson 14/05-2019
+s* 
 * CONTRIBUTORS:
 * 
 */
@@ -65,7 +66,7 @@ public class MatchTimer : NetworkBehaviour
     {
         //Convert match time to minutes and seconds
 	    for (int i = MatchLength; i > 0; i -= 60)
-		    if (i > 60)
+		    if (i >= 60)
 			    Minutes++;
 		    else
 			    Seconds = i;
@@ -84,11 +85,14 @@ public class MatchTimer : NetworkBehaviour
 			    secondsString = Seconds.ToString("00");
 
 		    TimePrintOut = minutesString + ":" + secondsString;
+			RpcUpdateTime();
 
+            //Gives the puppets some time to load in.
 		    yield return new WaitForSeconds(1);
 
 		    MatchLength--;
 		    Seconds--;
+			
 		    if (Seconds < 0)
 		    {
 			    Minutes--;
@@ -119,7 +123,8 @@ public class MatchTimer : NetworkBehaviour
                 StopCoroutine("Timer");
             }
 
-            numberOfPuppetsAlive = GameObject.FindGameObjectsWithTag("Player").Length;
+            //Problem line
+            numberOfPuppetsAlive = FindObjectsOfType<PlayerController>().Length;
         }
 
         //If the time runs out and one puppet have escaped. The puppets win
@@ -170,9 +175,9 @@ public class MatchTimer : NetworkBehaviour
     }
 
     [ClientRpc]
-    public void RpcUpdateTime(string timePrint)
+    public void RpcUpdateTime()
     {
-	    TimeRemainingTextBox.text = timePrint;
+	    TimeRemainingTextBox.text = TimePrintOut;
     }
 
     //Puppeteer win. Show endscreen for all clients

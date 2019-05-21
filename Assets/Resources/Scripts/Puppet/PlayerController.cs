@@ -151,7 +151,6 @@ public class PlayerController : NetworkBehaviour
 
         // setup compass late to prevent race condition
         Invoke("SetupCompass", 2.0f);
-        Invoke("SetupPuppeteerIcon", 2.0f);
         Invoke("SetSpawnPosition", 1.5f);
     }
 
@@ -174,20 +173,6 @@ public class PlayerController : NetworkBehaviour
           rigidBody.MovePosition(new Vector3(Random.Range(-SpawnRadius, SpawnRadius), 0.0f, Random.Range(-SpawnRadius, SpawnRadius)));
     }
 
-    private void SetupPuppeteerIcon()
-    {
-        var puppetTrackerIcon = GetComponent<PuppetTrackerIcon>();
-        Debug.Assert(puppetTrackerIcon != null, "PuppetTrackerIcon was not found in player prefab");
-
-        foreach (var player in GameObject.FindObjectsOfType<PlayerController>())
-        {
-            if (player.transform != transform)
-            {
-                continue;
-            }
-            puppetTrackerIcon.AddTarget(player.transform);
-        }
-    }
 
 	[Command]
 	void CmdSetName(string nickName)
