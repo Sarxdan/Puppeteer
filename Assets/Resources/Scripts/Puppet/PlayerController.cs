@@ -409,7 +409,7 @@ public class PlayerController : NetworkBehaviour
 
     private IEnumerator LoadingRoutine()
     {
-        while(!Physics.Raycast(transform.position + new Vector3(0,0.2f,0), Vector3.down, out RaycastHit hit, 10))
+        while(!(Physics.Raycast(transform.position + new Vector3(0,0.2f,0), Vector3.down, out RaycastHit hit, 10) && hit.point.y < 1))
         {
             yield return new WaitForSeconds(0.2f);
         }
