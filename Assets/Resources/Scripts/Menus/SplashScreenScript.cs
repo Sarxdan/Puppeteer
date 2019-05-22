@@ -28,7 +28,7 @@ public class SplashScreenScript : MonoBehaviour
         StartCoroutine(SplashScreenTimer());
     }
 
-    void Update()
+    void FixedUpdate()
     {
         if(ListenForInput)
         {
@@ -38,10 +38,11 @@ public class SplashScreenScript : MonoBehaviour
                 SplashScreen.SetActive(false);
                 FadeOverlay.SetActive(false);
                 Background.SetActive(false);
+                Pulsate.SetActive(false);
                 ListenForInput = false;
             }
             Pulsate.SetActive(true);
-            pulsate += Time.deltaTime + 0.05f;
+            pulsate += Time.fixedDeltaTime + 0.04f;
             pulsateImage.color = new Color(0,0,0, ((Mathf.Sin(pulsate)/1.3f) + 0.02f));
         }
         if(fadeImage.color.a > 0)
