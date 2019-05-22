@@ -17,6 +17,8 @@ using Mirror;
  * 
  * CONTRIBUTORS:
  * 
+ * 
+ * CLEANED
 */
 
 public class UsernameDisplay : NetworkBehaviour
@@ -35,7 +37,6 @@ public class UsernameDisplay : NetworkBehaviour
             Username.gameObject.SetActive(false);
             return;
         }
-
         Invoke("SetNickname", 1.0f);
     }
 

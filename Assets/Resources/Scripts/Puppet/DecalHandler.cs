@@ -14,6 +14,8 @@ using UnityEngine;
  * 
  * CONTRIBUTORS:
  * Sandra Andersson
+ * 
+ * CLEANED
  */
 
 public class DecalHandler : MonoBehaviour
@@ -36,7 +38,8 @@ public class DecalHandler : MonoBehaviour
 		{
 			Destroy(decalQueue.Dequeue());
 		}
-		else if (decalQueue.Count == 1)  // If this is the first decal in queue, start decay if enabled.
+        // If this is the first decal in queue, start decay if enabled.
+        else if (decalQueue.Count == 1)  
 		{
 			if (DecalDecay && !decayEnabled)
 			{
@@ -56,7 +59,8 @@ public class DecalHandler : MonoBehaviour
 				{
 					Destroy(decalQueue.Dequeue());
 				}
-				if (decalQueue.Count == 0) // If all decals have been destroyed, stop decay.
+                // If all decals have been destroyed, stop decay.
+                if (decalQueue.Count == 0) 
 				{
 					decayEnabled = false;
 					break;
@@ -66,7 +70,6 @@ public class DecalHandler : MonoBehaviour
 			{
 				decayEnabled = true;
 			}
-
 			yield return new WaitForSeconds(DecayTime);
 		}
 	}
