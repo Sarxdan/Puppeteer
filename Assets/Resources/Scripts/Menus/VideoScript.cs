@@ -8,6 +8,7 @@ public class VideoScript : MonoBehaviour
 {
     public RawImage Image;
     public VideoPlayer VideoPlayer;
+    public GameObject SplashScreenContainer;
     // Start is called before the first frame update
     void Start()
     {
@@ -26,5 +27,6 @@ public class VideoScript : MonoBehaviour
 
         Image.texture = VideoPlayer.texture;
         VideoPlayer.Play();
+        SplashScreenContainer.GetComponent<SplashScreenScript>().StartListening();
     }
 }
