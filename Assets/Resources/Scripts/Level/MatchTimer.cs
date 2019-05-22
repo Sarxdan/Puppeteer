@@ -48,6 +48,7 @@ public class MatchTimer : NetworkBehaviour
 	    gameEnded = false;
 	    manager = GameObject.Find("NetworkManager").GetComponent<NetworkManager>();
 		TimeRemainingTextBox = GameObject.Find("TimeLeft").GetComponent<Text>();
+
         if (isServer)
 		    StartCoroutine("Timer", 1);
 
