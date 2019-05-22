@@ -52,6 +52,7 @@ public class FinalRoomInteract : Interactable
         if (!ButtonPressed)
         {
 			endGameDisplay.SetActive(true);
+			RpcPlayMusic();
 		    DoorToOpen = GameObject.Find("ST_Final_DoorFrame_03");
             ProgressTransform = GameObject.Find("ProgressBar").GetComponent<RectTransform>();
 			LeverTransform = GameObject.Find("ST_lever_low").GetComponent<Transform>();
