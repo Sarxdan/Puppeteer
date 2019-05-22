@@ -34,6 +34,7 @@ public class StartWeaponSpawner : NetworkBehaviour
             {
                 GameObject spawnedWeapon = Instantiate(StartWeapon, Vector3.zero, transform.rotation);
                 NetworkServer.Spawn(spawnedWeapon);
+                spawnedWeapon.GetComponent<NetworkIdentity>().AssignClientAuthority(player.GetComponent<NetworkIdentity>().connectionToClient);
                 spawnedWeapon.GetComponent<WeaponComponent>().RpcPickupWeapon(spawnedWeapon, player);
             }
         }
