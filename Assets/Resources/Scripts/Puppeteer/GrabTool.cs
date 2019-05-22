@@ -20,8 +20,6 @@ using Mirror;
 
 public class GrabTool : NetworkBehaviour
 {
-    public static readonly bool UsePhysicsEngine = false;
-
     private PuppeteerRoomSounds sounds;
 	private LevelBuilder level;
 
@@ -50,9 +48,7 @@ public class GrabTool : NetworkBehaviour
     // Current selected node in tree. Used by RoomTreeNode to allow the selected object to be used in new tree.
     public RoomTreeNode currentNode;
 
-    public readonly int MaxNumCollisions = 16;
     public readonly float UpdateFrequency = 0.12f;
-    private Collider[] overlapColliders;
     private RoomCollider[] guideColliders;
 
     void Start()
@@ -62,7 +58,6 @@ public class GrabTool : NetworkBehaviour
 
         if (isServer)
         {
-            overlapColliders = new Collider[MaxNumCollisions];
             InvokeRepeating("ServerUpdate", 0, UpdateFrequency);
         }
     }
@@ -319,55 +314,20 @@ public class GrabTool : NetworkBehaviour
 
         guideObject.transform.position = selectedObject.transform.position - (bestSrcPoint.transform.position - bestDstPoint.transform.position);
         guideObject.transform.rotation = selectedObject.transform.rotation;
+      
+        RoomCollider[] placedRoomColliders = level.GetLevel().GetComponentsInChildren<RoomCollider>();
 
-        // check collisions
-        if (UsePhysicsEngine)
+        foreach (var placedRoomCollider in placedRoomColliders)
         {
-            // this is where the fun begins
-            var bcs = selectedObject.GetComponents<BoxCollider>();
-            foreach (var bc in bcs)
+            if (placedRoomCollider.transform.IsChildOf(sourceObject.transform))
             {
-                for (int i = 0; i < overlapColliders.Length; i++)
-                {
-                    overlapColliders[i] = null;
-                }
-
-                int numCollisions = Physics.OverlapBoxNonAlloc(bc.transform.position, bc.size * 0.45f, overlapColliders, bc.transform.rotation, 1 << 8);
-                if (numCollisions >= MaxNumCollisions)
-                {
-                    Debug.LogWarning("Too many collisions! Some collisions may be ignored.");
-                }
-
-                for (int i = 0; i < overlapColliders.Length; i++)
-                {
-                    var collider = overlapColliders[i];
-                    if (collider == null || 
-                        collider.transform == selectedObject.transform || 
-                        collider.transform == sourceObject.transform || 
-                        collider.transform == guideObject.transform)
-                    {
-                        continue;
-                    }
-                    return false;
-                }
+                continue;
             }
-        }
-        else
-        {
-            RoomCollider[] placedRoomColliders = level.GetLevel().GetComponentsInChildren<RoomCollider>();
-
-            foreach (var placedRoomCollider in placedRoomColliders)
+            foreach (var guideCollider in guideColliders)
             {
-                if (placedRoomCollider.transform.IsChildOf(sourceObject.transform))
+                if (guideCollider.GetPosition() == placedRoomCollider.GetPosition())
                 {
-                    continue;
-                }
-                foreach (var guideCollider in guideColliders)
-                {
-                    if (guideCollider.GetPosition() == placedRoomCollider.GetPosition())
-                    {
-                        return false;
-                    }
+                    return false;
                 }
             }
         }
