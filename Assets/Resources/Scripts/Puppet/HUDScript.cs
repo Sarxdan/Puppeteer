@@ -18,10 +18,11 @@ using Mirror;
  *
  * CONTRIBUTORS:
  * 
+ * 
+ * CLEANED
 */
 public class HUDScript : NetworkBehaviour
 {
-
     // The player whose health is to me monitored
     public Transform Owner;
     // The actual health "bar"
@@ -77,8 +78,6 @@ public class HUDScript : NetworkBehaviour
     // The speed of the stamina bar
     public float StaminaBarSpeed = 0.8f;
 
-
-
     // Getting all the components and setting all the constant variables
     void Start()
     {
@@ -103,7 +102,6 @@ public class HUDScript : NetworkBehaviour
         
         drawHealthBar();
         drawStaminaBar();
-
 
         //Powerup Status
         #region powerUp status
@@ -160,7 +158,6 @@ public class HUDScript : NetworkBehaviour
                 }
             }
         }
-
         #endregion
     }
 
@@ -182,11 +179,7 @@ public class HUDScript : NetworkBehaviour
         HPIncrement += HealthBarSpeed * Time.deltaTime;
 
         HealthPercentage.text = Mathf.RoundToInt(((float)health/maxHealth)*100).ToString() + "%";
-        //Debug.Log("Current Health" + health);
-       // Debug.Log("Max health" + maxHealth);
-       // Debug.Log("Heath percent: " + (health/maxHealth)*100);
-       // Debug.Log((health/maxHealth)*100);
-        // runs whe the lerp is complete
+        //Runs whe the lerp is complete
         if(HPIncrement >= 1)
         {
             previousHP = healthComponent.Health;
@@ -214,6 +207,7 @@ public class HUDScript : NetworkBehaviour
             lerpFromStamina = previousStamina;
         }
     }
+
     [ClientRpc]
     public void RpcScaleZero()
     {

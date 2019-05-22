@@ -2,6 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/*
+ * CLEANED
+ */
+
 public class StopFiring : MonoBehaviour
 {
     void StopFire()

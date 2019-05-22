@@ -15,6 +15,8 @@ using Mirror;
  *
  * CONTRIBUTORS:
  * Ludvig "Kät" Björk Förare (Added shader animation)
+ * 
+ * CLEANED
  */
 public class InvisibilityPower : PowerupBase
 {
@@ -30,10 +32,7 @@ public class InvisibilityPower : PowerupBase
     private Coroutine fadeRoutineInstance;
 
     //Set layer so the gameobject is invisible for the puppeteer and set the gameobject tag to something that is not player
-    //so minions stop attacking you!
-    
-    
-    
+    //So minions stop attacking you!
     public override void OnActivate()
     {
         CmdSetIsActive(true);
@@ -78,13 +77,11 @@ public class InvisibilityPower : PowerupBase
         setIsActive(value);
     }
 
-
     [ClientRpc]
     public void RpcSetLayers(int layer)
     {
         setLayers(layer);
     }
-
 
     [ClientRpc]
     public void RpcSetTag(string tag)
@@ -97,7 +94,6 @@ public class InvisibilityPower : PowerupBase
         float direction = (target - StealthValue)/Mathf.Abs(target - StealthValue);
         while(StealthValue != target)
         {
-            Debug.Log("Value: " + StealthValue + " Target: " + target + "Direction: " + direction);
             StealthValue = Mathf.Clamp(StealthValue + TransitionSpeed * Time.deltaTime * direction, 0, 1);
             yield return new WaitForEndOfFrame();
         }
@@ -121,7 +117,6 @@ public class InvisibilityPower : PowerupBase
         {
             item.gameObject.layer = layer;
         }
-
         setWeaponLayer(gameObject, layer);
     }
 
@@ -146,6 +141,7 @@ public class InvisibilityPower : PowerupBase
             setWeaponLayer(child.gameObject, layer);
         }
     }
+
     private void setTag(string tag)
     {
         gameObject.tag = tag;

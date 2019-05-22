@@ -11,6 +11,8 @@ using UnityEngine;
  * 
  * CODE REVIEWED BY:
  * 
+ * 
+ * CLEANED
  */
 
 public class SnifferPower : PowerupBase
@@ -27,6 +29,7 @@ public class SnifferPower : PowerupBase
 	// Arrays to store doors affected by powerup and whether they were last locked or not in order to notice if they change mid powerup
 	private DoorComponent[] doorArray;
 	private bool[] lockedBoolArray;
+
 
 	public override void OnActivate()
 	{
@@ -102,7 +105,6 @@ public class SnifferPower : PowerupBase
 					lockedBoolArray[i] = doorArray[i].Locked;
 				}
 			}
-
 			yield return new WaitForSeconds(refreshTime);
 		}
 	}
