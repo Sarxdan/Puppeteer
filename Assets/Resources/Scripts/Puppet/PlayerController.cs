@@ -411,6 +411,7 @@ public class PlayerController : NetworkBehaviour
     {
         while(!(Physics.Raycast(transform.position + new Vector3(0,0.2f,0), Vector3.down, out RaycastHit hit, 10) && hit.point.y < 1))
         {
+            transform.position = new Vector3(transform.position.x, 0, transform.position.z);
             yield return new WaitForSeconds(0.2f);
         }
         CmdSpawned();
