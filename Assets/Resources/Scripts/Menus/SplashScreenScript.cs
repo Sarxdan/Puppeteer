@@ -34,11 +34,11 @@ public class SplashScreenScript : MonoBehaviour
         {
             if(Input.anyKeyDown)
             {
+                Pulsate.SetActive(false);
                 PressAnyKey.SetActive(false);
                 SplashScreen.SetActive(false);
                 FadeOverlay.SetActive(false);
                 Background.SetActive(false);
-                Pulsate.SetActive(false);
                 ListenForInput = false;
             }
             Pulsate.SetActive(true);
