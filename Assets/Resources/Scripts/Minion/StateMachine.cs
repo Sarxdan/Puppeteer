@@ -21,6 +21,7 @@ using Mirror;
  * CODE REVIEWED BY:
  * Ludvig Björk Förare (Charge attack 190514)
  * 
+ * CLEANED
  */
 
 public enum EnemyType
@@ -52,9 +53,7 @@ public class StateMachine : NetworkBehaviour
     [HideInInspector]
     public List<GameObject> Puppets;
 
-    //ta bort senare
     public bool Corunning;
-
 
     [Header("Normal attack settings")]
     public float AttackCooldown;
@@ -73,9 +72,6 @@ public class StateMachine : NetworkBehaviour
     public int ChargeDamageMultiplier;
     [HideInInspector]
     public Collider[] HitColliders;
-    //[HideInInspector]
-    //public Collider[] HitPillars;
-
 
     [Header("Aggro settings")]
     public float AggroDropTime;
@@ -94,7 +90,8 @@ public class StateMachine : NetworkBehaviour
     public float MaxIdleTime;
 
     [Header("Misc. settings")]
-    public Vector3 RaycastOffset; //Safety offset so raycast doesn't hit ground instantly
+    //Safety offset so raycast doesn't hit ground instantly
+    public Vector3 RaycastOffset; 
     public bool debug;
 
     [Range(0,1)]
@@ -107,8 +104,6 @@ public class StateMachine : NetworkBehaviour
         layerMask = ~(1 << LayerMask.NameToLayer("Puppeteer Interact") | 1 << LayerMask.NameToLayer("Ignore Raycast"));
         AnimController = GetComponent<Animator>();
         PathFinder = GetComponent<PathfinderComponent>();
-
-        //TODO: remove when prefab gets changed from Acceleration 0
         
         CanAttack = true;
         PostThreat = Mathf.NegativeInfinity;
@@ -149,10 +144,10 @@ public class StateMachine : NetworkBehaviour
 
     public void Update()
     {
-        if (System.Environment.TickCount % tickRate == 0) //Runs current state every 'tickRate' ticks
+        //Runs current state every 'tickRate' ticks
+        if (System.Environment.TickCount % tickRate == 0) 
         {
-            //TODO make it work with invisible puppet, for now the tag changes from player when it becomes invisible and reverts after
-            Puppets.Clear(); //TODO move this to Start(). Currently in update for dev purposes
+            Puppets.Clear();
             GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
             foreach(GameObject player in players)
             {
@@ -167,9 +162,7 @@ public class StateMachine : NetworkBehaviour
                 {
                     
                 }
-                
             }
-            //CurrentChargeSpeed = AnimController.GetFloat("ChargeSpeed");
             if (CurrentState != null) CurrentState.Run();
         }
     }
@@ -192,7 +185,8 @@ public class StateMachine : NetworkBehaviour
             {
                 //If within cone range and not obscured
                 if (WithinCone(transform, puppet.transform, FOVConeAngle, ConeAggroRange, InstantAggroRange))
-                {     //Attack player
+                {     
+                    //Attack player
                     TargetEntity = puppet.GetComponent<HealthComponent>();
                     if (MinionType == EnemyType.Minion)
                     {
@@ -210,7 +204,6 @@ public class StateMachine : NetworkBehaviour
             }
         }
     }
-
 
     //Runs when health = 0
     public void Die()
@@ -274,7 +267,6 @@ public class StateMachine : NetworkBehaviour
         CanAttack = true;
     }
 
-
     public bool WithinCone(Transform source, Transform target, float coneAngle, float coneLength, float coneIgnoreRadius)
     {
         float distance = Vector3.Distance(source.position, target.position);
@@ -316,16 +308,6 @@ public class StateMachine : NetworkBehaviour
                 AnimController.SetFloat("ChargeSpeed", CurrentChargeSpeed);
             }
 
-            //HitPillars = Physics.OverlapSphere(gameObject.transform.position, 1f);
-
-            //foreach (Collider pillar in HitPillars)
-            //{
-            //    if (pillar.name == "ST_Pillar_Full_01")
-            //    {
-            //        pillar.gameObject.SetActive(false);
-            //    }
-            //}
-
             //Hit cone, triggered when the target is within the parameters
             if (WithinCone(transform, TargetEntity.transform, 80f, 2f, 0f))
             {
@@ -342,13 +324,8 @@ public class StateMachine : NetworkBehaviour
                         if (debug) Debug.Log("Damage dealt: " + chargeDamage + " Damage in uint: " + uChargeDamage + " Target hit = " + coll);
                         TargetEntity.Damage(uChargeDamage);
                     }
-                    //else if (coll.name == "ST_Pillar_Full_01")
-                    //{
-                    //    coll.gameObject.SetActive(false);
-                    //}
                 }
                 //Set variables back to default on routine exit
-                //HitPillars = null;
                 HitColliders = null;
                 ChargeStopped = true;
                 Corunning = false;
@@ -362,8 +339,7 @@ public class StateMachine : NetworkBehaviour
         }
     }
 
-
-    //Isn't used at the time this file is reviewed
+    //Unused attack priority code
     private IEnumerator attackPriority()
     {
         AtkPrioRunning = true;
@@ -432,7 +408,6 @@ public class StateMachine : NetworkBehaviour
             return Vector3.positiveInfinity;
         }
 
-
         while(doorReferences != null)
         {
             //Checks if this room is to be chosen
@@ -446,7 +421,7 @@ public class StateMachine : NetworkBehaviour
             foreach(AnchorPoint door in doorReferences.doors)
             {
                 if(door.Connected && door != currentDoor && door.ConnectedTo != null)
-                { //TODO remove nullprodection
+                {
                     availableDoors.Add(door);
                 }
             }
@@ -493,12 +468,10 @@ public class StateMachine : NetworkBehaviour
     }
 }
 
-
-
 //-------------------------------------------------------------
+
 public abstract class State
 {
-    
     protected int layerMask = ~(1 << LayerMask.NameToLayer("Puppeteer Interact") | 1 << LayerMask.NameToLayer("Ignore Raycast"));
     public abstract void Enter();
 
