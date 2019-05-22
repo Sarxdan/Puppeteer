@@ -41,6 +41,11 @@ public class UsernameDisplay : NetworkBehaviour
 
     void Update()
     {
+        if (Username.text == "")
+        {
+            SetNickname();
+        }
+
         if (lookAt != null)
         {
             //Rotate the text towards the localplayer
