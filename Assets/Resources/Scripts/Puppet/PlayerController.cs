@@ -414,6 +414,7 @@ public class PlayerController : NetworkBehaviour
             yield return new WaitForSeconds(0.2f);
         }
         CmdSpawned();
+        GameObject.Find("LoadingScreen").SetActive(false);
         rigidBody.isKinematic = false;
     }
 
