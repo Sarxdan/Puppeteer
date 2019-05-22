@@ -32,7 +32,7 @@ public class Compass : MonoBehaviour
 
     void Start()
     {
-        barTex = Resources.Load<Texture2D>("Textures/Compass_Line");
+        barTex = Resources.Load<Texture2D>("Textures/HUD/Compass/Compass_Line");
 
         if(GameObject.FindGameObjectWithTag("GameController").GetComponent<NetworkIdentity>().isLocalPlayer)
         {
