@@ -31,7 +31,7 @@ public class EnemySpawner : NetworkBehaviour
     public Animator MinionAnim;
     public List<StateMachine> LocalMinions = new List<StateMachine>();
     public static List<StateMachine> AllMinions = new List<StateMachine>();
-    public static Transform MinionContainerObject;
+    public static Transform MinionContainer;
 
     private SnapFunctionality snapFunctionality;
 
@@ -47,9 +47,9 @@ public class EnemySpawner : NetworkBehaviour
             finalRoomDummy = GameObject.Find("DummySpawner").GetComponent<EnemySpawner>();
             if(finalRoomDummy == this) return;
             
-            if(MinionContainerObject == null)
+            if(MinionContainer == null)
             {
-                MinionContainerObject = GameObject.Find("MinionContainer").transform;
+                MinionContainer = GameObject.Find("MinionContainer").transform;
             }
         }
         catch(System.NullReferenceException e)
@@ -100,7 +100,8 @@ public class EnemySpawner : NetworkBehaviour
     {
         if(!isServer) return;
         //If not then create a GameObject from attached prefab at the spawners position and make them children of the "folder" created earlier
-        GameObject npcEnemy = Instantiate(EnemyPrefab, spawnPoint.position, transform.rotation * Quaternion.Euler(0,180,0), MinionContainerObject) as GameObject;
+        GameObject npcEnemy = Instantiate(EnemyPrefab, spawnPoint.position, transform.rotation * Quaternion.Euler(0, 180, 0), MinionContainer) as GameObject;
+
         StateMachine machine = npcEnemy.GetComponent<StateMachine>();
 
 
