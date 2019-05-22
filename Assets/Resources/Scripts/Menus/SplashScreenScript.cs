@@ -32,6 +32,7 @@ public class SplashScreenScript : MonoBehaviour
     {
         if(ListenForInput)
         {
+            Pulsate.SetActive(true);
             if(Input.anyKeyDown)
             {
                 Pulsate.SetActive(false);
@@ -41,7 +42,6 @@ public class SplashScreenScript : MonoBehaviour
                 Background.SetActive(false);
                 ListenForInput = false;
             }
-            Pulsate.SetActive(true);
             pulsate += Time.fixedDeltaTime + 0.04f;
             pulsateImage.color = new Color(0,0,0, ((Mathf.Sin(pulsate)/1.3f) + 0.02f));
         }
