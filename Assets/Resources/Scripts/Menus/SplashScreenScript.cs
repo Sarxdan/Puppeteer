@@ -25,7 +25,7 @@ public class SplashScreenScript : MonoBehaviour
     {
         fadeImage = FadeOverlay.GetComponent<Image>();
         pulsateImage = Pulsate.GetComponent<Image>();
-        StartCoroutine(SplashScreenTimer());
+        //StartCoroutine(SplashScreenTimer());
     }
 
     void FixedUpdate()
@@ -56,10 +56,10 @@ public class SplashScreenScript : MonoBehaviour
 
     // Update is called once per frame
 
-    private IEnumerator SplashScreenTimer()
+    public void StartListening()
     {
 
-        yield return new WaitForSecondsRealtime(3);
+        //yield return new WaitForSecondsRealtime(3);
         ListenForInput = true;
         PressAnyKey.SetActive(true);
         
