@@ -61,6 +61,7 @@ public class LevelBuilder : NetworkBehaviour
 			SpawnRooms();
 			SpawnRoomsOnNetwork();
 		}
+		GameObject.Find("LoadingScreen").SetActive(false);
 	}
 
 	// Randomizes the order of the rooms and puts them into roomsToBePlaced list.
@@ -272,6 +273,7 @@ public class LevelBuilder : NetworkBehaviour
 		{
 			NetworkServer.Spawn(door.gameObject);
 		}
+
     }
 
     // Returns a List of rooms.
