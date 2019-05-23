@@ -18,7 +18,7 @@ using Mirror;
 * CONTRIBUTORS: 
 * 
 */
-
+//Cleaned
 
 public class MenuNavigation : MonoBehaviour
 {
@@ -184,9 +184,6 @@ public class MenuNavigation : MonoBehaviour
 		Vector3 targetLocation = OptionsPanel.transform.position + relativeLocation;
 		float timeDelta = 0.1f;
 
-		// Get target fade value
-		float targetOpacity = 1;
-
 		// Start coroutine
 		StartCoroutine(SmoothMove(OptionsPanel, targetLocation, timeDelta));
 
@@ -197,9 +194,6 @@ public class MenuNavigation : MonoBehaviour
 		// Get the target position
 		Vector3 relativeLocation2 = new Vector3(-Screen.width / 3, 0.0f, 0.0f);
 		Vector3 targetLocation2 = OptionsPanel.transform.position + relativeLocation2;
-
-		// Get target fade value
-		float targetOpacity2 = 0;
 
 		// Start coroutine
 		StartCoroutine(SmoothMove(OptionsPanel, targetLocation2, timeDelta));
@@ -212,9 +206,6 @@ public class MenuNavigation : MonoBehaviour
 		Vector3 targetlocation = AudioOptionsPanel.transform.position + relativeLocation;
 		float timeDelta = 0.1f;
 
-		// Get target fade value
-		float targetOpacity = 1;
-
 		// Start coroutine
 		StartCoroutine(SmoothMove(AudioOptionsPanel, targetlocation, timeDelta));
 
@@ -224,9 +215,6 @@ public class MenuNavigation : MonoBehaviour
 		// Get the target position
 		Vector3 relativeLocation2 = new Vector3(-(Screen.width / 2), 0, 0);
 		Vector3 targetLocation2 = AudioOptionsPanel.transform.position + relativeLocation2;
-
-		// Get target fade value
-		float targetOpacity2 = 0;
 
 		// Start coroutine
 		StartCoroutine(SmoothMove(AudioOptionsPanel, targetLocation2, timeDelta));
@@ -370,66 +358,4 @@ public class MenuNavigation : MonoBehaviour
         coroutinesRunning -= 1;
 
     }
-
-	//--------------------Fade--------------------
-	IEnumerator FadeText(Text text, float target, float delta)
-	{
-		// will need to perform some of this process and yeild until next frames
-		float closeEnough = 0.2f;
-		float difference = Mathf.Abs(text.color.a - target);
-		// GC will trigger unless we define this ahead of time
-		WaitForEndOfFrame wait = new WaitForEndOfFrame();
-
-		// continue until we're there
-		while (difference >= closeEnough)
-		{
-			// Confirm thaht it's moving
-
-			// Move a bit then wait until next frame
-			float temp = Mathf.Lerp(text.color.a, target, delta);
-			text.color = new Color(text.color.r, text.color.g, text.color.b, temp);
-			yield return wait;
-
-			// Check if we should repeat
-			difference = Mathf.Abs(text.color.a - target);
-		}
-		// Complete the motion to prevent sliding
-		text.color = new Color(text.color.r, text.color.g, text.color.b, target);
-
-		// Comfirm End
-	}
-	IEnumerator FadeSlider(Slider item, float target, float delta)
-	{
-		Image[] images = item.GetComponentsInChildren<Image>();
-
-		// will need to perform some of this process and yeild until next frames
-		float closeEnough = 0.2f;
-		float difference = Mathf.Abs(images[0].color.a - target);
-		// GC will trigger unless we define this ahead of time
-		WaitForEndOfFrame wait = new WaitForEndOfFrame();
-
-		// continue until we're there
-		while (difference >= closeEnough)
-		{
-            // Confirm that it's moving
-
-			// Move a bit then wait until next frame
-			for (int i = 0; i < images.Length; i++)
-			{
-				float temp = Mathf.Lerp(images[i].color.a, target, delta);
-				images[i].color = new Color(images[i].color.r, images[i].color.g, images[i].color.b, temp);
-			}
-			yield return wait;
-
-			// Check if we should repeat
-			difference = Mathf.Abs(images[0].color.a - target);
-		}
-		// Complete the motion to prevent sliding
-		for (int i = 0; i < images.Length; i++)
-		{
-            images [i].color = new Color(images[i].color.r, images[i].color.g, images[i].color.b, target);
-		}
-
-		// Comfirm End
-	}
 }
