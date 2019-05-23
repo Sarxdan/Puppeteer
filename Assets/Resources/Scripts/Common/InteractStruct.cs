@@ -17,8 +17,6 @@ using UnityEngine;
 * CLEANED
 */
 
-//CLEANED
-
 public struct InteractStruct
 {
 	public GameObject Source;

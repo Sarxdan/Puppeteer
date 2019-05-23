@@ -19,7 +19,6 @@ using UnityEngine;
  * 
  *CLEANED
  */
-//CLEANED
 
 public class PowerupRecharge : Interactable
 {

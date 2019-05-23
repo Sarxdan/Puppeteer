@@ -14,7 +14,6 @@ using Mirror;
  * 
  * CLEANED
  */
- //CLEANED
 
 public class FakeItemSpawner : NetworkBehaviour
 {

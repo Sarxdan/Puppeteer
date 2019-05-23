@@ -19,7 +19,6 @@ using MinionStates;
 * 
 * CLEANED
 */
-//CLEANED
 
 public class FinalRoomInteract : Interactable
 {

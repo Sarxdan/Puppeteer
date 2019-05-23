@@ -19,7 +19,6 @@ using Mirror;
  * 
  * CLEANED
  */
-//CLEANED
 
 [RequireComponent(typeof(Glowable))]
 public abstract class Interactable : NetworkBehaviour

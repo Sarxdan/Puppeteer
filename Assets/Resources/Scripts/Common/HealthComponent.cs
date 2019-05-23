@@ -16,7 +16,6 @@ using Mirror;
  * CONTRIBUTORS:
  * Kristoffer Lundgren (Interact tooltip)
  */
-//CLEANED
 public class HealthComponent : NetworkBehaviour
 {
     public static HealthComponent Local;

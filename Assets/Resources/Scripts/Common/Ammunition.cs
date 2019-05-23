@@ -24,7 +24,6 @@ using Mirror;
 * 
 * CLEANED
 */
-//CLEANED
 
 
 public class Ammunition : Interactable

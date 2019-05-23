@@ -21,8 +21,6 @@ using Mirror;
  * 
  * CLEANED
  */
-
-//CLEANED
 public abstract class PowerupBase : NetworkBehaviour
 {
     //The duration of the powerup

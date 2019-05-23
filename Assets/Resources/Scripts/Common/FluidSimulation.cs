@@ -13,7 +13,6 @@
  * 
  * CLEANED
  */
-//CLEANED
 
 public class FluidSimulation : MonoBehaviour
 {
