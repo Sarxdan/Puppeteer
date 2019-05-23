@@ -17,6 +17,7 @@ using UnityEngine.SceneManagement;
 *
 * CONTRIBUTORS:
 */
+//CLEANED
 
 
 public class CustomNetworkManager : NetworkLobbyManager

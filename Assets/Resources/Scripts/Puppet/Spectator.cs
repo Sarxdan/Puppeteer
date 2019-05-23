@@ -4,6 +4,10 @@ using UnityEngine.UI;
 using UnityEngine;
 using Mirror;
 
+/*
+ * CLEANED
+ */
+
 public class Spectator : NetworkBehaviour
 {
 	public bool Spectating = false;
@@ -43,7 +47,6 @@ public class Spectator : NetworkBehaviour
 			{
 				Prev();
 			}
-
 		}
     }
 
@@ -58,6 +61,7 @@ public class Spectator : NetworkBehaviour
 		NameText.text = Cameras[Index].GetComponentInParent<PlayerController>().NickName;
 		canvas.worldCamera = Cameras[Index];
 	}
+
 	void Next()
 	{
 		Cameras[Index].enabled = false;
@@ -73,6 +77,7 @@ public class Spectator : NetworkBehaviour
 		NameText.text = Cameras[Index].GetComponentInParent<PlayerController>().NickName;
 		canvas.worldCamera = Cameras[Index];
 	}
+
 	void Prev()
 	{
 		Cameras[Index].enabled = false;
@@ -88,12 +93,11 @@ public class Spectator : NetworkBehaviour
 		NameText.text = Cameras[Index].GetComponentInParent<PlayerController>().NickName;
 		canvas.worldCamera = Cameras[Index];
 	}
+
 	void ChoseValidCamera()
 	{
 		Index = 0;
 		Cameras[Index].enabled = true;
 		NameText.text = Cameras[Index].GetComponentInParent<PlayerController>().NickName;
 	}
-
-
 }

@@ -13,7 +13,7 @@ using Mirror;
  * CODE REVIEWED BY:
  * 
  * 
- * 
+ * CLEANED
  */
 
 public class EnableKineticOnNonLocalPlayer : NetworkBehaviour

@@ -12,19 +12,17 @@ using MinionStates;
  *
  * CODE REVIEWED BY:
  * 
+ * CLEANED
  */
 
 public class Noise
 {
-
-    
     public static void MakeNoise(Vector3 position, float amplitude)
     {
         foreach(StateMachine minion in EnemySpawner.AllMinions)
         {
             if(minion.CurrentStateName != "Attack" || minion.CurrentStateName != "ReturnToSpawn")
             {
-
                 Physics.Raycast(position, minion.transform.position, out RaycastHit hit, amplitude, ~(1 << LayerMask.NameToLayer("Puppeteer Interact")));
                 
                 if(hit.transform != null && hit.transform == minion.transform){

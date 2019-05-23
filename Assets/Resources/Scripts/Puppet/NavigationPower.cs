@@ -13,6 +13,8 @@ using UnityEngine;
  * CODE REVIEWED BY:
  * Anton Jonsson (24/4)
  * 
+ * 
+ * CLEANED
  */
 public class NavigationPower : PowerupBase
 {

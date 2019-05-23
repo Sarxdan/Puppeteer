@@ -3,9 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using Mirror;
 
+/*
+ * CLEANED
+ */
+
 public class PathfinderComponent : NetworkBehaviour
 {
-
     [Header("Movement settings")]
     public bool UseRootMotion;
     public float MovementSpeed = 50;
@@ -28,9 +31,8 @@ public class PathfinderComponent : NetworkBehaviour
     public bool PathfindDebug;
 
 
-
     [Header("Obstacle avoidance settings")]
-    //All-that-aren't-minions stuff
+    //All-that-aren't-minion variables
     public float RaycastAvoidDistance;
 
     public float RaycastAvoidAngle;
@@ -41,7 +43,7 @@ public class PathfinderComponent : NetworkBehaviour
 
     private Vector3 raycastAvoidVector;
 
-    //Minion stuff
+    //Minion variables
     public float MinionAvoidDistance;
     public float MinionAvoidWeight;
 
@@ -106,8 +108,6 @@ public class PathfinderComponent : NetworkBehaviour
         }
     }
 
-    
-
     public void Stop()
     {
         this.worldPath = new List<AStarRoomNode>();
@@ -115,7 +115,6 @@ public class PathfinderComponent : NetworkBehaviour
         this.HasPath = false;
         if(this.animController == null)
             this.animController = GetComponent<Animator>();
-        
     }
 
     public void MoveTo(Vector3 endPos)
@@ -144,7 +143,6 @@ public class PathfinderComponent : NetworkBehaviour
                 return;
             }
 
-            
             //Creates room pathfind
             this.worldPath = aStarRoomPathfind(startRoom, endRoom);
 
@@ -182,7 +180,6 @@ public class PathfinderComponent : NetworkBehaviour
     {
         if(Velocity.magnitude < MinVelocityThreshold)
         {
-
             currentStuckTime += Time.deltaTime;
             if(currentStuckTime >= StuckTimeThreshold)
             {
@@ -221,7 +218,6 @@ public class PathfinderComponent : NetworkBehaviour
             minionAvoidVector = minionAvoidVector * (1-ForceSmoothingValue) + Vector3.zero * ForceSmoothingValue;
         }
 
-
         RaycastHit hit;
         Vector3 newRaycastAvoidVector = Vector3.zero;
 
@@ -231,7 +227,6 @@ public class PathfinderComponent : NetworkBehaviour
         {
             newRaycastAvoidVector += hit.normal / hit.distance;
         }
-
 
 
         if(Physics.Raycast(transform.position + TransformRaycastOffset, rightRayRotation * transform.forward, out hit, RaycastAvoidDistance, layerMask) &&
@@ -247,7 +242,6 @@ public class PathfinderComponent : NetworkBehaviour
         {
             newRaycastAvoidVector += hit.normal / hit.distance;
         }
-
         raycastAvoidVector = raycastAvoidVector * (1-ForceSmoothingValue) + newRaycastAvoidVector * 0.3f * ForceSmoothingValue;
     }
 
@@ -373,7 +367,6 @@ public class PathfinderComponent : NetworkBehaviour
             {
                 distance = this.MovementSpeed * Time.deltaTime;
             }
-            //rigidBody.MovePosition(transform.position + transform.forward * this.MovementSpeed * Time.deltaTime );
             if(UseRootMotion)
             {
                 animController.SetBool("Moving", true);
@@ -451,7 +444,8 @@ public class PathfinderComponent : NetworkBehaviour
             {
                 if(door.Connected && door.ConnectedTo != null)
                 {
-                    Transform adjacentRoom = door.ConnectedTo.transform.GetComponentInParent<DoorReferences>().transform; //Ugly but secure way to get room transform
+                    //Ugly but secure way to get room transform
+                    Transform adjacentRoom = door.ConnectedTo.transform.GetComponentInParent<DoorReferences>().transform; 
                     if(!checkedRooms.Contains(adjacentRoom))
                     {
                         unevaluatedNodes.Add(new AStarRoomNode(Vector3.Distance(startRoom.position, adjacentRoom.position) + Vector3.Distance(endRoom.position, adjacentRoom.position), adjacentRoom, currentNode, door.transform.position));
@@ -459,11 +453,9 @@ public class PathfinderComponent : NetworkBehaviour
                     }
                 }
             }
-
         }
         return null;
         //If path was not found
-        
     }
 
     [System.Serializable]
@@ -586,7 +578,6 @@ public class PathfinderComponent : NetworkBehaviour
         Vector3 lastLeft = getLeft(currentNode, origin);
         Vector3 lastRight = getRight(currentNode, origin);
 
-        //
         Vector3 leftPortal = lastLeft;
         Vector3 rightPortal = lastRight;
 
@@ -601,7 +592,6 @@ public class PathfinderComponent : NetworkBehaviour
             //Defines next AStarNode
 
             if(PathfindDebug) Debug.DrawRay(navmeshTransform.TransformPoint(currentNode.Face.Origin), Vector3.up, Color.white, 2);
-
 
             //If next face does not contain current left vert
             if (!nextNode.Face.hasVertex(leftPortal))
@@ -661,7 +651,6 @@ public class PathfinderComponent : NetworkBehaviour
                 }
             }
             currentNode = nextNode;
-            
         }
 
         Vector3 endLeftCross = Vector3.Cross(end - origin, lastLeft - origin);
@@ -677,10 +666,9 @@ public class PathfinderComponent : NetworkBehaviour
             nodeList.Insert(0,lastRight);
             return funnelStringpull(getLastOccurance(lastLeftNode,lastRight), lastRight, end, nodeList, recursionIndex);
         }
-
-
         return nodeList;
     }
+
     class AStarFaceNode
     {
         public float FCost;
@@ -693,6 +681,7 @@ public class PathfinderComponent : NetworkBehaviour
             this.Face = Face;
         }
     }
+
     private List<T> listSum<T>(List<T> A, List<T> B)
     {
         List<T> ret = new List<T>();
@@ -705,6 +694,7 @@ public class PathfinderComponent : NetworkBehaviour
     {
         return getLeftOrRight(node, origin, 1);
     }
+
     private Vector3 getRight(AStarFaceNode node, Vector3 origin)
     {
         return getLeftOrRight(node, origin, -1);
@@ -721,9 +711,9 @@ public class PathfinderComponent : NetworkBehaviour
             return node;
         }
     }
+
     private Vector3 getLeftOrRight(AStarFaceNode node, Vector3 origin, int inverse)
     {
-        //If someone knows how to do this in one line plz call me ;*
         Vector3 A = new Vector3();
         Vector3 B = new Vector3();
         Vector3 C = new Vector3();
@@ -747,8 +737,8 @@ public class PathfinderComponent : NetworkBehaviour
             B = node.Face.bPos;
             C = node.Face.aPos;
         }
-        else{
-            
+        else
+        {
             return getLeftOrRight(node, getLonelyNode(node.Face, node.Parent.Face), inverse);
         }
 

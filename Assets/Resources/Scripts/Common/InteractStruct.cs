@@ -13,6 +13,8 @@ using UnityEngine;
 * Ludvig Björk Förare (190430)
 *
 * CONTRIBUTORS:
+* 
+* CLEANED
 */
 
 public struct InteractStruct

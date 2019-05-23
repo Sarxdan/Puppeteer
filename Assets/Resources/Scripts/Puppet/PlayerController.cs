@@ -25,6 +25,8 @@ using UnityEngine.UI;
  * Ludvig Björk Förare (Animation integration)
  * Sandra Andersson (Sound Impl.)
  * Filip Renman (Velocity)
+ * 
+ * CLEANED
 */
 public class PlayerController : NetworkBehaviour
 {
@@ -115,18 +117,13 @@ public class PlayerController : NetworkBehaviour
     void Start()
     {
         rigidBody = GetComponent<Rigidbody>();
-       // CurrentWeaponComponent = CurrentWeapon.GetComponent<WeaponComponent>();
         rigidBody = GetComponent<Rigidbody>();
         AnimController = GetComponent<Animator>();
         FPVAnimController = FPVArms.GetComponent<Animator>();
-        // Saves the original input from the variables
+        //Saves the original input from the variables
         speedSave = MovementSpeed;
         accSave = AccelerationRate;
 
-        // try to move to spawn position (physics enabled)
-      
-
-        
         if(isLocalPlayer)
         {
             FullBody.transform.Find("Mesh").gameObject.SetActive(false);
@@ -148,10 +145,9 @@ public class PlayerController : NetworkBehaviour
 				CmdSetName(LP.Nickname);
 			}
 		}
-
-        // Setup compass late to prevent race condition
+        //Setup compass late to prevent race condition
         Invoke("SetupCompass", 2.0f);
-        // Set Spawn position late to avoid spawning on roof or below map
+        //Set Spawn position late to avoid spawning on roof or below map
         Invoke("SetSpawnPosition", 1.5f);
     }
 
@@ -169,11 +165,11 @@ public class PlayerController : NetworkBehaviour
             compass.AddTarget(player.transform);
         }
     }
+
     private void SetSpawnPosition()
     {
           rigidBody.MovePosition(new Vector3(Random.Range(-SpawnRadius, SpawnRadius), 0.0f, Random.Range(-SpawnRadius, SpawnRadius)));
     }
-
 
 	[Command]
 	void CmdSetName(string nickName)
@@ -187,12 +183,12 @@ public class PlayerController : NetworkBehaviour
         {
             if (CurrentWeapon != null && CanShoot)
             {
-                // Fire current weapon
+                //Fire current weapon
                 if (Input.GetButton("Fire"))
                 {
                     CurrentWeapon.GetComponent<WeaponComponent>().Use();
                 }
-                // Reload current weapon
+                //Reload current weapon
                 if (Input.GetButton("Reload") && CurrentWeaponComponent.CanReload() && Ammunition > 0)
                 {
                     AnimController.SetFloat("ReloadSpeed", 4/CurrentWeaponComponent.ReloadTime);
@@ -213,39 +209,36 @@ public class PlayerController : NetworkBehaviour
                 StartCoroutine(GetComponent<PowerupBase>().Run());
             }
 
-            // Keeps cursor within screen
+            //Keeps cursor within screen
             if (Input.GetButton("Fire"))
             {
                 Cursor.lockState = CursorLockMode.Locked;
             }
 
-
-            // Escape releases cursor
+            //Escape releases cursor
             if (Input.GetButton("Cancel"))
             {
                 Cursor.lockState = CursorLockMode.None;
             }
 
-            // Mouse movement
+            //Mouse movement
             if (Input.GetAxis("Mouse X") != 0)
             {
                 transform.Rotate(Vector3.up * MouseSensitivity * Input.GetAxis("Mouse X"));
             }
             if (Input.GetAxis("Mouse Y") != 0)
             {
-                // Checks if within legal rotation limit
+                //Checks if within legal rotation limit
                 if (HeadTransform.localEulerAngles.x - MouseSensitivity * Input.GetAxis("Mouse Y") < LookVerticalMax || HeadTransform.localEulerAngles.x - MouseSensitivity * Input.GetAxis("Mouse Y") > LookVerticalMin + 360)
                 {
                     HeadTransform.localEulerAngles = HeadTransform.localEulerAngles - Vector3.right * MouseSensitivity * Input.GetAxis("Mouse Y");
                 }
             }
-
             AnimController.SetFloat("Forward", Input.GetAxis("Vertical"));
             AnimController.SetFloat("Strafe", Input.GetAxis("Horizontal"));
-
         }
 
-        // Jumping
+        //Jumping
         if (Input.GetButtonDown("Jump") && isGrounded)
         {
             if(Physics.Raycast(transform.position, -transform.up, JumpRayLength))
@@ -290,7 +283,7 @@ public class PlayerController : NetworkBehaviour
 
     private void FixedUpdate()
     {
-        // Horizontal movement
+        //Horizontal movement
         if ((Input.GetAxisRaw("Horizontal") != 0 || Input.GetAxisRaw("Vertical") != 0) && !DisableInput)
         {
             currentMovementSpeed += currentMovementSpeed < MovementSpeed ? AccelerationRate * Time.deltaTime : 0; //Accelerates to MovementSpeed
@@ -306,8 +299,8 @@ public class PlayerController : NetworkBehaviour
             rigidBody.velocity = new Vector3(0, rigidBody.velocity.y, 0);
         }
 
-        // Sprinting
-        // Checks the most important task, if the sprint button is released
+        //Sprinting
+        //Checks the most important task, if the sprint button is released
         if (Input.GetButtonUp("Sprint") && (!Input.GetButton("Horizontal") || !Input.GetButton("Vertical")))
         {
             AnimController.SetBool("Sprint", false);
@@ -316,7 +309,7 @@ public class PlayerController : NetworkBehaviour
             reachedZero = false;
             isDown = false;
         }
-        // Makes sure stamina can't be negative
+        //Makes sure stamina can't be negative
         else if (reachedZero == true && isDown == true)
         {
             AnimController.SetBool("Sprint", false);
@@ -326,7 +319,7 @@ public class PlayerController : NetworkBehaviour
             StartCoroutine("StaminaRegenRoutine");
         }
 
-        // Checks for sprint key and acts accordingly
+        //Checks for sprint key and acts accordingly
         else if (!DisableInput && (Input.GetButton("Sprint") && (Input.GetButton("Horizontal") || Input.GetButton("Vertical"))))
         {
             AnimController.SetBool("Sprint", true);
@@ -347,7 +340,7 @@ public class PlayerController : NetworkBehaviour
                 StartCoroutine("StaminaRegenRoutine");
             }
         }
-        // Basic stamina regen 
+        //Basic stamina regen 
         else
         {
             MovementSpeed = speedSave;
@@ -372,7 +365,7 @@ public class PlayerController : NetworkBehaviour
         AnimController.SetBool("Fire", false);
     }
 
-    // Freezes the position of the puppet and disables shooting and interacting
+    //Freezes the position of the puppet and disables shooting and interacting
     public void Stunned()
     {
         rigidBody.constraints = RigidbodyConstraints.FreezeAll;
@@ -393,7 +386,7 @@ public class PlayerController : NetworkBehaviour
         FPVAnimController.SetLayerWeight(1,0);
     }
 
-    // Unstunns the enemy and enables shooting and interacting
+    //Unstunns the enemy and enables shooting and interacting
     public void UnStunned()
     {
         rigidBody.constraints = RigidbodyConstraints.None | RigidbodyConstraints.FreezeRotation;

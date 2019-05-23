@@ -16,6 +16,7 @@ using UnityEngine;
  * CODE REVIEWED BY:
  * Ludvig Björk Förare (Charge attack 190514)
  * 
+ * CLEANED
  */
 
 namespace MinionStates
@@ -25,7 +26,6 @@ namespace MinionStates
 
         private StateMachine machine;
         
-        //Timekeeping (TODO move somewhere more accessible)
         private float playerLostTime = 0;
         private float lastSeenTime = 0;
 
@@ -34,7 +34,6 @@ namespace MinionStates
             this.machine = machine;
         }
         
-
         public override void Enter()
         {
             lastSeenTime = Time.time;
@@ -52,9 +51,6 @@ namespace MinionStates
                 machine.SetState(new WanderState(machine));
                 return;
             }
-
-            //Debug ray for attack range
-            if (machine.debug) Debug.DrawRay(machine.transform.position, Vector3.forward * machine.AttackRange, Color.green, 0.2f);
 
             //Tests if player is in front
             if (Vector3.Distance(machine.transform.position, StateMachine.RemoveY(machine.TargetEntity.transform.position)) < machine.AttackRange)
@@ -83,7 +79,6 @@ namespace MinionStates
                 machine.PathFinder.MoveTo(machine.TargetEntity.transform.position);
             }
             
-
             //Tests if player is concealed
             RaycastHit hit;
             if (!Physics.Raycast(machine.transform.position + new Vector3(0,.5f,0), machine.TargetEntity.transform.position - machine.transform.position + new Vector3(0,.5f,0), out hit, machine.ConeAggroRange, layerMask) || hit.transform.tag != ("Player"))
@@ -138,7 +133,7 @@ namespace MinionStates
             }
             else
             {
-                //If navmesh isn't found, goes idle
+                //If navmesh isn't found, go idle
                 Debug.LogError("Entity " + machine.transform.name + " could not find navmesh in spawnRoom!");
                 machine.AnimController.SetBool("Running", false);
                 machine.SetState(new IdleState(machine));
@@ -168,8 +163,6 @@ namespace MinionStates
         {
             machine.AnimController.SetBool("Running", false);
         }
-
-
     }
 
     //---------------------------------------------------------------------------------
@@ -253,7 +246,8 @@ namespace MinionStates
         }
     }
 
-//---------------------------------------------------------------------------------
+    //---------------------------------------------------------------------------------
+
     public class IdleState : State
     {
         private StateMachine machine;
@@ -322,13 +316,14 @@ namespace MinionStates
 
         public override void Exit()
         {
-
         }
     }
+
     //---------------------------------------------------------------------------------
     //TANK STATES
     //the idle state above is shared between tanks and minions
     //---------------------------------------------------------------------------------
+
     public class BigAttackState : State
     {
         private StateMachine machine;
@@ -375,10 +370,7 @@ namespace MinionStates
             {
                 if (machine.CanAttack)
                 {
-                    //TODO: fix for the tank animations and model
                     machine.StartCoroutine("attackTimer");
-                    //Insert animations & attack types
-                    //Placeholders from regular minion code:
                     machine.AnimController.SetInteger("RandomAnimationIndex", Random.Range(0, 6));
                     machine.AnimController.SetTrigger("Attack");
                 }
@@ -401,6 +393,7 @@ namespace MinionStates
     }
 
     //---------------------------------------------------------------------------------
+
     public class ChargeAttackState : State
     {
         private StateMachine machine;
@@ -416,7 +409,6 @@ namespace MinionStates
             machine.AnimController.SetBool("IsCharging", true);
             machine.ChargeStopped = false;
             machine.PathFinder.RotationSpeed = 7f;
-            //machine.PathFinder.NodeArrivalMargin = 0.6f;
             machine.AnimController.SetFloat("ChargeSpeed", machine.StartChargeSpeed);
         }
 
@@ -431,6 +423,7 @@ namespace MinionStates
                 machine.ChargeStopped = false;
                 machine.SetState(new BigAttackState(machine));
             }
+
             //If within a narrow long cone start the Charge Routine
             if (machine.WithinCone(machine.transform, machine.TargetEntity.transform, 30f, 15f, 0f))
             {
@@ -450,7 +443,6 @@ namespace MinionStates
         public override void Exit()
         {
             machine.PathFinder.RotationSpeed = 15;
-            //machine.PathFinder.NodeArrivalMargin = 0.6f;
             machine.AnimController.SetBool("IsCharging", false);
         }
     }

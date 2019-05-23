@@ -11,10 +11,13 @@ using UnityEngine;
  * 
  * CODE REVIEWED BY:
  * Carl Apppelkvist
+ * 
+ * CLEANED
 */
 public class WeightSync : MonoBehaviour
 {
     private PlayerController playerController;
+
     void Start()
     {
         playerController = GetComponent<PlayerController>();
@@ -26,6 +29,5 @@ public class WeightSync : MonoBehaviour
         float weight = playerController.AnimController.GetFloat("JumpWeight");
         playerController.AnimController.SetLayerWeight(2, weight / playerController.AnimController.GetLayerWeight(2) + .01f);
         playerController.FPVAnimController.SetLayerWeight(2, weight / playerController.FPVAnimController.GetLayerWeight(2)+ .01f);
-     
     }
 }

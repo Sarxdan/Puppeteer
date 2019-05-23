@@ -14,6 +14,8 @@ using UnityEngine;
 *
 * CONTRIBUTORS:
 * Kristoffer Lundgren
+* 
+* CLEANED
 */
 
 public class FinalDoorInteractable : Interactable
@@ -35,9 +37,9 @@ public class FinalDoorInteractable : Interactable
 
 	public override void OnInteractEnd(GameObject interactor)
 	{
-		Debug.Log("End");
+		
 	}
-	// (KL) Used to show the interact tooltip
+	// Used to show the interact tooltip
 	public override void OnRaycastEnter(GameObject interactor)
 	{
 		var button = GameObject.Find("FinalButton(Clone)");
@@ -45,7 +47,6 @@ public class FinalDoorInteractable : Interactable
 		if(buttonScript.Opened)
 			ShowTooltip(interactor);
 	}
-
 
 	[ClientRpc]
 	public void RpcTurnOff(GameObject interactor)

@@ -11,6 +11,8 @@ using UnityEngine;
  * 
  * CODE REVIEWED BY:
  * 
+ * 
+ * CLEANED
  */
 public class StaminaPower : PowerupBase
 {
