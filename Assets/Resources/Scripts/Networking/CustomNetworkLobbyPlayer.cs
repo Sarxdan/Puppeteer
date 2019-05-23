@@ -18,6 +18,8 @@ using Mirror;
 * CONTRIBUTORS:
 */
 
+//CLEANED
+
 public class CustomNetworkLobbyPlayer : NetworkLobbyPlayer
 {
     [SyncVar]
@@ -73,7 +75,6 @@ public class CustomNetworkLobbyPlayer : NetworkLobbyPlayer
     public override void OnStartServer()
     {
         base.OnStartServer();
-        //GameObject.Find("ReadyButton").GetComponent<Button>().onClick.AddListener(delegate { ToggleReadyState(); });
         GameObject.Find("StartCharacterSelectButton").SetActive(true);
     }
 
@@ -135,7 +136,6 @@ public class CustomNetworkLobbyPlayer : NetworkLobbyPlayer
     [ClientRpc]
     public void RpcSelectCharacter(int characterIndex)
     {
-        //TODO Change Index.ToString() to be the players name
         GameObject.Find("CharacterSelecter").GetComponent<CharacterSelect>().CharacterSelected(characterIndex, Nickname, Index);
     }
     #endregion
