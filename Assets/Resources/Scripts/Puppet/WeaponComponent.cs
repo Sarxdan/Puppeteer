@@ -18,6 +18,8 @@ using MinionStates;
  * CONTRIBUTORS:
  * Kristoffer Lundgren
  * Ludvig Björk Förare (Reload animation, gatling gun spin, bullet effects)
+ * 
+ * CLEANED
  */
 public class WeaponComponent : Interactable
 {
@@ -37,7 +39,6 @@ public class WeaponComponent : Interactable
     private GameObject currentMagazine;
     [HideInInspector]
     public FluidSimulation LiquidScript;
-
 
     private PlayerController user;
 
@@ -63,7 +64,6 @@ public class WeaponComponent : Interactable
     private Transform muzzlePoint;
 
     //Splat particles
-
     public WallSplat WallSplatObject;
 
     // time required before weapon is ready to fire (i.e gatling gun spinning up)
@@ -105,7 +105,6 @@ public class WeaponComponent : Interactable
         muzzlePoint = transform.Find("MuzzlePoint");
     }
 
-
     //Attemps to fire the weapon
     public void Use()
     {
@@ -143,7 +142,7 @@ public class WeaponComponent : Interactable
         for (int i = 0; i < NumShots; i++)
         {
 
-            // calculate spread
+            //Calculate spread
             Vector3 offset = Random.insideUnitSphere * Spread;
 
             RaycastHit hitInfo;
@@ -159,8 +158,7 @@ public class WeaponComponent : Interactable
                     uint damage = (uint)(this.Damage * Mathf.Pow(DamageDropoff, hitInfo.distance / 10.0f));
                     health.Damage(damage);
                 }
-                // create hit decal
-                //decalHandler.AddDecal(Instantiate(HitDecals[Random.Range(0, HitDecals.Length)], hitInfo.point, Quaternion.FromToRotation(Vector3.forward, hitInfo.normal), hitInfo.transform));
+                //Create hit decal
                 Instantiate(WallSplatObject.gameObject, hitInfo.point, Quaternion.LookRotation(hitInfo.normal, Vector3.up), hitInfo.transform);
 
                 if (SpawnTrail)
@@ -171,11 +169,9 @@ public class WeaponComponent : Interactable
 
                 Debug.DrawRay(hitInfo.point, hitInfo.normal, Color.black, 1.0f);
                 Debug.DrawRay(transform.position, -transform.forward * 100.0f, Color.red, 0.2f);
-
                 Noise.MakeNoise(transform.position, NoiseRadius);
             }
         }
-
         rotX = HeadTransform.localEulerAngles.x;
         resetRecoil = true;
 
@@ -222,17 +218,17 @@ public class WeaponComponent : Interactable
 
     void Update()
     {
-        // decrease weapon charge
+        //Decrease weapon charge
         charge = Mathf.Max(0.0f, charge -= Time.deltaTime * 0.5f);
 
         cooldown = Mathf.Max(0.0f, cooldown - Time.deltaTime);
 
-        // perform recoil
+        //Perform recoil
         if (HeadTransform != null)
         {
             recoil = Mathf.Max(Mathf.Lerp(recoil, recoil - RecoilRecovery, Time.deltaTime), 0.0f);
 
-            // rotate head according to the recoil amount
+            //Rotate head according to the recoil amount
             var rotation = HeadTransform.localEulerAngles + Vector3.left * recoil;
             if (resetRecoil)
             {
@@ -251,7 +247,6 @@ public class WeaponComponent : Interactable
                 else
                     rotation.x = 90;
             }
-
             HeadTransform.localEulerAngles = rotation;
             rotation.y = 180.0f;
         }
@@ -262,13 +257,11 @@ public class WeaponComponent : Interactable
                 GatlingAnimator.CurrentSpeed = 0;
             else
                 GatlingAnimator.CurrentSpeed = charge / ChargeTime;
-
         }
     }
 
     public override void OnInteractBegin(GameObject interactor)
     {
-
         this.HeadTransform = interactor.GetComponentInChildren<Camera>().transform;
         GetComponent<NetworkIdentity>().AssignClientAuthority(interactor.GetComponent<NetworkIdentity>().connectionToClient);
 
@@ -277,9 +270,9 @@ public class WeaponComponent : Interactable
 
     public override void OnInteractEnd(GameObject interactor)
     {
-        // empty
+        //Empty
     }
-    // (KL) Used to show the interact tooltip
+
     public override void OnRaycastEnter(GameObject interactor)
     {
         ShowTooltip(interactor);
@@ -311,11 +304,10 @@ public class WeaponComponent : Interactable
     [ClientRpc]
     public void RpcPickupWeapon(GameObject weaponObject, GameObject userObject)
     {
-
         WeaponComponent newWeapon = weaponObject.GetComponent<WeaponComponent>();
         PlayerController user = userObject.GetComponent<PlayerController>();
-        // plays sound.
-        if(sounds != null)sounds.Pickup(); // Send pickup trigger to sound
+        //Plays sound.
+        if(sounds != null)sounds.Pickup(); //Send pickup trigger to sound
 
         //Disables new weapons collider
         newWeapon.GetComponent<CapsuleCollider>().enabled = false;

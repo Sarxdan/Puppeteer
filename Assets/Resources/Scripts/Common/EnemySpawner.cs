@@ -17,6 +17,8 @@ using MinionStates;
  * 
  * CONTRIBUTORS:
  * Ludvig Björk Förare (Integration to game)
+ * 
+ * CLEANED
  */
 
 public class EnemySpawner : NetworkBehaviour
@@ -38,7 +40,6 @@ public class EnemySpawner : NetworkBehaviour
     public Transform spawnPoint;
 
     private EnemySpawner finalRoomDummy;
-
 
     public void Start()
     {   
@@ -63,7 +64,6 @@ public class EnemySpawner : NetworkBehaviour
         HealthComponent hpComponent = GetComponent<HealthComponent>();
         hpComponent.AddDeathAction(OnDeath);
         hpComponent.AddOnDamageAction(CmdOnTakeDamage);
-
     }
 
 
@@ -87,9 +87,8 @@ public class EnemySpawner : NetworkBehaviour
                     {
                         Spawn();
                         NetworkServer.Destroy(gameObject);
-                        yield break; //Safety first :^)
+                        yield break;
                     }
-    
                 }
             }
             yield return new WaitForSeconds(Random.Range(MinDelay, MaxDelay));
@@ -104,19 +103,14 @@ public class EnemySpawner : NetworkBehaviour
 
         StateMachine machine = npcEnemy.GetComponent<StateMachine>();
 
-
         if(!TankSpawner)
         {
             AllMinions.Add(machine);
             LocalMinions.Add(machine);
         } 
-    
         machine.Spawner = FinalRoomInteract.isEndGame ? finalRoomDummy : this;
         NetworkServer.Spawn(npcEnemy);
     }
-
-
-
 
     [Command]
     public void CmdOnTakeDamage()
@@ -127,7 +121,6 @@ public class EnemySpawner : NetworkBehaviour
                 minion.SetState(new ReturnToSpawnerState(minion));
         }
     }
-
 
     [ClientRpc]
     public void RpcPlayAnimation()

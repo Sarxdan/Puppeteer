@@ -14,6 +14,8 @@ using Mirror;
 *
 * CONTRIBUTORS:
 * Ludvig Björk Förare (added null protection)
+* 
+* CLEANED
 */
 
 public class DisableRemoteClientComponents : NetworkBehaviour

@@ -15,24 +15,26 @@ using Mirror;
  * CODE REVIEWED BY:
  * Kristoffer Lundgren
  * 
+ * CLEANED
  */
+
 public class Compass : MonoBehaviour
 {
-    // compass width to screen ratio
+    //Compass width to screen ratio
     public static readonly float ScreenWidthRatio = 0.7f;
-    // UI offset from top of the screen
+    //UI offset from top of the screen
     public static readonly float TopOffset = 30.0f;
-    // size of displayed icons
+    //Size of displayed icons
     public static readonly float IconSize = 32.0f;
 
-    // contains all tracked entities
+    //Contains all tracked entities
     public List<Transform> Targets;
 
     private Texture2D barTex;
 
     void Start()
     {
-        barTex = Resources.Load<Texture2D>("Textures/Compass_Line");
+        barTex = Resources.Load<Texture2D>("Textures/HUD/Compass/Compass_Line");
 
         if(GameObject.FindGameObjectWithTag("GameController").GetComponent<NetworkIdentity>().isLocalPlayer)
         {
@@ -48,7 +50,7 @@ public class Compass : MonoBehaviour
 
             if(target != null)
             {
-                // calculate angle using only x- and z-axes
+                //Calculate angle using only x- and z-axes
                 Vector3 inv = transform.InverseTransformPoint(target.position);
                 float angle = Mathf.Clamp(Mathf.Atan2(inv.x, inv.z), -1.0f, 1.0f);
 
@@ -57,15 +59,14 @@ public class Compass : MonoBehaviour
             }
             else
             {
-                // remove invalid target
+                //Remove invalid target
                 Targets.RemoveAt(i);
             }
         }
-
         GUI.DrawTexture(new Rect(Screen.width * 0.5f - Screen.width * ScreenWidthRatio * 0.5f, TopOffset + IconSize, Screen.width * ScreenWidthRatio, 2.0f), barTex, ScaleMode.StretchToFill, true);
     }
 
-    // registers a new tracked target in the compass
+    //Registers a new tracked target in the compass
     public void AddTarget(in Transform target)
     {
         Debug.Assert(target.GetComponent<RawImage>() != null, "Compass targets requires an icon");
@@ -76,7 +77,7 @@ public class Compass : MonoBehaviour
         }
     }
 
-    // unregisters a tracked target
+    //Unregisters a tracked target
     public void RemoveTarget(in Transform target)
     {
         if(Targets.Contains(target))

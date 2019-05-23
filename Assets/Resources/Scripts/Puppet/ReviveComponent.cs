@@ -18,20 +18,21 @@ using Mirror;
  * CONTRIBUTORS:
  * Kristoffer Lundgren
  *
+ * CLEANED
  */
 
 public class ReviveComponent : Interactable
 {
-    // delay until revive is complete
+    //Delay until revive is complete
     public int ReviveDelay;
-    // delay until the object may no longer be revived
+    //Delay until the object may no longer be revived
     public int DeathDelay;
-    // determines if the revive requires a medkit
+    //Determines if the revive requires a medkit
     public bool RequireMedkit = true;
 
-    // Used for drawing the circle on the hud
+    //Used for drawing the circle on the hud
     private HUDScript hudScript;
-    // Used for checking if a player is downed, variable is synced across all clients
+    //Used for checking if a player is downed, variable is synced across all clients
     private HealthComponent healthComponent;
 
     private GameObject downedPanel;
@@ -43,17 +44,17 @@ public class ReviveComponent : Interactable
 
     void Start()
     {
-        // register death action
+        //Register death action
         healthComponent = GetComponent<HealthComponent>();
 
         healthComponent.AddDeathAction(OnZeroHealth);
         downedPanel = GameObject.Find("DownedPanel");
-        //DeathVignette = GameObject.Find("Vignette").GetComponent<RectTransform>();
+
         downedBar = downedPanel.GetComponentsInChildren<RectTransform>()[1];
         downedPanel.SetActive(false);
     }
 
-    // An object has started to interact this object
+    //An object has started to interact this object
     public override void OnInteractBegin(GameObject interactor)
     {
         var interactionController = interactor.GetComponent<InteractionController>();
@@ -98,7 +99,7 @@ public class ReviveComponent : Interactable
         gameObject.GetComponent<PuppetSounds>().ReviveEnd();
     }
 
-    // (KL) Only show the interact tooltip if the player is downed and the interactor has a medkit
+    //Only show the interact tooltip if the player is downed and the interactor has a medkit
     public override void OnRaycastEnter(GameObject interactor)
     {
         bool medKit = interactor.GetComponent<PlayerController>().HasMedkit;
@@ -107,10 +108,9 @@ public class ReviveComponent : Interactable
             ShowTooltip(interactor);
     }
 
-    // called when the health of this object reaches zero
+    //Called when the health of this object reaches zero
     private void OnZeroHealth()
     {
-        //hudScript.ScaleInteractionProgress(0);
         StartCoroutine("DeathRoutine");
 		RpcStartDown(gameObject);
     }
@@ -124,13 +124,9 @@ public class ReviveComponent : Interactable
 		}
 	}
 
-
-
 	private IEnumerator DownedBar()
 	{
-
 		downedPanel.SetActive(true);
-        
 		var currentSize = downedBar.sizeDelta;
 		var diffInWidth = (downedBar.sizeDelta.x / (DeathDelay));
         var vignetteDelta = 1.0f/(DeathDelay);
@@ -142,13 +138,11 @@ public class ReviveComponent : Interactable
 				break;
 			}
 			downedBar.sizeDelta = new Vector2(downedBar.sizeDelta.x - diffInWidth, downedBar.sizeDelta.y);
-          //  DeathVignette.localScale = new Vector3(DeathVignette.localScale.x - vignetteDelta, DeathVignette.localScale.y - vignetteDelta, 1);
 			yield return new WaitForSeconds(1);
 			time--;
 		}
 		downedBar.sizeDelta = currentSize;
 		downedPanel.SetActive(false);
-      //  DeathVignette.localScale = MaxVignette;
     }
 
 
@@ -163,12 +157,11 @@ public class ReviveComponent : Interactable
         {
             if (healthComponent.Health != 0)
             {
-                // someone has revived!
+                //Someone has revived!
                 yield break;
             }
             yield return new WaitForSeconds(1);
         }
-        // TODO: perform death action across network
         RpcStartSpectating(gameObject);
         Destroy(gameObject);
     }
@@ -188,7 +181,7 @@ public class ReviveComponent : Interactable
     {
         if (RequireMedkit && !reviver.GetComponent<PlayerController>().HasMedkit)
         {
-            // no medkit available
+            //No medkit available
             yield break;
         }
 
@@ -197,33 +190,31 @@ public class ReviveComponent : Interactable
         {
             if (healthComponent.Health != 0)
             {
-                // someone has revived already
+                //Someone has revived already
                 yield break;
             }
             time += 0.1f;
-            //hudScript.ScaleInteractionProgress(time/ReviveDelay);
             RpcScaleProgress(time/ReviveDelay);
             yield return new WaitForSeconds(0.1f);
         }
 
-        // revive successful
-
+        //Revive successful
         healthComponent.Revive();
         var revivingPlayer = reviver.GetComponent<InteractionController>();
         if(revivingPlayer.isLocalPlayer && revivingPlayer.isServer)
         {
-            // Scale the interaction progress to zero
+            //Scale the interaction progress to zero
             hudScript.RpcScaleZero();
         }
         hudScript.RpcScaleZero();
         if(RequireMedkit)
         {
-            // consume medkit if required
+            //Consume medkit if required
             reviver.GetComponent<PlayerController>().HasMedkit = false;
             RpcRemoveMedkit(reviver);
         }
     }
-    // (KL) Sets the correct HUD script for the clients
+    //Sets the correct HUD script for the clients
     [ClientRpc]
     public void RpcGetHudScript(GameObject interactor)
     {
@@ -232,7 +223,7 @@ public class ReviveComponent : Interactable
             hudScript = interactor.GetComponent<HUDScript>();
         }
     }
-    // (KL) Since the revive action in running on the server the HUD has to be updated over the network
+    //Since the revive action in running on the server the HUD has to be updated over the network
     [ClientRpc]
     public void RpcScaleProgress(float scale)
     {
@@ -241,7 +232,7 @@ public class ReviveComponent : Interactable
             hudScript.ScaleInteractionProgress(scale);
         }
     }
-    // (KL) Remove the medkit when a revive is complete
+    //Remove the medkit when a revive is complete
     [ClientRpc]
     public void RpcRemoveMedkit(GameObject interactor)
     {
