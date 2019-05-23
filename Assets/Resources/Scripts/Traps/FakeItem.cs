@@ -15,7 +15,7 @@ using Mirror;
  * CONTRIBUTORS:
  * Kristoffer Lundgren
  */
-
+//Cleaned
 public class FakeItem : Interactable
 {
     public ParticleSystem[] Explosions;
