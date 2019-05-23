@@ -45,7 +45,7 @@ public class SplashScreenScript : MonoBehaviour
         if(ListenForInput)
         {
             Pulsate.SetActive(true);
-            if(Input.anyKeyDown)
+            if(Input.anyKey)
             {
                 Pulsate.SetActive(false);
                 PressAnyKey.SetActive(false);
