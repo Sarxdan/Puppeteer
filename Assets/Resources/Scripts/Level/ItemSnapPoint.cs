@@ -14,6 +14,8 @@ using UnityEngine;
 *
 * CONTRIBUTORS:
 * Sandra Andersson (Added impl. for medkit)
+* 
+* CLEANED
 */
 
 public class ItemSnapPoint : SnapPointBase
@@ -30,7 +32,7 @@ public class ItemSnapPoint : SnapPointBase
 	public uint ChanceToSpawnPowerUp;
 	public uint ChanceToSpawnMedKit;
 
-	// the clamped chance of spawn.
+	//The clamped chance of spawn.
 	private float realChanceToSpawnWeapon;
 	private float realChanceToSpawnAmmo;
 	private float realChanceToSpawnPowerUp;

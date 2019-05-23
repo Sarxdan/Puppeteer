@@ -3,12 +3,27 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Video;
-
+/*
+* AUTHOR:
+* Kristoffer Lundgren
+*
+* DESCRIPTION:
+* This script is needed to play the video in the main menu
+*
+* CODE REVIEWED BY:
+*
+*
+* CONTRIBUTORS:
+*
+*
+* CLEANED
+*/
 public class VideoScript : MonoBehaviour
 {
+    // Image to play the video on
     public RawImage Image;
+    // The Video player
     public VideoPlayer VideoPlayer;
-    // Start is called before the first frame update
     void Start()
     {
         StartCoroutine(PlayVideo());

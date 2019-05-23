@@ -20,6 +20,8 @@ using UnityEngine.UI;
 *
 * CONTRIBUTORS:
 * Philip Stenmark, Anton "Knugen" Jonsson
+* 
+* CLEANED
 */
 //CLEANED
 
@@ -29,8 +31,6 @@ public class ItemGrabTool : NetworkBehaviour
 
 	// The maximum distance for snapping modules
 	private int SnapDistance = 60;
-	// Maximum raycast ray length
-	private float RaycastDistance = 500;
 	// The lift height when grabbing an object
 	private float LiftHeight = 3.0f;
 	// The lift speed when grabbing an object

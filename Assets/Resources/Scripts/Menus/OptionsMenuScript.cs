@@ -17,6 +17,9 @@ using System.Linq;
 * Benjamin "Boris" Vesterlund 23/4/2019
 *
 * CONTRIBUTORS:
+*
+*
+* CLEANED
 */
 
 public class OptionsMenuScript : MonoBehaviour

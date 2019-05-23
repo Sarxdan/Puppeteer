@@ -16,6 +16,9 @@ using Mirror;
 * Anton Jonsson 17/04-2019
 *
 * CONTRIBUTORS:
+*
+*
+* CLEANED
 */
 
 public class Main_Menu : MonoBehaviour

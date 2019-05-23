@@ -15,6 +15,8 @@ using Mirror;
 * Ludvig Björk Förare (190430)
 *
 * CONTRIBUTORS:
+* 
+* CLEANED
 */
 
 public class AnchorPoint : NetworkBehaviour
@@ -33,7 +35,6 @@ public class AnchorPoint : NetworkBehaviour
     // Draw position and diretion of doors
     void Update()
     {
-
 		//Code to show doors and door connections in scene editor
 		if (Connected)
 		{
@@ -45,7 +46,6 @@ public class AnchorPoint : NetworkBehaviour
 			Debug.DrawLine(transform.position, transform.position - transform.forward * 2, Color.black);
 			Debug.DrawLine(transform.position, transform.position + transform.up * 2, Color.black);
 		}
-
 	}
 
 	// Returns the Position of the AnchorPoint as a Vector of rounded Ints to avoid Unity float errors.

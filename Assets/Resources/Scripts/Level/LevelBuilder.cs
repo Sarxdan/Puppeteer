@@ -19,6 +19,9 @@ using Mirror;
 * Filip Renman, Kristoffer Lundgren
 *
 * 2019-05-03 Krig added code to spawn items in a set amout of random rooms
+* 
+* 
+* CLEANED
 */
 
 public class LevelBuilder : NetworkBehaviour
@@ -72,6 +75,7 @@ public class LevelBuilder : NetworkBehaviour
 		{
 			RoomsToSpawnBeforeDeadEndRooms = MultiDoorRooms.Count;
 		}
+
 		for (int i = 0; i < RoomsToSpawnBeforeDeadEndRooms; i++)
 		{
 			int index = Random.Range(0, MultiDoorRooms.Count);
@@ -111,7 +115,6 @@ public class LevelBuilder : NetworkBehaviour
 				DeadEnds.RemoveAt(index);
 			}
 		}
-
 		// Add EndRoom to list last so it is placed last.
 		var endRoom = Instantiate(EndRoom, parent.transform);
 		endRoom.transform.position = new Vector3(0, -100, 0);
@@ -256,11 +259,9 @@ public class LevelBuilder : NetworkBehaviour
 				{
 					// Spawns items in the room
 					spawner.SpawnItems();
-
 				}
 			}
         }
-
 		// Spawn Button and final door.
 		var finalRoomInfo = GameObject.Find("EndRoom(Clone)").GetComponent<FinalButtonPlacer>();
 
@@ -273,7 +274,6 @@ public class LevelBuilder : NetworkBehaviour
 		{
 			NetworkServer.Spawn(door.gameObject);
 		}
-
     }
 
     // Returns a List of rooms.
@@ -296,7 +296,6 @@ public class LevelBuilder : NetworkBehaviour
 		}
 		return result;
 	}
-
 
     // Connect doors if able
     public void ConnectDoorsInRoomIfPossible(GameObject room)
@@ -327,7 +326,6 @@ public class LevelBuilder : NetworkBehaviour
 		{
 			startNode = GameObject.Find("startRoom").GetComponent<RoomTreeNode>();
 		}
-
 		return startNode;
 	}
 
@@ -342,7 +340,6 @@ public class LevelBuilder : NetworkBehaviour
 			door.transform.position = doorAnchor.transform.position + doorAnchor.transform.rotation * doorScript.adjustmentVector;
 			doorScript.defaultAngle = 0;
 			doorScript.Locked = true;
-
 		}
 	}
 
@@ -350,6 +347,7 @@ public class LevelBuilder : NetworkBehaviour
 	{
 		return parent;
 	}
+
 	//Krig added. Returns a list of random numbers in a given range.
 	public List<int> GetRandom(int min, int max, int num)
 	{
