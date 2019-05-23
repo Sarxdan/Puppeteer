@@ -18,7 +18,6 @@ public class PuppetRoomSounds : MonoBehaviour
 {
     // Sound Events
     [FMODUnity.EventRef] public string s_Open;
-    [FMODUnity.EventRef] public string s_SlamOpen;
     [FMODUnity.EventRef] public string s_Close;
     [FMODUnity.EventRef] public string s_Locked;
     
@@ -26,12 +25,7 @@ public class PuppetRoomSounds : MonoBehaviour
     {
         FMODUnity.RuntimeManager.PlayOneShot(s_Open, transform.position);
     }
-
-    public void SlamOpen()
-    {
-        FMODUnity.RuntimeManager.PlayOneShot(s_SlamOpen, transform.position);
-    }
-
+    
     public void Close()
     {
         FMODUnity.RuntimeManager.PlayOneShot(s_Close, transform.position);
