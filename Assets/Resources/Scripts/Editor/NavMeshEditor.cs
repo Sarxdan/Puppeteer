@@ -12,6 +12,8 @@ using UnityEditor;
  *
  * CODE REVIEWED BY:
  * 
+ * 
+ * CLEANED
  */
 #if UNITY_EDITOR
 [CustomEditor(typeof(NavMesh))]
@@ -44,7 +46,6 @@ public class NavMeshEditor : Editor
             EditorUtility.SetDirty(target);
         }
         EditorGUI.EndDisabledGroup();
-
     }
 }
 #endif

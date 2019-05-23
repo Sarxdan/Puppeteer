@@ -11,6 +11,8 @@ using Mirror;
  * 
  * CODE REVIEWED BY:
  * Kristoffer Lungdren
+ * 
+ * CLEANED
  */
  //CLEANED
 
@@ -23,7 +25,6 @@ public class FakeItemSpawner : NetworkBehaviour
     {   
         snapFunctionality = GetComponent<SnapFunctionality>();
     }
-
 
     //Spawn is a modified Update with a set amount of time (SpawnRate) between runs
     public void Update()

@@ -3,6 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 //CLEANED
 
+/*
+ *CLEANED
+ */
+
 public class PrefabLightmapData : MonoBehaviour
 {
 	[System.Serializable]
@@ -32,12 +36,10 @@ public class PrefabLightmapData : MonoBehaviour
 			combinedLightmaps[i+lightmaps.Length] = new LightmapData();
 			combinedLightmaps[i+lightmaps.Length].lightmapColor = m_Lightmaps[i];
 		}
-
 		ApplyRendererInfo(m_RendererInfo, lightmaps.Length);
 		LightmapSettings.lightmaps = combinedLightmaps;
 	}
 
-	
 	static void ApplyRendererInfo (RendererInfo[] infos, int lightmapOffsetIndex)
 	{
 		for (int i=0;i<infos.Length;i++)
@@ -100,11 +102,9 @@ public class PrefabLightmapData : MonoBehaviour
 					info.lightmapIndex = lightmaps.Count;
 					lightmaps.Add(lightmap);
 				}
-
 				rendererInfos.Add(info);
 			}
 		}
 	}
 #endif
-
 }

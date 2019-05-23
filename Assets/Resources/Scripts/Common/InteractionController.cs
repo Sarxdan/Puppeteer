@@ -18,15 +18,18 @@ using Mirror;
  * 
  * CONTRIBUTORS:
  * Kristoffer Lundgren (Interact Tooltip)
+ * 
+ * CLEANED
  */
-
-//CLEANED
 public class InteractionController : NetworkBehaviour
 {
-    public float Lookahead = 4.0f;      //Length for raycast
+    //Length for raycast
+    public float Lookahead = 4.0f;
 
-    private Interactable curInteractable;       //Gameobject that the raycast collides with
-    private bool isInteracting = false;     //Is the player interacting with something?
+    //Gameobject that the raycast collides with
+    private Interactable curInteractable;
+    //Is the player interacting with something?
+    private bool isInteracting = false;     
 
     // The image which is displayed when a player looking at something that can be interacted with
     public RawImage InteractionTooltip;
@@ -48,7 +51,6 @@ public class InteractionController : NetworkBehaviour
                     curInteractable = null;
                 }
 
-                    
                 curInteractable = hit;
                 if(curInteractable != null)
                 {
@@ -58,15 +60,11 @@ public class InteractionController : NetworkBehaviour
                 {
                     InteractionTooltip.enabled = false;
                 }
-
             }
             else if(hit == null)
             {
                 InteractionTooltip.enabled = false;
             }
-            
-
-
         }
         //If raycast hits nothing 
         else
@@ -92,7 +90,7 @@ public class InteractionController : NetworkBehaviour
             if(Input.GetButtonDown("Use") && !isInteracting)
             {
 				CmdBeginInteract(new InteractStruct(gameObject, curInteractable.gameObject));
-                isInteracting = true; // TODO: syncvar if works :)
+                isInteracting = true;
             }
 
             //Cancel interaction
@@ -103,10 +101,9 @@ public class InteractionController : NetworkBehaviour
                 InteractionTooltip.enabled = false;
                 curInteractable = null;
             }
-           
         }
     }
-    #region Commands
+
     [Command]
     private void CmdStopInteracting(InteractStruct info)
     {
@@ -118,5 +115,4 @@ public class InteractionController : NetworkBehaviour
 	{
 		info.Target.GetComponent<Interactable>().OnInteractBegin(info.Source);
 	}
-    #endregion
 }

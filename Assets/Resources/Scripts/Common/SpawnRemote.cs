@@ -3,6 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 //CLEANED
 
+/*
+ *CLEANED
+ */
+
 public class SpawnRemote : MonoBehaviour
 {
     private EnemySpawner spawner;

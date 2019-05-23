@@ -14,6 +14,8 @@ using UnityEngine;
 *
 * CONTRIBUTORS:
 * Kristoffer Lundgren
+* 
+* CLEANED
 */
 
 public class FinalDoorInteractable : Interactable
@@ -35,9 +37,9 @@ public class FinalDoorInteractable : Interactable
 
 	public override void OnInteractEnd(GameObject interactor)
 	{
-		Debug.Log("End");
+		
 	}
-	// (KL) Used to show the interact tooltip
+	// Used to show the interact tooltip
 	public override void OnRaycastEnter(GameObject interactor)
 	{
 		var button = GameObject.Find("FinalButton(Clone)");
@@ -46,8 +48,7 @@ public class FinalDoorInteractable : Interactable
 			ShowTooltip(interactor);
 	}
 
-    #region ClientRpc
-    [ClientRpc]
+	[ClientRpc]
 	public void RpcTurnOff(GameObject interactor)
 	{
 		if (interactor.GetComponent<InteractionController>().isLocalPlayer)
@@ -58,5 +59,4 @@ public class FinalDoorInteractable : Interactable
 			canvas.GetComponent<Spectator>().StartSpectating();
 		}
 	}
-    #endregion
 }

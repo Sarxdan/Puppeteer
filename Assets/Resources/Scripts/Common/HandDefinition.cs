@@ -10,6 +10,8 @@ using UnityEngine;
  * 
  * CODE REVIEWED BY:
  * 
+ * 
+ * CLEANED
  */
 //CLEANED
 public class HandDefinition : MonoBehaviour

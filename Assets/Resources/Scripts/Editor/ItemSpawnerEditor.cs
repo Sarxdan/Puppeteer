@@ -3,6 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 
+/*
+ *CLEANED
+ */
+
 #if UNITY_EDITOR
 [CustomEditor(typeof(ItemSpawner))]
 public class ItemSpawnerEditor : Editor
@@ -16,7 +20,6 @@ public class ItemSpawnerEditor : Editor
 		{
 			script.FindSnapPoints();
 		}
-
 	}
 }
 #endif

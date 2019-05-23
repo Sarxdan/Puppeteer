@@ -10,6 +10,8 @@ using UnityEngine;
  * 
  * CODE REVIEWED BY:
  * 
+ * 
+ * CLEANED
  */
 public class CameraShake : MonoBehaviour
 {
@@ -30,5 +32,4 @@ public class CameraShake : MonoBehaviour
         transform.localPosition = Vector3.Lerp(newPosition, transform.position, SmoothFactor);
         Strength = Mathf.Max(Strength - Decay * Time.deltaTime, 0);
     }
-
 }

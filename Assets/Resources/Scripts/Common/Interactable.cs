@@ -16,6 +16,8 @@ using Mirror;
  * 
  * CONTRIBUTORS:
  * Kristoffer Lundgren(Interactable tooltip)
+ * 
+ * CLEANED
  */
 //CLEANED
 
@@ -29,8 +31,7 @@ public abstract class Interactable : NetworkBehaviour
     // Called from the interaction controller when a player raycasts onto an interactable object
     public abstract void OnRaycastEnter(GameObject interactor);
 
- 
-    // Shows the E icon on the screen
+    //Shows the E icon on the screen
     public void ShowTooltip(GameObject interactor)
     {
          var button = interactor.GetComponent<InteractionController>().InteractionTooltip.enabled = true;

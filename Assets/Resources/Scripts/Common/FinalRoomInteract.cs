@@ -16,6 +16,8 @@ using MinionStates;
 *
 * CONTRIBUTORS:
 * Kristoffer Lundgren
+* 
+* CLEANED
 */
 //CLEANED
 
@@ -67,13 +69,12 @@ public class FinalRoomInteract : Interactable
 	{
 
 	}
-	// (KL) Used to show the interact tooltip
+	// Used to show the interact tooltip
 	public override void OnRaycastEnter(GameObject interactor)
 	{
 		if(!ButtonPressed)
 			ShowTooltip(interactor);
 	}
-
 
 	IEnumerator LeverDown()
 	{
@@ -90,7 +91,7 @@ public class FinalRoomInteract : Interactable
 			RpcMoveLever(LeverTransform.rotation);
 			yield return new WaitForEndOfFrame();
 		}
-		Debug.Log(LeverTransform.localEulerAngles);
+
 		LeverTransform.localEulerAngles = new Vector3(
 				LeverTransform.localEulerAngles.x,
 				LeverTransform.localEulerAngles.y,

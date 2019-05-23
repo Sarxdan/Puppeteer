@@ -21,6 +21,8 @@ using Mirror;
 * CONTRIBUTORS
 * Anton Jonsson
 * Kristoffer Lundgren
+* 
+* CLEANED
 */
 //CLEANED
 
@@ -44,7 +46,6 @@ public class Ammunition : Interactable
         {
             playerCont.RpcAddAmmo(Liquid);
         }
-        
         Destroy(gameObject);
     }
 
@@ -52,11 +53,9 @@ public class Ammunition : Interactable
     {
         // Empty
     }
-    // (KL) Used to show the interact tooltip
+    // Used to show the interact tooltip
     public override void OnRaycastEnter(GameObject interactor)
     {
         ShowTooltip(interactor);
     }
-
-
 }

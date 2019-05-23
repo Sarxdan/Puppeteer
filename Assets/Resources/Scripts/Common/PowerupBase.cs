@@ -18,16 +18,18 @@ using Mirror;
  * CONTRIBUTORS:
  * Sandra Andersson (Sound)
  * 
+ * 
+ * CLEANED
  */
 
 //CLEANED
 public abstract class PowerupBase : NetworkBehaviour
 {
-    // the duration of the powerup
+    //The duration of the powerup
     public int Duration;
-    // checks if the power is charged and ready to use
+    //Checks if the power is charged and ready to use
     public bool Charged;
-    // script for playing sounds
+    //Script for playing sounds
     public PowerUpSounds sounds;
 
     void Start()
@@ -35,7 +37,7 @@ public abstract class PowerupBase : NetworkBehaviour
         sounds = GetComponent<PowerUpSounds>();
     }
 
-    // get percentage left of powerup
+    //Get percentage left of powerup
     public float PercentageLeft
     {
         get
@@ -46,19 +48,19 @@ public abstract class PowerupBase : NetworkBehaviour
 
     private float timeLeft;
 
-    // attempts to start and consume the powerup
+    //Attempts to start and consume the powerup
     public IEnumerator Run()
     {
         if (!Charged)
         {
-            // unable to activate powerup
+            //Unable to activate powerup
             yield break;
         }
 
         timeLeft = 0.0f;
         Charged = false;
 
-        // activate power
+        //Activate power
         this.OnActivate();
         sounds.PowerUpStart();
 
@@ -68,16 +70,16 @@ public abstract class PowerupBase : NetworkBehaviour
             yield return new WaitForEndOfFrame();
         }
 
-        // deactivate power
+        //Deactivate power
         sounds.PowerUpEnd();
         timeLeft = Duration;
         this.OnComplete();
     }
     
-    // called once when the powerup is activated
+    //Called once when the powerup is activated
     public abstract void OnActivate();
 
-    // called once when the powerup is completed
+    //Called once when the powerup is completed
     public abstract void OnComplete();
 
     [ClientRpc]

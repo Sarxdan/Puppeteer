@@ -12,7 +12,10 @@ using UnityEditor;
  *
  * CODE REVIEWED BY:
  * 
+ * 
+ * CLEANED
  */
+
 #if UNITY_EDITOR
 [CustomEditor(typeof(ItemSnapPoint))]
 public class ItemSnapPointEditor : Editor
@@ -44,9 +47,6 @@ public class ItemSnapPointEditor : Editor
             index = 0;
             spawnables = new List<GameObject>();
         }
-
-        
-    
         if(GUILayout.Button("Next"))
             next();
     }
@@ -96,7 +96,6 @@ public class ItemSnapPointEditor : Editor
 		}
 		currentSpawned.transform.localEulerAngles = Vector3.zero; 
         index++;
-        
     }
 }
 #endif
