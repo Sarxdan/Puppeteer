@@ -17,6 +17,8 @@ using UnityEngine;
 * Kristoffer Lundgren
 */
 
+//CLEANED
+
 public class MedKitComponent : Interactable
 {
     //Override from Interactable component
@@ -37,7 +39,7 @@ public class MedKitComponent : Interactable
     {   
         // Empty
     }
-    // (KL) Used to show the interact tooltip
+    // Used to show the interact tooltip
     public override void OnRaycastEnter(GameObject interactor)
     {
         PlayerController playerController = interactor.GetComponent<PlayerController>();

@@ -46,8 +46,8 @@ public class FinalDoorInteractable : Interactable
 			ShowTooltip(interactor);
 	}
 
-
-	[ClientRpc]
+    #region ClientRpc
+    [ClientRpc]
 	public void RpcTurnOff(GameObject interactor)
 	{
 		if (interactor.GetComponent<InteractionController>().isLocalPlayer)
@@ -58,4 +58,5 @@ public class FinalDoorInteractable : Interactable
 			canvas.GetComponent<Spectator>().StartSpectating();
 		}
 	}
+    #endregion
 }

@@ -12,6 +12,7 @@ using Mirror;
  * CODE REVIEWED BY:
  * Kristoffer Lungdren
  */
+ //CLEANED
 
 public class FakeItemSpawner : NetworkBehaviour
 {

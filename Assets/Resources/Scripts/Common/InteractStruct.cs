@@ -15,6 +15,8 @@ using UnityEngine;
 * CONTRIBUTORS:
 */
 
+//CLEANED
+
 public struct InteractStruct
 {
 	public GameObject Source;

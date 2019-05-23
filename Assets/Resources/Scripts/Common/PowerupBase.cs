@@ -19,6 +19,8 @@ using Mirror;
  * Sandra Andersson (Sound)
  * 
  */
+
+//CLEANED
 public abstract class PowerupBase : NetworkBehaviour
 {
     // the duration of the powerup

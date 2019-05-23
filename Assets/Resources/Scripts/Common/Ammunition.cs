@@ -22,6 +22,7 @@ using Mirror;
 * Anton Jonsson
 * Kristoffer Lundgren
 */
+//CLEANED
 
 
 public class Ammunition : Interactable

@@ -19,6 +19,8 @@ using Mirror;
  * CONTRIBUTORS:
  * Kristoffer Lundgren (Interact Tooltip)
  */
+
+//CLEANED
 public class InteractionController : NetworkBehaviour
 {
     public float Lookahead = 4.0f;      //Length for raycast
@@ -104,6 +106,7 @@ public class InteractionController : NetworkBehaviour
            
         }
     }
+    #region Commands
     [Command]
     private void CmdStopInteracting(InteractStruct info)
     {
@@ -115,4 +118,5 @@ public class InteractionController : NetworkBehaviour
 	{
 		info.Target.GetComponent<Interactable>().OnInteractBegin(info.Source);
 	}
+    #endregion
 }

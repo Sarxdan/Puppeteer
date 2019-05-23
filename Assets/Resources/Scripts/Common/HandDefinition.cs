@@ -11,6 +11,7 @@ using UnityEngine;
  * CODE REVIEWED BY:
  * 
  */
+//CLEANED
 public class HandDefinition : MonoBehaviour
 {
     public Transform Right;

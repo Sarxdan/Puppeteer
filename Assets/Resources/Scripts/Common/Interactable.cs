@@ -17,6 +17,7 @@ using Mirror;
  * CONTRIBUTORS:
  * Kristoffer Lundgren(Interactable tooltip)
  */
+//CLEANED
 
 [RequireComponent(typeof(Glowable))]
 public abstract class Interactable : NetworkBehaviour

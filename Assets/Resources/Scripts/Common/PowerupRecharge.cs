@@ -19,6 +19,8 @@ using UnityEngine;
  * 
  *
  */
+//CLEANED
+
 public class PowerupRecharge : Interactable
 {
     public override void OnInteractBegin(GameObject interactor)
