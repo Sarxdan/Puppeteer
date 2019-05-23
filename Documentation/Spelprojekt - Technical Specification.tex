@@ -1,0 +1,513 @@
+\documentclass[11pt]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage{textcomp}
+
+\title{Puppeteer - Technical Specification}
+
+\begin{document}
+\maketitle
+
+
+\newpage
+\section{Game Mechanics}
+\subsection{Platform and OS}
+Windows 7 or higher (64-bit only)
+\\i7 - 6700k @ 4.00GHz or AMD equivalent
+\\Nvidia Geforce GTX-980 Ti or AMD equivalent
+\\16 GB RAM
+
+\subsection{External Code}
+Unity 2018
+\\Oculus SDK for VR-support
+\\Mirror by vis2k for networking
+\\FMOD for sound
+
+\subsection{Game Objects}
+\subsubsection{Level}
+Components
+\begin{itemize}
+\item LevelBuilder
+\\Attributes
+\begin{itemize}
+\item List<GameObject> MultiDoorRooms
+\item GameObject StartRoom
+\item GameObject GoalRoom
+\item GameObject Door
+\item Int RoomsToSpawnBeforeDeadEndRooms
+\item List<RoomCollider> roomColiderPositions
+\item Queue<AnchorPoint> openDoorQueue;
+\item List<GameObject> roomsToBePlace
+\item RoomTreeNode startNode
+\item GameObject parent
+\end{itemize}
+Methods
+\begin{itemize}
+\item Start
+\item RandomizeRooms
+\item SpawnRooms
+\item SpawnRoomsOnNetwork
+\item GetRooms
+\item ConnectDoorsInRoomIfPossible
+\end{itemize}
+\end{itemize}
+
+\subsubsection{Room}
+Room should be synced with Mirror
+\\Tag
+\begin{itemize}
+\item Connectable
+\end{itemize}
+Components
+\begin{itemize}
+\item CooldownComponent
+\\Attributes
+\begin{itemize}
+\item float CooldownTime
+\item bool Available
+\end{itemize}
+Methods
+\begin{itemize}
+\item get/set Available
+\item StartCooldown
+\end{itemize}
+\item Mesh Renderer
+\item Box Collider
+\end{itemize}
+
+\subsubsection{Puppet}
+Tag
+\begin{itemize}
+\item Player
+\end{itemize}
+Components
+\begin{itemize}
+\item HealthComponent
+\\Attributes
+\begin{itemize}
+\item uint Health
+\item uint MaxHealth
+\item uint MaxRegenHealth
+\item float MaxRegenRatio
+\item float MaxReviveRatio
+\item uint RegenSpeed
+\item uint RegenDelay
+\item bool AllowRegen
+\end{itemize}
+Methods
+\begin{itemize}
+\item Damage
+\item Revive
+\item AddDeathAction
+\item RemoveDeathAction
+\end{itemize}
+\item InteractionController
+\\Attributes
+\begin{itemize}
+\item Lookahead
+\end{itemize}
+Methods
+\begin{itemize}
+\item Update
+\end{itemize}
+\item Interactable (acts as base class for all in-level interactable items)
+\\Methods
+\begin{itemize}
+\item OnInteractBegin
+\item OnInteractEnd
+\item OnRaycastEnter
+\item OnRaycastExit
+\end{itemize}
+\item Image (UI image for compass)
+\item PowerUpBase (acts as base class for all power-ups)
+\\Attributes
+\begin{itemize}
+\item int Duration
+\end{itemize}
+Methods
+\begin{itemize}
+\item OnActivate
+\item OnComplete
+\end{itemize}
+\item StaminaPower : PowerUpBase
+\\Attributes
+\begin{itemize}
+\item float SpeedModifier
+\end{itemize}
+\item InvisibilityPower : PowerUpBase
+\item NavigationPower : PowerUpBase
+\item DetectionPower : PowerUpBase
+\item PlayerController : Interactable
+\\Attributes
+\begin{itemize}
+\item float MovementSpeed
+\item float JumpForce
+\item float JumpRayLength
+\item float AccelerationRate
+\item float MouseSensitivity
+\item int Ammunition
+\item bool HasMedkit
+\item GameObject CurrentWeapon
+\item float ReviveTime
+\end{itemize}
+Methods
+\begin{itemize}
+\item Update
+\item FixedUpdate
+\end{itemize}
+\item Mesh Renderer
+\item Rigidbody
+\item Capsule Collider (For collision detection)
+\item Animator
+\end{itemize}
+
+\subsubsection{Puppeteer}
+Components
+\begin{itemize}
+\item Mesh Renderer
+\item GrebTool
+\\Attributes
+\begin{itemize}
+\item LevelBuilder level
+\item int SnapDistance
+\item float RaycastDistance
+\item float LiftHeight
+\item float LiftSpeed
+\item bool EnableMovement
+\item GameObject sourceObject
+\item GameObject selectedObject
+\item GameObject guideObject
+\item AnchorPoint bestSrcPoint
+\item AnchorPoint bestDstPoint
+\item RoomInteractable lastHit
+\item Vector3 grabOffset
+\item RoomTreeNode firstParentNode
+\end{itemize}
+Methods
+\begin{itemize}
+\item Start
+\item Update
+\item Pickup
+\item Drop
+\item UpdatePositions
+\item FindNearestOpenDoor
+\item CanConnect
+\item MouseToWorldPosition
+\end{itemize}
+\end{itemize}
+
+\subsubsection{Enemy}
+Tag
+\begin{itemize}
+\item Enemy
+\end{itemize}
+Components
+\begin{itemize}
+\item HealthComponent
+\\Attributes
+\begin{itemize}
+\item uint Health
+\item uint MaxHealth
+\item uint MaxRegenHealth
+\item float MaxRegenRatio
+\item float MaxReviveRatio
+\item uint RegenSpeed
+\item uint RegenDelay
+\item bool AllowRegen
+\end{itemize}
+Methods
+\begin{itemize}
+\item Damage
+\item Revive
+\item AddDeathAction
+\item RemoveDeathAction
+\end{itemize}
+\item PathFinderComponent
+\\Attributes
+\begin{itemize}
+\item List CurrentPath
+\item float MovementSpeed
+\end{itemize}
+Methods
+\begin{itemize}
+\item MoveTo
+\item Update
+\end{itemize}
+\item StateMachineComponent/EnemyController
+\\Attributes
+\begin{itemize}
+\item State CurrentState
+\item GameObject EnemySpawner
+\item GameObject TargetEntity
+\item float AttackCooldown
+\item int AttackDamage 
+\end{itemize}
+Methods
+\begin{itemize}
+\item SetState
+\item Update
+\end{itemize}
+States (classes)
+\begin{itemize}
+\item AttackingState
+\\Methods
+\begin{itemize}
+\item Enter
+\item Run
+\item Exit
+\end{itemize}
+\item ReturnToSpawnerState
+\\Methods
+\begin{itemize}
+\item Enter
+\item Run
+\item Exit
+\end{itemize}
+\item WanderState
+\\Methods
+\begin{itemize}
+\item Enter
+\item Run
+\item Exit
+\end{itemize}
+\item SeekState
+\\Methods
+\begin{itemize}
+\item Enter
+\item Run
+\item Exit
+\end{itemize}
+\end{itemize}
+\item Mesh Renderer
+\item Rigidbody
+\item Capsule Collider
+\item Animator
+\end{itemize}
+
+\subsubsection{EnemySpawner}
+Tag
+\begin{itemize}
+\item EnemySpawner
+\end{itemize}
+Components
+\begin{itemize}
+\item EnemySpawner
+\\Attributes
+\begin{itemize}
+\item GameObject EnemyPrefab
+\item GameObject spawnedEnemies
+\item Float SpawnRate
+\item Int MaxEnemyCount
+\item Transform[] SpawnPoint
+\item List<GameObject> EnemyCount
+\end{itemize}
+Methods
+\begin{itemize}
+\item Start
+\item Spawn
+\end{itemize}
+\item Mesh Renderer
+\item HealthComponent
+\\Attributes
+\begin{itemize}
+\item uint Health
+\item uint MaxHealth
+\item uint MaxRegenHealth
+\item float MaxRegenRatio
+\item float MaxReviveRatio
+\item uint RegenSpeed
+\item uint RegenDelay
+\item bool AllowRegen
+\end{itemize}
+Methods
+\begin{itemize}
+\item Damage
+\item Revive
+\item AddDeathAction
+\item RemoveDeathAction
+\end{itemize}
+\item Box Collider
+\end{itemize}
+
+\subsubsection{Weapon}
+Tag
+\begin{itemize}
+\item Weapon
+\end{itemize}
+Components
+\begin{itemize}
+\item WeaponComponent : Interactable
+\\Attributes
+\begin{itemize}
+\item int Capacity
+\item int LiquidLeft
+\item int LiquidPerRound
+\item float FiringSpeed
+\item int Damage
+\item float Spread
+\item float RecoilAmount
+\item float ReloadTime
+\item int NumberOfShots
+\end{itemize}
+Methods
+\begin{itemize}
+\item Use
+\item Reload
+\item OnInteractBegin
+\end{itemize}
+\item Mesh Renderer
+\end{itemize}
+
+\subsubsection{Trap}
+Tag
+\begin{itemize}
+\item Trap
+\end{itemize}
+Components
+\begin{itemize}
+\item TrapComponent
+\\Attributes
+\begin{itemize}
+\item uint Damage
+\item float ActivateTime
+\item float DestroyTime
+\item List<GameObject> Puppets
+\item Animator Anim
+\end{itemize}
+Methods
+\begin{itemize}
+\item TrapTimer
+\item DestroyTimer
+\item OnTriggerEnter
+\item OnTriggerStay
+\item ActivateTrap
+\item DestroyTrap
+\end{itemize}
+\item Box Collider
+\item HealthComponent
+\\Attributes
+\begin{itemize}
+\item uint Health
+\item uint MaxHealth
+\item uint MaxRegenHealth
+\item float MaxRegenRatio
+\item float MaxReviveRatio
+\item uint RegenSpeed
+\item uint RegenDelay
+\item bool AllowRegen
+\end{itemize}
+Methods
+\begin{itemize}
+\item Damage
+\item Revive
+\item AddDeathAction
+\item RemoveDeathAction
+\end{itemize}
+\item Mesh Renderer
+\item Animator
+\end{itemize}
+
+\subsubsection{Door}
+Tag
+\begin{itemize}
+\item Door
+\end{itemize}
+Components
+\begin{itemize}
+\item DoorComponent : Interactable
+\\Attributes
+\begin{itemize}
+\item (private)bool locked
+\item (public with getter and setter)bool Locked
+\item Float RotationSpeed
+\item Float openAngle
+\item Float defaultAngle
+\item Vector3 adjustmentVector
+\item Float currentAngle
+\item Bool open
+\end{itemize}
+Methods
+\begin{itemize}
+\item Start
+\item OnInteractBegin
+\item FixedUpdate
+\item OnInteractEnd
+\end{itemize}
+\item Mesh Renderer
+\item Box Collider
+\end{itemize}
+
+\subsubsection{Compass}
+Components
+\begin{itemize}
+\item CompassComponent
+\\Attributes
+\begin{itemize}
+\item List<GameObject> targets
+\item Vector3 north
+\end{itemize}
+Methods
+\begin{itemize}
+\item AddObject
+\item RemoveObject
+\item Update
+\end{itemize}
+\end{itemize}
+
+\subsubsection{PowerUpRecharge}
+Components
+\begin{itemize}
+\item MeshRenderer
+\item Recharge/Refill : Interactable (used to refill the player’s power)
+\item Box Collider
+\end{itemize}
+
+\subsubsection{Medkit}
+Components
+\begin{itemize}
+\item Medkit : interactable
+\\Methods
+\begin{itemize}
+\item OnInteractBegin
+\item OnInteractEnd
+\end{itemize}
+\end{itemize}
+
+\subsubsection{HUD}
+Components
+\begin{itemize}
+\item HUDScript
+\\Attributes
+\begin{itemize}
+\item Transform Owner
+\item RectTransform HealthBarFill
+\item RectTransform StaminaBarFill
+\item RectTransform MedKit
+\item RectTransform PowerUpFill
+\item Text CurrentAmmo
+\item HealthComponent healthComponent
+\item PlayerController playerController
+\item PowerupBase powerUp
+\item uint health
+\item uint maxHealth
+\item float xScaleHP
+\item float xScaleStamina
+\item float HPIncrement
+\item uint previousHP
+\item uint lerpToHP
+\item float HealthBarSpeed
+\item bool medKitToggle
+\item float previousStamina
+\item float lerpToStamina
+\item float staminaIncrement
+\end{itemize}
+Methods
+\begin{itemize}
+\item Start
+\item Update
+\item DrawHealthBar
+\item DrawStaminaBar
+\end{itemize}
+\end{itemize}
+
+\end{document}
