@@ -14,6 +14,9 @@ using UnityEngine;
  * Benjamin "Boris" Vesterlund
  * CONTRIBUTORS:
  * 
+ *
+ *
+ * CLEANED
 */
 public class PauseMenu : MonoBehaviour
 {
