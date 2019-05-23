@@ -12,6 +12,7 @@ using UnityEngine;
  * Filip Renman
  * 
  */
+//Cleaned
 public class SnapFunctionality : MonoBehaviour
 {
     [Header("Changed by script")]

@@ -14,7 +14,7 @@ using UnityEngine;
  * 
  * 
  */
-
+//Cleaned
 public class BearTrap : TrapComponent
 {
     public GameObject Target;
