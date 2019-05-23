@@ -13,22 +13,22 @@
 \section{Game Mechanics}
 \subsection{Platform and OS}
 Windows 7 or higher (64-bit only)
-\\i7 - 6700k @ 4.00GHz or AMD equivalent
-\\Nvidia Geforce GTX-980 Ti or AMD equivalent
-\\16 GB RAM
+\newline i7 - 6700k @ 4.00GHz or AMD equivalent
+\newline Nvidia Geforce GTX-980 Ti or AMD equivalent
+\newline 16 GB RAM
 
 \subsection{External Code}
 Unity 2018
-\\Oculus SDK for VR-support
-\\Mirror by vis2k for networking
-\\FMOD for sound
+\newline Oculus SDK for VR-support
+\newline Mirror by vis2k for networking
+\newline FMOD for sound
 
 \subsection{Game Objects}
 \subsubsection{Level}
 Components
 \begin{itemize}
 \item LevelBuilder
-\\Attributes
+\newline Attributes
 \begin{itemize}
 \item List<GameObject> MultiDoorRooms
 \item GameObject StartRoom
@@ -54,14 +54,14 @@ Methods
 
 \subsubsection{Room}
 Room should be synced with Mirror
-\\Tag
+\newline Tag
 \begin{itemize}
 \item Connectable
 \end{itemize}
 Components
 \begin{itemize}
 \item CooldownComponent
-\\Attributes
+\newline Attributes
 \begin{itemize}
 \item float CooldownTime
 \item bool Available
@@ -83,7 +83,7 @@ Tag
 Components
 \begin{itemize}
 \item HealthComponent
-\\Attributes
+\newline Attributes
 \begin{itemize}
 \item uint Health
 \item uint MaxHealth
@@ -102,7 +102,7 @@ Methods
 \item RemoveDeathAction
 \end{itemize}
 \item InteractionController
-\\Attributes
+\newline Attributes
 \begin{itemize}
 \item Lookahead
 \end{itemize}
@@ -111,7 +111,7 @@ Methods
 \item Update
 \end{itemize}
 \item Interactable (acts as base class for all in-level interactable items)
-\\Methods
+\newline Methods
 \begin{itemize}
 \item OnInteractBegin
 \item OnInteractEnd
@@ -120,7 +120,7 @@ Methods
 \end{itemize}
 \item Image (UI image for compass)
 \item PowerUpBase (acts as base class for all power-ups)
-\\Attributes
+\newline Attributes
 \begin{itemize}
 \item int Duration
 \end{itemize}
@@ -130,7 +130,7 @@ Methods
 \item OnComplete
 \end{itemize}
 \item StaminaPower : PowerUpBase
-\\Attributes
+\newline Attributes
 \begin{itemize}
 \item float SpeedModifier
 \end{itemize}
@@ -138,7 +138,7 @@ Methods
 \item NavigationPower : PowerUpBase
 \item DetectionPower : PowerUpBase
 \item PlayerController : Interactable
-\\Attributes
+\newline Attributes
 \begin{itemize}
 \item float MovementSpeed
 \item float JumpForce
@@ -166,7 +166,7 @@ Components
 \begin{itemize}
 \item Mesh Renderer
 \item GrebTool
-\\Attributes
+\newline Attributes
 \begin{itemize}
 \item LevelBuilder level
 \item int SnapDistance
@@ -204,7 +204,7 @@ Tag
 Components
 \begin{itemize}
 \item HealthComponent
-\\Attributes
+\newline Attributes
 \begin{itemize}
 \item uint Health
 \item uint MaxHealth
@@ -223,7 +223,7 @@ Methods
 \item RemoveDeathAction
 \end{itemize}
 \item PathFinderComponent
-\\Attributes
+\newline Attributes
 \begin{itemize}
 \item List CurrentPath
 \item float MovementSpeed
@@ -234,7 +234,7 @@ Methods
 \item Update
 \end{itemize}
 \item StateMachineComponent/EnemyController
-\\Attributes
+\newline Attributes
 \begin{itemize}
 \item State CurrentState
 \item GameObject EnemySpawner
@@ -250,28 +250,28 @@ Methods
 States (classes)
 \begin{itemize}
 \item AttackingState
-\\Methods
+\newline Methods
 \begin{itemize}
 \item Enter
 \item Run
 \item Exit
 \end{itemize}
 \item ReturnToSpawnerState
-\\Methods
+\newline Methods
 \begin{itemize}
 \item Enter
 \item Run
 \item Exit
 \end{itemize}
 \item WanderState
-\\Methods
+\newline Methods
 \begin{itemize}
 \item Enter
 \item Run
 \item Exit
 \end{itemize}
 \item SeekState
-\\Methods
+\newline Methods
 \begin{itemize}
 \item Enter
 \item Run
@@ -292,7 +292,7 @@ Tag
 Components
 \begin{itemize}
 \item EnemySpawner
-\\Attributes
+\newline Attributes
 \begin{itemize}
 \item GameObject EnemyPrefab
 \item GameObject spawnedEnemies
@@ -308,7 +308,7 @@ Methods
 \end{itemize}
 \item Mesh Renderer
 \item HealthComponent
-\\Attributes
+\newline Attributes
 \begin{itemize}
 \item uint Health
 \item uint MaxHealth
@@ -337,7 +337,7 @@ Tag
 Components
 \begin{itemize}
 \item WeaponComponent : Interactable
-\\Attributes
+\newline Attributes
 \begin{itemize}
 \item int Capacity
 \item int LiquidLeft
@@ -366,7 +366,7 @@ Tag
 Components
 \begin{itemize}
 \item TrapComponent
-\\Attributes
+\newline Attributes
 \begin{itemize}
 \item uint Damage
 \item float ActivateTime
@@ -385,7 +385,7 @@ Methods
 \end{itemize}
 \item Box Collider
 \item HealthComponent
-\\Attributes
+\newline Attributes
 \begin{itemize}
 \item uint Health
 \item uint MaxHealth
@@ -415,7 +415,7 @@ Tag
 Components
 \begin{itemize}
 \item DoorComponent : Interactable
-\\Attributes
+\newline Attributes
 \begin{itemize}
 \item (private)bool locked
 \item (public with getter and setter)bool Locked
@@ -441,7 +441,7 @@ Methods
 Components
 \begin{itemize}
 \item CompassComponent
-\\Attributes
+\newline Attributes
 \begin{itemize}
 \item List<GameObject> targets
 \item Vector3 north
@@ -466,7 +466,7 @@ Components
 Components
 \begin{itemize}
 \item Medkit : interactable
-\\Methods
+\newline Methods
 \begin{itemize}
 \item OnInteractBegin
 \item OnInteractEnd
@@ -477,7 +477,7 @@ Components
 Components
 \begin{itemize}
 \item HUDScript
-\\Attributes
+\newline Attributes
 \begin{itemize}
 \item Transform Owner
 \item RectTransform HealthBarFill
@@ -509,5 +509,18 @@ Methods
 \item DrawStaminaBar
 \end{itemize}
 \end{itemize}
+
+\subsection{Control Loop}
+Unity handles everything that has to do with the control loop.
+
+\subsection{Data Flow}
+Unity handles the storing and loading of all files and assets. Every component written by the dev team should aim to load everything that is going to be used frequently into memory during the loading phase in the unity Start() and Awake() functions.
+
+\subsection{Game Physics and Statistics}
+\subsubsection{LevelBuilder}
+The LevelBuilder Start() method should only happen on the server. When spawning a new room as the host, you need to specify that with Mirror.
+\newline 
+\newline Start
+
 
 \end{document}
