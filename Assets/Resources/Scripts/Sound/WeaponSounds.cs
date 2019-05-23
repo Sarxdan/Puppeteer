@@ -22,9 +22,7 @@ public class WeaponSounds : MonoBehaviour
     [FMODUnity.EventRef] public string s_Pickup;
     [FMODUnity.EventRef] public string s_Shoot;
     FMOD.Studio.EventInstance shoot;
-    [FMODUnity.EventRef] public string s_OutOfAmmo;
     [FMODUnity.EventRef] public string s_Reload;
-    [FMODUnity.EventRef] public string s_Foley;
     
     public void Pickup()
     {
@@ -39,19 +37,10 @@ public class WeaponSounds : MonoBehaviour
         shoot.start();
         shoot.release();
     }
-
-    public void OutOfAmmo()
-    {
-        FMODUnity.RuntimeManager.PlayOneShot(s_OutOfAmmo, transform.position);
-    }
-
+    
     public void Reload()
     {
         FMODUnity.RuntimeManager.PlayOneShot(s_Reload, transform.position);
     }
 
-    public void Foley()
-    {
-        FMODUnity.RuntimeManager.PlayOneShot(s_Foley, transform.position);
-    }
 }

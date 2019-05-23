@@ -32,7 +32,6 @@ public class GatlingGunSounds : WeaponSounds
     public void SpinDown()
     {
         spin.setParameterByName("Stop", 1);
-        //spin.stop(FMOD.Studio.STOP_MODE.ALLOWFADEOUT);
         spin.release();
     }
 }

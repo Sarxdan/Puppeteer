@@ -36,6 +36,7 @@ public class EnemySpawner : NetworkBehaviour
     public static Transform MinionContainer;
 
     private SnapFunctionality snapFunctionality;
+    private EnemySpawnerSounds sounds;
 
     public Transform spawnPoint;
 
@@ -59,11 +60,13 @@ public class EnemySpawner : NetworkBehaviour
         }
 
         snapFunctionality = GetComponent<SnapFunctionality>();
-        StartCoroutine("SpawnRoutine");
+        sounds = GetComponent<EnemySpawnerSounds>();
 
         HealthComponent hpComponent = GetComponent<HealthComponent>();
         hpComponent.AddDeathAction(OnDeath);
         hpComponent.AddOnDamageAction(CmdOnTakeDamage);
+
+        StartCoroutine("SpawnRoutine");
     }
 
 
@@ -125,6 +128,7 @@ public class EnemySpawner : NetworkBehaviour
     [ClientRpc]
     public void RpcPlayAnimation()
     {
+        sounds.Spawn();
         SpawnerAnim.SetTrigger("Spawn"); //Runs spawn through animation event
         MinionAnim.SetTrigger("Spawn");
     }
@@ -135,6 +139,9 @@ public class EnemySpawner : NetworkBehaviour
         {
             minion.Spawner = null;
         }
+
+        sounds.Destroy();
+
         Destroy(gameObject);
     }
 }

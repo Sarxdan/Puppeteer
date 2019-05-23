@@ -18,14 +18,8 @@ using UnityEngine;
 public class EnemySpawnerSounds : MonoBehaviour
 {
     // Sound Events
-    [FMODUnity.EventRef] public string s_Idle;
     [FMODUnity.EventRef] public string s_Spawn;
     [FMODUnity.EventRef] public string s_Destroy;
-
-    public void Idle()
-    {
-        FMODUnity.RuntimeManager.PlayOneShot(s_Idle, transform.position);
-    }
 
     public void Spawn()
     {

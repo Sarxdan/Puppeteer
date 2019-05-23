@@ -35,7 +35,7 @@ public class VideoScript : MonoBehaviour
         VideoPlayer.Prepare();
         while(!VideoPlayer.isPrepared)
         {
-                yield return new WaitForSeconds(1);
+                yield return new WaitForSeconds(0.5f);
                 break;
         }
 
