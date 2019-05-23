@@ -14,6 +14,9 @@ using UnityEngine.UI;
 * Anton Jonsson 23/04/2019
 *
 * CONTRIBUTORS:
+*
+*
+* CLEANED
 */
 
 public class ExitButtonScript : MonoBehaviour

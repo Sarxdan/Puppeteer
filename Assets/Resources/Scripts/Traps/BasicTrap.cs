@@ -14,7 +14,7 @@ using UnityEngine;
  * 
  * 
  */
-
+//Cleaned
 public class BasicTrap : TrapComponent
 {
     //Add only puppets to those who are to take damage

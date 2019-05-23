@@ -13,6 +13,8 @@ using UnityEngine;
 * Sandra "Sanders" Andersson (16/4)
 *
 * CONTRIBUTORS:
+* 
+* CLEANED
 */
 
 public class RoomCollider : MonoBehaviour

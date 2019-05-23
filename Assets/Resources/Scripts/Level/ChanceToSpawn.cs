@@ -1,7 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+/*
+ *CLEANED
+ */
 public class ChanceToSpawn : MonoBehaviour
 {
 	public bool SpawningWeapons;
@@ -49,6 +51,4 @@ public class ChanceToSpawn : MonoBehaviour
 	{
 		return realChanceToSpawnPowerUp;
 	}
-
-
 }

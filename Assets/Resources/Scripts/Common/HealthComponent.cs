@@ -16,7 +16,6 @@ using Mirror;
  * CONTRIBUTORS:
  * Kristoffer Lundgren (Interact tooltip)
  */
-
 public class HealthComponent : NetworkBehaviour
 {
     public static HealthComponent Local;
@@ -89,32 +88,7 @@ public class HealthComponent : NetworkBehaviour
             Local.CmdDamage(gameObject, damage);
         }
     }
-
-    [Command]
-    public void CmdDamage(GameObject targetObject, uint damage){
-        if(!isServer) Debug.LogError("Not server!");
-        targetObject.GetComponent<HealthComponent>().Damage(damage);
-    }
-
-    //Sends damage update to clients
-    [ClientRpc]
-    public void RpcDamage()
-	{
-        this.takeDamageAction();
-        sounds.Damage(); 
-    }
-
-    //Sends death update to clients
-    [ClientRpc]
-    public void RpcDeath()
-    {
-		if (isLocalPlayer)
-			if(sounds != null) sounds.Death();
-
-        this.zeroHealthAction();
-        Downed = true;
-    }
-    
+ 
     //Starts regenerate HP after delay, up to the max amount of regen
     private IEnumerator RegenRoutine()
     {
@@ -137,20 +111,6 @@ public class HealthComponent : NetworkBehaviour
         AddDeathAction(playerController.Downed);
         gameObject.GetComponent<PuppetSounds>().Revive();
         RpcSendRevive();    
-    }
-
-    [ClientRpc]
-    public void RpcSendRevive()
-    {
-        Downed = false;
-        if (!isLocalPlayer)
-            return;
-        Debug.Log("Rezed");
-        gameObject.GetComponent<PuppetSounds>().Revive();
-        AllowRegen = true;
-        PlayerController playerController = gameObject.GetComponent<PlayerController>();
-        playerController.UnStunned();
-        AddDeathAction(playerController.Downed);
     }
 
     //Registers a new zero health delegate
@@ -176,4 +136,47 @@ public class HealthComponent : NetworkBehaviour
     {
         this.takeDamageAction -= action;
     }
+
+    #region Commands
+    [Command]
+    public void CmdDamage(GameObject targetObject, uint damage){
+        if(!isServer) Debug.LogError("Not server!");
+        targetObject.GetComponent<HealthComponent>().Damage(damage);
+    }
+    #endregion
+
+    #region ClientRpcs
+    //Sends damage update to clients
+    [ClientRpc]
+    public void RpcDamage()
+	{
+        this.takeDamageAction();
+        sounds.Damage(); 
+    }
+
+    //Sends death update to clients
+    [ClientRpc]
+    public void RpcDeath()
+    {
+		if (isLocalPlayer)
+			if(sounds != null) sounds.Death();
+
+        this.zeroHealthAction();
+        Downed = true;
+    }
+
+    [ClientRpc]
+    public void RpcSendRevive()
+    {
+        Downed = false;
+        if (!isLocalPlayer)
+            return;
+        Debug.Log("Rezed");
+        gameObject.GetComponent<PuppetSounds>().Revive();
+        AllowRegen = true;
+        PlayerController playerController = gameObject.GetComponent<PlayerController>();
+        playerController.UnStunned();
+        AddDeathAction(playerController.Downed);
+    }
+    #endregion
 }

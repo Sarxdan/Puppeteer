@@ -21,8 +21,6 @@ public class UISounds : MonoBehaviour
     // Sound Events
     [FMODUnity.EventRef] public string s_Click;
     [FMODUnity.EventRef] public string s_Hover;
-    [FMODUnity.EventRef] public string s_Forward;
-    [FMODUnity.EventRef] public string s_Backward;
 
     // FMOD Buses
     public string masterBusString = "bus:/Master";
@@ -98,15 +96,4 @@ public class UISounds : MonoBehaviour
     {
         FMODUnity.RuntimeManager.PlayOneShot(s_Hover, transform.position);
     }
-
-    public void Forward()
-    {
-        FMODUnity.RuntimeManager.PlayOneShot(s_Forward, transform.position);
-    }
-
-    public void Backward()
-    {
-        FMODUnity.RuntimeManager.PlayOneShot(s_Backward, transform.position);
-    }
-
 }

@@ -11,6 +11,9 @@
 * Anton Jonsson 17/04-2019
 *
 * CONTRIBUTORS:
+*
+*
+* CLEANED
 */
 
 public class SelectableCharacter : MonoBehaviour

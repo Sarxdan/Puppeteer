@@ -2,7 +2,21 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-
+/*
+* AUTHOR:
+* Kristoffer Lundgren
+*
+* DESCRIPTION:
+* This Script shows the fades the splash screen and pulsated the press any button text
+*
+* CODE REVIEWED BY:
+*
+*
+* CONTRIBUTORS:
+*
+*
+* CLEANED
+*/
 public class SplashScreenScript : MonoBehaviour
 {
     public GameObject PressAnyKey;
@@ -14,11 +28,9 @@ public class SplashScreenScript : MonoBehaviour
 
     private Image fadeImage;
     private Image pulsateImage;
-    private float fade = 1;
     private float pulsate;
 
     private float fadeSpeed = 0.5f;
-    private float alpha = 1.0f;
     private bool ListenForInput = false;
     // Start is called before the first frame update
     void Start()
@@ -33,7 +45,7 @@ public class SplashScreenScript : MonoBehaviour
         if(ListenForInput)
         {
             Pulsate.SetActive(true);
-            if(Input.anyKeyDown)
+            if(Input.anyKey)
             {
                 Pulsate.SetActive(false);
                 PressAnyKey.SetActive(false);
@@ -53,9 +65,7 @@ public class SplashScreenScript : MonoBehaviour
 
 
     }
-
-    // Update is called once per frame
-
+    // Wait for three seconds before you can continue
     private IEnumerator SplashScreenTimer()
     {
 

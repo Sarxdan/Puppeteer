@@ -14,6 +14,9 @@ using UnityEngine.UI;
 * Anton Jonsson 17/04-2019
 *
 * CONTRIBUTORS:
+*
+*
+* CLEANED
 */
 
 public class GameStartRequierments : MonoBehaviour

@@ -15,6 +15,7 @@ using Mirror;
 *
 * CONTRIBUTORS:
 * 
+* CLEANED
 */
 
 public abstract class SnapPointBase : MonoBehaviour

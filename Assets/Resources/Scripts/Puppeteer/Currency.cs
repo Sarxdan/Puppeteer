@@ -16,7 +16,7 @@ using UnityEngine.UI;
  * CONTRIBUTORS:
  * Sandra Andersson (Currency UI)
  */
-
+//CLEANED
 public class Currency : MonoBehaviour
 {
 	public int CurrencyIncrease;

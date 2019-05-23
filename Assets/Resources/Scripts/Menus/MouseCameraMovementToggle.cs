@@ -16,6 +16,7 @@ using UnityEngine.UI;
 * CONTRIBUTORS:
 *
 *
+* CLEANED
 */
 
 public class MouseCameraMovementToggle : MonoBehaviour

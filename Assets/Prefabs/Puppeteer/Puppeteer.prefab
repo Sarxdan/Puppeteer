@@ -9,12 +9,12 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 882945469650525591}
-  - component: {fileID: 882945469650525592}
   - component: {fileID: 351344373693174191}
-  - component: {fileID: 2594469943257660708}
-  - component: {fileID: 7011425764817422923}
+  - component: {fileID: 882945469650525592}
   - component: {fileID: 5963027110821384781}
   - component: {fileID: 8319625633179747584}
+  - component: {fileID: 2594469943257660708}
+  - component: {fileID: 7011425764817422923}
   - component: {fileID: 2164618449766289586}
   - component: {fileID: 6560965921680926819}
   - component: {fileID: 5846211066637989002}
@@ -42,22 +42,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &882945469650525592
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 882945469650525590}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 35ba13b14de52294cbcf6f4fba2d28cc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  syncInterval: 0.1
-  LiftHeight: 3
-  LiftSpeed: 50
-  currentNode: {fileID: 0}
 --- !u!114 &351344373693174191
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -74,6 +58,71 @@ MonoBehaviour:
   localPlayerAuthority: 1
   m_AssetId: a355b3cf20abdf34d86a9cdb43b0bbaf
   m_SceneId: 0
+--- !u!114 &882945469650525592
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 882945469650525590}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 35ba13b14de52294cbcf6f4fba2d28cc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncInterval: 0.1
+  LiftHeight: 3
+  LiftSpeed: 50
+  currentNode: {fileID: 0}
+--- !u!114 &5963027110821384781
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 882945469650525590}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1e44804a0483c7f48960f17a6ab2fb81, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncInterval: 0.1
+  HudItems: []
+  ButtonBearTrap: {fileID: 8339057735785524188}
+  ButtonSpikeTrap: {fileID: 5743371616704660481}
+  ButtonChandelier: {fileID: 931415180871972255}
+  ButtonFakeItem: {fileID: 2131066219035210549}
+  ButtonMinionSpawner: {fileID: 8347266326099628780}
+  ButtonSpawnTank: {fileID: 5660474675205567575}
+  BearTrap: {fileID: 5733567816084534936, guid: 9e1af8b73d684464dbc9b16d8dbf8097,
+    type: 3}
+  SpikeTrapFloor: {fileID: 2588813442285734548, guid: 544cab8dfe3776442a06fa2e6d7b8ad7,
+    type: 3}
+  SpikeTrapRoof: {fileID: 2588813442285734548, guid: da3b8ac20a4819348a645dc0ed703b5a,
+    type: 3}
+  Chandelier: {fileID: 2046261812361734448, guid: 62bfbd8e0afe2414bab61a3c81db2dcb,
+    type: 3}
+  FakeItem: {fileID: 7878347970347006104, guid: 8b9cc288ce095a349aa9e77926c6dec3,
+    type: 3}
+  MinionSpawner: {fileID: 4963745196626812900, guid: 74164b7b500a80d41af59122632b64c3,
+    type: 3}
+  Tank: {fileID: 4963745196626812900, guid: 9285f64eec81e6a46a1d4e4fbecab1a8, type: 3}
+--- !u!114 &8319625633179747584
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 882945469650525590}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 56d998eda61b14e4b849900a5f47e419, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  CurrencyIncrease: 5
+  CurrentCurrency: 150
+  TemporaryCurrency: 0
+  CurrencyText: {fileID: 3219454129538878312}
 --- !u!114 &2594469943257660708
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -189,55 +238,6 @@ MonoBehaviour:
   Door: {fileID: 3565548570659699362, guid: 44dec3f5c49221f4d8a32bbe8d3002a3, type: 3}
   RoomsToSpawnBeforeDeadEndRooms: 20
   PercentageOfRoomsWithItems: 100
---- !u!114 &5963027110821384781
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 882945469650525590}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1e44804a0483c7f48960f17a6ab2fb81, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  syncInterval: 0.1
-  HudItems: []
-  ButtonBearTrap: {fileID: 8339057735785524188}
-  ButtonSpikeTrap: {fileID: 5743371616704660481}
-  ButtonChandelier: {fileID: 931415180871972255}
-  ButtonFakeItem: {fileID: 2131066219035210549}
-  ButtonMinionSpawner: {fileID: 8347266326099628780}
-  ButtonSpawnTank: {fileID: 5660474675205567575}
-  BearTrap: {fileID: 5733567816084534936, guid: 9e1af8b73d684464dbc9b16d8dbf8097,
-    type: 3}
-  SpikeTrapFloor: {fileID: 2588813442285734548, guid: 544cab8dfe3776442a06fa2e6d7b8ad7,
-    type: 3}
-  SpikeTrapRoof: {fileID: 2588813442285734548, guid: da3b8ac20a4819348a645dc0ed703b5a,
-    type: 3}
-  Chandelier: {fileID: 2046261812361734448, guid: 62bfbd8e0afe2414bab61a3c81db2dcb,
-    type: 3}
-  FakeItem: {fileID: 7878347970347006104, guid: 8b9cc288ce095a349aa9e77926c6dec3,
-    type: 3}
-  MinionSpawner: {fileID: 4963745196626812900, guid: 74164b7b500a80d41af59122632b64c3,
-    type: 3}
-  Tank: {fileID: 4963745196626812900, guid: 9285f64eec81e6a46a1d4e4fbecab1a8, type: 3}
---- !u!114 &8319625633179747584
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 882945469650525590}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 56d998eda61b14e4b849900a5f47e419, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  CurrencyIncrease: 5
-  CurrentCurrency: 150
-  TemporaryCurrency: 0
-  CurrencyText: {fileID: 3219454129538878312}
 --- !u!114 &2164618449766289586
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -11,7 +11,9 @@ using UnityEngine;
  * CODE REVIEWED BY:
  * 
  * 
+ * CLEANED
  */
+
 public class MuzzleFlash : MonoBehaviour
 {
     public float FlashSpeed;

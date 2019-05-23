@@ -17,6 +17,7 @@ using Mirror;
 * CONTRIBUTORS:
 * Philip Stenmark
 */
+//CLEANED
 
 public class GrabTool : NetworkBehaviour
 {

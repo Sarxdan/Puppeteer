@@ -16,6 +16,8 @@ using Mirror;
 s* 
 * CONTRIBUTORS:
 * 
+* 
+* CLEANED
 */
 
 public class MatchTimer : NetworkBehaviour
@@ -38,7 +40,7 @@ public class MatchTimer : NetworkBehaviour
     private int Minutes = 0;
     private int Seconds = 0;
 
-// Start is called before the first frame update
+    //Start is called before the first frame update
     void Start()
     {
 	    numberOfPuppetsAlive = GameObject.Find("NetworkManager").GetComponent<CustomNetworkManager>().lobbySlots.Count - 1;
@@ -57,6 +59,7 @@ public class MatchTimer : NetworkBehaviour
 			TimeTracker.position = new Vector3(TimeTracker.position.x, TimeTracker.position.y + 50, TimeTracker.position.z);
 		}
     }
+
 	private void Update()
 	{
 		TimeRemainingTextBox.text = TimePrintOut;
@@ -65,7 +68,6 @@ public class MatchTimer : NetworkBehaviour
 	public IEnumerator Timer()
     {
 		yield return new WaitForSeconds(5);
-
 		//Convert match time to minutes and seconds
 		for (int i = MatchLength; i > 0; i -= 60)
 		    if (i >= 60)
@@ -101,8 +103,6 @@ public class MatchTimer : NetworkBehaviour
 			    Seconds = 59;
 		    }
 
-            //Check if a team have won
-
             //If a puppet have escaped and all other are dead, the puppets win
             if (numberOfPuppetsAlive <= 0 && NumberOfPuppetsThatEscaped != 0 && !gameEnded)
             {
@@ -124,7 +124,6 @@ public class MatchTimer : NetworkBehaviour
                 StartCoroutine("EndTimer");
                 StopCoroutine("Timer");
             }
-
             //Problem line
             numberOfPuppetsAlive = FindObjectsOfType<PlayerController>().Length;
         }

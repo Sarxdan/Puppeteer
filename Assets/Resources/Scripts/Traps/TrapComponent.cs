@@ -14,7 +14,7 @@ using Mirror;
  * Philip Stenmark
  * 
  */
-
+//Cleaned
 public abstract class TrapComponent : NetworkBehaviour
 { 
     public uint Damage;
