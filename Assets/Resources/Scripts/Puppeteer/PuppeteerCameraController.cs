@@ -16,6 +16,7 @@ using UnityEngine;
 * Philip Stenmark
 * Sandra "Sanders" Andersson (MouseMovement is opt.)
 */
+//CLEANED
 
 public class PuppeteerCameraController : MonoBehaviour
 {

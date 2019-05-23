@@ -14,6 +14,7 @@ using Mirror;
 * CONTRIBUTORS: 
 *
 */
+//CLEANED
 public class StartWeaponSpawner : NetworkBehaviour
 {
     public GameObject StartWeapon;

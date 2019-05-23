@@ -21,6 +21,7 @@ using UnityEngine.UI;
 * CONTRIBUTORS:
 * Philip Stenmark, Anton "Knugen" Jonsson
 */
+//CLEANED
 
 public class ItemGrabTool : NetworkBehaviour
 {

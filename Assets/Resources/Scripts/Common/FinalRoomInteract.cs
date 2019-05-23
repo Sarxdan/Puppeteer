@@ -136,6 +136,29 @@ public class FinalRoomInteract : Interactable
 		}
 	}
 
+    // Only run on server.
+    IEnumerator OpenDoor()
+	{
+		if (DoorToOpen == null)
+		{
+			DoorToOpen = GameObject.Find("ST_Final_Door_01 (1)");
+		}
+		openAngle = DoorToOpen.transform.eulerAngles.y + 13;
+		while (true)
+		{
+			if (DoorToOpen.transform.eulerAngles.y == openAngle)
+			{
+				break;
+			}
+			DoorToOpen.transform.rotation = Quaternion.RotateTowards(
+				DoorToOpen.transform.rotation,
+				Quaternion.Euler(0, openAngle, 0), RotationSpeed);
+			yield return new WaitForFixedUpdate();
+		}
+	}
+
+    #region ClientRpc
+
     [ClientRpc]
     public void RpcPlayMusic()
     {
@@ -163,24 +186,6 @@ public class FinalRoomInteract : Interactable
 		ProgressTransform.sizeDelta = size;
 	}
 
-	// Only run on server.
-	IEnumerator OpenDoor()
-	{
-		if (DoorToOpen == null)
-		{
-			DoorToOpen = GameObject.Find("ST_Final_Door_01 (1)");
-		}
-		openAngle = DoorToOpen.transform.eulerAngles.y + 13;
-		while (true)
-		{
-			if (DoorToOpen.transform.eulerAngles.y == openAngle)
-			{
-				break;
-			}
-			DoorToOpen.transform.rotation = Quaternion.RotateTowards(
-				DoorToOpen.transform.rotation,
-				Quaternion.Euler(0, openAngle, 0), RotationSpeed);
-			yield return new WaitForFixedUpdate();
-		}
-	}
+    #endregion
+
 }
