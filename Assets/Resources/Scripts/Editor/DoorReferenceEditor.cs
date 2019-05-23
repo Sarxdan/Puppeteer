@@ -12,13 +12,14 @@ using UnityEditor;
  *
  * CODE REVIEWED BY:
  * 
+ * 
+ * CLEANED
  */
 
 #if UNITY_EDITOR
 [CustomEditor(typeof(DoorReferences))]
 public class DoorReferenceEditor : Editor
 {
-    
     public override void OnInspectorGUI()
     {
         DrawDefaultInspector();
@@ -29,7 +30,6 @@ public class DoorReferenceEditor : Editor
             script.GetDoors();
             EditorUtility.SetDirty(target);
         }
-
     }
 }
 #endif

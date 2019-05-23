@@ -12,8 +12,9 @@ using UnityEngine;
  *
  * CODE REVIEWED BY:
  * 
+ * 
+ * CLEANED
  */
-
 
 //Class for defining triangles in navmesh
 [System.Serializable]
@@ -24,13 +25,11 @@ public class navmeshFace : System.Object
 
     public navmeshFace(Vector3 a, Vector3 b, Vector3 c)
     {
-
         this.aPos = a;
         this.bPos = b;
         this.cPos = c;
 
         this.Origin = (aPos + bPos + cPos)/3;
-
     }
 
     //Returns if face has vertex 'vertexPos'
@@ -38,9 +37,7 @@ public class navmeshFace : System.Object
     {
         return this.aPos == vertexPos || this.bPos == vertexPos || this.cPos == vertexPos;
     }
-
 }
-
 
 [ExecuteInEditMode]
 public class NavMesh : MonoBehaviour
@@ -100,7 +97,6 @@ public class NavMesh : MonoBehaviour
                 filteredFaces.Add(face);
             }
         }
-
     }
 
     //Gets face with closest origin to point that is not included in filter
@@ -120,10 +116,7 @@ public class NavMesh : MonoBehaviour
                 }
             }
         }
-
-
         return closestFace;
-
     }
     
     //Returns true if point is within face
@@ -142,29 +135,28 @@ public class NavMesh : MonoBehaviour
         Vector3 crossB = Vector3.Cross(B - A, pB - A);
         float dot = Vector3.Dot(crossA,crossB);
         return dot >= 0;
-
     }
 
-    public void BakeNavmesh(){
-            //Fetches vertex data from mesh
-            Vector3[] vertices = new Vector3[inputMesh.vertices.Length];
+    public void BakeNavmesh()
+    {
+        //Fetches vertex data from mesh
+        Vector3[] vertices = new Vector3[inputMesh.vertices.Length];
 
-            //Rotates vertices
-            for(int i = 0; i < inputMesh.vertices.Length; i++)
-            {
-                vertices[i] = rotation * inputMesh.vertices[i] + NavmeshOffset;
-            }
+        //Rotates vertices
+        for(int i = 0; i < inputMesh.vertices.Length; i++)
+        {
+            vertices[i] = rotation * inputMesh.vertices[i] + NavmeshOffset;
+        }
 
-            //Saves faces from mesh
-            Faces = new navmeshFace[(int)(inputMesh.triangles.Length / 3)];
-            for(int i = 0; i < Faces.Length; i++)
-            {
-                Faces[i] = new navmeshFace(vertices[inputMesh.triangles[i*3]], vertices[inputMesh.triangles[i * 3 + 1]], vertices[inputMesh.triangles[i * 3 + 2]]); 
-            }
+        //Saves faces from mesh
+        Faces = new navmeshFace[(int)(inputMesh.triangles.Length / 3)];
+        for(int i = 0; i < Faces.Length; i++)
+        {
+            Faces[i] = new navmeshFace(vertices[inputMesh.triangles[i*3]], vertices[inputMesh.triangles[i * 3 + 1]], vertices[inputMesh.triangles[i * 3 + 2]]); 
+        }
     }
 
     public void ClearNavmesh(){
         Faces = null;
     }
-    
 }

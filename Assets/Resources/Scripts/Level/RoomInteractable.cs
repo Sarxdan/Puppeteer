@@ -13,6 +13,8 @@ using UnityEngine;
 * Filip Renman (24/4/2019)
 *
 * CONTRIBUTORS:
+* 
+* CLEANED
 */
 
 public class RoomInteractable : Interactable
@@ -29,8 +31,10 @@ public class RoomInteractable : Interactable
 
 	}
 
-	public override void OnRaycastEnter(GameObject interactor){}
+	public override void OnRaycastEnter(GameObject interactor)
+    {
 
+    }
 
 	// Returns true if there is a player in the room
 	public bool RoomContainsPlayer()

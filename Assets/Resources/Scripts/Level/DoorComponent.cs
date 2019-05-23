@@ -15,7 +15,11 @@ using Mirror;
 * CONTRIBUTORS:
 * Anton Jonsson
 * Ludvig Björk Förare
+* 
+* 
+* CLEANED
 */
+
 public class DoorComponent : Interactable
 {
 	[SerializeField]
@@ -36,7 +40,7 @@ public class DoorComponent : Interactable
 			locked = value;
 			if(locked)
 			{
-				transform.GetChild(0).gameObject.SetActive(false); // NEEDS NETWORK
+                transform.GetChild(0).gameObject.SetActive(false);
 				transform.GetChild(1).gameObject.SetActive(true);
 
 				transform.localRotation = Quaternion.Euler(transform.localEulerAngles.x, defaultAngle, transform.localEulerAngles.z);
@@ -61,7 +65,6 @@ public class DoorComponent : Interactable
 			transform.GetChild(0).gameObject.SetActive(true);
 			transform.GetChild(1).gameObject.SetActive(false);
 		}
-
 	}
 
 	public GameObject Icon;
@@ -88,6 +91,7 @@ public class DoorComponent : Interactable
         sounds = GetComponent<PuppetRoomSounds>();
 		Icon.transform.up = Vector3.forward;
     }
+
     // When the used key is pressed the direction the door should open is calculated
     public override void OnInteractBegin(GameObject interactor)
     {
@@ -112,6 +116,7 @@ public class DoorComponent : Interactable
 			RpcPlaySoundLocked();
         }
 	}
+
     public override void OnInteractEnd(GameObject interactor){}
 	// Used to show the interact tooltip
 	public override void OnRaycastEnter(GameObject interactor)
@@ -124,6 +129,7 @@ public class DoorComponent : Interactable
 	{
 		sounds.Open();
 	}
+
 	[ClientRpc]
 	public void RpcPlaySoundLocked()
 	{

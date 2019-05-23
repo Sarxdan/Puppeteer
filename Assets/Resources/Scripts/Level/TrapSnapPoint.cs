@@ -14,6 +14,8 @@ using UnityEngine;
 * 
 * CONTRIBUTORS:
 * 
+* 
+* CLEANED
 */
 
 public class TrapSnapPoint : SnapPointBase

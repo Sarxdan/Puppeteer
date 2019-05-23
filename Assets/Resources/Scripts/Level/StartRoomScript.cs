@@ -13,6 +13,8 @@ using UnityEngine;
 * Ludvig Björk Förare (190430)
 *
 * CONTRIBUTORS:
+* 
+* CLEANED
 */
 
 public class StartRoomScript : MonoBehaviour
@@ -21,5 +23,4 @@ public class StartRoomScript : MonoBehaviour
     {
 		gameObject.name = "startRoom";
     }
-
 }

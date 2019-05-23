@@ -2,6 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/*
+ *CLEANED
+ */
+
 public class PSSelfDestruct : MonoBehaviour
 {
     private ParticleSystem particleSystem;
