@@ -11,6 +11,8 @@ using UnityEngine;
 *
 * CODE REVIEWED BY:
 * Sandra "Sanders" Andersson (02/05-2019)
+* 
+* CLEANED
 */
 
 public class LevelReturn : MonoBehaviour

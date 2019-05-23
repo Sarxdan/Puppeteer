@@ -3,6 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+/*
+ *CLEANED
+ */
+
 public class EndOfMatchCanvas : MonoBehaviour
 {
     public Text WinnerText;
@@ -10,7 +14,6 @@ public class EndOfMatchCanvas : MonoBehaviour
     public Text PuppetsAliveInfoText;
     public Text TimeLeftText;
     public Text TimeLeftInfoText;
-
 
     public void SetWinnerText(string text)
     {
@@ -36,5 +39,4 @@ public class EndOfMatchCanvas : MonoBehaviour
     {
         TimeLeftInfoText.text = text;
     }
-
 }

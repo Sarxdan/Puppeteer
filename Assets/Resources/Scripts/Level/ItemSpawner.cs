@@ -15,6 +15,8 @@ using UnityEngine;
 *
 * CONTRIBUTORS:
 * Sandra Andersson (Added medkit and updated prefabs)
+* 
+* CLEANED
 */
 
 public class ItemSpawner : NetworkBehaviour
@@ -138,7 +140,6 @@ public class ItemSpawner : NetworkBehaviour
 		}
 		else
 		{
-			Debug.Log("ERROR: List not correct size.");
 			return null;
 		}
 	}
@@ -178,5 +179,4 @@ public class ItemSpawner : NetworkBehaviour
 		NetworkServer.Spawn(spawnableObject);
 		RpcSetParent(spawner.GetComponentInParent<NetworkIdentity>().gameObject, spawnableObject);
 	}
-
 }

@@ -14,11 +14,13 @@ using UnityEngine;
 * 
 *
 * CONTRIBUTORS: 
+* 
+* 
+* CLEANED
 */
 
 public class RoomTreeNode : MonoBehaviour
 {
-
 	private RoomTreeNode parent;
 	private List<RoomTreeNode> children = new List<RoomTreeNode>();
     public bool InTree { get; set; } = false;
@@ -108,7 +110,7 @@ public class RoomTreeNode : MonoBehaviour
 				{
 					if (newNode.gameObject.name == "guideObject")
 					{
-						SetParent(FindObjectOfType<GrabTool>().currentNode); // Might not always find server script first (?)
+						SetParent(FindObjectOfType<GrabTool>().currentNode); 
 					}
 					else
 					{
