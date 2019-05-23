@@ -17,7 +17,7 @@ using UnityEngine;
  * Sandra Andersson (Implemented with animation)
  * Kristoffer Lundgren
  * 
- *
+ *CLEANED
  */
 public class PowerupRecharge : Interactable
 {
@@ -28,7 +28,7 @@ public class PowerupRecharge : Interactable
 
         if (power.isServer && power.isLocalPlayer)
         {
-            // attempt to pickup recharge
+            //Attempt to pickup recharge
             if (power != null && power.PercentageLeft == 0.0f)
             {
                 power.Charged = true;
@@ -41,15 +41,14 @@ public class PowerupRecharge : Interactable
                 power.RpcBoostPowerup();
             }
         }
-
         Destroy(gameObject);
     }
 
     public override void OnInteractEnd(GameObject interactor)
     {
-        // empty
+        //Empty
     }
-    // (KL) Used to show the interact tooltip
+    //Used to show the interact tooltip
     public override void OnRaycastEnter(GameObject interactor)
     {
         if (!interactor.GetComponent<PowerupBase>().Charged)

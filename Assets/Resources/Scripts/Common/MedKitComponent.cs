@@ -15,6 +15,8 @@ using UnityEngine;
 * 
 * CONTRIBUTORS:
 * Kristoffer Lundgren
+* 
+* CLEANED
 */
 
 public class MedKitComponent : Interactable
@@ -30,19 +32,19 @@ public class MedKitComponent : Interactable
             playerController.RpcAddMedkit();
             Destroy(gameObject);
         }
-        
     }
+
     //Overrides from Interactable component, adds the medkit to the players inventory.
     public override void OnInteractEnd(GameObject interactor)
     {   
         // Empty
     }
-    // (KL) Used to show the interact tooltip
+
+    //Used to show the interact tooltip
     public override void OnRaycastEnter(GameObject interactor)
     {
         PlayerController playerController = interactor.GetComponent<PlayerController>();
         if(!playerController.HasMedkit)
             ShowTooltip(interactor);
     }
-
 }
