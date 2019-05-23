@@ -14,6 +14,8 @@ using UnityEngine;
  * 
  * CONTRIBUTORS:
  * Kristoffer Lundgren
+ * 
+ * CLEANED
  */
 public class GatlingGunAnimator : MonoBehaviour
 {
@@ -30,5 +32,4 @@ public class GatlingGunAnimator : MonoBehaviour
         Barrel.Rotate(Vector3.forward, MaxSpeed * CurrentSpeed * Time.deltaTime);
         Gear.Rotate(Vector3.right, MaxSpeed * TeethRatio * CurrentSpeed * Time.deltaTime);
     }
-
 }

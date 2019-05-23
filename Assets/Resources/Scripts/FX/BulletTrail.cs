@@ -9,8 +9,11 @@ using UnityEngine;
  * Script for handling bullet trails
  * 
  * CODE REVIEWED BY:
+ *
  * 
+ * CLEANED
  */
+
 public class BulletTrail : MonoBehaviour
 {
     public float Duration;

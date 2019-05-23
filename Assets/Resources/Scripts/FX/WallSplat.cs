@@ -12,6 +12,8 @@ using UnityEngine;
  * 
  * CODE REVIEWED BY:
  * 
+ * 
+ * CLEANED
 */
 public class WallSplat : MonoBehaviour
 {
