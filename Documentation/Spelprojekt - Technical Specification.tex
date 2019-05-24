@@ -27,487 +27,487 @@ Unity 2018
 \subsubsection{Level}
 Components
 \begin{itemize}
-\item LevelBuilder
-\newline Attributes
-\begin{itemize}
-\item List<GameObject> MultiDoorRooms
-\item GameObject StartRoom
-\item GameObject GoalRoom
-\item GameObject Door
-\item Int RoomsToSpawnBeforeDeadEndRooms
-\item List<RoomCollider> roomColiderPositions
-\item Queue<AnchorPoint> openDoorQueue;
-\item List<GameObject> roomsToBePlace
-\item RoomTreeNode startNode
-\item GameObject parent
-\end{itemize}
-Methods
-\begin{itemize}
-\item Start
-\item RandomizeRooms
-\item SpawnRooms
-\item SpawnRoomsOnNetwork
-\item GetRooms
-\item ConnectDoorsInRoomIfPossible
-\end{itemize}
+	\item LevelBuilder
+	\newline Attributes
+	\begin{itemize}
+		\item List<GameObject> MultiDoorRooms
+		\item GameObject StartRoom
+		\item GameObject GoalRoom
+		\item GameObject Door
+		\item Int RoomsToSpawnBeforeDeadEndRooms
+		\item List<RoomCollider> roomColiderPositions
+		\item Queue<AnchorPoint> openDoorQueue;
+		\item List<GameObject> roomsToBePlace
+		\item RoomTreeNode startNode
+		\item GameObject parent
+	\end{itemize}
+	Methods
+	\begin{itemize}
+		\item Start
+		\item RandomizeRooms
+		\item SpawnRooms
+		\item SpawnRoomsOnNetwork
+		\item GetRooms
+		\item ConnectDoorsInRoomIfPossible
+	\end{itemize}
 \end{itemize}
 
 \subsubsection{Room}
 Room should be synced with Mirror
 \newline Tag
 \begin{itemize}
-\item Connectable
+	\item Connectable
 \end{itemize}
 Components
 \begin{itemize}
-\item CooldownComponent
-\newline Attributes
-\begin{itemize}
-\item float CooldownTime
-\item bool Available
-\end{itemize}
-Methods
-\begin{itemize}
-\item get/set Available
-\item StartCooldown
-\end{itemize}
-\item Mesh Renderer
-\item Box Collider
+	\item CooldownComponent
+	\newline Attributes
+	\begin{itemize}
+		\item float CooldownTime
+		\item bool Available
+	\end{itemize}
+	Methods
+	\begin{itemize}
+		\item get/set Available
+		\item StartCooldown
+	\end{itemize}
+	\item Mesh Renderer
+	\item Box Collider
 \end{itemize}
 
 \subsubsection{Puppet}
 Tag
 \begin{itemize}
-\item Player
+	\item Player
 \end{itemize}
 Components
 \begin{itemize}
-\item HealthComponent
-\newline Attributes
-\begin{itemize}
-\item uint Health
-\item uint MaxHealth
-\item uint MaxRegenHealth
-\item float MaxRegenRatio
-\item float MaxReviveRatio
-\item uint RegenSpeed
-\item uint RegenDelay
-\item bool AllowRegen
-\end{itemize}
-Methods
-\begin{itemize}
-\item Damage
-\item Revive
-\item AddDeathAction
-\item RemoveDeathAction
-\end{itemize}
-\item InteractionController
-\newline Attributes
-\begin{itemize}
-\item Lookahead
-\end{itemize}
-Methods
-\begin{itemize}
-\item Update
-\end{itemize}
-\item Interactable (acts as base class for all in-level interactable items)
-\newline Methods
-\begin{itemize}
-\item OnInteractBegin
-\item OnInteractEnd
-\item OnRaycastEnter
-\item OnRaycastExit
-\end{itemize}
-\item Image (UI image for compass)
-\item PowerUpBase (acts as base class for all power-ups)
-\newline Attributes
-\begin{itemize}
-\item int Duration
-\end{itemize}
-Methods
-\begin{itemize}
-\item OnActivate
-\item OnComplete
-\end{itemize}
-\item StaminaPower : PowerUpBase
-\newline Attributes
-\begin{itemize}
-\item float SpeedModifier
-\end{itemize}
-\item InvisibilityPower : PowerUpBase
-\item NavigationPower : PowerUpBase
-\item DetectionPower : PowerUpBase
-\item PlayerController : Interactable
-\newline Attributes
-\begin{itemize}
-\item float MovementSpeed
-\item float JumpForce
-\item float JumpRayLength
-\item float AccelerationRate
-\item float MouseSensitivity
-\item int Ammunition
-\item bool HasMedkit
-\item GameObject CurrentWeapon
-\item float ReviveTime
-\end{itemize}
-Methods
-\begin{itemize}
-\item Update
-\item FixedUpdate
-\end{itemize}
-\item Mesh Renderer
-\item Rigidbody
-\item Capsule Collider (For collision detection)
-\item Animator
+	\item HealthComponent
+	\newline Attributes
+	\begin{itemize}
+		\item uint Health
+		\item uint MaxHealth
+		\item uint MaxRegenHealth
+		\item float MaxRegenRatio
+		\item float MaxReviveRatio
+		\item uint RegenSpeed
+		\item uint RegenDelay
+		\item bool AllowRegen
+	\end{itemize}
+	Methods
+	\begin{itemize}
+		\item Damage
+		\item Revive
+		\item AddDeathAction
+		\item RemoveDeathAction
+	\end{itemize}
+	\item InteractionController
+	\newline Attributes
+	\begin{itemize}
+		\item Lookahead
+	\end{itemize}
+	Methods
+	\begin{itemize}
+		\item Update
+	\end{itemize}
+	\item Interactable (acts as base class for all in-level interactable items)
+	\newline Methods
+	\begin{itemize}
+		\item OnInteractBegin
+		\item OnInteractEnd
+		\item OnRaycastEnter
+		\item OnRaycastExit
+	\end{itemize}
+	\item Image (UI image for compass)
+	\item PowerUpBase (acts as base class for all power-ups)
+	\newline Attributes
+	\begin{itemize}
+		\item int Duration
+	\end{itemize}
+	Methods
+	\begin{itemize}
+		\item OnActivate
+		\item OnComplete
+	\end{itemize}
+	\item StaminaPower : PowerUpBase
+	\newline Attributes
+	\begin{itemize}
+		\item float SpeedModifier
+	\end{itemize}
+	\item InvisibilityPower : PowerUpBase
+	\item NavigationPower : PowerUpBase
+	\item DetectionPower : PowerUpBase
+	\item PlayerController : Interactable
+	\newline Attributes
+	\begin{itemize}
+		\item float MovementSpeed
+		\item float JumpForce
+		\item float JumpRayLength
+		\item float AccelerationRate
+		\item float MouseSensitivity
+		\item int Ammunition
+		\item bool HasMedkit
+		\item GameObject CurrentWeapon
+		\item float ReviveTime
+	\end{itemize}
+	Methods
+	\begin{itemize}
+		\item Update
+		\item FixedUpdate
+	\end{itemize}
+	\item Mesh Renderer
+	\item Rigidbody
+	\item Capsule Collider (For collision detection)
+	\item Animator
 \end{itemize}
 
 \subsubsection{Puppeteer}
 Components
 \begin{itemize}
-\item Mesh Renderer
-\item GrebTool
-\newline Attributes
-\begin{itemize}
-\item LevelBuilder level
-\item int SnapDistance
-\item float RaycastDistance
-\item float LiftHeight
-\item float LiftSpeed
-\item bool EnableMovement
-\item GameObject sourceObject
-\item GameObject selectedObject
-\item GameObject guideObject
-\item AnchorPoint bestSrcPoint
-\item AnchorPoint bestDstPoint
-\item RoomInteractable lastHit
-\item Vector3 grabOffset
-\item RoomTreeNode firstParentNode
-\end{itemize}
-Methods
-\begin{itemize}
-\item Start
-\item Update
-\item Pickup
-\item Drop
-\item UpdatePositions
-\item FindNearestOpenDoor
-\item CanConnect
-\item MouseToWorldPosition
-\end{itemize}
+	\item Mesh Renderer
+	\item GrebTool
+	\newline Attributes
+	\begin{itemize}
+		\item LevelBuilder level
+		\item int SnapDistance
+		\item float RaycastDistance
+		\item float LiftHeight
+		\item float LiftSpeed
+		\item bool EnableMovement
+		\item GameObject sourceObject
+		\item GameObject selectedObject
+		\item GameObject guideObject
+		\item AnchorPoint bestSrcPoint
+		\item AnchorPoint bestDstPoint
+		\item RoomInteractable lastHit
+		\item Vector3 grabOffset
+		\item RoomTreeNode firstParentNode
+	\end{itemize}
+	Methods
+	\begin{itemize}
+		\item Start
+		\item Update
+		\item Pickup
+		\item Drop
+		\item UpdatePositions
+		\item FindNearestOpenDoor
+		\item CanConnect
+		\item MouseToWorldPosition
+	\end{itemize}
 \end{itemize}
 
 \subsubsection{Enemy}
 Tag
 \begin{itemize}
-\item Enemy
+	\item Enemy
 \end{itemize}
 Components
 \begin{itemize}
-\item HealthComponent
-\newline Attributes
-\begin{itemize}
-\item uint Health
-\item uint MaxHealth
-\item uint MaxRegenHealth
-\item float MaxRegenRatio
-\item float MaxReviveRatio
-\item uint RegenSpeed
-\item uint RegenDelay
-\item bool AllowRegen
-\end{itemize}
-Methods
-\begin{itemize}
-\item Damage
-\item Revive
-\item AddDeathAction
-\item RemoveDeathAction
-\end{itemize}
-\item PathFinderComponent
-\newline Attributes
-\begin{itemize}
-\item List CurrentPath
-\item float MovementSpeed
-\end{itemize}
-Methods
-\begin{itemize}
-\item MoveTo
-\item Update
-\end{itemize}
-\item StateMachineComponent/EnemyController
-\newline Attributes
-\begin{itemize}
-\item State CurrentState
-\item GameObject EnemySpawner
-\item GameObject TargetEntity
-\item float AttackCooldown
-\item int AttackDamage 
-\end{itemize}
-Methods
-\begin{itemize}
-\item SetState
-\item Update
-\end{itemize}
-States (classes)
-\begin{itemize}
-\item AttackingState
-\newline Methods
-\begin{itemize}
-\item Enter
-\item Run
-\item Exit
-\end{itemize}
-\item ReturnToSpawnerState
-\newline Methods
-\begin{itemize}
-\item Enter
-\item Run
-\item Exit
-\end{itemize}
-\item WanderState
-\newline Methods
-\begin{itemize}
-\item Enter
-\item Run
-\item Exit
-\end{itemize}
-\item SeekState
-\newline Methods
-\begin{itemize}
-\item Enter
-\item Run
-\item Exit
-\end{itemize}
-\end{itemize}
-\item Mesh Renderer
-\item Rigidbody
-\item Capsule Collider
-\item Animator
+	\item HealthComponent
+	\newline Attributes
+	\begin{itemize}
+		\item uint Health
+		\item uint MaxHealth
+		\item uint MaxRegenHealth
+		\item float MaxRegenRatio
+		\item float MaxReviveRatio
+		\item uint RegenSpeed
+		\item uint RegenDelay
+		\item bool AllowRegen
+	\end{itemize}
+	Methods
+	\begin{itemize}
+		\item Damage
+		\item Revive
+		\item AddDeathAction
+		\item RemoveDeathAction
+	\end{itemize}
+	\item PathFinderComponent
+	\newline Attributes
+	\begin{itemize}
+		\item List CurrentPath
+		\item float MovementSpeed
+	\end{itemize}
+	Methods
+	\begin{itemize}
+		\item MoveTo
+		\item Update
+	\end{itemize}
+	\item StateMachineComponent/EnemyController
+	\newline Attributes
+	\begin{itemize}
+		\item State CurrentState
+		\item GameObject EnemySpawner
+		\item GameObject TargetEntity
+		\item float AttackCooldown
+		\item int AttackDamage 
+	\end{itemize}
+	Methods
+	\begin{itemize}
+		\item SetState
+		\item Update
+	\end{itemize}
+	States (classes)
+	\begin{itemize}
+		\item AttackingState
+		\newline Methods
+		\begin{itemize}
+			\item Enter
+			\item Run
+			\item Exit
+		\end{itemize}
+		\item ReturnToSpawnerState
+		\newline Methods
+		\begin{itemize}
+			\item Enter
+			\item Run
+			\item Exit
+		\end{itemize}
+		\item WanderState
+		\newline Methods
+		\begin{itemize}
+			\item Enter
+			\item Run
+			\item Exit
+		\end{itemize}
+		\item SeekState
+		\newline Methods
+		\begin{itemize}
+			\item Enter
+			\item Run
+			\item Exit
+		\end{itemize}
+	\end{itemize}
+	\item Mesh Renderer
+	\item Rigidbody
+	\item Capsule Collider
+	\item Animator
 \end{itemize}
 
 \subsubsection{EnemySpawner}
 Tag
 \begin{itemize}
-\item EnemySpawner
+	\item EnemySpawner
 \end{itemize}
 Components
 \begin{itemize}
-\item EnemySpawner
-\newline Attributes
-\begin{itemize}
-\item GameObject EnemyPrefab
-\item GameObject spawnedEnemies
-\item Float SpawnRate
-\item Int MaxEnemyCount
-\item Transform[] SpawnPoint
-\item List<GameObject> EnemyCount
-\end{itemize}
-Methods
-\begin{itemize}
-\item Start
-\item Spawn
-\end{itemize}
-\item Mesh Renderer
-\item HealthComponent
-\newline Attributes
-\begin{itemize}
-\item uint Health
-\item uint MaxHealth
-\item uint MaxRegenHealth
-\item float MaxRegenRatio
-\item float MaxReviveRatio
-\item uint RegenSpeed
-\item uint RegenDelay
-\item bool AllowRegen
-\end{itemize}
-Methods
-\begin{itemize}
-\item Damage
-\item Revive
-\item AddDeathAction
-\item RemoveDeathAction
-\end{itemize}
-\item Box Collider
+	\item EnemySpawner
+	\newline Attributes
+	\begin{itemize}
+		\item GameObject EnemyPrefab
+		\item GameObject spawnedEnemies
+		\item Float SpawnRate
+		\item Int MaxEnemyCount
+		\item Transform[] SpawnPoint
+		\item List<GameObject> EnemyCount
+	\end{itemize}
+	Methods
+	\begin{itemize}
+		\item Start
+		\item Spawn
+	\end{itemize}
+	\item Mesh Renderer
+	\item HealthComponent
+	\newline Attributes
+	\begin{itemize}
+		\item uint Health
+		\item uint MaxHealth
+		\item uint MaxRegenHealth
+		\item float MaxRegenRatio
+		\item float MaxReviveRatio
+		\item uint RegenSpeed
+		\item uint RegenDelay
+		\item bool AllowRegen
+	\end{itemize}
+	Methods
+	\begin{itemize}
+		\item Damage
+		\item Revive
+		\item AddDeathAction
+		\item RemoveDeathAction
+	\end{itemize}
+	\item Box Collider
 \end{itemize}
 
 \subsubsection{Weapon}
 Tag
 \begin{itemize}
-\item Weapon
+	\item Weapon
 \end{itemize}
 Components
 \begin{itemize}
-\item WeaponComponent : Interactable
-\newline Attributes
-\begin{itemize}
-\item int Capacity
-\item int LiquidLeft
-\item int LiquidPerRound
-\item float FiringSpeed
-\item int Damage
-\item float Spread
-\item float RecoilAmount
-\item float ReloadTime
-\item int NumberOfShots
-\end{itemize}
-Methods
-\begin{itemize}
-\item Use
-\item Reload
-\item OnInteractBegin
-\end{itemize}
-\item Mesh Renderer
+	\item WeaponComponent : Interactable
+	\newline Attributes
+	\begin{itemize}
+		\item int Capacity
+		\item int LiquidLeft
+		\item int LiquidPerRound
+		\item float FiringSpeed
+		\item int Damage
+		\item float Spread
+		\item float RecoilAmount
+		\item float ReloadTime
+		\item int NumberOfShots
+	\end{itemize}
+	Methods
+	\begin{itemize}
+		\item Use
+		\item Reload
+		\item OnInteractBegin
+	\end{itemize}
+	\item Mesh Renderer
 \end{itemize}
 
 \subsubsection{Trap}
 Tag
 \begin{itemize}
-\item Trap
+	\item Trap
 \end{itemize}
 Components
 \begin{itemize}
-\item TrapComponent
-\newline Attributes
-\begin{itemize}
-\item uint Damage
-\item float ActivateTime
-\item float DestroyTime
-\item List<GameObject> Puppets
-\item Animator Anim
-\end{itemize}
-Methods
-\begin{itemize}
-\item TrapTimer
-\item DestroyTimer
-\item OnTriggerEnter
-\item OnTriggerStay
-\item ActivateTrap
-\item DestroyTrap
-\end{itemize}
-\item Box Collider
-\item HealthComponent
-\newline Attributes
-\begin{itemize}
-\item uint Health
-\item uint MaxHealth
-\item uint MaxRegenHealth
-\item float MaxRegenRatio
-\item float MaxReviveRatio
-\item uint RegenSpeed
-\item uint RegenDelay
-\item bool AllowRegen
-\end{itemize}
-Methods
-\begin{itemize}
-\item Damage
-\item Revive
-\item AddDeathAction
-\item RemoveDeathAction
-\end{itemize}
-\item Mesh Renderer
-\item Animator
+	\item TrapComponent
+	\newline Attributes
+	\begin{itemize}
+		\item uint Damage
+		\item float ActivateTime
+		\item float DestroyTime
+		\item List<GameObject> Puppets
+		\item Animator Anim
+	\end{itemize}
+	Methods
+	\begin{itemize}
+		\item TrapTimer
+		\item DestroyTimer
+		\item OnTriggerEnter
+		\item OnTriggerStay
+		\item ActivateTrap
+		\item DestroyTrap
+	\end{itemize}
+	\item Box Collider
+	\item HealthComponent
+	\newline Attributes
+	\begin{itemize}
+		\item uint Health
+		\item uint MaxHealth
+		\item uint MaxRegenHealth
+		\item float MaxRegenRatio
+		\item float MaxReviveRatio
+		\item uint RegenSpeed
+		\item uint RegenDelay
+		\item bool AllowRegen
+	\end{itemize}
+	Methods
+	\begin{itemize}
+		\item Damage
+		\item Revive
+		\item AddDeathAction
+		\item RemoveDeathAction
+	\end{itemize}
+	\item Mesh Renderer
+	\item Animator
 \end{itemize}
 
 \subsubsection{Door}
 Tag
 \begin{itemize}
-\item Door
+	\item Door
 \end{itemize}
 Components
 \begin{itemize}
-\item DoorComponent : Interactable
-\newline Attributes
-\begin{itemize}
-\item (private)bool locked
-\item (public with getter and setter)bool Locked
-\item Float RotationSpeed
-\item Float openAngle
-\item Float defaultAngle
-\item Vector3 adjustmentVector
-\item Float currentAngle
-\item Bool open
-\end{itemize}
-Methods
-\begin{itemize}
-\item Start
-\item OnInteractBegin
-\item FixedUpdate
-\item OnInteractEnd
-\end{itemize}
-\item Mesh Renderer
-\item Box Collider
+	\item DoorComponent : Interactable
+	\newline Attributes
+	\begin{itemize}
+		\item (private)bool locked
+		\item (public with getter and setter)bool Locked
+		\item Float RotationSpeed
+		\item Float openAngle
+		\item Float defaultAngle
+		\item Vector3 adjustmentVector
+		\item Float currentAngle
+		\item Bool open
+	\end{itemize}
+	Methods
+	\begin{itemize}
+		\item Start
+		\item OnInteractBegin
+		\item FixedUpdate
+		\item OnInteractEnd
+	\end{itemize}
+	\item Mesh Renderer
+	\item Box Collider
 \end{itemize}
 
 \subsubsection{Compass}
 Components
 \begin{itemize}
-\item CompassComponent
-\newline Attributes
-\begin{itemize}
-\item List<GameObject> targets
-\item Vector3 north
-\end{itemize}
-Methods
-\begin{itemize}
-\item AddObject
-\item RemoveObject
-\item Update
-\end{itemize}
+	\item CompassComponent
+	\newline Attributes
+	\begin{itemize}
+		\item List<GameObject> targets
+		\item Vector3 north
+	\end{itemize}
+	Methods
+	\begin{itemize}
+		\item AddObject
+		\item RemoveObject
+		\item Update
+	\end{itemize}
 \end{itemize}
 
 \subsubsection{PowerUpRecharge}
 Components
 \begin{itemize}
-\item MeshRenderer
-\item Recharge/Refill : Interactable (used to refill the player’s power)
-\item Box Collider
+	\item MeshRenderer
+	\item Recharge/Refill : Interactable (used to refill the player’s power)
+	\item Box Collider
 \end{itemize}
 
 \subsubsection{Medkit}
 Components
 \begin{itemize}
-\item Medkit : interactable
-\newline Methods
-\begin{itemize}
-\item OnInteractBegin
-\item OnInteractEnd
-\end{itemize}
+	\item Medkit : interactable
+	\newline Methods
+	\begin{itemize}
+		\item OnInteractBegin
+		\item OnInteractEnd
+	\end{itemize}
 \end{itemize}
 
 \subsubsection{HUD}
 Components
 \begin{itemize}
-\item HUDScript
-\newline Attributes
-\begin{itemize}
-\item Transform Owner
-\item RectTransform HealthBarFill
-\item RectTransform StaminaBarFill
-\item RectTransform MedKit
-\item RectTransform PowerUpFill
-\item Text CurrentAmmo
-\item HealthComponent healthComponent
-\item PlayerController playerController
-\item PowerupBase powerUp
-\item uint health
-\item uint maxHealth
-\item float xScaleHP
-\item float xScaleStamina
-\item float HPIncrement
-\item uint previousHP
-\item uint lerpToHP
-\item float HealthBarSpeed
-\item bool medKitToggle
-\item float previousStamina
-\item float lerpToStamina
-\item float staminaIncrement
-\end{itemize}
-Methods
-\begin{itemize}
-\item Start
-\item Update
-\item DrawHealthBar
-\item DrawStaminaBar
-\end{itemize}
+	\item HUDScript
+	\newline Attributes
+	\begin{itemize}
+		\item Transform Owner
+		\item RectTransform HealthBarFill
+		\item RectTransform StaminaBarFill
+		\item RectTransform MedKit
+		\item RectTransform PowerUpFill
+		\item Text CurrentAmmo
+		\item HealthComponent healthComponent
+		\item PlayerController playerController
+		\item PowerupBase powerUp
+		\item uint health
+		\item uint maxHealth
+		\item float xScaleHP
+		\item float xScaleStamina
+		\item float HPIncrement
+		\item uint previousHP
+		\item uint lerpToHP
+		\item float HealthBarSpeed
+		\item bool medKitToggle
+		\item float previousStamina
+		\item float lerpToStamina
+		\item float staminaIncrement
+	\end{itemize}
+	Methods
+	\begin{itemize}
+		\item Start
+		\item Update
+		\item DrawHealthBar
+		\item DrawStaminaBar
+	\end{itemize}
 \end{itemize}
 
 \subsection{Control Loop}
