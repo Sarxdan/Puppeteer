@@ -2,14 +2,22 @@
 
 \usepackage[T1]{fontenc}
 \usepackage{textcomp}
+\usepackage{changepage}
+
+\newenvironment{indentall}{\begin{adjustwidth}{2cm}{}}{\end{adjustwidth}}
 
 \title{Puppeteer - Technical Specification}
+\pagenumbering{gobble}
 
 \begin{document}
 \maketitle
 
 
 \newpage
+\tableofcontents
+
+\newpage
+\pagenumbering{arabic}
 \section{Game Mechanics}
 \subsection{Platform and OS}
 Windows 7 or higher (64-bit only)
@@ -521,6 +529,331 @@ Unity handles the storing and loading of all files and assets. Every component w
 The LevelBuilder Start() method should only happen on the server. When spawning a new room as the host, you need to specify that with Mirror.
 \newline 
 \newline Start
+\begin{indentall}
+All room modules that may be included in the level generation are provided in the Modules game object array with an exception of the start and goal rooms, which are provided separately as StartModule and GoalModule. Once the LevelBuilder is started, the level is generated in its entirety. It is however required that the start and goal rooms are reachable from each other.
+\end{indentall}
+
+\subsubsection{HealthComponent}
+The Health attribute should be synced with Mirror, meaning all methods changing health (Heal \& Damage must happen on the server)
+\newline 
+\newline Damage
+\begin{indentall}
+Damage is a method used for removing health from the Health attribute in HealthComponent. It takes the amount of health to lose as a parameter. This function is called from either the WeaponComponent on the player or from the enemy if it does damage to a player. If the health reaches zero upon taking damage, some action need to be handled, i.e. the player downing, spawner exploding or enemy dying. This is done using by registering actions using AddDeathAction.
+\end{indentall}
+Revive
+\begin{indentall}
+Revive is a method used for restoring the health to a certain state. The health is always restored to MaxHealth * MaxReviveRatio.
+\end{indentall}
+AddDeathAction
+\begin{indentall}
+Registers a new action used when the health reaches zero.
+\end{indentall}
+RemoveDeathAction
+\begin{indentall}
+Unregisters a registered action.
+\end{indentall}
+
+\subsubsection{PlayerController}
+The player must be synced with Mirror. Internal variables such as ammo and movementSpeed does not unless implementing anti-cheat.
+\newline 
+\newline Update
+\begin{indentall}
+Handles player movement using inputs. Limits velocity according to the MovementSpeed. 
+\end{indentall}
+OnInteractBegin
+\begin{indentall}
+The interactor attempts to start reviving the player if below zero health. The function also verifies that the interactor has a medkit to perform this action. The revive action is not instant, but instead uses the ReviveTime attribute.
+\end{indentall}
+OnInteractEnd
+\begin{indentall}
+The interactor will stop the revive if not done already.
+\end{indentall}
+
+\subsubsection{PowerUpBase}
+PowerUpBase might need a bool or something to sync in order to for example make Gekko invisible for Puppeteer but not puppets.
+\newline 
+\newline OnActivate
+\begin{indentall}
+Override this function to specify behavior when the power up is activated. The activation will start the power up usage countdown using the Duration. The OnActivate function may be implemented as a coroutine to simplify logic.
+\end{indentall}
+OnComplete
+\begin{indentall}
+Override this function to specify behavior when the power up is suspended. The completion function may for example remove the Pekko’s goal icon from the compass.
+\end{indentall}
+
+\subsubsection{GrabTool}
+Update
+\begin{indentall}
+Checks all inputs relevant to the grabbing and dropping mechanic of the puppeteer and calls the relevant methods depending on the output. Also updates the currently selected room and placement guide depending on mouse/VR hover.
+\end{indentall}
+Pickup
+\begin{indentall}
+Pickup works with both items such as spawners and traps, and also rooms. For rooms specific rules need to be followed: Pickup picks up the selected room from the puppeteers perspective. The pickup function creates a copy of the selected object that can be lifted from the ground. The source object is however still in place until a new position is fully selected. Furthermore, a guidance object is also created from a lightweight clone of the source object that acts as an outline and views the most optimal placement option.
+\end{indentall}
+Drop
+\begin{indentall}
+Drop has to do different checks depending on if you are holding a room or just a trap/spawner. For a room, it drops the picked up room into the most optimal position in the level layout, if any. When a room is dropped, the selected object clone and its guide object is destroyed. If a dropped room does not fulfill all rules for connecting (using the CanConnect function), it is discarded.
+\end{indentall}
+CanConnect
+\begin{indentall}
+Returns a bool telling whether or not a room can be dropped in a certain place. The function should handle all placement rules. A source anchor point and destination anchor point should be provided. To modify the maximum snapping distance between anchors, the SnapDistance property is used. The connection rules are:
+\begin{itemize}
+	\item Both anchors must be valid.
+	\item Anchors must be open for connection (not already used).
+	\item The forward vector of the anchors must be opposite of each other.
+	\begin{itemize}
+		\item Vector3.Dot(srcForwardNormalized, dstForwardNormalized) == -1
+	\end{itemize}
+	\item The distance between the anchors must be less than the SnapDistance.
+	\begin{itemize}
+		\item Vector3.Distance(srcPosition, dstPosition) < SnapDistance
+	\end{itemize}
+\end{itemize}
+\end{indentall}
+FindNearestAnchor
+\begin{indentall}
+Locates the nearest anchor (door) to the selected object, if any.
+\end{indentall}
+
+\subsubsection{InteractionController}
+Update
+\begin{indentall}
+The update function raycasts straight ahead and looks for objects with the Interactable component. In case the player presses the Use button, an interaction is started.
+\end{indentall}
+
+\subsubsection{PathfinderComponent}
+MoveTo
+\begin{indentall}
+Pathfinds to coordinates specified in parameter and updates CurrentPath attribute.
+\end{indentall}
+Update
+\begin{indentall}
+Follows the CurrentPath attribute by adding force vectors along the path on the rigidbody. If there is no current path do nothing.
+\end{indentall}
+
+\subsubsection{StateMachineComponent}
+SetState
+\begin{indentall}
+Changes state.
+\end{indentall}
+Update
+\begin{indentall}
+Runs the current states Run function.
+\end{indentall}
+
+\subsubsection{EnemySpawner}
+Needs to be synced with Mirror
+\newline
+\newline Update
+\begin{indentall}
+Spawns an EnemyPrefab instance at some nearby position in a predefined range of the spawner position if the spawn rate timer reaches zero. The SpawnRate variable determines how often the update function may perform its logic. May also use a coroutine for a simpler implementation.
+\end{indentall}
+
+\subsubsection{WeaponComponent}
+Use
+\begin{indentall}
+Attempts to fire the weapon. The function may immediately fail if there is no ammunition left or if the time since last weapon use does not exceed the firing speed. The weapon may also not be fired while reloading. In case the firing was successful, the following steps are performed:
+\begin{itemize}
+\item For each bullet in the total number of simultaneous bullet fired:
+\begin{itemize}
+\item Calculate bullet spread using the Spread variable
+\item Raycast directly from the viewport center into the direction of the camera plus the angle deviation from the spread
+\begin{itemize}
+\item ViewportPointToRay(new Vector3(0.5f, 0.5f, 0.0f))
+\end{itemize}
+\item Collect the raycast hit information and fetch its HealthComponent
+\item If there is a health component, deal some damage using the Damage variable
+\item Create bullet impact effect or other effect
+\end{itemize}
+\item Play appropriate firing animation and effects
+\item Perform recoil physics on the weapon
+\item Play appropriate weapon firing sound
+\item Reset firing speed timer
+\item Decrease ammunition count
+\end{itemize}
+\end{indentall}
+Reload
+\begin{indentall}
+Reloads the weapon using the ammunition the weapon owner is carrying. The function attempts to fill the weapon to its maximum Capacity, if possible. If the weapon is fully loaded, its LiquidLeft will equal its Capacity. A reload sound and animation is also played.
+\end{indentall}
+OnInteractBegin
+\begin{indentall}
+The interactor picks up this weapon. If the interactor already has a weapon component attached, the new weapon is automatically swapped for the new one. Some logic is here required to properly attach transforms between weapon and interactor.
+\end{indentall}
+
+\subsubsection{TrapComponent}
+Must be synced with Mirror.
+\newline
+\newline DestroyTimer
+\newline
+\newline ActivateTrap
+\begin{indentall}
+Override this function in the subclass for handling the activation of the trap and damaging the puppet(s) inside, starting the DestroyTimer and other optional functionality.
+\end{indentall}
+DestroyTrap
+\begin{indentall}
+Override this function in the subclass for handling the destroying of the trap object after the DestroyTimer is done.
+\end{indentall}
+OnTriggerEnter
+\begin{indentall}
+Override this function in the subclass for detecting when a game object is within the trap activation area. The function shall immediately triggers the TrapTimer function. If the timer reaches ActivationTime, the trap and activation animation is activated and is therefore considered consumed.
+\end{indentall}
+
+\subsubsection{DoorComponent}
+Must be synced with Mirror.
+\newline
+\newline Update
+\begin{indentall}
+Checks if the door should open or close depending on its current state.
+\end{indentall}
+OnInteractBegin
+\begin{indentall}
+Toggles the door from the open and closed positions. The door may not be opened when the attribute Locked is set to true. The rotation of the door is determined by the position of the interactor, meaning it may rotate both inwards and outwards. When the attribute Locked is set to false the door is instantly closed while normally the door opens smoothly.
+\end{indentall}
+
+\subsubsection{Interactable}
+OnInteractBegin
+\begin{indentall}
+Override this function in the subclass for handling interaction events.
+\end{indentall}
+OnInteractEnd
+\begin{indentall}
+Override this function in the subclass for handling end of interaction events.
+\end{indentall}
+OnRaycastEnter
+\begin{indentall}
+Enables the outline of the object.
+\end{indentall}
+OnRaycastExit
+\begin{indentall}
+Disables the outline of the object.
+\end{indentall}
+
+\subsubsection{CompassComponent}
+AddObject
+\begin{indentall}
+Registers a new ‘trackable’ entity to the compass, e.g. teammates or level objects. Accepts any GameObject as parameter as long as it contains some Icon component.
+\end{indentall}
+RemoveObject
+\begin{indentall}
+Unregisters a game object from the list.
+\end{indentall}
+Update
+\begin{indentall}
+Updates all relative positions of the registered objects in the compass user interface. The icon of each object is displayed in the compass UI element. The compass is configured using some predefined ‘north’ direction. Some nitty gritty maths is here required to map 3D direction vectors to the 2D user interface element.
+\end{indentall}
+
+\subsubsection{PowerupRecharge}
+Must be synced with Mirror.
+\newline
+\newline OnInteractBegin
+\begin{indentall}
+Refills the player’s power if applicable.
+\end{indentall}
+
+\subsubsection{MedkitComponent}
+Must be synced with Mirror.
+\newline
+\newline OnInteractBegin
+\begin{indentall}
+Adds the medkit to the player’s inventory if the player doesn’t have one.
+\end{indentall}
+
+\subsubsection{HUD}
+Start
+\begin{indentall}
+Load all the components needed to draw the HUD to the screen, they are loaded inside the start function instead of the update to increase performance.
+\end{indentall}
+Update
+\begin{indentall}
+Draw all the information about powerups, health, medkits, and stamina to the screen, images are scaled to represent the health and stamina and the scale is lerped to create smooth transitions.	
+\end{indentall}
+
+\subsection{Artificial Intelligence}
+The enemies are controlled by a simple Finite State Machine(FSM):
+\newline
+\newline States
+\begin{itemize}
+	\item AttackingState
+	\item ReturnToSpawnerState
+	\item WanderState
+	\item SeekState
+\end{itemize}
+AttackingState
+\newline
+The enemies enter the attacking state when they have a clear line of sight of the player and they are within range. While in this state the enemies follow the player and automatically attack them when within range. 
+\newline
+\newline ReturnToSpawnerState
+\newline
+When the spawner that spawned an enemy is attacked all the spawned enemies will enter this state and return to the spawner in order to protect it. When a spawner or an enemy is moved by the puppeteer this behavior is lost.
+\newline
+\newline WanderState
+\newline
+When an enemy doesn’t see any players it will wander on its own to nearby rooms to search for players.
+\newline
+\newline SeekState
+\newline
+This state will pathfind to a players last known location or back toward spawn if it has run to far from home.
+
+\subsection{Multiplayer}
+Mirror by vis2k solves all of our multiplayer issues. The data is sent using TCP and a client-host system.
+
+\section{User interface}
+\subsection{Game Shell}
+\begin{itemize}
+\item Splash screen
+\newline The first screen you see when you open the game. After any button is pressed, the menu should be opened.
+\item Main menu
+\newline The main menu is just a way to get to the other menus.
+\item Video options
+\newline Video options is where you can change resolution and enable/disable fullscreen.
+\item Audio options
+\newline Audio options should implement sound sliders for all types of sound in the game.
+\item Controls
+\newline In controls you should be able to rebind all keys used in the game and also change the sensitivity of the mouse.
+\item Join
+\newline In Join you enter an IP-address to connect to a host and enter a lobby
+\item Lobby
+\newline In a lobby you choose character and indicate when you are ready to start the game
+\item Host/Lobby
+\newline The same as ordinary lobby but for the host of the game.
+\end{itemize}
+
+\subsection{Main Play Screens}
+Puppet
+\begin{itemize}
+	\item Health from the HealthComponent displayed as a number.
+	\item Stamina from the PlayerController displayed as a bar.
+	\item Ammunition from PlayerController displayer as a number.
+	\item Power-up status displayed as a bar.
+	\item Compass that points towards other game objects using their transforms to calculate angles.
+	\begin{itemize}
+		\item Also displays cardinal directions relative to some fixed point.
+		\item Uses unique icons to represent different game objects, such as players.
+	\end{itemize}
+	\item Ammunition and Capacity from the equipped weapon as numbers
+\end{itemize}
+Puppeteer
+\begin{itemize}
+	\item Cooldown on rooms from CooldownComponent
+	\item Room selection highlights calculated by the GrabTool
+	\begin{itemize}
+		\item Uses some outline shader to display optimal room placement and the selected room’s previous position.
+	\end{itemize}
+\end{itemize}
+
+\section{Art and Video}
+Unity handles loading, storing and drawing of the art. The animation transitions are done using an Animator Controller.
+\section{Graphics Engine}
+Unity handles all graphics rendering in the game.
+\section{Artist Instructions}
+Use file formats supported by Unity. Otherwise they have free hands.
+\section{Sound and Music}
+Unity has built in support for all the standard audio formats. Sounds are played by an Audio Source and they are picked up by an audio listener which is normally placed on the player’s camera. 3D sound, filters, and drop-off are all controlled inside the audio source.
+\subsection{Sound Engineering Instructions}
+Use file formats supported by Unity. Otherwise they have free hands. FMOD will be used.
+\section{Level Specific Code}
+The level is randomly generated at the start of the game to get a different layout each time. This is done using the LevelBuilder component in the Level game object. It is required that the start and goal rooms always are reachable after each level generation.
 
 
 \end{document}
