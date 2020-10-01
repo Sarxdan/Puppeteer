@@ -54,6 +54,7 @@ public class CustomNetworkLobbyPlayer : NetworkLobbyPlayer
             ReadyText.text = "Not Ready";
             ReadyText.color = new Color(255, 0, 0);
         }
+        gameObject.transform.localPosition = new Vector3(0, -(Index * (Screen.currentResolution.height / 15)), 0);
     }
 
     //Runs when client connects to the lobby
@@ -154,7 +155,7 @@ public class CustomNetworkLobbyPlayer : NetworkLobbyPlayer
     {
         if (isLocalPlayer)
         {
-        CmdToggleReadyState();
+			CmdToggleReadyState();
         }
     }
 

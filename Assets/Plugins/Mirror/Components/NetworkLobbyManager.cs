@@ -331,7 +331,7 @@ namespace Mirror
                 ClientScene.RegisterPrefab(lobbyPlayerPrefab.gameObject);
 
             if (playerPrefab == null)
-                Debug.LogError("NetworkLobbyManager no GamePlayer prefab is registered. Please add a GamePlayer prefab.");
+                Debug.Log("NetworkLobbyManager no GamePlayer prefab is registered. Please add a GamePlayer prefab.");
             else
                 ClientScene.RegisterPrefab(playerPrefab);
 

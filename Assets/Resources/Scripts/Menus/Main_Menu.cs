@@ -25,8 +25,13 @@ public class Main_Menu : MonoBehaviour
 {
     public Button HostGameButton;
     public Button JoinGameButton;
-    public NetworkManager manager;
+	public Button SearchGameButton;
+	public Button PostOnLanButton;
+	public Button SetServerNameButton;
+    private NetworkManager manager;
+	private CustomNetworkDiscovery discovery;
     public InputField Ip_Field;
+	public InputField Servername_Field;
 
     [Scene]  public string LobbyScene;
 
@@ -34,13 +39,16 @@ public class Main_Menu : MonoBehaviour
     void Start()
     {
         manager = GameObject.Find("NetworkManager").GetComponent<NetworkManager>();
-        HostGameButton.onClick.AddListener(HostGame);
+		discovery = GameObject.Find("NetworkManager").GetComponent<CustomNetworkDiscovery>();
+		HostGameButton.onClick.AddListener(HostGame);
         JoinGameButton.onClick.AddListener(JoinGame);
+		SearchGameButton.onClick.AddListener(SearchGame);
+		PostOnLanButton.onClick.AddListener(PostOnLan);
+		SetServerNameButton.onClick.AddListener(SetServerName);
         Cursor.lockState = CursorLockMode.None;
 
         if (PlayerPrefs.HasKey("LatestIPToConnectTo"))
             Ip_Field.text = PlayerPrefs.GetString("LatestIPToConnectTo");
-
     }
 
     void HostGame()
@@ -48,7 +56,16 @@ public class Main_Menu : MonoBehaviour
         manager.StartHost();
     }
 
-    void JoinGame()
+	void SetServerName()
+	{
+		discovery.broadcastData = Servername_Field.text;
+	}
+	void PostOnLan()
+	{
+		discovery.Initialize();
+	}
+
+	void JoinGame()
     {
         if (Ip_Field.text != "")
         {
@@ -63,5 +80,9 @@ public class Main_Menu : MonoBehaviour
         JoinGameButton.interactable = false;
         manager.StartClient();
     }
-    
+
+	void SearchGame()
+	{
+		discovery.Initialize();
+	}
 }

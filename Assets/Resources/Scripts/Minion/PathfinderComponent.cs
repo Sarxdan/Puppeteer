@@ -72,7 +72,7 @@ public class PathfinderComponent : NetworkBehaviour
 
     void Start()
     {
-        layerMask = ~(1 << LayerMask.NameToLayer("Puppeteer Interact") | 1 << LayerMask.NameToLayer("Ignore Raycast"));
+        layerMask = ~(1 << LayerMask.NameToLayer("Puppeteer Interact") | 1 << LayerMask.NameToLayer("Ignore Raycast") | 1 << LayerMask.NameToLayer("PuppeteerItemInteract") | 1 << LayerMask.NameToLayer("PathfindIgnore"));
         if(!isServer)
         {
             gameObject.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezeAll;
@@ -125,11 +125,11 @@ public class PathfinderComponent : NetworkBehaviour
         RaycastHit endHit = new RaycastHit();
         try{
             //Raycasts to floor on destination
-            if(!Physics.Raycast(endPos + TransformRaycastOffset, Vector3.down, out endHit))
+            if(!Physics.Raycast(endPos + TransformRaycastOffset, Vector3.down, out endHit, 2, layerMask))
                 return;
 
             //Raycasts to floor on start
-            if (!Physics.Raycast(transform.position + TransformRaycastOffset, -transform.up, out startHit))
+            if (!Physics.Raycast(transform.position + TransformRaycastOffset, -transform.up, out startHit, 2, layerMask))
                 return;
 
             //Clears previous path
@@ -283,7 +283,7 @@ public class PathfinderComponent : NetworkBehaviour
         {
             //Raycasts to floor
             RaycastHit hit;
-            if(!Physics.Raycast(transform.position + TransformRaycastOffset, -Vector3.up, out hit, 4))
+            if(!Physics.Raycast(transform.position + TransformRaycastOffset, -Vector3.up, out hit, 4, layerMask))
             {
                 Debug.LogError("Pathfind error: Agent " + transform.name + " could not find the floor and therefore not pathfind. This is very bad and cannot happen");
                 this.HasPath = false;

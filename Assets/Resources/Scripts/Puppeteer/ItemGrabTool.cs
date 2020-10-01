@@ -424,7 +424,8 @@ public class ItemGrabTool : NetworkBehaviour
 	[ClientRpc]
 	public void RpcUpdateLayer(GameObject target)
 	{
-		SetLayerOnAll(target, 0);
+		target.layer = 14;
+		//SetLayerOnAll(target, 14); //14 = PathfindIgnore
 	}
 
 	// Calls all but the puppeteer to tell dem to parent the gameobjects.

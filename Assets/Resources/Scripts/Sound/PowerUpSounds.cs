@@ -2,6 +2,19 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/*
+ * AUTHOR:
+ * Sandra Andersson
+ * 
+ * DESCRIPTION:
+ * Is placed on the puppets for sounds handling power-ups
+ * 
+ * CODE REVIEWED BY:
+ * Kristoffer Lundgren
+ * 
+ */
+
+
 public class PowerUpSounds : MonoBehaviour
 {
     // Sound Events

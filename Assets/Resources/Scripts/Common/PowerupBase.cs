@@ -30,6 +30,8 @@ public abstract class PowerupBase : NetworkBehaviour
     //Script for playing sounds
     public PowerUpSounds sounds;
 
+    private float timeLeft;
+
     void Start()
     {
         sounds = GetComponent<PowerUpSounds>();
@@ -44,7 +46,6 @@ public abstract class PowerupBase : NetworkBehaviour
         }
     }
 
-    private float timeLeft;
 
     //Attempts to start and consume the powerup
     public IEnumerator Run()

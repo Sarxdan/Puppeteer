@@ -29,12 +29,16 @@ public class CustomNetworkManager : NetworkLobbyManager
     public GameObject[] PlayableCharacters;
     public int PlayersRequiredToStartTheGame = 2;
 
+	private GameObject ServerSettings;
+
     private int AmountOfPlayersLastUpdate = -1;
     
 
     void Start()
     {
         StartButton = GameObject.Find("StartCharacterSelectButton").GetComponent<Button>();
+		ServerSettings = GameObject.Find("ServerSettings");
+		ServerSettings.SetActive(false);
         StartButton.onClick.AddListener(HideCanvas);
         StartButton.onClick.AddListener(CloseLobby);
         StartButton.gameObject.SetActive(false);
@@ -81,6 +85,8 @@ public class CustomNetworkManager : NetworkLobbyManager
         StartButton.enabled = true;
         StartButton.interactable = false;
         base.OnLobbyStartHost();
+
+		ServerSettings.SetActive(true);
     }
 
     //Runs when a client enters the lobby

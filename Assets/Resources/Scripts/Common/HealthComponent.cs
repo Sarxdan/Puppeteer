@@ -160,8 +160,9 @@ public class HealthComponent : NetworkBehaviour
     {
 		if (isLocalPlayer)
 			if(sounds != null) sounds.Death();
-
         this.zeroHealthAction();
+        if(isLocalPlayer)
+            gameObject.GetComponent<InteractionController>().InteractionTooltip.enabled = false; 
         Downed = true;
     }
 
@@ -171,7 +172,6 @@ public class HealthComponent : NetworkBehaviour
         Downed = false;
         if (!isLocalPlayer)
             return;
-        Debug.Log("Rezed");
         gameObject.GetComponent<PuppetSounds>().Revive();
         AllowRegen = true;
         PlayerController playerController = gameObject.GetComponent<PlayerController>();

@@ -108,14 +108,7 @@ public class RoomTreeNode : MonoBehaviour
 				RoomTreeNode newNode = door.ConnectedTo.GetComponentInParent<RoomTreeNode>();
 				if (newNode.InTree)
 				{
-					if (newNode.gameObject.name == "guideObject")
-					{
-						SetParent(FindObjectOfType<GrabTool>().currentNode); 
-					}
-					else
-					{
-						SetParent(newNode);
-					}
+					SetParent(newNode);
 					InTree = true;
 					return true;
 				}

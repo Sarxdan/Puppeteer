@@ -45,7 +45,10 @@ public class BearInteract : Interactable
         if(interacting)
         {
             interactionProgress += Time.deltaTime;
-            HudScript.ScaleInteractionProgress((interactionProgress)/totalTime);
+            if(HudScript != null)
+            {
+                HudScript.ScaleInteractionProgress((interactionProgress)/totalTime);
+            }
         }
     }
     // (KL) Shows the interactable tooltip if the trap has been activated

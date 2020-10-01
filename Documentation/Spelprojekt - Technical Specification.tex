@@ -3,6 +3,16 @@
 \usepackage[T1]{fontenc}
 \usepackage{textcomp}
 \usepackage{changepage}
+\usepackage{geometry}
+\geometry{
+a4paper,
+left=30mm,
+right = 30mm,
+top=30mm,
+bottom = 30mm,
+}
+
+
 
 \newenvironment{indentall}{\begin{adjustwidth}{2cm}{}}{\end{adjustwidth}}
 
@@ -11,6 +21,48 @@
 
 \begin{document}
 \maketitle
+
+\vspace*{\fill}
+
+\subsection*{Group Members}
+\hspace*{\fill}
+\newline Sandra Andersson \hfill Dev
+\newline Carl Appelkvist \hfill Dev
+\newline Ludvig Björk Förare \hfill Dev
+\newline Anton Jonsson \hfill Dev
+\newline Kristoffer Lundgren \hfill Dev
+\newline Filip Rehnman \hfill Dev
+\newline Philip Stenmark \hfill Dev
+\newline Benjamin Vesterlund \hfill Dev
+\newline Oscar Leiner Olsson \hfill Artist
+\newline Gustav Mårdestam \hfill Artist
+\newline Robert Ringholm \hfill Artist
+\newline
+\hspace*{\fill}
+
+\begin{center}
+\begin{tabular}{|c|c|c|c|} 
+\hline
+Revision & Date & Name & Comment \\
+\hline
+A & 2019-04-11 & Anton Jonsson & Milestone 2 \\ 
+&&   Philip Stenmark &\\
+&& Kristoffer Lundgren &\\
+\hline
+B & 2019-04-16 & Sandra Andersson & Revised for implementation of player,\\ 
+&&   Philip Stenmark & interaction, weapons and health. \\
+\hline
+C & 2019-04-18 & Sandra Andersson & Revised for implementation of traps. \\
+\hline
+D & 2019-05-24 & Anton Jonsson & Implemented into \LaTeX \\
+\hline
+E & 2019-05-24 & All developers & Final cleanup for Milestone 5 \\
+\hline
+\end{tabular}
+\end{center}
+
+
+
 
 
 \newpage
@@ -31,6 +83,8 @@ Unity 2018
 \newline Mirror by vis2k for networking
 \newline FMOD for sound
 
+\newpage
+
 \subsection{Game Objects}
 \subsubsection{Level}
 Components
@@ -43,9 +97,9 @@ Components
 		\item GameObject GoalRoom
 		\item GameObject Door
 		\item Int RoomsToSpawnBeforeDeadEndRooms
-		\item List<RoomCollider> roomColiderPositions
-		\item Queue<AnchorPoint> openDoorQueue;
-		\item List<GameObject> roomsToBePlace
+		\item List<RoomCollider> roomColliderPosit	ions
+		\item Queue<AnchorPoint> openDoorQueue
+		\item List<GameObject> roomsToBePlaced
 		\item RoomTreeNode startNode
 		\item GameObject parent
 	\end{itemize}
@@ -57,6 +111,30 @@ Components
 		\item SpawnRoomsOnNetwork
 		\item GetRooms
 		\item ConnectDoorsInRoomIfPossible
+	\end{itemize}
+\newpage
+	\item ItemSpawning
+	\newline Attributes
+	\begin{itemize}
+		\item uint NumberOfSpawns
+		\item List<SnapPointBase> spawners
+		\item GameObject level
+		\item List<GameObject> WeaponList
+		\item GameObject localSpawner
+		\item ItemsToSpawn
+	\end{itemize}
+	Methods
+	\begin{itemize}
+		\item Awake
+		\item FindSnapPoints
+		\item SpawnItems
+		\item RpcSetParent
+		\item GetRandom
+		\item SpawnWeapon
+		\item SpawnAmmo
+		\item SpawnPowerUp
+		\item SpawnMedkit
+		\item SpawnItem
 	\end{itemize}
 \end{itemize}
 
@@ -124,9 +202,9 @@ Components
 		\item OnInteractBegin
 		\item OnInteractEnd
 		\item OnRaycastEnter
-		\item OnRaycastExit
 	\end{itemize}
 	\item Image (UI image for compass)
+\newpage
 	\item PowerUpBase (acts as base class for all power-ups)
 	\newline Attributes
 	\begin{itemize}
@@ -144,19 +222,22 @@ Components
 	\end{itemize}
 	\item InvisibilityPower : PowerUpBase
 	\item NavigationPower : PowerUpBase
-	\item DetectionPower : PowerUpBase
+	\item SnifferPower : PowerUpBase
 	\item PlayerController : Interactable
 	\newline Attributes
 	\begin{itemize}
 		\item float MovementSpeed
+		\item float AccelerationRate
+		\item float SprintSpeed
+		\item float MaxStamina
+		\item bool DisableInput
 		\item float JumpForce
 		\item float JumpRayLength
-		\item float AccelerationRate
 		\item float MouseSensitivity
-		\item int Ammunition
 		\item bool HasMedkit
 		\item GameObject CurrentWeapon
-		\item float ReviveTime
+		\item int Ammunition
+		\item bool CanShoot
 	\end{itemize}
 	Methods
 	\begin{itemize}
@@ -173,7 +254,7 @@ Components
 Components
 \begin{itemize}
 	\item Mesh Renderer
-	\item GrebTool
+	\item GrabTool
 	\newline Attributes
 	\begin{itemize}
 		\item LevelBuilder level
@@ -202,6 +283,25 @@ Components
 		\item CanConnect
 		\item MouseToWorldPosition
 	\end{itemize}
+\newpage
+	\item ItemGrabTool
+	\newline Attributes
+	\begin{itemize}
+		\item GameObject[] HudItems
+		\item Button (All HUD buttons used for the spawning of items and enemies)
+		\item GameObject (All the items that can be spawned by the puppeteer)
+	\end{itemize}
+	Methods
+	\begin{itemize}
+		\item Start
+		\item Update
+		\item SetPrices
+		\item ClientUpdate
+		\item Pickup
+		\item Drop
+		\item FindNearestFreePoint
+		\item CanBePlaced
+	\end{itemize}
 \end{itemize}
 
 \subsubsection{Enemy}
@@ -222,6 +322,7 @@ Components
 		\item uint RegenSpeed
 		\item uint RegenDelay
 		\item bool AllowRegen
+		\item bool Downed
 	\end{itemize}
 	Methods
 	\begin{itemize}
@@ -230,34 +331,85 @@ Components
 		\item AddDeathAction
 		\item RemoveDeathAction
 	\end{itemize}
+\newpage
 	\item PathFinderComponent
 	\newline Attributes
 	\begin{itemize}
-		\item List CurrentPath
+		\item bool UseRootMotion
 		\item float MovementSpeed
+		\item float RotationSpeed
+		\item float LegHeight
+		\newline
+		\item int MaxRecursionDepth
+		\item Vector3 TransformRaycastOffset
+		\item float NodeArrivalMargin
+		\item bool PathfindDebug
+		\newline
+		\item float RaycastAvoidDistance
+		\item float RaycastAvoidAngle
+		\item float RaycastAvoidWeight
+		\item float MinionAvoidDistance
+		\item bool ObstacleAvoidDebug
+		\newline
+		\item float MinVelocityThreshold
+		\item float StuckTimeThreshold
+		\item float UnstuckRadius
+		\newline
+		\item float DoorInteractRange
+		\item float ForceSmoothingValue
+		\item float ClampValue
+		
 	\end{itemize}
 	Methods
 	\begin{itemize}
 		\item MoveTo
-		\item Update
+		\item Stop
 	\end{itemize}
-	\item StateMachineComponent/EnemyController
+\newpage
+	\item StateMachine
 	\newline Attributes
 	\begin{itemize}
-		\item State CurrentState
-		\item GameObject EnemySpawner
-		\item GameObject TargetEntity
+		\item uint tickRate
+		\item bool MinionType
+		\item EnemySpawner Spawner
+		\item HealthComponent TargetEntity
+		\item PathfinderComponent PathFinder
+		\item List GameObject Puppets
 		\item float AttackCooldown
-		\item int AttackDamage 
+		\item uint AttackDamage;
+		\item float AttackRange
+		\item float AttackEscapeDistance
+		\item float ChargeAccelerationSpeed
+		\item float StartChargeSpeed
+		\item int ChargeDamageMultiplier
+		\item Collider[] HitColliders
+		\item float AggroDropTime
+		\item float InstantAggroRange
+		\item float ConeAggroRange
+		\item float FOVConeAngle
+		\item float MinIdleTime
+		\item float MaxIdleTime
+		\item Vector3 RaycastOffset
+		\item bool debug
+		\item float ChooseCurrentRoomChance
 	\end{itemize}
 	Methods
 	\begin{itemize}
 		\item SetState
 		\item Update
+		\item CheckProximity
+		\item Die
+		\item Despawn
+		\item Attack
+		\item WithinCone
+		\item RemoveY
+		\item getNearbyDestination
+		\item RoomContainsPlayer
 	\end{itemize}
+\newpage
 	States (classes)
 	\begin{itemize}
-		\item AttackingState
+		\item AttackState
 		\newline Methods
 		\begin{itemize}
 			\item Enter
@@ -285,18 +437,39 @@ Components
 			\item Run
 			\item Exit
 		\end{itemize}
+		\item IdleState
+		\newline Methods
+		\begin{itemize}
+			\item Enter
+			\item Run
+			\item Exit
+		\end{itemize}
+		\item BigAttackState
+		\newline Methods
+		\begin{itemize}
+			\item Enter
+			\item Run
+			\item Exit
+		\end{itemize}
+		\item ChargeAttackState
+		\newline Methods
+		\begin{itemize}
+			\item Enter
+			\item Run
+			\item Exit
+		\end{itemize}
 	\end{itemize}
-	\item Mesh Renderer
+	\item Network Transform
+	\item Network Identity
+	\item Network Animator
+	\item Minion Sounds
+	\item Studio Event Emitter
 	\item Rigidbody
 	\item Capsule Collider
 	\item Animator
 \end{itemize}
 
 \subsubsection{EnemySpawner}
-Tag
-\begin{itemize}
-	\item EnemySpawner
-\end{itemize}
 Components
 \begin{itemize}
 	\item EnemySpawner
@@ -304,17 +477,30 @@ Components
 	\begin{itemize}
 		\item GameObject EnemyPrefab
 		\item GameObject spawnedEnemies
-		\item Float SpawnRate
-		\item Int MaxEnemyCount
-		\item Transform[] SpawnPoint
-		\item List<GameObject> EnemyCount
+		\item bool TankSpawner
+		\item int MaxEnemyCount
+		\item Transform spawnPoint
+		\item int MinDelay
+		\item int MaxDelay
+		\item List<StateMachine> LocalMinions
+		\item List<StateMachine> AllMinions
+		\item Transform MinionContainer
 	\end{itemize}
 	Methods
 	\begin{itemize}
 		\item Start
 		\item Spawn
+		\item CmdOnTakeDamage
+		\item RpcPlayAnimation
+		\item OnDeath
 	\end{itemize}
-	\item Mesh Renderer
+	\item Transform
+	\item Network Identity
+	\item Snap Fucntionality
+	\item Custom Network Transform
+	\item Enemy Spawner Sounds
+	\item Puppeteer Item Sounds
+\newpage
 	\item HealthComponent
 	\newline Attributes
 	\begin{itemize}
@@ -362,6 +548,7 @@ Components
 		\item Use
 		\item Reload
 		\item OnInteractBegin
+		\item OnRaycastEnter
 	\end{itemize}
 	\item Mesh Renderer
 \end{itemize}
@@ -377,7 +564,7 @@ Components
 	\newline Attributes
 	\begin{itemize}
 		\item uint Damage
-		\item float ActivateTime
+		\item float ActivationTime
 		\item float DestroyTime
 		\item List<GameObject> Puppets
 		\item Animator Anim
@@ -386,34 +573,23 @@ Components
 	\begin{itemize}
 		\item TrapTimer
 		\item DestroyTimer
+		\item ActivateAnim
 		\item OnTriggerEnter
 		\item OnTriggerStay
 		\item ActivateTrap
 		\item DestroyTrap
 	\end{itemize}
 	\item Box Collider
-	\item HealthComponent
-	\newline Attributes
-	\begin{itemize}
-		\item uint Health
-		\item uint MaxHealth
-		\item uint MaxRegenHealth
-		\item float MaxRegenRatio
-		\item float MaxReviveRatio
-		\item uint RegenSpeed
-		\item uint RegenDelay
-		\item bool AllowRegen
-	\end{itemize}
-	Methods
-	\begin{itemize}
-		\item Damage
-		\item Revive
-		\item AddDeathAction
-		\item RemoveDeathAction
-	\end{itemize}
+	\item BasicTrap : TrapComponent
+	\item BearTrap : TrapComponent
+	\item BearInteract : Interactable
+	\item FakeItem : Interactable
+	\item SnapFunctionality
 	\item Mesh Renderer
 	\item Animator
 \end{itemize}
+
+\newpage
 
 \subsubsection{Door}
 Tag
@@ -440,6 +616,7 @@ Components
 		\item OnInteractBegin
 		\item FixedUpdate
 		\item OnInteractEnd
+		\item OnRaycastEnter
 	\end{itemize}
 	\item Mesh Renderer
 	\item Box Collider
@@ -478,8 +655,11 @@ Components
 	\begin{itemize}
 		\item OnInteractBegin
 		\item OnInteractEnd
+		\item OnRaycastEnter
 	\end{itemize}
 \end{itemize}
+
+\newpage
 
 \subsubsection{HUD}
 Components
@@ -533,8 +713,28 @@ The LevelBuilder Start() method should only happen on the server. When spawning 
 All room modules that may be included in the level generation are provided in the Modules game object array with an exception of the start and goal rooms, which are provided separately as StartModule and GoalModule. Once the LevelBuilder is started, the level is generated in its entirety. It is however required that the start and goal rooms are reachable from each other.
 \end{indentall}
 
+\subsubsection{ItemSpawner}
+The ItemSpawner is run when all rooms have spawned in. It runs once per rooms and spawns items correctly parented to avoid issues when moving rooms.
+\newline 
+\newline Awake
+\begin{indentall}
+Adds all weapon prefabs to the weapons list.
+\end{indentall}
+FindSnapPoints
+\begin{indentall}
+Finds all Snappoints in the current room. After first time, just return the points without the search.
+\end{indentall}
+SpawnItems
+\begin{indentall}
+Gets all potential spawners, then choses a set number of them to spawn a item, by silently clamping the set percentige then randoming a item or weapon.
+\end{indentall}
+GetRandom
+\begin{indentall}
+Produces a list with length of num with unic random numbers between min and max.
+\end{indentall}
+
 \subsubsection{HealthComponent}
-The Health attribute should be synced with Mirror, meaning all methods changing health (Heal \& Damage must happen on the server)
+The Health attribute should be synced with Mirror, meaning all methods changing health must be synced (Heal \& Damage must happen on the server)
 \newline 
 \newline Damage
 \begin{indentall}
@@ -568,9 +768,14 @@ OnInteractEnd
 \begin{indentall}
 The interactor will stop the revive if not done already.
 \end{indentall}
+OnRaycastEnter
+\begin{indentall}
+If the player is downed and the player that is looking at the downed player has med Med Kit, show the interact tooltip.
+\end{indentall}
+
 
 \subsubsection{PowerUpBase}
-PowerUpBase might need a bool or something to sync in order to for example make Gekko invisible for Puppeteer but not puppets.
+PowerUpBase is used as a base class for all the individual puppet powerups.
 \newline 
 \newline OnActivate
 \begin{indentall}
@@ -580,6 +785,18 @@ OnComplete
 \begin{indentall}
 Override this function to specify behavior when the power up is suspended. The completion function may for example remove the Pekko’s goal icon from the compass.
 \end{indentall}
+
+\subsubsection{StaminaPower : PowerUpBase}
+Froggo's individual powerup. Increases speed and stamina to allow Froggo to run through traps before they are activated. Inherits from PowerUpBase.
+
+\subsubsection{InvisibilityPower : PowerUpBase}
+Gekko's individual powerup. Makes Gekko invisible by changing shaders for puppets and puppeteer. Puppets will see a different color while puppeteer sees nothing. Inherits from PowerUpBase.
+
+\subsubsection{NavigationPower : PowerUpBase}
+Pekko's individual powerup. Shows the direction of the goal on the Compass by adding a new target to the CompassComponent. Inherits from PowerUpBase.
+
+\subsubsection{SnifferPower : PowerUpBase}
+Doggo's individual powerup. Shows if every door is locked by displaying a colored paw-print on the doors. Red for locked, green for unlocked. Inherits from PowerUpBase.
 
 \subsubsection{GrabTool}
 Update
@@ -615,23 +832,63 @@ FindNearestAnchor
 Locates the nearest anchor (door) to the selected object, if any.
 \end{indentall}
 
+\newpage
+
+\subsubsection{ItemGrabTool}
+Start
+\begin{indentall}
+Gets all the components and values needed.
+\end{indentall}
+SetPrices
+\begin{indentall}
+Sets up the HUD to display the correct cost for all items that can be placed.
+\end{indentall}
+Update
+\begin{indentall}
+Checks for inputs from the player and calls other functions depending on the input.
+\end{indentall}
+Pickup
+\begin{indentall}
+Instantiates the item you want to place add makes it follow your cursor.
+\end{indentall}
+Drop
+\begin{indentall}
+Places down the item on the position of the guide object.
+\end{indentall}
+FindNearestFreePoint
+\begin{indentall}
+Finds the nearest point on the map where the item can be placed
+\end{indentall}
+CanBePlaced
+\begin{indentall}
+Checks if the item can be placed down on the current snap point.
+\end{indentall}
+
 \subsubsection{InteractionController}
 Update
 \begin{indentall}
-The update function raycasts straight ahead and looks for objects with the Interactable component. In case the player presses the Use button, an interaction is started.
+The update function raycasts straight ahead and looks for objects with the Interactable component. In case the player presses the Use button, an interaction is started. If a player hits an object with the Interactable component the OnRaycastEnter function is called.
 \end{indentall}
 
 \subsubsection{PathfinderComponent}
 MoveTo
 \begin{indentall}
-Pathfinds to coordinates specified in parameter and updates CurrentPath attribute.
+Pathfinds to coordinates specified in parameter.
 \end{indentall}
 Update
 \begin{indentall}
-Follows the CurrentPath attribute by adding force vectors along the path on the rigidbody. If there is no current path do nothing.
+Follows the current path by steering/rotating the object and moving it forwards. If no path exists, do nothing.
+\end{indentall}
+Stop
+\begin{indentall}
+Aborts the current pathfinding
 \end{indentall}
 
-\subsubsection{StateMachineComponent}
+\subsubsection{StateMachine}
+CheckProximity
+\begin{indentall}
+Checks for players nearby.
+\end{indentall}
 SetState
 \begin{indentall}
 Changes state.
@@ -641,12 +898,14 @@ Update
 Runs the current states Run function.
 \end{indentall}
 
+\newpage
+
 \subsubsection{EnemySpawner}
 Needs to be synced with Mirror
 \newline
 \newline Update
 \begin{indentall}
-Spawns an EnemyPrefab instance at some nearby position in a predefined range of the spawner position if the spawn rate timer reaches zero. The SpawnRate variable determines how often the update function may perform its logic. May also use a coroutine for a simpler implementation.
+Spawns an EnemyPrefab instance at the position of the member SpawnPoint whenever it's coroutine timer hits zero. The min-/maxDelay variables determin the range in which the spawntime can vary. Number of spawned minions per spawners is capped to the attribute MaxEnemySpawner. 
 \end{indentall}
 
 \subsubsection{WeaponComponent}
@@ -678,26 +937,56 @@ Reloads the weapon using the ammunition the weapon owner is carrying. The functi
 \end{indentall}
 OnInteractBegin
 \begin{indentall}
-The interactor picks up this weapon. If the interactor already has a weapon component attached, the new weapon is automatically swapped for the new one. Some logic is here required to properly attach transforms between weapon and interactor.
+The interactor picks up this weapon. If the interactor already has a weapon component attached, the new weapon is automatically swapped for the new one. Some logic is required here to properly attach transforms between weapon and interactor.
 \end{indentall}
+OnRaycastEnter
+\begin{indentall}
+Shows the interact tooltip to the player that is looking at the weapon.
+\end{indentall}
+
+\newpage
 
 \subsubsection{TrapComponent}
 Must be synced with Mirror.
 \newline
-\newline DestroyTimer
-\newline
-\newline ActivateTrap
+OnTriggerEnter
 \begin{indentall}
-Override this function in the subclass for handling the activation of the trap and damaging the puppet(s) inside, starting the DestroyTimer and other optional functionality.
+Override this function in the subclass for detecting when a game object is within the trap activation area. The function shall immediately trigger the TrapTimer function. If the timer reaches ActivationTime, the trap and activation animation is activated and is therefore considered consumed.
+\end{indentall}
+OnTriggerExit
+\begin{indentall}
+Override this function in the subclass for detecting when a game object leaves the trap activation area. The function shall be used for handling damage on targets when the trap is activated.
+\end{indentall}
+TrapTimer
+\begin{indentall}
+This timer is started when a puppet enters the collider and is used for activating the trap after an amount of time. When the timer runs out it will start the animation for the trap.
+\end{indentall}
+DestroyTimer
+\begin{indentall}
+This timer is started when the trap has activated and the animation has finished. When the timer runs out it will destroy the object for the trap.
+\end{indentall}
+ActivateTrap
+\begin{indentall}
+Override this function in the subclass for handling the activation of the trap and damaging the puppet(s) inside, starting the DestroyTimer and other optional functionality. Function is often called in within the animation in an animation event.
 \end{indentall}
 DestroyTrap
 \begin{indentall}
 Override this function in the subclass for handling the destroying of the trap object after the DestroyTimer is done.
 \end{indentall}
-OnTriggerEnter
-\begin{indentall}
-Override this function in the subclass for detecting when a game object is within the trap activation area. The function shall immediately triggers the TrapTimer function. If the timer reaches ActivationTime, the trap and activation animation is activated and is therefore considered consumed.
-\end{indentall}
+
+\subsubsection{BasicTrap}
+Is placed on basic traps such as spikes and chandelier.
+
+\subsubsection{BearTrap and BearInteract}
+Both is placed on bear trap. BearTrap is used for the collider part of the logic, and BearInteract for the interaction logic once the trap has been activated by BearTrap.
+
+\subsubsection{FakeItem}
+Is placed on FakeItem for the interactable logic. Since it will relate more to a useable object than previous traps and does not activate upon entering its collider it does not use TrapComponent
+
+\subsubsection{SnapFunctionality}
+Is placed on all placeable traps for identifying with the item placement for the Puppeteer.
+
+\newpage
 
 \subsubsection{DoorComponent}
 Must be synced with Mirror.
@@ -722,11 +1011,15 @@ Override this function in the subclass for handling end of interaction events.
 \end{indentall}
 OnRaycastEnter
 \begin{indentall}
-Enables the outline of the object.
+Override this function in order to use the interaction tooltip
 \end{indentall}
 OnRaycastExit
 \begin{indentall}
 Disables the outline of the object.
+\end{indentall}
+ShowToolTip
+\begin{indentall}
+Shows the interaction tooltip for the player that is looking at an interactable object.
 \end{indentall}
 
 \subsubsection{CompassComponent}
@@ -758,6 +1051,10 @@ Must be synced with Mirror.
 \begin{indentall}
 Adds the medkit to the player’s inventory if the player doesn’t have one.
 \end{indentall}
+OnRaycastEnter
+\begin{indentall}
+Show the interact tooltip if the player does not already have a med kit in its inventory.
+\end{indentall}
 
 \subsubsection{HUD}
 Start
@@ -769,6 +1066,8 @@ Update
 Draw all the information about powerups, health, medkits, and stamina to the screen, images are scaled to represent the health and stamina and the scale is lerped to create smooth transitions.	
 \end{indentall}
 
+\newpage
+
 \subsection{Artificial Intelligence}
 The enemies are controlled by a simple Finite State Machine(FSM):
 \newline
@@ -778,10 +1077,13 @@ The enemies are controlled by a simple Finite State Machine(FSM):
 	\item ReturnToSpawnerState
 	\item WanderState
 	\item SeekState
+	\item IdleState
+	\item BigAttackState
+	\item ChargeAttackState
 \end{itemize}
 AttackingState
 \newline
-The enemies enter the attacking state when they have a clear line of sight of the player and they are within range. While in this state the enemies follow the player and automatically attack them when within range. 
+The enemies enter the attacking state when they have a clear line of sight of the player and they are within range. While in this state the enemies follow the player and automatically attack them when within range.
 \newline
 \newline ReturnToSpawnerState
 \newline
@@ -793,7 +1095,19 @@ When an enemy doesn’t see any players it will wander on its own to nearby room
 \newline
 \newline SeekState
 \newline
-This state will pathfind to a players last known location or back toward spawn if it has run to far from home.
+This state will pathfind to a players last known location.
+\newline
+\newline IdleState
+\newline
+This state happens between wandering and makes the minion wait for an amount of time between two values.
+\newline
+\newline BigAttackState
+\newline
+The attack state for the tank. The tank can never lose its target unless it dies or turns invisible so it follows and attack when possible.
+\newline
+\newline ChargeAttackState
+\newline
+The tanks special attack, an accelerating charge at its target. The tank doesn't stop until the target is hit or the tank dies. It does damage depending on the tanks speed.
 
 \subsection{Multiplayer}
 Mirror by vis2k solves all of our multiplayer issues. The data is sent using TCP and a client-host system.
@@ -801,22 +1115,22 @@ Mirror by vis2k solves all of our multiplayer issues. The data is sent using TCP
 \section{User interface}
 \subsection{Game Shell}
 \begin{itemize}
-\item Splash screen
-\newline The first screen you see when you open the game. After any button is pressed, the menu should be opened.
-\item Main menu
-\newline The main menu is just a way to get to the other menus.
-\item Video options
-\newline Video options is where you can change resolution and enable/disable fullscreen.
-\item Audio options
-\newline Audio options should implement sound sliders for all types of sound in the game.
-\item Controls
-\newline In controls you should be able to rebind all keys used in the game and also change the sensitivity of the mouse.
-\item Join
-\newline In Join you enter an IP-address to connect to a host and enter a lobby
-\item Lobby
-\newline In a lobby you choose character and indicate when you are ready to start the game
-\item Host/Lobby
-\newline The same as ordinary lobby but for the host of the game.
+	\item Splash screen
+	\newline The first screen you see when you open the game. After any button is pressed, the menu should be opened.
+	\item Main menu
+	\newline The main menu is just a way to get to the other menus.
+	\item Video options
+	\newline Video options is where you can change resolution and enable/disable fullscreen.
+	\item Audio options
+	\newline Audio options should implement sound sliders for all types of sound in the game.
+	\item Controls
+	\newline In controls you should be able to rebind all keys used in the game and also change the sensitivity of the mouse.
+	\item Join
+	\newline In Join you enter an IP-address to connect to a host and enter a lobby
+	\item Lobby
+	\newline In a lobby you choose character and indicate when you are ready to start the game
+	\item Host/Lobby
+	\newline The same as ordinary lobby but for the host of the game.
 \end{itemize}
 
 \subsection{Main Play Screens}

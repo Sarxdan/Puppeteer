@@ -33,7 +33,6 @@ public enum EnemyType
 
 public class StateMachine : NetworkBehaviour
 {
-
     [Header("General settings")]
     public uint tickRate = 10;
     //States

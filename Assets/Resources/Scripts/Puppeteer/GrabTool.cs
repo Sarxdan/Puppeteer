@@ -340,7 +340,6 @@ public class GrabTool : NetworkBehaviour
 
         if (!bestDstPoint.GetComponentInParent<RoomTreeNode>().InTree)
         {
-            DisconnectGuideDoors();
             return false;
         }
 
@@ -350,12 +349,10 @@ public class GrabTool : NetworkBehaviour
         {
             currentNode.SetParent(parentNode);
             level.GetStartNode().ReconnectToTree();
-            DisconnectGuideDoors();
             return false;
         }
 
         level.GetStartNode().ReconnectToTree();
-        DisconnectGuideDoors();
 
         // made it!
         return true;
@@ -366,13 +363,5 @@ public class GrabTool : NetworkBehaviour
         Vector3 mousePos = Input.mousePosition;
         mousePos.z = Camera.main.WorldToScreenPoint(selectedObject.transform.position).z;
         return Camera.main.ScreenToWorldPoint(mousePos);
-    }
-
-    private void DisconnectGuideDoors()
-    {
-        foreach (AnchorPoint guideDoor in guideObject.GetComponentsInChildren<AnchorPoint>())
-        {
-            guideDoor.NoSpawnDisconnectDoor();
-        }
     }
 }

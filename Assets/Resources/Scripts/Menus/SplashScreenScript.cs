@@ -32,12 +32,18 @@ public class SplashScreenScript : MonoBehaviour
 
     private float fadeSpeed = 0.5f;
     private bool ListenForInput = false;
+
+    private static bool disableSplashScreen;
     // Start is called before the first frame update
     void Start()
     {
         fadeImage = FadeOverlay.GetComponent<Image>();
         pulsateImage = Pulsate.GetComponent<Image>();
-        StartCoroutine(SplashScreenTimer());
+
+        if (disableSplashScreen)
+            gameObject.SetActive(false);
+        else
+            StartCoroutine(SplashScreenTimer());
     }
 
     void FixedUpdate()
@@ -53,6 +59,7 @@ public class SplashScreenScript : MonoBehaviour
                 FadeOverlay.SetActive(false);
                 Background.SetActive(false);
                 ListenForInput = false;
+                disableSplashScreen = true;
             }
             pulsate += Time.fixedDeltaTime + 0.04f;
             pulsateImage.color = new Color(0,0,0, ((Mathf.Sin(pulsate)/1.3f) + 0.02f));

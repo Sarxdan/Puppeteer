@@ -2,6 +2,18 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/*
+ * AUTHOR:
+ * Sandra Andersson
+ * 
+ * DESCRIPTION:
+ * Is placed on the players for playing and changing mood of music
+ * 
+ * CODE REVIEWED BY:
+ * Kristoffer Lundgren
+ * 
+ */
+
 public class Music : MonoBehaviour
 {
     // Sound Events
